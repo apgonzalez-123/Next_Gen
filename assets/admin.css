@@ -4,6 +4,10 @@
 
 body.admin { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
+/* An explicit `display` beats the `hidden` attribute, so the gate and the
+   board — both flex/grid — would otherwise show at the same time. */
+[hidden] { display: none !important; }
+
 .a-top {
   flex: 0 0 auto;
   display: flex; align-items: center; justify-content: space-between;
