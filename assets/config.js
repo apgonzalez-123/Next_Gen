@@ -16,8 +16,16 @@ window.CONFIG = {
    * live session so practice votes do not pollute the real numbers. */
   SESSION_ID: "nextgen-2026",
 
-  /* Guests per synthetic audience in demo mode. */
-  DEMO_ROOM_SIZE: 42,
+  /* Guests in the synthetic demo audience.
+   *
+   * 0 = OFF: only real responses are ever shown or counted. That is the
+   * right setting for a live session and for testing that real answers
+   * are being recognised.
+   *
+   * Set it to ~40 only if you need populated screens to rehearse against
+   * before anyone has scanned. Synthetic guests are always labelled on
+   * screen and are never included in the admin table or any export. */
+  DEMO_ROOM_SIZE: 0,
 
   /* How often the presenter screen refreshes, in ms. */
   POLL_MS: 3000,

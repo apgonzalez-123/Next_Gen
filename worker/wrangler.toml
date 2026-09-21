@@ -2,12 +2,11 @@ name = "nextgen-votes"
 main = "index.js"
 compatibility_date = "2025-09-01"
 
-# Created by: npx wrangler d1 create nextgen-votes
-# Paste the database_id the command prints into the line below.
+# Bound to the existing `investor_profile` D1 database.
 [[d1_databases]]
 binding = "DB"
-database_name = "nextgen-votes"
-database_id = "PASTE_YOUR_DATABASE_ID_HERE"
+database_name = "investor_profile"
+database_id = "9510e9ec-72b2-4dd7-bcd3-9253629a1a11"
 
 # ADMIN_KEY guards /api/reset and /api/export. Set it as a secret, never here:
 #   npx wrangler secret put ADMIN_KEY

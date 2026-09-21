@@ -156,7 +156,11 @@
     var badge = document.getElementById("modeBadge");
     badge.hidden = res.mode !== "demo";
     if (res.mode === "demo") {
-      badge.textContent = "Demo · " + res.real + " live + " + res.synthetic + " simulated";
+      /* Say which of the two demo-mode situations this is: a synthetic
+         audience padding the screens, or simply no backend yet. */
+      badge.textContent = res.synthetic
+        ? "Demo · " + res.real + " live + " + res.synthetic + " simulated"
+        : "No backend · this device only";
     }
 
     if (!responses.length) return;
