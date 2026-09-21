@@ -230,15 +230,36 @@ window.STORE = (function () {
     });
   }
 
-  /* Every response with its identity attached, newest first — what the
-   * admin board and the CSV export read. Synthetic demo rows are excluded:
-   * they are scenery for the projector, never real guest data. */
-  function roster() {
-    return results().then(function (res) {
-      return res.responses
-        .filter(function (r) { return !r.synthetic; })
-        .sort(function (a, b) { return (b.at || 0) - (a.at || 0); });
-    });
+  /* Every response WITH its identity, newest first — what the admin board
+   * and the CSV export read.
+   *
+   * Against a live backend this is a separate, key-protected route: the
+   * public /api/results deliberately carries no names, so the admin key is
+   * what unlocks them, and the worker is what checks it. The key is never
+   * stored in any file this site serves.
+   *
+   * With no backend the data never left this device, so there is nothing
+   * to authorise against and no key is required. */
+  function roster(adminKey) {
+    if (MODE !== "remote") {
+      return results().then(function (res) {
+        return res.responses
+          .filter(function (r) { return !r.synthetic; })
+          .sort(function (a, b) { return (b.at || 0) - (a.at || 0); });
+      });
+    }
+
+    return fetch(cfg.BACKEND_URL + "/api/roster?session=" +
+                 encodeURIComponent(cfg.SESSION_ID) +
+                 "&key=" + encodeURIComponent(adminKey || ""))
+      .then(function (r) {
+        if (r.status === 401) { var e = new Error("unauthorized"); e.code = 401; throw e; }
+        if (!r.ok) throw new Error("roster failed: " + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        return (data.responses || []).sort(function (a, b) { return (b.at || 0) - (a.at || 0); });
+      });
   }
 
   return {

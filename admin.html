@@ -23,7 +23,20 @@
   </div>
 </header>
 
-<main class="a-main">
+<section class="a-gate" id="gate" hidden>
+  <div class="a-gate-box">
+    <h2 class="display">Responses</h2>
+    <p>This board shows guests&rsquo; names and their answers. Enter the session password to continue.</p>
+    <label class="field">
+      <span class="field-label">Password</span>
+      <input class="field-input" id="gateKey" type="password" autocomplete="current-password">
+    </label>
+    <p class="a-gate-msg" id="gateMsg"></p>
+    <button class="btn btn-primary" id="gateGo" type="button">Unlock</button>
+  </div>
+</section>
+
+<main class="a-main" id="board" hidden>
   <p class="a-note" id="note"></p>
   <div class="a-scroll">
     <table class="a-table" id="table">

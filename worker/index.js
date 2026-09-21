@@ -7,10 +7,14 @@
  * seconds.
  *
  * Routes
- *   POST /api/vote     { session, response }  upsert one guest's answers
- *   GET  /api/results?session=ID              every response for a session
- *   GET  /api/export?session=ID&key=ADMIN_KEY CSV of the same
- *   POST /api/reset    { session, key }       clear a session
+ *   POST /api/vote     { session, response }   upsert one guest's answers
+ *   GET  /api/results?session=ID               ANONYMISED answers — this is
+ *                                              what every guest's browser and
+ *                                              the projector call, so it must
+ *                                              never carry names
+ *   GET  /api/roster?session=ID&key=ADMIN_KEY  full records WITH identities
+ *   GET  /api/export?session=ID&key=ADMIN_KEY  the same, as CSV
+ *   POST /api/reset    { session, key }        clear a session
  *
  * Deploy: see README.md.
  */
@@ -45,6 +49,9 @@ export default {
       }
       if (url.pathname === "/api/results" && request.method === "GET") {
         return await results(url, env);
+      }
+      if (url.pathname === "/api/roster" && request.method === "GET") {
+        return await roster(url, env);
       }
       if (url.pathname === "/api/export" && request.method === "GET") {
         return await exportCsv(url, env);
@@ -136,7 +143,23 @@ function safeParse(s) {
   try { return JSON.parse(s) || {}; } catch { return {}; }
 }
 
+/* PUBLIC. Every guest's phone and the projector poll this to render the
+ * room's aggregate, so it returns answers ONLY — no name, group, token or
+ * registration fields ever leave through this route. Stripping happens
+ * here rather than in the client, because the client is the untrusted
+ * party. */
 async function results(url, env) {
+  const session = String(url.searchParams.get("session") || "default").slice(0, MAX_SESSION);
+  const full = await readSession(env, session);
+  const responses = full.map((r) => ({ id: r.id, at: r.at, answers: r.answers }));
+  return json({ session, count: responses.length, responses });
+}
+
+/* PRIVATE. Full records including identities. Requires ADMIN_KEY. */
+async function roster(url, env) {
+  if (!checkKey(url.searchParams.get("key"), env)) {
+    return json({ error: "unauthorized" }, 401);
+  }
   const session = String(url.searchParams.get("session") || "default").slice(0, MAX_SESSION);
   const responses = await readSession(env, session);
   return json({ session, count: responses.length, responses });

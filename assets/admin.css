@@ -74,3 +74,12 @@ body.admin { height: 100vh; display: flex; flex-direction: column; overflow: hid
 .a-empty { padding: 60px 20px; text-align: center; color: var(--muted); font-size: 14px; }
 
 .a-nofit { color: var(--muted); font-style: italic; font-weight: 400; }
+
+/* --- password gate --- */
+.a-gate { flex: 1 1 auto; display: grid; place-items: center; padding: 40px 24px; }
+.a-gate-box { width: 100%; max-width: 380px; }
+.a-gate-box h2 { font-size: 34px; margin-bottom: 10px; }
+.a-gate-box p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 22px; }
+.a-gate-box .field { margin-bottom: 14px; }
+.a-gate-box .btn { width: 100%; }
+.a-gate-msg { min-height: 18px; font-size: 13px; color: var(--gold); margin: 0 0 14px !important; }

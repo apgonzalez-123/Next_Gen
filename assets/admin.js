@@ -154,17 +154,61 @@
 
   /* ---------- load ---------- */
 
+  /* The admin key lives only in this tab, for this visit. It is never
+     written to a file this site serves, and never to localStorage. */
+  var KEY_STORE = "nextgen:adminkey";
+  function savedKey() {
+    try { return sessionStorage.getItem(KEY_STORE) || ""; } catch (e) { return ""; }
+  }
+  function rememberKey(k) {
+    try { sessionStorage.setItem(KEY_STORE, k); } catch (e) {}
+  }
+  function forgetKey() {
+    try { sessionStorage.removeItem(KEY_STORE); } catch (e) {}
+  }
+
+  function lock(message) {
+    document.getElementById("gate").hidden = false;
+    document.getElementById("board").hidden = true;
+    document.getElementById("gateMsg").textContent = message || "";
+    var f = document.getElementById("gateKey");
+    f.value = "";
+    f.focus();
+  }
+  function unlock() {
+    document.getElementById("gate").hidden = true;
+    document.getElementById("board").hidden = false;
+  }
+
   function refresh() {
-    window.STORE.roster().then(function (list) {
+    window.STORE.roster(savedKey()).then(function (list) {
+      unlock();
       rows = list;
       document.getElementById("nCount").textContent = rows.length;
       build();
     }).catch(function (e) {
+      if (e && e.code === 401) {
+        forgetKey();
+        lock("That password was not accepted.");
+        return;
+      }
       console.error(e);
       document.getElementById("tbody").innerHTML =
         '<tr><td class="a-empty" colspan="20">Could not reach the vote backend.</td></tr>';
     });
   }
+
+  function submitKey() {
+    var v = document.getElementById("gateKey").value.trim();
+    if (!v) return;
+    rememberKey(v);
+    document.getElementById("gateMsg").textContent = "Checking…";
+    refresh();
+  }
+  document.getElementById("gateGo").addEventListener("click", submitKey);
+  document.getElementById("gateKey").addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); submitKey(); }
+  });
 
   window.BASE.ready.then(function () {
     var badge = document.getElementById("srcBadge");
@@ -177,7 +221,16 @@
       : "Live responses from every guest in the room. The table scrolls sideways through all " +
         window.AXES.length + " questions; name and group stay pinned.";
 
-    refresh();
-    setInterval(refresh, 5000);
+    /* With no backend the rows never left this device, so there is nothing
+       to unlock. Against the live backend the worker holds the key. */
+    if (window.STORE.mode !== "remote") {
+      unlock();
+      refresh();
+      setInterval(refresh, 5000);
+      return;
+    }
+
+    if (savedKey()) refresh(); else lock("");
+    setInterval(function () { if (savedKey()) refresh(); }, 5000);
   });
 })();
