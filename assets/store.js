@@ -138,21 +138,32 @@ window.STORE = (function () {
    * the id is per-device. */
   function submit(answers, guest) {
     guest = guest || {};
+    var fields = guest.fields || {};
     var prior = myResponse();
     var id = guest.token
       ? "t-" + String(guest.token).replace(/[^A-Za-z0-9_-]/g, "").slice(0, 40)
       : (prior ? prior.id : "g-" + Math.random().toString(36).slice(2, 10));
 
+    /* name and group keep their own slots because the backend and the
+       export treat them as first-class; anything else the registration
+       step collected rides along in `fields`. */
+    var extra = {};
+    Object.keys(fields).forEach(function (k) {
+      var v = String(fields[k] == null ? "" : fields[k]).trim().slice(0, 120);
+      if (v) extra[k] = v;
+    });
+
     var response = {
       id: id,
-      name:  (guest.name  || "").trim().slice(0, 80),
-      group: (guest.group || "").trim().slice(0, 40),
+      name:  (fields.name  || "").trim().slice(0, 80),
+      group: (fields.group || "").trim().slice(0, 40),
       token: (guest.token || "").slice(0, 40),
+      fields: extra,
       answers: answers,
       at: Date.now()
     };
     writeJSON(LS_MINE, response);
-    writeJSON(LS_GUEST, { name: response.name, group: response.group, token: response.token, fromLink: !!response.token });
+    writeJSON(LS_GUEST, { token: response.token, fromLink: !!response.token, fields: extra });
 
     if (MODE === "demo") {
       /* Keep every vote cast on this device, so one laptop passed around

@@ -26,6 +26,17 @@
     return opt ? opt.label : String(value);
   }
 
+  /* name and group have dedicated columns; everything else the
+     registration step collects gets one generated for it. */
+  function regFields() { return window.CONFIG.REGISTER_FIELDS || []; }
+  function groupLabel() {
+    var g = regFields().find(function (f) { return f.id === "group"; });
+    return g ? g.label : "Group";
+  }
+  function extraFields() {
+    return regFields().filter(function (f) { return f.id !== "name" && f.id !== "group"; });
+  }
+
   function when(ts) {
     if (!ts) return "";
     var d = new Date(ts);
@@ -40,7 +51,10 @@
 
     thead.innerHTML = "<tr>" +
       '<th class="sticky-1"><small>Guest</small>Name</th>' +
-      '<th class="sticky-2"><small>' + esc(window.CONFIG.GROUP_FIELD || "Group") + "</small>Group</th>" +
+      '<th class="sticky-2"><small>Registration</small>' + esc(groupLabel()) + "</th>" +
+      extraFields().map(function (f) {
+        return "<th><small>Registration</small>" + esc(f.label) + "</th>";
+      }).join("") +
       "<th><small>Matched</small>Portfolio</th>" +
       "<th><small>Fit</small>Score</th>" +
       window.AXES.map(function (a) {
@@ -52,7 +66,7 @@
       "</tr>";
 
     if (!rows.length) {
-      tbody.innerHTML = '<tr><td class="a-empty" colspan="' + (window.AXES.length + 6) +
+      tbody.innerHTML = '<tr><td class="a-empty" colspan="' + (window.AXES.length + 6 + extraFields().length) +
         '">No responses yet. They appear here as guests finish the five steps.</td></tr>';
       return;
     }
@@ -68,6 +82,9 @@
           ? '<span class="a-name">' + esc(r.name) + "</span>"
           : '<span class="a-anon">anonymous</span>') + "</td>" +
         '<td class="sticky-2">' + esc(r.group || "") + "</td>" +
+        extraFields().map(function (f) {
+          return "<td>" + esc((r.fields && r.fields[f.id]) || "") + "</td>";
+        }).join("") +
         '<td class="a-match">' + (noFit
           ? '<span class="a-nofit">none eligible</span>'
           : esc(top ? top.portfolio.name : "")) + "</td>" +
@@ -92,16 +109,19 @@
   }
 
   function toCSV() {
-    var head = ["Name", window.CONFIG.GROUP_FIELD || "Group", "Matched portfolio", "Fit %"]
+    var head = ["Name", groupLabel()]
+      .concat(extraFields().map(function (f) { return f.label; }))
+      .concat(["Matched portfolio", "Fit %"])
       .concat(window.AXES.map(function (a) { return a.label; }))
       .concat(["Submitted", "ID"]);
 
     var body = rows.map(function (r) {
       var top = window.ENGINE.rank(r.answers)[0];
       var noFit = top && top.blocked;
-      return [r.name || "", r.group || "",
-              noFit ? "none eligible" : (top ? top.portfolio.name : ""),
-              noFit ? "" : (top ? top.fit : "")]
+      return [r.name || "", r.group || ""]
+        .concat(extraFields().map(function (f) { return (r.fields && r.fields[f.id]) || ""; }))
+        .concat([noFit ? "none eligible" : (top ? top.portfolio.name : ""),
+                 noFit ? "" : (top ? top.fit : "")])
         .concat(window.AXES.map(function (a) { return labelFor(a.id, r.answers[a.id]); }))
         .concat([r.at ? new Date(r.at).toISOString() : "", r.token || r.id || ""]);
     });

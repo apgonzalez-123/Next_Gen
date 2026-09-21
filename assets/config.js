@@ -39,12 +39,24 @@ window.CONFIG = {
    * qr-gen.html prints) is identified already and never sees the field. */
   IDENTIFY: "required",
 
-  /* Ask for a second grouping field alongside the name — a table number,
-   * team, or advisor. Set to "" to hide it. */
-  GROUP_FIELD: "Table / group",
+  /* What the registration step asks for. `name` and `group` get their own
+   * columns in the export; any other field you add gets its own column
+   * automatically, in both the admin table and the CSV.
+   *
+   * To collect contact details, uncomment the email row — but update
+   * PRIVACY_NOTE to say so, and check it against your own client-data
+   * rules first. An event sign-up sheet is still personal data. */
+  REGISTER_FIELDS: [
+    { id: "name",  label: "Your name",     placeholder: "First and last name",
+      required: true,  autocomplete: "name" },
+    { id: "group", label: "Table / group", placeholder: "e.g. Table 4",
+      required: false }
+    // { id: "email", label: "Email", placeholder: "you@bank.com",
+    //   required: false, type: "email", autocomplete: "email" }
+  ],
 
-  /* Shown on the welcome screen so guests know what is recorded. Keep it
-   * accurate if you change IDENTIFY. */
+  /* Shown on the registration step so guests know what is recorded. Keep it
+   * accurate if you change IDENTIFY or REGISTER_FIELDS. */
   PRIVACY_NOTE: "Your name and your answers are recorded for this session so " +
                 "your host can follow up. No contact details are collected here."
 };

@@ -12,33 +12,52 @@
 
   var steps = window.SCHEMA.activeSteps;
   var answers = {};
-  var guest = readUrlIdentity();   /* { name, token, group } */
-  var view = "welcome";            /* "welcome" | 0..4 | "results" */
+  var guest = readUrlIdentity();   /* { token, fromLink, fields: {...} } */
+  var view = "welcome";            /* "welcome" | "register" | 0..n | "results" */
   var roomData = null;
 
   /* A personal link — ?g=TOKEN&n=Name, which is what qr-gen.html prints —
    * identifies the guest up front, so they never see the name field. The
    * token is what ties this device's answers to a row on the guest list. */
+  function regFields() { return window.CONFIG.REGISTER_FIELDS || []; }
+
   function readUrlIdentity() {
     var q = new URLSearchParams(window.location.search);
     var token = q.get("g") || "";
     var name  = q.get("n") || "";
     var group = q.get("t") || "";
-    var saved = window.STORE.savedGuest();
     if (token || name) {
-      return { token: token, name: name, group: group, fromLink: !!token };
+      return { token: token, fromLink: !!token, fields: { name: name, group: group } };
     }
-    return saved || { token: "", name: "", group: "", fromLink: false };
+    var saved = window.STORE.savedGuest();
+    if (saved) return saved;
+    return { token: "", fromLink: false, fields: {} };
   }
 
-  function needsName() {
-    return window.CONFIG.IDENTIFY !== "off" && !guest.fromLink;
+  /* The registration step is skipped entirely when identity is off, or
+     when a personal link already named this guest. */
+  function needsRegistration() {
+    return window.CONFIG.IDENTIFY !== "off" && !guest.fromLink && regFields().length > 0;
   }
+
   function identityOk() {
     if (window.CONFIG.IDENTIFY !== "required") return true;
     if (guest.fromLink) return true;
-    return !!(guest.name && guest.name.trim().length >= 2);
+    return regFields().every(function (f) {
+      if (!f.required) return true;
+      var v = (guest.fields[f.id] || "").trim();
+      return v.length >= 2;
+    });
   }
+
+  /* The screens a guest moves through, in order. */
+  function flow() {
+    var out = [];
+    if (needsRegistration()) out.push("register");
+    steps.forEach(function (_, i) { out.push(i); });
+    return out;
+  }
+  function flowIndex(v) { return flow().indexOf(v); }
 
   /* ---------- helpers ---------- */
 
@@ -64,32 +83,38 @@
   function render() {
     window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
     app.innerHTML = "";
-    if (view === "welcome")      renderWelcome();
-    else if (view === "results") renderResults();
-    else                         renderStep(view);
+    if (view === "welcome")       renderWelcome();
+    else if (view === "register") renderRegister();
+    else if (view === "results")  renderResults();
+    else                          renderStep(view);
     renderChrome();
   }
 
   function renderChrome() {
-    var onStep = typeof view === "number";
-    rail.hidden = !onStep;
+    var seq = flow();
+    var at = flowIndex(view);
+    var inFlow = at !== -1;
+
+    rail.hidden = !inFlow;
     actions.hidden = (view === "results");
 
-    if (onStep) {
+    if (inFlow) {
       rail.innerHTML = "";
-      steps.forEach(function (s, i) {
-        rail.appendChild(el("span", i < view ? "done" : i === view ? "active" : ""));
+      seq.forEach(function (_, i) {
+        rail.appendChild(el("span", i < at ? "done" : i === at ? "active" : ""));
       });
-      stepCount.textContent = "Step " + (view + 1) + " of " + steps.length;
+      stepCount.textContent = "Step " + (at + 1) + " of " + seq.length;
       btnBack.hidden = false;
-      btnBack.textContent = view === 0 ? "Start over" : "Back";
-      btnNext.textContent = view === steps.length - 1 ? "See the results" : "Continue";
-      btnNext.disabled = !stepComplete(view);
+      btnBack.textContent = at === 0 ? "Start over" : "Back";
+
+      var last = at === seq.length - 1;
+      btnNext.textContent = last ? "See my portfolio" : "Continue";
+      btnNext.disabled = view === "register" ? !identityOk() : !stepComplete(view);
     } else if (view === "welcome") {
       stepCount.textContent = "";
       btnBack.hidden = true;
       btnNext.textContent = "Begin";
-      btnNext.disabled = !identityOk();
+      btnNext.disabled = false;
     } else {
       stepCount.textContent = "Complete";
     }
@@ -122,53 +147,53 @@
     });
     s.appendChild(preview);
 
-    if (guest.fromLink && guest.name) {
+    if (guest.fromLink && guest.fields.name) {
       s.appendChild(el("div", "notice",
-        "<span>&#9679;</span><div>Signed in as <b>" + esc(guest.name) + "</b>" +
-        (guest.group ? " &middot; " + esc(guest.group) : "") + "</div>"));
-    } else if (needsName()) {
-      s.appendChild(identityFields());
+        "<span>&#9679;</span><div>Signed in as <b>" + esc(guest.fields.name) + "</b>" +
+        (guest.fields.group ? " &middot; " + esc(guest.fields.group) : "") + "</div>"));
     }
 
-    s.appendChild(el("p", "footnote",
-      esc(window.CONFIG.PRIVACY_NOTE) + " Takes about two minutes."));
+    s.appendChild(el("p", "footnote", "Takes about two minutes."));
     app.appendChild(s);
   }
 
-  function identityFields() {
-    var wrap = el("div", "idblock");
+  /* Registration — the first step, not a form bolted under the intro. */
+  function renderRegister() {
+    var s = el("section", "screen");
     var optional = window.CONFIG.IDENTIFY === "optional";
 
-    var nameWrap = el("label", "field");
-    nameWrap.innerHTML = '<span class="field-label">Your name' +
-      (optional ? ' <em>optional</em>' : "") + "</span>";
-    var name = document.createElement("input");
-    name.type = "text";
-    name.className = "field-input";
-    name.placeholder = "First and last name";
-    name.autocomplete = "name";
-    name.value = guest.name || "";
-    name.addEventListener("input", function () {
-      guest.name = name.value;
-      renderChrome();
-    });
-    nameWrap.appendChild(name);
-    wrap.appendChild(nameWrap);
+    s.appendChild(el("div", "step-head",
+      "<h2>Registration</h2><p>So your host can match this portfolio back to you.</p>"));
 
-    if (window.CONFIG.GROUP_FIELD) {
-      var gWrap = el("label", "field");
-      gWrap.innerHTML = '<span class="field-label">' + esc(window.CONFIG.GROUP_FIELD) +
-        ' <em>optional</em></span>';
-      var grp = document.createElement("input");
-      grp.type = "text";
-      grp.className = "field-input";
-      grp.placeholder = "e.g. Table 4";
-      grp.value = guest.group || "";
-      grp.addEventListener("input", function () { guest.group = grp.value; });
-      gWrap.appendChild(grp);
-      wrap.appendChild(gWrap);
-    }
-    return wrap;
+    var wrap = el("div", "idblock");
+    regFields().forEach(function (f) {
+      var lab = el("label", "field");
+      var soft = optional || !f.required;
+      lab.innerHTML = '<span class="field-label">' + esc(f.label) +
+        (soft ? ' <em>optional</em>' : "") + "</span>";
+
+      var input = document.createElement("input");
+      input.type = f.type || "text";
+      input.className = "field-input";
+      input.placeholder = f.placeholder || "";
+      if (f.autocomplete) input.autocomplete = f.autocomplete;
+      input.value = guest.fields[f.id] || "";
+      input.addEventListener("input", function () {
+        guest.fields[f.id] = input.value;
+        renderChrome();
+      });
+      /* Enter moves on rather than doing nothing, which is what a phone
+         keyboard's "go" key is expected to do. */
+      input.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { e.preventDefault(); if (identityOk()) advance(); }
+      });
+      lab.appendChild(input);
+      wrap.appendChild(lab);
+    });
+    s.appendChild(wrap);
+
+    s.appendChild(el("p", "footnote", esc(window.CONFIG.PRIVACY_NOTE)));
+    app.appendChild(s);
   }
 
   function renderStep(i) {
@@ -312,7 +337,9 @@
         "a mandate this constrained needs a portfolio built for it.</div>"));
     } else {
       s.appendChild(el("div", "result-head",
-        '<div class="eyebrow">Your match</div>' +
+        '<div class="eyebrow">' +
+          (guest.fields.name ? esc(guest.fields.name) + "&rsquo;s portfolio" : "Your portfolio") +
+        "</div>" +
         '<h2 class="display">' + esc(mine.portfolio.name) + "</h2>" +
         '<p class="tagline">' + esc(mine.portfolio.tagline) + "</p>"));
     }
@@ -454,7 +481,11 @@
       answers = {};
       /* A shared device (an iPad on the table) hands over to the next
          guest: keep the group, clear the person. */
-      if (!guest.fromLink) guest = { token: "", name: "", group: guest.group, fromLink: false };
+      if (!guest.fromLink) {
+        /* A shared device (an iPad on the table) hands over to the next
+           guest: keep the group, clear the person. */
+        guest = { token: "", fromLink: false, fields: { group: guest.fields.group || "" } };
+      }
       view = "welcome";
       render();
     });
@@ -601,21 +632,25 @@
 
   /* ---------- navigation ---------- */
 
+  function advance() {
+    var seq = flow();
+    var at = flowIndex(view);
+    if (at === -1) return;
+    if (view === "register" ? !identityOk() : !stepComplete(view)) return;
+    if (at === seq.length - 1) submit();
+    else { view = seq[at + 1]; render(); }
+  }
+
   btnNext.addEventListener("click", function () {
-    if (view === "welcome") {
-      if (!identityOk()) return;
-      view = 0; render(); return;
-    }
-    if (typeof view === "number") {
-      if (!stepComplete(view)) return;
-      if (view === steps.length - 1) submit();
-      else { view = view + 1; render(); }
-    }
+    if (view === "welcome") { view = flow()[0]; render(); return; }
+    advance();
   });
 
   btnBack.addEventListener("click", function () {
-    if (view === 0) { answers = {}; view = "welcome"; }
-    else if (typeof view === "number") view = view - 1;
+    var seq = flow();
+    var at = flowIndex(view);
+    if (at <= 0) { answers = {}; view = "welcome"; }
+    else view = seq[at - 1];
     render();
   });
 

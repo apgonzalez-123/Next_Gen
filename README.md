@@ -13,10 +13,10 @@ Entirely static — **no bank network, no server required** to run the session.
 
 | Page | Who opens it | What it does |
 |---|---|---|
-| `index.html` | Guests, by QR | The five-step flow and each guest's own result |
+| `index.html` | Guests, by QR | Registration, the questions, and each guest's own portfolio |
 | `present.html` | Presenter, on the projector | QR to join, live counter, and the reveal (5 slides) |
 | `admin.html` | You | Every response, one row per guest, CSV / JSON export |
-| `qr-gen.html` | You, before the event | Printable personal QR codes, one per guest |
+| `qr-gen.html` | You, before the event | *Optional* — printable personal QR codes, one per guest |
 
 ---
 
@@ -210,19 +210,46 @@ axis needs a matching `target` on every portfolio and an entry in `weights`.
 
 ---
 
-## Knowing who answered what
+## The guest journey
 
-Two ways, both supported at once.
+One generic QR for the whole room. A guest scans it and walks through:
 
-**A · One shared code (simplest).** Project `present.html`. Guests scan the
-single QR and type their name on the welcome screen. Controlled by
-`IDENTIFY` in `assets/config.js`:
+```
+scan → welcome → 1. Registration → 2..n. the questions → their portfolio
+```
+
+**Registration is the first step**, with its own slot in the progress rail.
+It asks for whatever `REGISTER_FIELDS` lists in `assets/config.js`:
+
+```js
+REGISTER_FIELDS: [
+  { id: "name",  label: "Your name",     required: true, autocomplete: "name" },
+  { id: "group", label: "Table / group", required: false }
+  // { id: "email", label: "Email", type: "email", autocomplete: "email" }
+]
+```
+
+`name` and `group` have dedicated columns in the admin table and the CSV;
+**any other field you add gets its own column automatically** — no code
+change. Continue stays disabled until every `required` field is filled.
+
+`IDENTIFY` controls whether the step appears at all:
 
 ```js
 IDENTIFY: "required"   // "required" | "optional" | "off"
 ```
 
-**B · A personal code per guest (no typing, most reliable).** Open
+At the end the guest gets their own portfolio, headed with their name, the
+proposed holdings and the risk analysis.
+
+> If you add a contact field such as email, update `PRIVACY_NOTE` to say so —
+> it is what guests are shown at registration, and it should stay true. An
+> event sign-up is still a collection of personal data.
+
+### Optional: a personal code per guest
+
+The generic QR above is the intended path. If you would rather guests did not
+type anything at all, open
 `qr-gen.html`, paste the guest list, print the sheet, put a card at each place
 setting. Each card encodes:
 
@@ -230,15 +257,12 @@ setting. Each card encodes:
 https://<site>/?g=<token>&n=<name>&t=<group>
 ```
 
-The guest lands already identified — the name field never appears — and every
-answer is recorded against that token. Re-scanning the same card **updates**
-that guest's row rather than creating a second one.
+The guest lands already identified — the registration step is skipped — and
+every answer is recorded against that token. Re-scanning the same card
+**updates** that guest's row rather than creating a second one.
 
 Either way, `admin.html` shows one row per guest and one column per question,
 plus the portfolio they matched, and exports the lot as CSV or JSON.
-
-> Change `PRIVACY_NOTE` in `assets/config.js` if you change `IDENTIFY` — it is
-> what guests are told is being recorded, and it should stay true.
 
 ---
 

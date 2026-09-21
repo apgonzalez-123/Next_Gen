@@ -71,6 +71,7 @@ async function ensureSchema(env) {
        name     TEXT,
        grp      TEXT,
        token    TEXT,
+       fields   TEXT,
        answers  TEXT NOT NULL,
        at       INTEGER NOT NULL,
        PRIMARY KEY (session, id)
@@ -95,17 +96,18 @@ async function vote(request, env) {
   if (answers.length > MAX_ANSWERS_BYTES) return json({ error: "answers too large" }, 413);
 
   await env.DB.prepare(
-    `INSERT INTO responses (id, session, name, grp, token, answers, at)
-     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
+    `INSERT INTO responses (id, session, name, grp, token, fields, answers, at)
+     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
      ON CONFLICT (session, id) DO UPDATE SET
        name = excluded.name, grp = excluded.grp, token = excluded.token,
-       answers = excluded.answers, at = excluded.at`
+       fields = excluded.fields, answers = excluded.answers, at = excluded.at`
   ).bind(
     id,
     session,
     String(r.name || "").slice(0, 80),
     String(r.group || "").slice(0, 40),
     String(r.token || "").slice(0, 40),
+    JSON.stringify(r.fields || {}).slice(0, 2000),
     answers,
     Number(r.at) || Date.now()
   ).run();
@@ -115,7 +117,7 @@ async function vote(request, env) {
 
 async function readSession(env, session) {
   const { results } = await env.DB.prepare(
-    `SELECT id, name, grp, token, answers, at FROM responses
+    `SELECT id, name, grp, token, fields, answers, at FROM responses
       WHERE session = ?1 ORDER BY at ASC`
   ).bind(session).all();
 
@@ -124,6 +126,7 @@ async function readSession(env, session) {
     name: row.name || "",
     group: row.grp || "",
     token: row.token || "",
+    fields: safeParse(row.fields),
     at: row.at,
     answers: safeParse(row.answers),
   }));
