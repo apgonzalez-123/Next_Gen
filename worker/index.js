@@ -1,7 +1,11 @@
 /**
  * NextGen Portfolio Builder — vote backend.
  *
- * A single Cloudflare Worker over a D1 database. D1 (rather than KV) because
+ * A single Cloudflare Worker over a D1 database. It owns the
+ * `nextgen_responses` table and nothing else — deliberately NOT the
+ * `responses` table, which already exists in this database with a
+ * different schema and belongs to separate work.
+ * D1 (rather than KV) because
  * the room's tally is read back immediately after each write: KV is
  * eventually consistent and votes would lag the projector by several
  * seconds.
@@ -72,7 +76,7 @@ export default {
 
 async function ensureSchema(env) {
   await env.DB.prepare(
-    `CREATE TABLE IF NOT EXISTS responses (
+    `CREATE TABLE IF NOT EXISTS nextgen_responses (
        id       TEXT NOT NULL,
        session  TEXT NOT NULL,
        name     TEXT,
@@ -103,7 +107,7 @@ async function vote(request, env) {
   if (answers.length > MAX_ANSWERS_BYTES) return json({ error: "answers too large" }, 413);
 
   await env.DB.prepare(
-    `INSERT INTO responses (id, session, name, grp, token, fields, answers, at)
+    `INSERT INTO nextgen_responses (id, session, name, grp, token, fields, answers, at)
      VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
      ON CONFLICT (session, id) DO UPDATE SET
        name = excluded.name, grp = excluded.grp, token = excluded.token,
@@ -124,7 +128,7 @@ async function vote(request, env) {
 
 async function readSession(env, session) {
   const { results } = await env.DB.prepare(
-    `SELECT id, name, grp, token, fields, answers, at FROM responses
+    `SELECT id, name, grp, token, fields, answers, at FROM nextgen_responses
       WHERE session = ?1 ORDER BY at ASC`
   ).bind(session).all();
 
@@ -199,7 +203,7 @@ async function reset(request, env) {
   const body = await request.json().catch(() => ({}));
   if (!checkKey(body.key, env)) return json({ error: "unauthorized" }, 401);
   const session = String(body.session || "default").slice(0, MAX_SESSION);
-  await env.DB.prepare(`DELETE FROM responses WHERE session = ?1`).bind(session).run();
+  await env.DB.prepare(`DELETE FROM nextgen_responses WHERE session = ?1`).bind(session).run();
   return json({ ok: true, session });
 }
 

@@ -10,7 +10,7 @@
  *   BACKEND_URL: "https://nextgen-votes.<your-subdomain>.workers.dev"
  */
 window.CONFIG = {
-  BACKEND_URL: "",
+  BACKEND_URL: "https://nextgen-votes.apgonzalez.workers.dev",
 
   /* Bumping this starts a clean tally — use it between rehearsal and the
    * live session so practice votes do not pollute the real numbers. */
