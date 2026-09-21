@@ -15,6 +15,22 @@
   var guest = readUrlIdentity();   /* { token, fromLink, fields: {...} } */
   var view = "welcome";            /* "welcome" | "register" | 0..n | "results" */
   var roomData = null;
+  var openSections = null;   /* null = not loaded yet; {} = nothing open */
+  var waitingFor = null;     /* step index the guest is held at */
+
+  /* A section is open when the admin has opened it. Before the state has
+     loaded we hold rather than guess, so a guest never sees a section
+     that is still meant to be closed. */
+  function sectionOpen(stepId) {
+    if (openSections === null) return false;
+    /* No locks configured at all means the admin is not gating this
+       session — everything runs as one continuous quiz. */
+    if (!Object.keys(openSections).length) return true;
+    return !!openSections[stepId];
+  }
+  function gatingOn() {
+    return openSections !== null && Object.keys(openSections).length > 0;
+  }
 
   /* A personal link — ?g=TOKEN&n=Name, which is what qr-gen.html prints —
    * identifies the guest up front, so they never see the name field. The
@@ -85,6 +101,7 @@
     app.innerHTML = "";
     if (view === "welcome")       renderWelcome();
     else if (view === "register") renderRegister();
+    else if (view === "waiting")  renderWaiting();
     else if (view === "results")  renderResults();
     else                          renderStep(view);
     renderChrome();
@@ -94,6 +111,18 @@
     var seq = flow();
     var at = flowIndex(view);
     var inFlow = at !== -1;
+
+    if (view === "waiting") {
+      var wseq = flow(), wat = wseq.indexOf(waitingFor);
+      rail.hidden = false;
+      rail.innerHTML = "";
+      wseq.forEach(function (_, i) {
+        rail.appendChild(el("span", i < wat ? "done" : ""));
+      });
+      stepCount.textContent = "Waiting";
+      actions.hidden = true;
+      return;
+    }
 
     rail.hidden = !inFlow;
     actions.hidden = (view === "results");
@@ -307,7 +336,8 @@
         /* A dropped connection must never strand a guest mid-session —
            fall back to their own result and say so. */
         console.error(err);
-        roomData = { responses: [{ id: "me", answers: answers }], real: 1, synthetic: 0, mode: "offline" };
+        roomData = { agg: window.ENGINE.aggregate([{ id: "me", answers: answers }]),
+                     real: 1, synthetic: 0, mode: "offline" };
         view = "results";
         render();
       });
@@ -318,10 +348,11 @@
     var ranked = window.ENGINE.rank(answers);
     var ruledOut = ranked.filter(function (r) { return r.blocked; });
     var mine = ranked[0];
-    var responses = roomData.responses;
-    var roomProfile = window.ENGINE.roomProfile(responses);
+    var agg = roomData.agg;
+    var roomCount = agg.count;
+    var roomProfile = window.ENGINE.aggProfile(agg);
     var roomTop = window.ENGINE.rank(roomProfile)[0];
-    var split = window.ENGINE.roomSplit(responses);
+    var split = window.ENGINE.aggSplit(agg);
 
     /* --- hero: the guest's own match --- */
     if (mine.blocked) {
@@ -388,7 +419,7 @@
     /* --- the room --- */
     s.appendChild(el("div", "result-head", '<div class="eyebrow">The room</div>' +
       '<h2 class="display" style="font-size:clamp(28px,8vw,40px)">' + esc(roomTop.portfolio.name) + "</h2>" +
-      '<p class="tagline">' + responses.length + " guests, averaged</p>"));
+      '<p class="tagline">' + roomCount + " guest" + (roomCount === 1 ? "" : "s") + ", averaged</p>"));
 
     if (roomData.mode === "demo" && roomData.synthetic) {
       s.appendChild(el("div", "notice",
@@ -450,7 +481,7 @@
     window.AXES.filter(function (a) {
       return a.kind === "choice" || a.kind === "multi";
     }).forEach(function (axis) {
-      var dist = window.ENGINE.distribution(responses, axis.id);
+      var dist = window.ENGINE.aggDistribution(agg, axis.id);
       var sorted = dist.bars.slice().sort(function (a, b) { return b.count - a.count; });
       var dd;
       if (axis.kind === "multi") {
@@ -637,12 +668,54 @@
     var at = flowIndex(view);
     if (at === -1) return;
     if (view === "register" ? !identityOk() : !stepComplete(view)) return;
-    if (at === seq.length - 1) submit();
-    else { view = seq[at + 1]; render(); }
+
+    /* Each finished section is saved as the guest goes, so the room can
+       see that section's results while the next one is still closed. */
+    if (typeof view === "number") saveProgress();
+
+    if (at === seq.length - 1) { submit(); return; }
+
+    var next = seq[at + 1];
+    if (typeof next === "number" && !sectionOpen(steps[next].id)) {
+      waitingFor = next;
+      view = "waiting";
+      render();
+      return;
+    }
+    view = next;
+    render();
+  }
+
+  /* Fire-and-forget upsert of whatever is answered so far. */
+  function saveProgress() {
+    window.STORE.submit(answers, guest).catch(function (e) {
+      console.warn("progress not saved", e);
+    });
+  }
+
+  function renderWaiting() {
+    var step = steps[waitingFor];
+    var s = el("section", "screen");
+    s.appendChild(el("div", "wait",
+      '<div class="wait-pulse" aria-hidden="true"><span></span><span></span><span></span></div>' +
+      '<div class="eyebrow">Up next</div>' +
+      '<h2 class="display">' + esc(step.title) + "</h2>" +
+      "<p>Your answers so far are saved. This section opens when your host " +
+      "reaches that part of the presentation &mdash; this page will move on by itself.</p>"));
+    app.appendChild(s);
   }
 
   btnNext.addEventListener("click", function () {
-    if (view === "welcome") { view = flow()[0]; render(); return; }
+    if (view === "welcome") {
+      var first = flow()[0];
+      if (typeof first === "number" && !sectionOpen(steps[first].id)) {
+        waitingFor = first; view = "waiting";
+      } else {
+        view = first;
+      }
+      render();
+      return;
+    }
     advance();
   });
 
@@ -654,7 +727,32 @@
     render();
   });
 
+  /* Keep the lock state fresh so a guest held at a closed section moves
+     on by themselves the moment the admin opens it. */
+  function watchSections() {
+    function poll() {
+      window.STORE.sections().then(function (map) {
+        var before = JSON.stringify(openSections);
+        openSections = map || {};
+        if (JSON.stringify(openSections) === before) return;
+        if (view === "waiting" && waitingFor !== null &&
+            sectionOpen(steps[waitingFor].id)) {
+          view = waitingFor;
+          waitingFor = null;
+          render();
+        } else if (view === "waiting" || view === "welcome") {
+          render();
+        }
+      }).catch(function () { if (openSections === null) openSections = {}; });
+    }
+    poll();
+    setInterval(poll, 4000);
+  }
+
   /* Wait for the portfolio base before the first paint, so a replaced
      data/portfolios.json is in force from the very first screen. */
-  window.BASE.ready.then(render);
+  window.BASE.ready.then(function () {
+    watchSections();
+    render();
+  });
 })();

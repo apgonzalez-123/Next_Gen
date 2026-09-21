@@ -175,6 +175,12 @@ window.STORE = (function () {
       return Promise.resolve(response);
     }
 
+    /* The guest's own match travels with the answers so the backend can
+       tally the room split without ever sending anyone's answers back
+       out. */
+    var top = window.ENGINE.rank(answers)[0];
+    if (top && !top.blocked) response.match = { id: top.portfolio.id, fit: top.fit };
+
     return fetch(cfg.BACKEND_URL + "/api/vote", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -185,28 +191,72 @@ window.STORE = (function () {
     });
   }
 
-  /* Every response the room has cast. Resolves to
-   * { responses, real, synthetic, mode }. */
+  /* What the room looks like, as COUNTS.
+   *
+   * Against the live backend this is /api/summary, which never sends an
+   * individual response — so a guest's browser cannot read another
+   * guest's answers even by inspecting the network. With no backend the
+   * same shape is built locally from this device's own rows, so every
+   * screen renders through one identical path.
+   *
+   * Resolves to { agg, real, synthetic, mode }. */
   function results() {
     if (MODE === "demo") {
       var local = readJSON(LS_LOCAL_ROOM, []);
       var synth = syntheticRoom(cfg.DEMO_ROOM_SIZE);
+      var all = local.concat(synth);
       return Promise.resolve({
-        responses: local.concat(synth),
+        agg: window.ENGINE.aggregate(all),
         real: local.length,
         synthetic: synth.length,
         mode: "demo"
       });
     }
-    return fetch(cfg.BACKEND_URL + "/api/results?session=" + encodeURIComponent(cfg.SESSION_ID))
+    return fetch(cfg.BACKEND_URL + "/api/summary?session=" + encodeURIComponent(cfg.SESSION_ID))
       .then(function (r) {
-        if (!r.ok) throw new Error("results failed: " + r.status);
+        if (!r.ok) throw new Error("summary failed: " + r.status);
         return r.json();
       })
       .then(function (data) {
-        var responses = data.responses || [];
-        return { responses: responses, real: responses.length, synthetic: 0, mode: "remote" };
+        return {
+          agg: { count: data.count || 0, complete: data.complete || 0,
+                 axes: data.axes || {}, matches: data.matches || {} },
+          real: data.count || 0,
+          synthetic: 0,
+          mode: "remote"
+        };
       });
+  }
+
+  /* ---- which sections are open ----
+   * Server-held, so it is the same for the whole room and a guest cannot
+   * unlock a section by editing their own browser state. */
+  function sections() {
+    if (MODE !== "remote") {
+      return Promise.resolve(readJSON("nextgen:sections:" + cfg.SESSION_ID, null));
+    }
+    return fetch(cfg.BACKEND_URL + "/api/state?session=" + encodeURIComponent(cfg.SESSION_ID))
+      .then(function (r) {
+        if (!r.ok) throw new Error("state failed: " + r.status);
+        return r.json();
+      })
+      .then(function (d) { return d.sections || {}; });
+  }
+
+  function setSections(map, adminKey) {
+    if (MODE !== "remote") {
+      writeJSON("nextgen:sections:" + cfg.SESSION_ID, map);
+      return Promise.resolve(map);
+    }
+    return fetch(cfg.BACKEND_URL + "/api/state", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session: cfg.SESSION_ID, key: adminKey || "", sections: map })
+    }).then(function (r) {
+      if (r.status === 401) { var e = new Error("unauthorized"); e.code = 401; throw e; }
+      if (!r.ok) throw new Error("state save failed: " + r.status);
+      return r.json();
+    }).then(function (d) { return d.sections; });
   }
 
   /* Clear the tally — presenter control, between rehearsal and the real run.
@@ -266,6 +316,8 @@ window.STORE = (function () {
     mode: MODE,
     submit: submit,
     results: results,
+    sections: sections,
+    setSections: setSections,
     roster: roster,
     reset: reset,
     myResponse: myResponse,

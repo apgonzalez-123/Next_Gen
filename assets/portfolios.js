@@ -1014,9 +1014,98 @@ window.ENGINE = (function () {
     return v === null || v === undefined ? null : (v / SCALE_MAX) * 100;
   }
 
+  /* ---- aggregate views -------------------------------------------
+   * The room screens read COUNTS, never individual responses: the
+   * backend never sends them, so one guest can never see another's
+   * answers. Everything below derives from the same aggregate shape:
+   *   { count, axes: { id: {counts, sum, n, respondents} }, matches: {} }
+   */
+
+  /* Build that shape locally — used with no backend, so the rendering
+     path is identical whether or not a worker is configured. */
+  function aggregate(responses) {
+    var axes = {}, matches = {}, complete = 0;
+    responses.forEach(function (r) {
+      var top = rank(r.answers)[0];
+      if (top && !top.blocked) { matches[top.portfolio.id] = (matches[top.portfolio.id] || 0) + 1; complete++; }
+      window.AXES.forEach(function (axis) {
+        var v = r.answers[axis.id];
+        if (v === null || v === undefined) return;
+        var a = axes[axis.id] || (axes[axis.id] = { counts: {}, sum: 0, n: 0, respondents: 0 });
+        a.respondents++;
+        if (Array.isArray(v)) {
+          v.forEach(function (x) { a.counts[x] = (a.counts[x] || 0) + 1; });
+        } else if (typeof v === "number") {
+          a.counts[v] = (a.counts[v] || 0) + 1; a.sum += v; a.n++;
+        } else {
+          a.counts[v] = (a.counts[v] || 0) + 1;
+        }
+      });
+    });
+    return { count: responses.length, complete: complete, axes: axes, matches: matches };
+  }
+
+  function aggProfile(agg) {
+    var profile = {};
+    window.AXES.forEach(function (axis) {
+      var a = agg.axes[axis.id];
+      if (!a || !a.respondents) { profile[axis.id] = null; return; }
+
+      if (axis.kind === "scale") {
+        profile[axis.id] = a.n ? a.sum / a.n : null;
+        return;
+      }
+      var ranked = Object.keys(a.counts).sort(function (x, y) {
+        return a.counts[y] - a.counts[x] || x.localeCompare(y);
+      });
+      if (!ranked.length) { profile[axis.id] = axis.kind === "multi" ? [] : null; return; }
+      if (axis.kind === "multi") {
+        var floor = a.respondents * 0.25;
+        var kept = ranked.filter(function (k) { return a.counts[k] >= floor; });
+        profile[axis.id] = kept.length ? kept : ranked.slice(0, 1);
+      } else {
+        profile[axis.id] = ranked[0];
+      }
+    });
+    return profile;
+  }
+
+  function aggDistribution(agg, axisId) {
+    var axis = window.AXIS_BY_ID[axisId];
+    var a = agg.axes[axisId] || { counts: {}, respondents: 0 };
+    var picks = Object.keys(a.counts).reduce(function (t, k) { return t + a.counts[k]; }, 0);
+    return {
+      total: a.respondents,
+      respondents: a.respondents,
+      picks: picks,
+      multi: axis.kind === "multi",
+      bars: axis.options.map(function (o) {
+        var count = a.counts[o.v] || a.counts[String(o.v)] || 0;
+        return {
+          value: o.v, label: o.label, sub: o.sub || "", count: count,
+          pct: a.respondents ? Math.round((count / a.respondents) * 100) : 0
+        };
+      })
+    };
+  }
+
+  function aggSplit(agg) {
+    var total = Object.keys(agg.matches || {}).reduce(function (t, k) { return t + agg.matches[k]; }, 0);
+    return window.PORTFOLIOS.map(function (p) {
+      var count = (agg.matches && agg.matches[p.id]) || 0;
+      return { portfolio: p, count: count, pct: total ? Math.round((count / total) * 100) : 0 };
+    }).sort(function (a, b) {
+      return b.count - a.count || indexOf(a.portfolio) - indexOf(b.portfolio);
+    });
+  }
+
   return {
     rank: rank,
     eligible: eligible,
+    aggregate: aggregate,
+    aggProfile: aggProfile,
+    aggDistribution: aggDistribution,
+    aggSplit: aggSplit,
     roomProfile: roomProfile,
     roomSplit: roomSplit,
     distribution: distribution,

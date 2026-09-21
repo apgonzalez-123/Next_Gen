@@ -198,6 +198,79 @@
     });
   }
 
+  /* ---- section locks ---- */
+  var sectionState = {};   /* stepId -> true when open */
+  var secBusy = false;
+
+  function paintSections() {
+    var host = document.getElementById("secList");
+    var gated = Object.keys(sectionState).length > 0;
+
+    host.innerHTML = window.SCHEMA.activeSteps.map(function (st) {
+      var open = !!sectionState[st.id];
+      return '<button class="a-sec' + (open ? " open" : "") + '" type="button" data-step="' +
+        esc(st.id) + '"' + (secBusy ? " disabled" : "") + '>' +
+        '<span class="a-sec-n">0' + st.n + "</span>" +
+        '<span class="a-sec-t">' + esc(st.title) + "</span>" +
+        '<span class="a-sec-s">' + (open ? "Open" : "Locked") + "</span>" +
+        "</button>";
+    }).join("");
+
+    Array.prototype.forEach.call(host.querySelectorAll(".a-sec"), function (b) {
+      b.addEventListener("click", function () {
+        var id = b.getAttribute("data-step");
+        var next = {};
+        window.SCHEMA.activeSteps.forEach(function (st) { next[st.id] = !!sectionState[st.id]; });
+        next[id] = !next[id];
+        pushSections(next);
+      });
+    });
+
+    document.getElementById("secNote").textContent = gated
+      ? "Guests can only answer the sections marked Open."
+      : "No sections are open, so the quiz is gated shut. Open the first one when you are ready — " +
+        "or use Open all to run it as one continuous quiz.";
+  }
+
+  function pushSections(map) {
+    secBusy = true;
+    paintSections();
+    window.STORE.setSections(map, savedKey()).then(function (saved) {
+      sectionState = saved || map;
+      secBusy = false;
+      paintSections();
+    }).catch(function (e) {
+      secBusy = false;
+      if (e && e.code === 401) { forgetKey(); lock("That password was not accepted."); return; }
+      paintSections();
+      window.alert("Could not save the section state.");
+    });
+  }
+
+  function loadSections() {
+    window.STORE.sections().then(function (map) {
+      /* Only repaint when it actually changed, so a click is not undone
+         by a poll landing a moment later. */
+      if (secBusy) return;
+      var next = map || {};
+      if (JSON.stringify(next) !== JSON.stringify(sectionState)) {
+        sectionState = next;
+        paintSections();
+      }
+    }).catch(function () {});
+  }
+
+  document.getElementById("secAllOpen").addEventListener("click", function () {
+    var all = {};
+    window.SCHEMA.activeSteps.forEach(function (st) { all[st.id] = true; });
+    pushSections(all);
+  });
+  document.getElementById("secAllShut").addEventListener("click", function () {
+    var none = {};
+    window.SCHEMA.activeSteps.forEach(function (st) { none[st.id] = false; });
+    pushSections(none);
+  });
+
   function submitKey() {
     var v = document.getElementById("gateKey").value.trim();
     if (!v) return;
@@ -223,14 +296,19 @@
 
     /* With no backend the rows never left this device, so there is nothing
        to unlock. Against the live backend the worker holds the key. */
+    paintSections();
+
     if (window.STORE.mode !== "remote") {
       unlock();
       refresh();
-      setInterval(refresh, 5000);
+      loadSections();
+      setInterval(function () { refresh(); loadSections(); }, 5000);
       return;
     }
 
-    if (savedKey()) refresh(); else lock("");
-    setInterval(function () { if (savedKey()) refresh(); }, 5000);
+    if (savedKey()) { refresh(); loadSections(); } else lock("");
+    setInterval(function () {
+      if (savedKey()) { refresh(); loadSections(); }
+    }, 5000);
   });
 })();

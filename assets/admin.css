@@ -83,3 +83,48 @@ body.admin { height: 100vh; display: flex; flex-direction: column; overflow: hid
 .a-gate-box .field { margin-bottom: 14px; }
 .a-gate-box .btn { width: 100%; }
 .a-gate-msg { min-height: 18px; font-size: 13px; color: var(--gold); margin: 0 0 14px !important; }
+
+/* --- section locks --- */
+.a-sections {
+  flex: 0 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin: 16px 0 6px;
+}
+.a-sec-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+.a-sec-head h2 { font-size: 15px; font-weight: 600; margin-bottom: 5px; }
+.a-sec-head p { font-size: 12.5px; color: var(--muted); line-height: 1.5; max-width: 60ch; }
+.a-sec-bulk { display: flex; gap: 8px; flex: 0 0 auto; }
+
+.a-sec-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 10px; }
+
+.a-sec {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--ink-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 13px 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.18s, background 0.18s;
+  -webkit-tap-highlight-color: transparent;
+}
+.a-sec:hover { border-color: rgba(201,169,107,0.45); }
+.a-sec-n {
+  flex: 0 0 auto; font-size: 10.5px; letter-spacing: 0.1em;
+  color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.a-sec-t { flex: 1 1 auto; min-width: 0; font-size: 13.5px; line-height: 1.3; }
+.a-sec-s {
+  flex: 0 0 auto; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 4px 9px; border-radius: 100px;
+  border: 1px solid var(--line); color: var(--muted);
+}
+.a-sec.open { border-color: var(--gold); background: linear-gradient(var(--gold-dim), var(--gold-dim)), var(--ink-2); }
+.a-sec.open .a-sec-t { color: var(--gold-bright); font-weight: 550; }
+.a-sec.open .a-sec-s { border-color: var(--gold); background: var(--gold-dim); color: var(--gold); }
+.a-sec[disabled] { opacity: 0.5; cursor: default; }
+
+.a-sec-note { font-size: 12px; color: var(--muted); margin-top: 14px !important; line-height: 1.5; }

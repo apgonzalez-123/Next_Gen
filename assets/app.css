@@ -671,3 +671,29 @@ button { font-family: inherit; color: inherit; }
   color: var(--muted);
 }
 .disclaim b { color: var(--text-2); }
+
+/* ============================================================
+   Waiting for the next section to open
+   ============================================================ */
+
+.wait { text-align: center; padding: 60px 8px 0; }
+.wait .eyebrow { margin-bottom: 14px; }
+.wait h2 {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(30px, 8vw, 42px); line-height: 1.08;
+  color: var(--gold-bright); margin-bottom: 16px;
+}
+.wait p { color: var(--text-2); font-size: 15px; line-height: 1.6; max-width: 38ch; margin: 0 auto; }
+
+.wait-pulse { display: flex; justify-content: center; gap: 7px; margin-bottom: 30px; }
+.wait-pulse span {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--gold);
+  animation: waitp 1.4s ease-in-out infinite;
+}
+.wait-pulse span:nth-child(2) { animation-delay: 0.18s; }
+.wait-pulse span:nth-child(3) { animation-delay: 0.36s; }
+@keyframes waitp {
+  0%, 100% { opacity: 0.22; transform: translateY(0); }
+  50%      { opacity: 1;    transform: translateY(-4px); }
+}

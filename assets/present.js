@@ -150,9 +150,9 @@
 
   function paint(res) {
     last = res;
-    var responses = res.responses;
+    var agg = res.agg;
 
-    document.getElementById("liveCount").textContent = responses.length;
+    document.getElementById("liveCount").textContent = agg.count;
     var badge = document.getElementById("modeBadge");
     badge.hidden = res.mode !== "demo";
     if (res.mode === "demo") {
@@ -163,13 +163,13 @@
         : "No backend · this device only";
     }
 
-    if (!responses.length) return;
+    if (!agg.count) return;
     if (!built) buildSkeletons();
 
-    var roomProfile = window.ENGINE.roomProfile(responses);
-    paintSplit(window.ENGINE.roomSplit(responses));
-    paintVerdict(window.ENGINE.rank(roomProfile)[0], responses.length);
-    paintBreakdown(responses, roomProfile);
+    var roomProfile = window.ENGINE.aggProfile(agg);
+    paintSplit(window.ENGINE.aggSplit(agg));
+    paintVerdict(window.ENGINE.rank(roomProfile)[0], agg.count);
+    paintBreakdown(agg, roomProfile);
   }
 
   function paintSplit(split) {
@@ -263,10 +263,10 @@
     return out;
   }
 
-  function paintBreakdown(responses, roomProfile) {
+  function paintBreakdown(agg, roomProfile) {
     window.AXES.forEach(function (axis) {
       var panel = axisRows[axis.id];
-      var dist = window.ENGINE.distribution(responses, axis.id);
+      var dist = window.ENGINE.aggDistribution(agg, axis.id);
       var maxPct = Math.max.apply(null, dist.bars.map(function (b) { return b.pct; }));
 
       var note = "";
