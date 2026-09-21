@@ -178,9 +178,14 @@
   function unlock() {
     document.getElementById("gate").hidden = true;
     document.getElementById("board").hidden = false;
+    /* Clear the "Checking…" notice, or it is still sitting there the next
+       time the gate is shown. */
+    document.getElementById("gateMsg").textContent = "";
   }
 
   function refresh() {
+    var wasLocked = !document.getElementById("gate").hidden;
+
     window.STORE.roster(savedKey()).then(function (list) {
       unlock();
       rows = list;
@@ -193,8 +198,16 @@
         return;
       }
       console.error(e);
-      document.getElementById("tbody").innerHTML =
-        '<tr><td class="a-empty" colspan="20">Could not reach the vote backend.</td></tr>';
+      /* Report the failure wherever the reader is actually looking. Writing
+         it only into the table left anyone still at the gate staring at
+         "Checking…" with no idea what had gone wrong. */
+      var why = "Could not reach the vote backend. Check your connection and try again.";
+      if (wasLocked) {
+        lock(why);
+      } else {
+        document.getElementById("tbody").innerHTML =
+          '<tr><td class="a-empty" colspan="20">' + esc(why) + "</td></tr>";
+      }
     });
   }
 
