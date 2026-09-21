@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NextGen — Presenter</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A1220">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/present.css">
+</head>
+<body class="present">
+
+<header class="p-top">
+  <div class="wordmark"><b>NextGen</b> <span>Portfolio Lab</span></div>
+  <div class="p-live">
+    <span id="modeBadge" class="p-badge" hidden>Demo mode</span>
+    <div class="p-count"><b id="liveCount">0</b><span><span class="dot"></span>responses</span></div>
+  </div>
+</header>
+
+<main class="p-stage">
+
+  <!-- 1 · JOIN -->
+  <section class="p-slide on" data-slide="0">
+    <div class="p-join">
+      <div class="qr-frame"><div id="qr"></div></div>
+      <div>
+        <h1>Scan to <em>build</em><br>your portfolio.</h1>
+        <div class="p-url" id="joinUrl">&nbsp;</div>
+        <p>Five short steps &mdash; horizon, equities, fixed income, FX and structured notes.
+           We average every answer in the room and match it to a portfolio.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · THE SPLIT -->
+  <section class="p-slide" data-slide="1">
+    <h2 class="p-h">Where the room landed</h2>
+    <p class="p-sub">Every guest matched on their own answers.</p>
+    <div class="p-bars" id="splitBars"></div>
+  </section>
+
+  <!-- 3 · THE VERDICT -->
+  <section class="p-slide" data-slide="2">
+    <h2 class="p-h">The room&rsquo;s portfolio</h2>
+    <p class="p-sub">Every answer averaged into a single profile, then matched.</p>
+    <div class="p-verdict" id="verdict"></div>
+  </section>
+
+  <!-- 4 · BREAKDOWN, first half -->
+  <section class="p-slide" data-slide="3">
+    <h2 class="p-h">Answer by answer</h2>
+    <p class="p-sub">Profile, equities &amp; options, and the start of fixed income.</p>
+    <div class="p-grid" id="breakdownA"></div>
+  </section>
+
+  <!-- 5 · BREAKDOWN, second half -->
+  <section class="p-slide" data-slide="4">
+    <h2 class="p-h">Answer by answer</h2>
+    <p class="p-sub">The rest of fixed income, FX and structured notes.</p>
+    <div class="p-grid" id="breakdownB"></div>
+  </section>
+
+</main>
+
+<footer class="p-foot">
+  <div class="p-dots" id="dots"></div>
+  <div class="p-keys">
+    <kbd>&larr;</kbd><kbd>&rarr;</kbd> slides
+    <span style="margin-left:14px"><kbd>F</kbd> fullscreen</span>
+    <span style="margin-left:14px"><kbd>R</kbd> reset votes</span>
+  </div>
+  <button class="p-btn" id="btnReset" type="button">Reset votes</button>
+</footer>
+
+<script src="assets/vendor/qrcode.min.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/schema.js"></script>
+<script src="assets/portfolios.js"></script>
+<script src="assets/base-loader.js"></script>
+<script src="assets/store.js"></script>
+<script src="assets/present.js"></script>
+</body>
+</html>

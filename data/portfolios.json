@@ -1,0 +1,492 @@
+{
+  "$schema": "See README — replace this file with your own portfolio base.",
+  "version": 1,
+  "weights": {
+    "horizon": 1.2,
+    "maxLoss": 1.6,
+    "sector": 0.8,
+    "region": 0.8,
+    "options": 1,
+    "credit": 1.2,
+    "duration": 1,
+    "rank": 1,
+    "fxLong": 0.6,
+    "fxConcern": 0.5,
+    "snReturn": 1.2,
+    "snProtection": 1.5
+  },
+  "portfolios": [
+    {
+      "id": "shield",
+      "name": "Capital Shield",
+      "tagline": "Preserve first. Return second.",
+      "blurb": "Short-dated investment grade paper and fully protected notes. Built for capital that cannot be impaired.",
+      "alloc": {
+        "equities": 10,
+        "fixedIncome": 55,
+        "notes": 25,
+        "cash": 10
+      },
+      "expReturn": "4 – 6%",
+      "vol": "Low",
+      "traits": [
+        "Senior secured credit",
+        "Sub-2y duration",
+        "100% principal protection"
+      ],
+      "target": {
+        "horizon": 0,
+        "maxLoss": 0,
+        "sector": {
+          "v": "consumer",
+          "also": [
+            "healthcare"
+          ]
+        },
+        "region": {
+          "v": "global",
+          "also": [
+            "us"
+          ]
+        },
+        "options": {
+          "v": "protection",
+          "also": [
+            "none"
+          ]
+        },
+        "credit": 0,
+        "duration": 0,
+        "rank": 0,
+        "fxLong": {
+          "v": "usd",
+          "also": [
+            "chf"
+          ]
+        },
+        "fxConcern": {
+          "v": "brl",
+          "also": [
+            "jpy"
+          ]
+        },
+        "snReturn": 0,
+        "snProtection": 0
+      }
+    },
+    {
+      "id": "income",
+      "name": "Steady Income",
+      "tagline": "A coupon you can plan around.",
+      "blurb": "Investment grade credit and dividend equity, with covered calls layered on to lift the running yield.",
+      "alloc": {
+        "equities": 25,
+        "fixedIncome": 50,
+        "notes": 20,
+        "cash": 5
+      },
+      "expReturn": "6 – 8%",
+      "vol": "Low to moderate",
+      "traits": [
+        "Dividend equity core",
+        "Covered call overlay",
+        "90% protected notes"
+      ],
+      "target": {
+        "horizon": 1,
+        "maxLoss": 1,
+        "sector": {
+          "v": "financials",
+          "also": [
+            "consumer",
+            "industrials"
+          ]
+        },
+        "region": {
+          "v": "global",
+          "also": [
+            "us"
+          ]
+        },
+        "options": {
+          "v": "income",
+          "also": [
+            "none"
+          ]
+        },
+        "credit": 1,
+        "duration": 1,
+        "rank": 1,
+        "fxLong": {
+          "v": "usd",
+          "also": [
+            "eur"
+          ]
+        },
+        "fxConcern": {
+          "v": "jpy",
+          "also": [
+            "gbp"
+          ]
+        },
+        "snReturn": 1,
+        "snProtection": 1
+      }
+    },
+    {
+      "id": "balanced",
+      "name": "Balanced Core",
+      "tagline": "The middle of the road, held with conviction.",
+      "blurb": "A classic split between global equities and intermediate investment grade credit. No overlay, no leverage.",
+      "alloc": {
+        "equities": 45,
+        "fixedIncome": 40,
+        "notes": 10,
+        "cash": 5
+      },
+      "expReturn": "7 – 9%",
+      "vol": "Moderate",
+      "traits": [
+        "Global equity core",
+        "5–10y IG credit",
+        "Minimal complexity"
+      ],
+      "target": {
+        "horizon": 2,
+        "maxLoss": 1,
+        "sector": {
+          "v": "industrials",
+          "also": [
+            "tech",
+            "healthcare"
+          ]
+        },
+        "region": {
+          "v": "global",
+          "also": [
+            "us",
+            "europe"
+          ]
+        },
+        "options": {
+          "v": "none",
+          "also": [
+            "income"
+          ]
+        },
+        "credit": 1,
+        "duration": 2,
+        "rank": 1,
+        "fxLong": {
+          "v": "usd",
+          "also": [
+            "eur"
+          ]
+        },
+        "fxConcern": {
+          "v": "gbp",
+          "also": [
+            "brl"
+          ]
+        },
+        "snReturn": 1,
+        "snProtection": 1
+      }
+    },
+    {
+      "id": "growth",
+      "name": "Global Growth",
+      "tagline": "Own the compounders. Sit still.",
+      "blurb": "Equity-led and unapologetic about it. Developed market growth names, long horizon, drawdowns accepted.",
+      "alloc": {
+        "equities": 70,
+        "fixedIncome": 15,
+        "notes": 10,
+        "cash": 5
+      },
+      "expReturn": "9 – 12%",
+      "vol": "Moderate to high",
+      "traits": [
+        "70% equity weight",
+        "DM growth tilt",
+        "Long horizon required"
+      ],
+      "target": {
+        "horizon": 3,
+        "maxLoss": 2,
+        "sector": {
+          "v": "tech",
+          "also": [
+            "healthcare",
+            "industrials"
+          ]
+        },
+        "region": {
+          "v": "us",
+          "also": [
+            "asia",
+            "global"
+          ]
+        },
+        "options": {
+          "v": "leverage",
+          "also": [
+            "none"
+          ]
+        },
+        "credit": 2,
+        "duration": 2,
+        "rank": 1,
+        "fxLong": {
+          "v": "usd",
+          "also": [
+            "jpy"
+          ]
+        },
+        "fxConcern": {
+          "v": "eur",
+          "also": [
+            "gbp"
+          ]
+        },
+        "snReturn": 2,
+        "snProtection": 2
+      }
+    },
+    {
+      "id": "credit",
+      "name": "Credit Opportunist",
+      "tagline": "Paid to take the risk others won't.",
+      "blurb": "High yield and subordinated financial paper. The return comes from carry and spread compression, not from equity beta.",
+      "alloc": {
+        "equities": 20,
+        "fixedIncome": 60,
+        "notes": 15,
+        "cash": 5
+      },
+      "expReturn": "8 – 10%",
+      "vol": "Moderate",
+      "traits": [
+        "High yield core",
+        "Subordinated / Tier 2",
+        "Carry-driven"
+      ],
+      "target": {
+        "horizon": 2,
+        "maxLoss": 2,
+        "sector": {
+          "v": "financials",
+          "also": [
+            "energy"
+          ]
+        },
+        "region": {
+          "v": "europe",
+          "also": [
+            "global",
+            "us"
+          ]
+        },
+        "options": {
+          "v": "income",
+          "also": [
+            "none"
+          ]
+        },
+        "credit": 3,
+        "duration": 2,
+        "rank": 2,
+        "fxLong": {
+          "v": "eur",
+          "also": [
+            "usd"
+          ]
+        },
+        "fxConcern": {
+          "v": "jpy",
+          "also": [
+            "chf"
+          ]
+        },
+        "snReturn": 2,
+        "snProtection": 2
+      }
+    },
+    {
+      "id": "emfx",
+      "name": "EM Carry & FX",
+      "tagline": "The currency is the trade.",
+      "blurb": "Emerging market local debt and commodity exposure, where the FX call drives more of the return than the credit does.",
+      "alloc": {
+        "equities": 30,
+        "fixedIncome": 45,
+        "notes": 15,
+        "cash": 10
+      },
+      "expReturn": "10 – 14%",
+      "vol": "High",
+      "traits": [
+        "EM local currency",
+        "Commodity linked equity",
+        "FX is the main risk"
+      ],
+      "target": {
+        "horizon": 2,
+        "maxLoss": 3,
+        "sector": {
+          "v": "energy",
+          "also": [
+            "financials",
+            "industrials"
+          ]
+        },
+        "region": {
+          "v": "latam",
+          "also": [
+            "asia"
+          ]
+        },
+        "options": {
+          "v": "none",
+          "also": [
+            "income"
+          ]
+        },
+        "credit": 3,
+        "duration": 1,
+        "rank": 2,
+        "fxLong": {
+          "v": "brl",
+          "also": [
+            "usd"
+          ]
+        },
+        "fxConcern": {
+          "v": "eur",
+          "also": [
+            "jpy"
+          ]
+        },
+        "snReturn": 3,
+        "snProtection": 2
+      }
+    },
+    {
+      "id": "thematic",
+      "name": "Thematic Alpha",
+      "tagline": "Concentrated, convex, uncomfortable.",
+      "blurb": "A small number of high-conviction themes with long-dated calls on top. The widest range of outcomes on the shelf.",
+      "alloc": {
+        "equities": 75,
+        "fixedIncome": 5,
+        "notes": 15,
+        "cash": 5
+      },
+      "expReturn": "12 – 18%",
+      "vol": "High",
+      "traits": [
+        "Concentrated themes",
+        "Long call overlay",
+        "Wide outcome range"
+      ],
+      "target": {
+        "horizon": 3,
+        "maxLoss": 3,
+        "sector": {
+          "v": "tech",
+          "also": [
+            "healthcare"
+          ]
+        },
+        "region": {
+          "v": "us",
+          "also": [
+            "asia"
+          ]
+        },
+        "options": {
+          "v": "leverage",
+          "also": [
+            "protection"
+          ]
+        },
+        "credit": 2,
+        "duration": 3,
+        "rank": 3,
+        "fxLong": {
+          "v": "usd",
+          "also": [
+            "jpy"
+          ]
+        },
+        "fxConcern": {
+          "v": "chf",
+          "also": [
+            "eur"
+          ]
+        },
+        "snReturn": 3,
+        "snProtection": 3
+      }
+    },
+    {
+      "id": "notesled",
+      "name": "Yield Enhancer",
+      "tagline": "Structure does the work.",
+      "blurb": "Half the book in autocallables and reverse convertibles. Equity-linked payoffs with a barrier, rather than equity itself.",
+      "alloc": {
+        "equities": 20,
+        "fixedIncome": 25,
+        "notes": 50,
+        "cash": 5
+      },
+      "expReturn": "8 – 11%",
+      "vol": "Moderate",
+      "traits": [
+        "Autocallable core",
+        "70% barrier notes",
+        "Equity-linked, not equity"
+      ],
+      "target": {
+        "horizon": 1,
+        "maxLoss": 2,
+        "sector": {
+          "v": "financials",
+          "also": [
+            "tech",
+            "consumer"
+          ]
+        },
+        "region": {
+          "v": "us",
+          "also": [
+            "europe"
+          ]
+        },
+        "options": {
+          "v": "income",
+          "also": [
+            "protection"
+          ]
+        },
+        "credit": 2,
+        "duration": 1,
+        "rank": 2,
+        "fxLong": {
+          "v": "usd",
+          "also": [
+            "eur"
+          ]
+        },
+        "fxConcern": {
+          "v": "brl",
+          "also": [
+            "gbp"
+          ]
+        },
+        "snReturn": 2,
+        "snProtection": 2
+      }
+    }
+  ]
+}

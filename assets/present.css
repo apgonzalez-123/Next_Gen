@@ -1,0 +1,232 @@
+/* ============================================================
+   Presenter view — projector layout.
+   Inherits every token from app.css; only layout changes here.
+   ============================================================ */
+
+body.present {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.p-top {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 40px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.p-top .wordmark { font-size: 14px; }
+
+.p-live {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.p-count { display: flex; align-items: baseline; gap: 9px; }
+.p-count b {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 30px;
+  color: var(--gold-bright);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--gold);
+  display: inline-block;
+  margin-right: 8px;
+  animation: pulse 2.2s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+.p-stage {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 36px 40px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.p-slide { display: none; flex: 1 1 auto; min-height: 0; flex-direction: column; }
+.p-slide.on { display: flex; animation: rise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+.p-h {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(30px, 3.6vw, 52px);
+  line-height: 1.05;
+  margin-bottom: 8px;
+}
+.p-sub { color: var(--muted); font-size: 15px; margin-bottom: 30px; }
+
+/* --- slide 1: join --- */
+.p-join {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 64px;
+  align-items: center;
+}
+.qr-frame {
+  background: #fff;
+  padding: 18px;
+  border-radius: 18px;
+  line-height: 0;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+}
+.qr-frame img, .qr-frame canvas { display: block; width: clamp(220px, 24vw, 330px); height: auto; }
+.p-join h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(42px, 5.6vw, 84px);
+  line-height: 1.02;
+  margin-bottom: 22px;
+}
+.p-join h1 em { font-style: italic; color: var(--gold-bright); }
+.p-url {
+  display: inline-block;
+  font-size: clamp(17px, 1.7vw, 24px);
+  letter-spacing: 0.01em;
+  color: var(--gold);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 22px;
+  margin-bottom: 22px;
+  word-break: break-all;
+}
+.p-join p { color: var(--text-2); font-size: clamp(15px, 1.3vw, 19px); line-height: 1.6; max-width: 46ch; }
+
+/* --- slide 2: the split --- */
+.p-bars { flex: 1 1 auto; display: grid; gap: 16px; align-content: center; min-height: 0; }
+.p-bar { display: grid; grid-template-columns: 250px 1fr 120px; gap: 22px; align-items: center; }
+.p-bar-name { font-size: clamp(15px, 1.4vw, 21px); color: var(--text-2); text-align: right; }
+.p-bar-track { height: 26px; border-radius: 6px; background: var(--line-soft); overflow: hidden; }
+.p-bar-fill {
+  display: block; height: 100%; border-radius: 6px;
+  background: rgba(201, 169, 107, 0.32);
+  transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.p-bar-val {
+  font-size: clamp(15px, 1.4vw, 21px);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.p-bar.lead .p-bar-name { color: var(--gold-bright); font-weight: 550; }
+.p-bar.lead .p-bar-fill { background: var(--gold); }
+.p-bar.lead .p-bar-val  { color: var(--gold); }
+
+/* --- slide 3: the verdict --- */
+.p-verdict { flex: 1 1 auto; display: grid; grid-template-columns: 1.15fr 1fr; gap: 56px; align-items: center; }
+.p-verdict h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(46px, 6vw, 92px);
+  line-height: 1.02;
+  color: var(--gold-bright);
+  margin-bottom: 14px;
+}
+.p-verdict .tagline { font-size: clamp(17px, 1.6vw, 24px); font-style: italic; color: var(--text-2); margin-bottom: 26px; }
+.p-verdict .body { font-size: clamp(14px, 1.2vw, 18px); line-height: 1.65; color: var(--text-2); max-width: 52ch; }
+.p-fit { display: flex; align-items: baseline; gap: 12px; margin-bottom: 26px; }
+.p-fit b {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: clamp(56px, 7vw, 104px); line-height: 1;
+  color: var(--gold-bright); font-variant-numeric: tabular-nums;
+}
+.p-fit span { font-size: 15px; color: var(--muted); }
+
+/* --- slide 4: breakdown grid --- */
+.p-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  /* Six panels per board -> a balanced 3x2 on a projector. */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  align-content: start;
+  padding-right: 6px;
+}
+.p-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.p-panel h4 {
+  margin: 0 0 16px;
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+
+/* --- footer / controls --- */
+.p-foot {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 40px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 12px;
+  color: var(--muted);
+}
+.p-dots { display: flex; gap: 8px; }
+.p-dots i {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--line); cursor: pointer;
+  transition: background 0.25s, transform 0.2s;
+}
+.p-dots i.on { background: var(--gold); transform: scale(1.25); }
+.p-keys kbd {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 3px 7px;
+  margin: 0 2px;
+  color: var(--text-2);
+}
+.p-btn {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text-2);
+  border-radius: 8px;
+  padding: 8px 15px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.p-btn:hover { border-color: var(--gold); color: var(--text); }
+
+.p-badge {
+  font-size: 10.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold-dim);
+  background: var(--gold-dim);
+  border-radius: 100px;
+  padding: 5px 11px;
+}
+
+@media (max-width: 1240px) {
+  .p-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 1000px) {
+  .p-grid { grid-template-columns: 1fr; }
+  .p-join, .p-verdict { grid-template-columns: 1fr; gap: 28px; }
+  .p-bar { grid-template-columns: 150px 1fr 88px; gap: 14px; }
+  .p-top, .p-stage, .p-foot { padding-left: 22px; padding-right: 22px; }
+}

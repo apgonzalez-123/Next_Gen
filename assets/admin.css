@@ -1,0 +1,74 @@
+/* ============================================================
+   Admin board — one row per guest, one column per question.
+   ============================================================ */
+
+body.admin { height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+.a-top {
+  flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; padding: 18px 28px;
+  border-bottom: 1px solid var(--line-soft);
+  flex-wrap: wrap;
+}
+.a-tools { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.a-stat { font-size: 13px; color: var(--muted); }
+.a-stat b {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: 22px; color: var(--gold-bright);
+  font-variant-numeric: tabular-nums; margin-right: 5px;
+}
+
+.a-main { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; padding: 0 28px 24px; }
+.a-note { font-size: 12.5px; color: var(--muted); padding: 14px 0; line-height: 1.55; }
+.a-note b { color: var(--text-2); }
+
+/* The table is wide by design — it scrolls inside its own box so the
+   page itself never scrolls sideways. */
+.a-scroll {
+  flex: 1 1 auto; min-height: 0;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.a-table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13px; }
+.a-table th, .a-table td {
+  padding: 11px 14px;
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--line-soft);
+}
+.a-table thead th {
+  position: sticky; top: 0; z-index: 2;
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-weight: 550;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--line);
+}
+.a-table thead th small { display: block; color: var(--muted); font-weight: 400; font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 3px; }
+.a-table tbody td { color: var(--text-2); }
+.a-table tbody tr:hover td { background: var(--surface-2); }
+
+/* Identity columns pin to the left so a guest stays identifiable while
+   scrolling across twelve answers. The two widths and the second column's
+   offset must agree exactly, or the third column slides underneath. */
+.a-table .sticky-1, .a-table .sticky-2 {
+  position: sticky; z-index: 1;
+  background: var(--surface);
+  box-sizing: border-box;
+}
+.a-table .sticky-1 { left: 0;      width: 190px; min-width: 190px; max-width: 190px; }
+.a-table .sticky-2 { left: 190px;  width: 130px; min-width: 130px; max-width: 130px; }
+/* A rule on the right edge marks where the frozen pair ends. */
+.a-table .sticky-2 { border-right: 1px solid var(--line); }
+.a-table thead .sticky-1, .a-table thead .sticky-2 { z-index: 3; background: var(--surface-2); }
+.a-table tbody tr:hover .sticky-1, .a-table tbody tr:hover .sticky-2 { background: var(--surface-2); }
+
+.a-name { color: var(--text); font-weight: 500; }
+.a-match { color: var(--gold-bright); font-weight: 500; }
+.a-anon { color: var(--muted); font-style: italic; }
+.a-empty { padding: 60px 20px; text-align: center; color: var(--muted); font-size: 14px; }

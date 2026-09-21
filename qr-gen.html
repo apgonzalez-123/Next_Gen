@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NextGen — Personal QR codes</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+<style>
+  body.qrgen { padding: 0 0 60px; }
+  .g-wrap { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
+  .g-head { padding: 34px 0 10px; }
+  .g-head h1 { font-family: var(--font-display); font-weight: 400; font-size: 40px; margin-bottom: 10px; }
+  .g-head p { color: var(--text-2); font-size: 14.5px; line-height: 1.6; max-width: 70ch; }
+  .g-form { display: grid; gap: 16px; margin: 26px 0; }
+  .g-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  textarea.field-input { min-height: 190px; resize: vertical; font-size: 14px; line-height: 1.6; }
+  .g-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .g-count { font-size: 13px; color: var(--muted); }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 16px; margin-top: 28px; }
+  .qcard {
+    background: #fff; color: #0A1220;
+    border-radius: 12px; padding: 16px;
+    text-align: center;
+    break-inside: avoid; page-break-inside: avoid;
+  }
+  .qcard .qbox { line-height: 0; margin-bottom: 12px; }
+  .qcard img, .qcard canvas { width: 100%; height: auto; display: block; }
+  .qcard .nm { font-size: 15px; font-weight: 600; line-height: 1.25; }
+  .qcard .gp { font-size: 12px; color: #5a6475; margin-top: 3px; }
+  .qcard .tk { font-size: 9.5px; color: #96a0b0; margin-top: 7px; letter-spacing: 0.07em; font-family: ui-monospace, monospace; }
+  .qcard .brand { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: #96a0b0; margin-top: 9px; }
+
+  @media print {
+    body.qrgen { background: #fff; }
+    .g-head, .g-form, .noprint { display: none !important; }
+    .g-wrap { padding: 0; max-width: none; }
+    .cards { grid-template-columns: repeat(3, 1fr); gap: 10mm; margin: 0; }
+    .qcard { border: 1px solid #d5dae2; }
+  }
+</style>
+</head>
+<body class="qrgen">
+<div class="g-wrap">
+
+  <div class="g-head">
+    <h1 class="display">Personal QR codes</h1>
+    <p>One code per guest. Each carries a token, so every answer that guest
+       gives is recorded against their name on the admin board — no typing
+       on their part. Print the sheet and put a card at each place setting.
+       If you would rather use a single shared code, project
+       <code>present.html</code> instead and guests type their own name.</p>
+  </div>
+
+  <div class="g-form">
+    <label class="field">
+      <span class="field-label">Site address</span>
+      <input class="field-input" id="baseUrl" type="text" placeholder="https://yourname.github.io/Next_Gen/">
+    </label>
+
+    <label class="field">
+      <span class="field-label">Guest list <em>one per line &mdash; &ldquo;Name&rdquo; or &ldquo;Name, Table 4&rdquo;</em></span>
+      <textarea class="field-input" id="guests" spellcheck="false" placeholder="Ana Ribeiro, Table 1&#10;Bruno Salles, Table 1&#10;Carla Menezes, Table 2"></textarea>
+    </label>
+
+    <div class="g-actions">
+      <button class="btn btn-primary" id="btnGen" type="button" style="flex:0 0 auto">Generate codes</button>
+      <button class="p-btn" id="btnPrint" type="button">Print sheet</button>
+      <button class="p-btn" id="btnCsvTokens" type="button">Download token list</button>
+      <span class="g-count" id="count"></span>
+    </div>
+  </div>
+
+  <div class="cards" id="cards"></div>
+</div>
+
+<script src="assets/vendor/qrcode.min.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/qr-gen.js"></script>
+</body>
+</html>

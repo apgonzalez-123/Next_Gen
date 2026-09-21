@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NextGen — Responses</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/admin.css">
+</head>
+<body class="admin">
+
+<header class="a-top">
+  <div class="wordmark"><b>NextGen</b> <span>Responses</span></div>
+  <div class="a-tools">
+    <span id="srcBadge" class="p-badge"></span>
+    <span class="a-stat"><b id="nCount">0</b> responses</span>
+    <button class="p-btn" id="btnCsv" type="button">Download CSV</button>
+    <button class="p-btn" id="btnJson" type="button">Download JSON</button>
+  </div>
+</header>
+
+<main class="a-main">
+  <p class="a-note" id="note"></p>
+  <div class="a-scroll">
+    <table class="a-table" id="table">
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</main>
+
+<script src="assets/config.js"></script>
+<script src="assets/schema.js"></script>
+<script src="assets/portfolios.js"></script>
+<script src="assets/base-loader.js"></script>
+<script src="assets/store.js"></script>
+<script src="assets/admin.js"></script>
+</body>
+</html>

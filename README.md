@@ -1,0 +1,283 @@
+# NextGen Portfolio Lab
+
+A guest-facing web app for the NextGen session. Guests scan a QR code, answer
+five short steps on their phone, and the room's answers are averaged and
+matched against a base of portfolios. A presenter screen drives the reveal on
+the projector; an admin board shows who answered what.
+
+Entirely static — **no bank network, no server required** to run the session.
+
+---
+
+## The four pages
+
+| Page | Who opens it | What it does |
+|---|---|---|
+| `index.html` | Guests, by QR | The five-step flow and each guest's own result |
+| `present.html` | Presenter, on the projector | QR to join, live counter, and the reveal (5 slides) |
+| `admin.html` | You | Every response, one row per guest, CSV / JSON export |
+| `qr-gen.html` | You, before the event | Printable personal QR codes, one per guest |
+
+---
+
+## Run it locally
+
+```bash
+python3 -m http.server 8817
+```
+
+Then open <http://localhost:8817/> (guest) and
+<http://localhost:8817/present.html> (presenter).
+
+It works immediately, with no backend: see **Demo mode** below.
+
+## Publish it (GitHub Pages)
+
+1. Push this repo to GitHub.
+2. **Settings → Pages → Build and deployment → Deploy from a branch**, branch
+   `main`, folder `/ (root)`.
+3. The site appears at `https://<user>.github.io/<repo>/` within a minute or two.
+
+That URL is public and outside the bank network, which is what the QR code
+needs. The presenter page builds the QR from its **own address**, so there is
+nothing to configure — deploy it anywhere and the code points to the right place.
+
+---
+
+## The five steps
+
+| Step | Questions |
+|---|---|
+| 1 · Quick Profile | Investment horizon · acceptable loss |
+| 2 · Equities & Options | Sector · country of risk · options overlay |
+| 3 · Fixed Income | IG or HY · duration · bond rank |
+| 4 · FX | Currency backed · currency of concern |
+| 5 · Structured Notes | Target return · protection level |
+
+Twelve answers in total: seven ordinal scales (averaged across the room) and
+five categorical picks (the room shows the modal choice).
+
+---
+
+## How matching works
+
+Each portfolio declares a `target` on every one of the twelve axes. A guest's
+fit is a weighted similarity across those axes:
+
+- **scale axes** — `1 − |answer − target| / 3`
+- **choice axes** — `1` exact, `0.55` if the answer is in the portfolio's
+  `also` list, `0.1` otherwise
+
+Weights live in `data/portfolios.json` (`weights`). Risk appetite and
+protection dominate; the FX opinion is flavour rather than structure.
+
+The results screens show **two different numbers**, and the difference is the
+point of the session:
+
+- **The composite** — every answer averaged into one profile, then matched.
+  Averaging pulls toward the middle, so this tends to land on a balanced
+  portfolio.
+- **The split** — each guest matched on their *own* answers, then tallied.
+  This shows how genuinely varied the room is, which the average hides.
+
+---
+
+## Replacing the portfolio base
+
+The shelf lives in **`data/portfolios.json`** — replace that one file. Nothing
+else needs to change.
+
+```jsonc
+{
+  "weights": { "horizon": 1.2, "maxLoss": 1.6, ... },
+  "portfolios": [
+    {
+      "id": "shield",
+      "name": "Capital Shield",
+      "tagline": "Preserve first. Return second.",
+      "blurb": "One or two sentences shown on the result screen.",
+      "alloc": { "equities": 10, "fixedIncome": 55, "notes": 25, "cash": 10 },
+      "expReturn": "4 – 6%",
+      "vol": "Low",
+      "traits": ["Senior secured credit", "Sub-2y duration"],
+      "target": {
+        "horizon": 0, "maxLoss": 0,                      // scale: 0–3
+        "sector": { "v": "consumer", "also": ["healthcare"] },  // choice
+        "region": { "v": "global",  "also": ["us"] },
+        "options": { "v": "protection", "also": ["none"] },
+        "credit": 0, "duration": 0, "rank": 0,
+        "fxLong":    { "v": "usd", "also": ["chf"] },
+        "fxConcern": { "v": "brl", "also": ["jpy"] },
+        "snReturn": 0, "snProtection": 0
+      }
+    }
+  ]
+}
+```
+
+Rules:
+
+- Every portfolio needs a `target` for **all twelve** axes.
+- `alloc` must sum to 100.
+- Valid `choice` values are the option `v` keys in `assets/schema.js`.
+- The file is **validated on load**. If anything is wrong the site falls back
+  to the eight built-in portfolios and prints exactly what failed to the browser
+  console — check there if a change does not appear.
+
+Six to eight portfolios is the sweet spot. Check they are all *reachable*:
+if one can never win, guests will never see it.
+
+To change the **questions** themselves, edit `assets/schema.js` — the matching
+engine, both result screens and the admin export all derive from it. Any new
+axis needs a matching `target` on every portfolio and an entry in `weights`.
+
+---
+
+## Knowing who answered what
+
+Two ways, both supported at once.
+
+**A · One shared code (simplest).** Project `present.html`. Guests scan the
+single QR and type their name on the welcome screen. Controlled by
+`IDENTIFY` in `assets/config.js`:
+
+```js
+IDENTIFY: "required"   // "required" | "optional" | "off"
+```
+
+**B · A personal code per guest (no typing, most reliable).** Open
+`qr-gen.html`, paste the guest list, print the sheet, put a card at each place
+setting. Each card encodes:
+
+```
+https://<site>/?g=<token>&n=<name>&t=<group>
+```
+
+The guest lands already identified — the name field never appears — and every
+answer is recorded against that token. Re-scanning the same card **updates**
+that guest's row rather than creating a second one.
+
+Either way, `admin.html` shows one row per guest and one column per question,
+plus the portfolio they matched, and exports the lot as CSV or JSON.
+
+> Change `PRIVACY_NOTE` in `assets/config.js` if you change `IDENTIFY` — it is
+> what guests are told is being recorded, and it should stay true.
+
+---
+
+## Demo mode vs. live voting
+
+**Demo mode** is the default (`BACKEND_URL: ""`). Votes stay on the device and
+are blended into a seeded synthetic audience of ~42 guests, so every results
+screen is fully populated before anyone has scanned anything. Enough to
+rehearse, and enough to present from a single laptop. The presenter and admin
+screens both label it clearly, and synthetic guests are **never** included in
+the admin table or any export.
+
+**Live voting across the room** needs the backend in `worker/`:
+
+```bash
+cd worker
+npm install
+npx wrangler d1 create nextgen-votes     # paste the database_id into wrangler.toml
+npx wrangler secret put ADMIN_KEY        # guards reset + server-side export
+npx wrangler deploy
+```
+
+Then set the URL it prints in `assets/config.js`:
+
+```js
+BACKEND_URL: "https://nextgen-votes.<your-subdomain>.workers.dev",
+SESSION_ID:  "nextgen-2026",   // bump between rehearsal and the live run
+```
+
+It is a single Cloudflare Worker over a D1 database — SQL and strongly
+consistent, because the tally is read back immediately after each write (KV is
+eventually consistent and would lag the projector by several seconds).
+
+| Route | |
+|---|---|
+| `POST /api/vote` | upsert one guest's answers |
+| `GET /api/results?session=ID` | every response for a session |
+| `GET /api/export?session=ID&key=…` | CSV straight from the backend |
+| `POST /api/reset` | clear a session (needs `ADMIN_KEY`) |
+
+`ADMIN_KEY` is never stored in `config.js` — that file ships to every guest.
+The presenter is prompted for it once and it is held in `sessionStorage` for
+that session only.
+
+---
+
+## Running the session
+
+1. Open `present.html` on the projector, press **F** for fullscreen.
+2. Slide 1 shows the QR and a live response counter. Wait for the room.
+3. **→** to slide 2: where the room landed, per guest.
+4. **→** to slide 3: the room's composite portfolio — the reveal.
+5. **→** slides 4 and 5: answer-by-answer breakdown, for discussion.
+
+| Key | |
+|---|---|
+| `←` `→` / space | move between slides |
+| `1`–`5` | jump to a slide (also `present.html#3`) |
+| `F` | fullscreen |
+| `R` | reset votes |
+
+Press **R** after the rehearsal so practice votes do not pollute the real
+numbers — or bump `SESSION_ID`, which starts a clean tally and keeps the old
+one intact.
+
+---
+
+## Re-skinning
+
+All colour, type and spacing tokens are the `:root` block at the top of
+`assets/app.css`. Swapping the palette to brand colours is a six-line change;
+nothing else references a raw hex.
+
+The four asset-class colours (`--series-*`) are deliberate: they are validated
+for contrast and colour-blind separation against this dark navy surface, in the
+order they appear in the stacked allocation bar. If you change them, keep
+adjacent segments distinguishable.
+
+There is **no bank branding anywhere** — the wordmark is plain "NextGen
+Portfolio Lab". Add the real mark in `index.html`, `present.html` and
+`admin.html` (the `.wordmark` element) once you know what is approved.
+
+---
+
+## Layout
+
+```
+index.html          guest flow
+present.html        projector view
+admin.html          responses + export
+qr-gen.html         printable personal QR codes
+data/
+  portfolios.json   THE PORTFOLIO BASE — replace this
+assets/
+  schema.js         the five steps and their questions
+  portfolios.js     built-in fallback base + matching engine
+  base-loader.js    loads & validates data/portfolios.json
+  store.js          sync layer (demo mode / live backend)
+  config.js         deployment + identity settings
+  app.js            guest flow
+  present.js        presenter slides
+  admin.js          admin table + CSV/JSON export
+  qr-gen.js         personal QR codes
+  app.css           tokens + guest styles
+  present.css       projector layout
+  admin.css         admin table
+  vendor/qrcode.min.js   vendored so a weak venue wifi cannot break the QR
+worker/
+  index.js          Cloudflare Worker + D1 vote backend
+  wrangler.toml
+```
+
+---
+
+## Not investment advice
+
+Every portfolio, return range and volatility label in this repo is illustrative,
+written to make the session work. Nothing here is an offer, a recommendation, or
+advice, and the result screens say so.

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Build Your Portfolio — NextGen</title>
+<meta name="description" content="Five quick steps. We match the room to a portfolio.">
+<meta name="theme-color" content="#0A1220">
+
+<!-- Open Graph: the link gets shared in chats after the session -->
+<meta property="og:title" content="Build Your Portfolio — NextGen">
+<meta property="og:description" content="Five quick steps. We match the room to a portfolio.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+
+<div class="shell">
+  <header class="topbar">
+    <div class="wordmark"><b>NextGen</b> <span>Portfolio Lab</span></div>
+    <div class="step-count" id="stepCount"></div>
+  </header>
+
+  <div class="rail" id="rail" hidden></div>
+
+  <main id="app" aria-live="polite"></main>
+</div>
+
+<div class="actions" id="actions" hidden>
+  <div class="actions-inner">
+    <button class="btn btn-ghost" id="btnBack" type="button">Back</button>
+    <button class="btn btn-primary" id="btnNext" type="button">Continue</button>
+  </div>
+</div>
+
+<script src="assets/config.js"></script>
+<script src="assets/schema.js"></script>
+<script src="assets/portfolios.js"></script>
+<script src="assets/base-loader.js"></script>
+<script src="assets/store.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
