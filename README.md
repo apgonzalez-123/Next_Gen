@@ -20,6 +20,27 @@ Entirely static — **no bank network, no server required** to run the session.
 
 ---
 
+## Current deployment
+
+| | |
+|---|---|
+| Guest (the QR target) | https://apgonzalez-123.github.io/Next_Gen/ |
+| Presenter | https://apgonzalez-123.github.io/Next_Gen/present.html |
+| Admin | https://apgonzalez-123.github.io/Next_Gen/admin.html |
+| QR sheet *(optional)* | https://apgonzalez-123.github.io/Next_Gen/qr-gen.html |
+| Vote backend | https://nextgen-votes.apgonzalez.workers.dev |
+| Database | D1 `investor_profile`, table `nextgen_responses` |
+
+Live voting is **on**: responses are collected across devices and the
+synthetic demo audience is off (`DEMO_ROOM_SIZE: 0`).
+
+The admin board asks for the session password, which is the worker secret
+`ADMIN_KEY`. Rotate it with `npx wrangler secret put ADMIN_KEY` from `worker/`.
+
+> The worker owns the `nextgen_responses` table **only**. The `responses`
+> table in the same database has a different schema and belongs to separate
+> work — nothing here reads, writes or alters it.
+
 ## Run it locally
 
 ```bash
