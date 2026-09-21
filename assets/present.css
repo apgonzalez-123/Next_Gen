@@ -230,3 +230,32 @@ body.present {
   .p-bar { grid-template-columns: 150px 1fr 88px; gap: 14px; }
   .p-top, .p-stage, .p-foot { padding-left: 22px; padding-right: 22px; }
 }
+
+/* --- verdict slide: scenarios and top holdings --- */
+.p-scen {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+.p-scen > div {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  padding: 11px 13px;
+}
+.p-scen .lbl { display: block; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.p-scen .val { font-family: var(--font-display); font-weight: 400; font-size: clamp(20px, 1.9vw, 28px); font-variant-numeric: tabular-nums; }
+.p-scen .val.up   { color: var(--pos); }
+.p-scen .val.down { color: var(--neg); }
+
+.p-hold { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line-soft); }
+.p-hold-h { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.p-hold-row {
+  display: flex; justify-content: space-between; gap: 16px;
+  font-size: clamp(12px, 1.05vw, 15px);
+  color: var(--text-2);
+  padding: 5px 0;
+}
+.p-hold-row b { color: var(--gold-bright); font-weight: 550; font-variant-numeric: tabular-nums; }
+.p-hold-more { font-size: 11px; color: var(--muted); margin-top: 8px; }

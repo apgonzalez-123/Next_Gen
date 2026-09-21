@@ -44,18 +44,36 @@ nothing to configure — deploy it anywhere and the code points to the right pla
 
 ---
 
-## The five steps
+## The steps
 
 | Step | Questions |
 |---|---|
 | 1 · Quick Profile | Investment horizon · acceptable loss |
-| 2 · Equities & Options | Sector · country of risk · options overlay |
+| 2 · Equities & Options | Sectors *(pick 3)* · country of risk · options overlay |
 | 3 · Fixed Income | IG or HY · duration · bond rank |
 | 4 · FX | Currency backed · currency of concern |
 | 5 · Structured Notes | Target return · protection level |
+| 6 · Portfolio Construction | Concentration · liquidity · themes *(pick 3)* · exclusions |
 
-Twelve answers in total: seven ordinal scales (averaged across the room) and
-five categorical picks (the room shows the modal choice).
+Sixteen answers across three question kinds:
+
+| Kind | Behaviour | Room view |
+|---|---|---|
+| `scale` | ordinal 0–3, pick one | averaged |
+| `choice` | pick one | modal pick |
+| `multi` | pick several (`max` caps, `min: 0` allows none) | share of the room per option — bars legitimately exceed 100% |
+
+Step 6 is marked `optional: true`. To run the original five, set
+`STEPS: ["profile","equities","fixedincome","fx","notes"]` in `config.js`;
+the step, its questions and its columns drop out of matching, the breakdown
+and the export, and the progress rail renumbers itself.
+
+### Adding your own questions
+
+Add the question to the right step in `assets/schema.js`, then give every
+portfolio a `target` for it and add a `weights` entry. Nothing else changes —
+the guest flow, the presenter breakdown (which paginates into as many boards
+as it needs, six panels each) and the CSV export all derive from the schema.
 
 ---
 
@@ -67,9 +85,34 @@ fit is a weighted similarity across those axes:
 - **scale axes** — `1 − |answer − target| / 3`
 - **choice axes** — `1` exact, `0.55` if the answer is in the portfolio's
   `also` list, `0.1` otherwise
+- **multi axes (affinity)** — `0.7 × best pick + 0.3 × mean of all picks`, so
+  the strongest match carries the axis while scattershot picking is shaded
+  down rather than rewarded
+- **multi axes (avoidance)** — see exclusions below
 
 Weights live in `data/portfolios.json` (`weights`). Risk appetite and
 protection dominate; the FX opinion is flavour rather than structure.
+
+### Exclusions are constraints, not preferences
+
+The exclusions question is marked `hard: true`, and each portfolio splits what
+it holds into two tiers:
+
+```jsonc
+"exclusions": {
+  "conflicts": ["em"],        // the strategy cannot exist without it
+  "screens":   ["fossil"]     // it holds some, but could screen it out
+}
+```
+
+A `conflicts` hit **rules the portfolio out entirely** — it sorts below every
+eligible portfolio and the guest is told which exclusion did it. A `screens`
+hit costs 25% of that axis. So "I will not own emerging markets" removes the EM
+carry strategy outright, while "no tobacco" merely shades a dividend sleeve, and
+neither is left to be outvoted by fifteen other axes.
+
+If a guest's exclusions rule out the whole shelf, the result screen says so
+rather than recommending something they have refused.
 
 The results screens show **two different numbers**, and the difference is the
 point of the session:
@@ -115,11 +158,45 @@ else needs to change.
 }
 ```
 
+### The proposed book
+
+Each portfolio also carries the instruments it would actually hold and the risk
+that comes with them:
+
+```jsonc
+"holdings": [
+  { "name": "IG corporate credit, 3-5y", "ticker": "IG 3-5Y",
+    "cls": "fixedIncome", "weight": 28, "detail": "BBB+ avg · senior unsecured" }
+],
+"risk": {
+  "expReturn": 7.0, "vol": 6.8, "maxDrawdown": -8.0,
+  "sharpe": 0.74, "yield": 5.6,
+  "scenarios": [
+    { "label": "Bull", "pct": 12.0, "driver": "Coupons paid, autocall triggers early" },
+    { "label": "Base", "pct":  7.0, "driver": "Carry plus dividends" },
+    { "label": "Bear", "pct": -5.5, "driver": "Barrier tested" }
+  ]
+}
+```
+
+`cls` must be one of `equities`, `fixedIncome`, `notes`, `cash`. Holdings appear
+on the guest's result screen grouped by asset class, and the presenter's verdict
+slide shows the headline risk figures plus the four largest positions.
+
+**The instruments shipped in this repo are representative placeholders** — broad
+sleeves and generic instrument descriptions, not a real proposal, and the return
+figures are modelled illustrations rather than forecasts. Replace them with the
+real book. The result screen carries a "Hypothetical" disclaimer under the risk
+numbers; keep it there, or replace it with your own approved wording.
+
 Rules:
 
-- Every portfolio needs a `target` for **all twelve** axes.
+- Every portfolio needs a `target` for **every** axis in the active steps.
 - `alloc` must sum to 100.
-- Valid `choice` values are the option `v` keys in `assets/schema.js`.
+- `holdings` weights must sum to 100 **and** reconcile to `alloc` per asset
+  class — the loader rejects a base where the pie chart and the line items
+  disagree.
+- Valid `choice` and `multi` values are the option `v` keys in `assets/schema.js`.
 - The file is **validated on load**. If anything is wrong the site falls back
   to the eight built-in portfolios and prints exactly what failed to the browser
   console — check there if a change does not appear.
@@ -235,10 +312,12 @@ All colour, type and spacing tokens are the `:root` block at the top of
 `assets/app.css`. Swapping the palette to brand colours is a six-line change;
 nothing else references a raw hex.
 
-The four asset-class colours (`--series-*`) are deliberate: they are validated
-for contrast and colour-blind separation against this dark navy surface, in the
-order they appear in the stacked allocation bar. If you change them, keep
-adjacent segments distinguishable.
+The four asset-class colours (`--series-*`) and the scenario gain/loss pair
+(`--pos` / `--neg`) are deliberate: both sets are validated for contrast and
+colour-blind separation against this dark navy surface, in the order they appear
+on screen. The scenario pair is aqua/orange rather than green/red for exactly
+that reason, and every bar is direct-labelled so colour is never the only cue.
+If you change them, keep adjacent segments distinguishable.
 
 There is **no bank branding anywhere** — the wordmark is plain "NextGen
 Portfolio Lab". Add the real mark in `index.html`, `present.html` and

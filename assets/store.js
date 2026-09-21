@@ -29,14 +29,30 @@ window.STORE = (function () {
   /* Real rooms cluster around a few investor types — a flat random draw
    * would make every distribution look like noise on the projector. */
   var PERSONAS = [
-    { weight: 0.26, centres: { horizon: 0.6, maxLoss: 0.5, credit: 0.6, duration: 0.7, rank: 0.6, snReturn: 0.7, snProtection: 0.5 },
-      picks: { sector: ["consumer", "healthcare", "financials"], region: ["global", "us"], options: ["none", "protection"], fxLong: ["usd", "chf"], fxConcern: ["brl", "eur"] } },
-    { weight: 0.38, centres: { horizon: 1.8, maxLoss: 1.4, credit: 1.4, duration: 1.7, rank: 1.3, snReturn: 1.4, snProtection: 1.3 },
-      picks: { sector: ["tech", "financials", "industrials"], region: ["global", "us", "europe"], options: ["none", "income"], fxLong: ["usd", "eur"], fxConcern: ["brl", "jpy"] } },
-    { weight: 0.24, centres: { horizon: 2.7, maxLoss: 2.2, credit: 2.0, duration: 2.1, rank: 1.8, snReturn: 2.2, snProtection: 2.0 },
-      picks: { sector: ["tech", "healthcare", "energy"], region: ["us", "asia", "latam"], options: ["income", "leverage"], fxLong: ["usd", "brl"], fxConcern: ["eur", "gbp"] } },
-    { weight: 0.12, centres: { horizon: 3.0, maxLoss: 3.0, credit: 2.7, duration: 2.6, rank: 2.6, snReturn: 2.9, snProtection: 2.8 },
-      picks: { sector: ["tech", "energy"], region: ["us", "latam", "asia"], options: ["leverage"], fxLong: ["usd", "brl"], fxConcern: ["chf", "jpy"] } }
+    { weight: 0.22,
+      centres: { horizon: 1.0, maxLoss: 0.8, credit: 0.9, duration: 1.0, rank: 0.9,
+                 snReturn: 1.0, snProtection: 0.8, maxPosition: 0.8, liquidity: 0.7 },
+      picks: { sector: ["consumer", "healthcare", "financials"], region: ["global", "us"],
+               options: ["none", "protection"], fxLong: ["usd", "chf"], fxConcern: ["brl", "eur"],
+               themes: ["infra", "health", "consumer"], exclusions: ["tobacco", "defence", "illiquid"] } },
+    { weight: 0.42,
+      centres: { horizon: 1.8, maxLoss: 1.4, credit: 1.4, duration: 1.7, rank: 1.3,
+                 snReturn: 1.4, snProtection: 1.3, maxPosition: 1.2, liquidity: 1.1 },
+      picks: { sector: ["tech", "financials", "industrials"], region: ["global", "us", "europe"],
+               options: ["none", "income"], fxLong: ["usd", "eur"], fxConcern: ["brl", "jpy"],
+               themes: ["ai", "infra", "fintech", "health"], exclusions: ["tobacco", "fossil"] } },
+    { weight: 0.24,
+      centres: { horizon: 2.7, maxLoss: 2.2, credit: 2.0, duration: 2.1, rank: 1.8,
+                 snReturn: 2.2, snProtection: 2.0, maxPosition: 2.0, liquidity: 1.8 },
+      picks: { sector: ["tech", "healthcare", "energy"], region: ["us", "asia", "latam"],
+               options: ["income", "leverage"], fxLong: ["usd", "brl"], fxConcern: ["eur", "gbp"],
+               themes: ["ai", "energy", "fintech"], exclusions: ["fossil"] } },
+    { weight: 0.12,
+      centres: { horizon: 3.0, maxLoss: 3.0, credit: 2.7, duration: 2.6, rank: 2.6,
+                 snReturn: 2.9, snProtection: 2.8, maxPosition: 2.9, liquidity: 2.4 },
+      picks: { sector: ["tech", "energy"], region: ["us", "latam", "asia"],
+               options: ["leverage"], fxLong: ["usd", "brl"], fxConcern: ["chf", "jpy"],
+               themes: ["ai", "fintech", "energy"], exclusions: [] } }
   ];
 
   function pickPersona(rand) {
@@ -61,12 +77,30 @@ window.STORE = (function () {
       var p = pickPersona(rand);
       var answers = {};
       window.AXES.forEach(function (axis) {
+        var pool = p.picks[axis.id] || axis.options.map(function (o) { return o.v; });
+
         if (axis.kind === "scale") {
-          answers[axis.id] = jitter(rand, p.centres[axis.id]);
-        } else {
-          var pool = p.picks[axis.id] || axis.options.map(function (o) { return o.v; });
-          answers[axis.id] = pool[Math.floor(rand() * pool.length)];
+          answers[axis.id] = jitter(rand, p.centres[axis.id] || 1.5);
+          return;
         }
+
+        if (axis.kind === "multi") {
+          /* Most people pick one or two, a few pick the cap — and on an
+             opt-out axis a good share rule nothing out at all. */
+          var cap = axis.max || 3;
+          var want = axis.min === 0
+            ? Math.floor(rand() * (Math.min(cap, pool.length) + 1))
+            : 1 + Math.floor(rand() * Math.min(cap, pool.length));
+          var bag = pool.slice();
+          var out = [];
+          while (out.length < want && bag.length) {
+            out.push(bag.splice(Math.floor(rand() * bag.length), 1)[0]);
+          }
+          answers[axis.id] = out;
+          return;
+        }
+
+        answers[axis.id] = pool[Math.floor(rand() * pool.length)];
       });
       out.push({ id: "demo-" + i, answers: answers, synthetic: true });
     }

@@ -36,6 +36,27 @@ window.BASE = (function () {
         var sum = Object.keys(p.alloc).reduce(function (a, k) { return a + p.alloc[k]; }, 0);
         if (Math.abs(sum - 100) > 0.5) problems.push(where + ": alloc sums to " + sum + ", not 100");
       }
+      if (p.holdings) {
+        var hw = p.holdings.reduce(function (a, h) { return a + (h.weight || 0); }, 0);
+        if (Math.abs(hw - 100) > 0.5) {
+          problems.push(where + ": holdings sum to " + hw + "%, not 100");
+        }
+        /* The sleeve and the headline allocation must tell the same story,
+           or the pie chart and the line items contradict each other. */
+        if (p.alloc) {
+          var byCls = {};
+          p.holdings.forEach(function (h) { byCls[h.cls] = (byCls[h.cls] || 0) + (h.weight || 0); });
+          Object.keys(p.alloc).forEach(function (k) {
+            if (Math.abs((byCls[k] || 0) - p.alloc[k]) > 0.5) {
+              problems.push(where + ": holdings give " + (byCls[k] || 0) + "% " + k +
+                            " but alloc says " + p.alloc[k] + "%");
+            }
+          });
+        }
+      }
+      if (p.risk && p.risk.scenarios && !Array.isArray(p.risk.scenarios)) {
+        problems.push(where + ": risk.scenarios must be an array");
+      }
     });
     return problems;
   }

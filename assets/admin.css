@@ -72,3 +72,5 @@ body.admin { height: 100vh; display: flex; flex-direction: column; overflow: hid
 .a-match { color: var(--gold-bright); font-weight: 500; }
 .a-anon { color: var(--muted); font-style: italic; }
 .a-empty { padding: 60px 20px; text-align: center; color: var(--muted); font-size: 14px; }
+
+.a-nofit { color: var(--muted); font-style: italic; font-weight: 400; }

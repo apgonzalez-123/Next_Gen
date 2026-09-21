@@ -1,6 +1,6 @@
 {
   "$schema": "See README — replace this file with your own portfolio base.",
-  "version": 1,
+  "version": 3,
   "weights": {
     "horizon": 1.2,
     "maxLoss": 1.6,
@@ -13,7 +13,11 @@
     "fxLong": 0.6,
     "fxConcern": 0.5,
     "snReturn": 1.2,
-    "snProtection": 1.5
+    "snProtection": 1.5,
+    "maxPosition": 0.9,
+    "liquidity": 1.1,
+    "themes": 0.8,
+    "exclusions": 1
   },
   "portfolios": [
     {
@@ -34,6 +38,74 @@
         "Sub-2y duration",
         "100% principal protection"
       ],
+      "holdings": [
+        {
+          "name": "US 2Y Treasury Note",
+          "ticker": "T 2Y",
+          "cls": "fixedIncome",
+          "weight": 22,
+          "detail": "Sovereign · 2y"
+        },
+        {
+          "name": "Short-dated IG corporate ladder",
+          "ticker": "IG 1-3Y",
+          "cls": "fixedIncome",
+          "weight": 20,
+          "detail": "A– avg · senior secured"
+        },
+        {
+          "name": "Covered bond basket (EUR)",
+          "ticker": "CB EUR",
+          "cls": "fixedIncome",
+          "weight": 13,
+          "detail": "AAA · 2y"
+        },
+        {
+          "name": "100% capital-protected note, 3y",
+          "ticker": "CPN 3Y",
+          "cls": "notes",
+          "weight": 25,
+          "detail": "Principal protected · index-linked"
+        },
+        {
+          "name": "Global minimum-volatility equity",
+          "ticker": "MinVol",
+          "cls": "equities",
+          "weight": 10,
+          "detail": "Defensive equity sleeve"
+        },
+        {
+          "name": "USD money market",
+          "ticker": "MMF",
+          "cls": "cash",
+          "weight": 10,
+          "detail": "Daily liquidity"
+        }
+      ],
+      "risk": {
+        "expReturn": 5,
+        "vol": 4.2,
+        "maxDrawdown": -4.5,
+        "sharpe": 0.71,
+        "yield": 4.3,
+        "scenarios": [
+          {
+            "label": "Bull",
+            "pct": 8.5,
+            "driver": "Rates rally, credit spreads tighten"
+          },
+          {
+            "label": "Base",
+            "pct": 5,
+            "driver": "Carry earned, protection unused"
+          },
+          {
+            "label": "Bear",
+            "pct": -1.5,
+            "driver": "Protection caps the loss at the note floor"
+          }
+        ]
+      },
       "target": {
         "horizon": 0,
         "maxLoss": 0,
@@ -71,7 +143,19 @@
           ]
         },
         "snReturn": 0,
-        "snProtection": 0
+        "snProtection": 0,
+        "maxPosition": 0,
+        "liquidity": 0,
+        "themes": {
+          "v": "infra",
+          "also": [
+            "health"
+          ]
+        },
+        "exclusions": {
+          "conflicts": [],
+          "screens": []
+        }
       }
     },
     {
@@ -92,6 +176,81 @@
         "Covered call overlay",
         "90% protected notes"
       ],
+      "holdings": [
+        {
+          "name": "IG corporate credit, 3-5y",
+          "ticker": "IG 3-5Y",
+          "cls": "fixedIncome",
+          "weight": 28,
+          "detail": "BBB+ avg · senior unsecured"
+        },
+        {
+          "name": "EUR financials senior paper",
+          "ticker": "FIN SR",
+          "cls": "fixedIncome",
+          "weight": 12,
+          "detail": "Senior preferred"
+        },
+        {
+          "name": "Emerging sovereign hard currency",
+          "ticker": "EMD HC",
+          "cls": "fixedIncome",
+          "weight": 10,
+          "detail": "USD-denominated"
+        },
+        {
+          "name": "Global dividend equity",
+          "ticker": "DIV",
+          "cls": "equities",
+          "weight": 17,
+          "detail": "Yield 3.8% · quality screen"
+        },
+        {
+          "name": "Covered-call overlay on the equity sleeve",
+          "ticker": "BXM",
+          "cls": "equities",
+          "weight": 8,
+          "detail": "Systematic call writing"
+        },
+        {
+          "name": "90% protected autocallable, 2y",
+          "ticker": "AC 2Y",
+          "cls": "notes",
+          "weight": 20,
+          "detail": "8% coupon · 90% barrier"
+        },
+        {
+          "name": "USD money market",
+          "ticker": "MMF",
+          "cls": "cash",
+          "weight": 5,
+          "detail": "Daily liquidity"
+        }
+      ],
+      "risk": {
+        "expReturn": 7,
+        "vol": 6.8,
+        "maxDrawdown": -8,
+        "sharpe": 0.74,
+        "yield": 5.6,
+        "scenarios": [
+          {
+            "label": "Bull",
+            "pct": 12,
+            "driver": "Coupons paid, autocall triggers early"
+          },
+          {
+            "label": "Base",
+            "pct": 7,
+            "driver": "Carry plus dividends, calls expire worthless"
+          },
+          {
+            "label": "Bear",
+            "pct": -5.5,
+            "driver": "Barrier tested, dividends cushion the drawdown"
+          }
+        ]
+      },
       "target": {
         "horizon": 1,
         "maxLoss": 1,
@@ -130,7 +289,22 @@
           ]
         },
         "snReturn": 1,
-        "snProtection": 1
+        "snProtection": 1,
+        "maxPosition": 1,
+        "liquidity": 1,
+        "themes": {
+          "v": "consumer",
+          "also": [
+            "infra",
+            "fintech"
+          ]
+        },
+        "exclusions": {
+          "conflicts": [],
+          "screens": [
+            "tobacco"
+          ]
+        }
       }
     },
     {
@@ -151,6 +325,74 @@
         "5–10y IG credit",
         "Minimal complexity"
       ],
+      "holdings": [
+        {
+          "name": "Developed market equity core",
+          "ticker": "DM EQ",
+          "cls": "equities",
+          "weight": 30,
+          "detail": "Cap-weighted global"
+        },
+        {
+          "name": "Global industrials & infrastructure",
+          "ticker": "INFRA",
+          "cls": "equities",
+          "weight": 15,
+          "detail": "Thematic tilt"
+        },
+        {
+          "name": "IG corporate credit, 5-10y",
+          "ticker": "IG 5-10Y",
+          "cls": "fixedIncome",
+          "weight": 25,
+          "detail": "BBB+ avg · intermediate"
+        },
+        {
+          "name": "US Treasury 7-10y",
+          "ticker": "UST 7-10",
+          "cls": "fixedIncome",
+          "weight": 15,
+          "detail": "Duration ballast"
+        },
+        {
+          "name": "90% protected note on equity index, 3y",
+          "ticker": "PN 3Y",
+          "cls": "notes",
+          "weight": 10,
+          "detail": "Soft buffer"
+        },
+        {
+          "name": "USD money market",
+          "ticker": "MMF",
+          "cls": "cash",
+          "weight": 5,
+          "detail": "Daily liquidity"
+        }
+      ],
+      "risk": {
+        "expReturn": 8,
+        "vol": 9.5,
+        "maxDrawdown": -15,
+        "sharpe": 0.63,
+        "yield": 3.1,
+        "scenarios": [
+          {
+            "label": "Bull",
+            "pct": 17,
+            "driver": "Equity beta delivers, duration neutral"
+          },
+          {
+            "label": "Base",
+            "pct": 8,
+            "driver": "Equity earnings growth plus bond carry"
+          },
+          {
+            "label": "Bear",
+            "pct": -12,
+            "driver": "Equity drawdown, partly offset by duration"
+          }
+        ]
+      },
       "target": {
         "horizon": 2,
         "maxLoss": 1,
@@ -190,7 +432,24 @@
           ]
         },
         "snReturn": 1,
-        "snProtection": 1
+        "snProtection": 1,
+        "maxPosition": 1,
+        "liquidity": 1,
+        "themes": {
+          "v": "infra",
+          "also": [
+            "ai",
+            "health"
+          ]
+        },
+        "exclusions": {
+          "conflicts": [],
+          "screens": [
+            "fossil",
+            "tobacco",
+            "defence"
+          ]
+        }
       }
     },
     {
@@ -211,6 +470,81 @@
         "DM growth tilt",
         "Long horizon required"
       ],
+      "holdings": [
+        {
+          "name": "US large-cap growth",
+          "ticker": "US GRW",
+          "cls": "equities",
+          "weight": 30,
+          "detail": "Quality growth screen"
+        },
+        {
+          "name": "Global healthcare innovation",
+          "ticker": "HLTH",
+          "cls": "equities",
+          "weight": 15,
+          "detail": "Thematic sleeve"
+        },
+        {
+          "name": "Asia ex-Japan equity",
+          "ticker": "AXJ",
+          "cls": "equities",
+          "weight": 15,
+          "detail": "Regional diversifier"
+        },
+        {
+          "name": "Global software & semis",
+          "ticker": "TECH",
+          "cls": "equities",
+          "weight": 10,
+          "detail": "Concentrated"
+        },
+        {
+          "name": "IG corporate credit, 5-10y",
+          "ticker": "IG 5-10Y",
+          "cls": "fixedIncome",
+          "weight": 15,
+          "detail": "Ballast only"
+        },
+        {
+          "name": "Participation note on equity index, 3y",
+          "ticker": "PPN 3Y",
+          "cls": "notes",
+          "weight": 10,
+          "detail": "1.2x upside, no cap"
+        },
+        {
+          "name": "USD money market",
+          "ticker": "MMF",
+          "cls": "cash",
+          "weight": 5,
+          "detail": "Daily liquidity"
+        }
+      ],
+      "risk": {
+        "expReturn": 10.5,
+        "vol": 14.5,
+        "maxDrawdown": -26,
+        "sharpe": 0.58,
+        "yield": 1.4,
+        "scenarios": [
+          {
+            "label": "Bull",
+            "pct": 26,
+            "driver": "Growth multiple expansion, note participates 1.2x"
+          },
+          {
+            "label": "Base",
+            "pct": 10.5,
+            "driver": "Earnings compound, multiples flat"
+          },
+          {
+            "label": "Bear",
+            "pct": -22,
+            "driver": "Multiple compression; little ballast to absorb it"
+          }
+        ]
+      },
       "target": {
         "horizon": 3,
         "maxLoss": 2,
@@ -250,7 +584,23 @@
           ]
         },
         "snReturn": 2,
-        "snProtection": 2
+        "snProtection": 2,
+        "maxPosition": 2,
+        "liquidity": 1,
+        "themes": {
+          "v": "ai",
+          "also": [
+            "health",
+            "fintech"
+          ]
+        },
+        "exclusions": {
+          "conflicts": [],
+          "screens": [
+            "fossil",
+            "defence"
+          ]
+        }
       }
     },
     {
@@ -271,6 +621,81 @@
         "Subordinated / Tier 2",
         "Carry-driven"
       ],
+      "holdings": [
+        {
+          "name": "European high yield, BB-B",
+          "ticker": "EU HY",
+          "cls": "fixedIncome",
+          "weight": 25,
+          "detail": "Senior unsecured"
+        },
+        {
+          "name": "Subordinated financials (Tier 2)",
+          "ticker": "T2",
+          "cls": "fixedIncome",
+          "weight": 20,
+          "detail": "Subordinated"
+        },
+        {
+          "name": "US high yield, short duration",
+          "ticker": "US HY SD",
+          "cls": "fixedIncome",
+          "weight": 15,
+          "detail": "2-4y"
+        },
+        {
+          "name": "Financials equity",
+          "ticker": "FIN EQ",
+          "cls": "equities",
+          "weight": 12,
+          "detail": "Banks & insurers"
+        },
+        {
+          "name": "Covered-call overlay",
+          "ticker": "BXM",
+          "cls": "equities",
+          "weight": 8,
+          "detail": "Yield enhancement"
+        },
+        {
+          "name": "Credit-linked note, 3y",
+          "ticker": "CLN 3Y",
+          "cls": "notes",
+          "weight": 15,
+          "detail": "Reference: IG index"
+        },
+        {
+          "name": "USD money market",
+          "ticker": "MMF",
+          "cls": "cash",
+          "weight": 5,
+          "detail": "Daily liquidity"
+        }
+      ],
+      "risk": {
+        "expReturn": 9,
+        "vol": 8.5,
+        "maxDrawdown": -16,
+        "sharpe": 0.71,
+        "yield": 7.4,
+        "scenarios": [
+          {
+            "label": "Bull",
+            "pct": 15,
+            "driver": "Spreads compress, no defaults in the book"
+          },
+          {
+            "label": "Base",
+            "pct": 9,
+            "driver": "Carry earned, default rate near historical average"
+          },
+          {
+            "label": "Bear",
+            "pct": -13,
+            "driver": "Spread widening and subordinated paper repriced hardest"
+          }
+        ]
+      },
       "target": {
         "horizon": 2,
         "maxLoss": 2,
@@ -309,7 +734,23 @@
           ]
         },
         "snReturn": 2,
-        "snProtection": 2
+        "snProtection": 2,
+        "maxPosition": 1,
+        "liquidity": 2,
+        "themes": {
+          "v": "fintech",
+          "also": [
+            "energy",
+            "infra"
+          ]
+        },
+        "exclusions": {
+          "conflicts": [],
+          "screens": [
+            "fossil",
+            "tobacco"
+          ]
+        }
       }
     },
     {
@@ -330,6 +771,81 @@
         "Commodity linked equity",
         "FX is the main risk"
       ],
+      "holdings": [
+        {
+          "name": "Brazil local-currency sovereign (NTN-B)",
+          "ticker": "NTN-B",
+          "cls": "fixedIncome",
+          "weight": 20,
+          "detail": "BRL · inflation-linked"
+        },
+        {
+          "name": "EM local-currency sovereign basket",
+          "ticker": "EM LC",
+          "cls": "fixedIncome",
+          "weight": 15,
+          "detail": "LatAm & Asia"
+        },
+        {
+          "name": "EM hard-currency corporates",
+          "ticker": "EM CORP",
+          "cls": "fixedIncome",
+          "weight": 10,
+          "detail": "BB avg"
+        },
+        {
+          "name": "LatAm energy & materials equity",
+          "ticker": "LATAM",
+          "cls": "equities",
+          "weight": 18,
+          "detail": "Commodity linked"
+        },
+        {
+          "name": "Global mining equity",
+          "ticker": "MINE",
+          "cls": "equities",
+          "weight": 12,
+          "detail": "Diversified miners"
+        },
+        {
+          "name": "FX-linked note, BRL/USD, 2y",
+          "ticker": "FXN 2Y",
+          "cls": "notes",
+          "weight": 15,
+          "detail": "Currency participation"
+        },
+        {
+          "name": "USD money market",
+          "ticker": "MMF",
+          "cls": "cash",
+          "weight": 10,
+          "detail": "Daily liquidity"
+        }
+      ],
+      "risk": {
+        "expReturn": 12,
+        "vol": 17,
+        "maxDrawdown": -30,
+        "sharpe": 0.53,
+        "yield": 8.1,
+        "scenarios": [
+          {
+            "label": "Bull",
+            "pct": 30,
+            "driver": "BRL appreciates, commodity cycle turns up"
+          },
+          {
+            "label": "Base",
+            "pct": 12,
+            "driver": "High local carry, currency roughly flat"
+          },
+          {
+            "label": "Bear",
+            "pct": -25,
+            "driver": "Currency depreciation overwhelms the carry"
+          }
+        ]
+      },
       "target": {
         "horizon": 2,
         "maxLoss": 3,
@@ -368,7 +884,24 @@
           ]
         },
         "snReturn": 3,
-        "snProtection": 2
+        "snProtection": 2,
+        "maxPosition": 2,
+        "liquidity": 2,
+        "themes": {
+          "v": "energy",
+          "also": [
+            "infra",
+            "consumer"
+          ]
+        },
+        "exclusions": {
+          "conflicts": [
+            "em"
+          ],
+          "screens": [
+            "fossil"
+          ]
+        }
       }
     },
     {
@@ -389,6 +922,81 @@
         "Long call overlay",
         "Wide outcome range"
       ],
+      "holdings": [
+        {
+          "name": "AI & automation basket",
+          "ticker": "AI",
+          "cls": "equities",
+          "weight": 25,
+          "detail": "Concentrated · 12 names"
+        },
+        {
+          "name": "Healthcare innovation basket",
+          "ticker": "BIO",
+          "cls": "equities",
+          "weight": 20,
+          "detail": "Concentrated · 10 names"
+        },
+        {
+          "name": "Financial disruption basket",
+          "ticker": "FNTK",
+          "cls": "equities",
+          "weight": 15,
+          "detail": "Payments & exchanges"
+        },
+        {
+          "name": "Long-dated calls on the theme baskets",
+          "ticker": "LEAPS",
+          "cls": "equities",
+          "weight": 15,
+          "detail": "2y calls · convex"
+        },
+        {
+          "name": "Leveraged participation note, 3y",
+          "ticker": "LPN 3Y",
+          "cls": "notes",
+          "weight": 15,
+          "detail": "1.5x upside, no protection"
+        },
+        {
+          "name": "IG corporate credit",
+          "ticker": "IG",
+          "cls": "fixedIncome",
+          "weight": 5,
+          "detail": "Minimal ballast"
+        },
+        {
+          "name": "USD money market",
+          "ticker": "MMF",
+          "cls": "cash",
+          "weight": 5,
+          "detail": "Daily liquidity"
+        }
+      ],
+      "risk": {
+        "expReturn": 15,
+        "vol": 24,
+        "maxDrawdown": -42,
+        "sharpe": 0.52,
+        "yield": 0.4,
+        "scenarios": [
+          {
+            "label": "Bull",
+            "pct": 48,
+            "driver": "Themes re-rate; calls and the 1.5x note compound the move"
+          },
+          {
+            "label": "Base",
+            "pct": 15,
+            "driver": "Themes grow into their multiples"
+          },
+          {
+            "label": "Bear",
+            "pct": -38,
+            "driver": "Calls expire worthless; concentration offers nowhere to hide"
+          }
+        ]
+      },
       "target": {
         "horizon": 3,
         "maxLoss": 3,
@@ -426,7 +1034,22 @@
           ]
         },
         "snReturn": 3,
-        "snProtection": 3
+        "snProtection": 3,
+        "maxPosition": 3,
+        "liquidity": 2,
+        "themes": {
+          "v": "ai",
+          "also": [
+            "health",
+            "fintech"
+          ]
+        },
+        "exclusions": {
+          "conflicts": [],
+          "screens": [
+            "defence"
+          ]
+        }
       }
     },
     {
@@ -447,6 +1070,74 @@
         "70% barrier notes",
         "Equity-linked, not equity"
       ],
+      "holdings": [
+        {
+          "name": "Autocallable on US index, 2y",
+          "ticker": "AC 2Y",
+          "cls": "notes",
+          "weight": 20,
+          "detail": "9% coupon · 70% barrier"
+        },
+        {
+          "name": "Reverse convertible on financials basket, 1y",
+          "ticker": "RC 1Y",
+          "cls": "notes",
+          "weight": 15,
+          "detail": "11% coupon · 70% barrier"
+        },
+        {
+          "name": "Autocallable on EuroStoxx, 3y",
+          "ticker": "AC EU",
+          "cls": "notes",
+          "weight": 15,
+          "detail": "8.5% coupon · 65% barrier"
+        },
+        {
+          "name": "IG corporate credit, 1-3y",
+          "ticker": "IG 1-3Y",
+          "cls": "fixedIncome",
+          "weight": 25,
+          "detail": "Collateral sleeve"
+        },
+        {
+          "name": "US large-cap equity",
+          "ticker": "US EQ",
+          "cls": "equities",
+          "weight": 20,
+          "detail": "Unhedged residual"
+        },
+        {
+          "name": "USD money market",
+          "ticker": "MMF",
+          "cls": "cash",
+          "weight": 5,
+          "detail": "Daily liquidity"
+        }
+      ],
+      "risk": {
+        "expReturn": 9.5,
+        "vol": 10.5,
+        "maxDrawdown": -22,
+        "sharpe": 0.62,
+        "yield": 9.2,
+        "scenarios": [
+          {
+            "label": "Bull",
+            "pct": 11,
+            "driver": "Notes autocall at the first observation; coupon capped"
+          },
+          {
+            "label": "Base",
+            "pct": 9.5,
+            "driver": "Coupons paid, barriers intact"
+          },
+          {
+            "label": "Bear",
+            "pct": -19,
+            "driver": "Barriers breached — full equity downside, coupons stop"
+          }
+        ]
+      },
       "target": {
         "horizon": 1,
         "maxLoss": 2,
@@ -485,7 +1176,22 @@
           ]
         },
         "snReturn": 2,
-        "snProtection": 2
+        "snProtection": 2,
+        "maxPosition": 2,
+        "liquidity": 3,
+        "themes": {
+          "v": "fintech",
+          "also": [
+            "ai",
+            "consumer"
+          ]
+        },
+        "exclusions": {
+          "conflicts": [
+            "illiquid"
+          ],
+          "screens": []
+        }
       }
     }
   ]

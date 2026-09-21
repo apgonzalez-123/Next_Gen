@@ -10,7 +10,7 @@
   var btnNext  = document.getElementById("btnNext");
   var stepCount= document.getElementById("stepCount");
 
-  var steps = window.SCHEMA.steps;
+  var steps = window.SCHEMA.activeSteps;
   var answers = {};
   var guest = readUrlIdentity();   /* { name, token, group } */
   var view = "welcome";            /* "welcome" | 0..4 | "results" */
@@ -97,7 +97,12 @@
 
   function stepComplete(i) {
     return steps[i].questions.every(function (q) {
-      return answers[q.id] !== undefined && answers[q.id] !== null;
+      var v = answers[q.id];
+      if (v === undefined || v === null) return false;
+      /* An opt-out multi (min: 0) counts as answered once it has been
+         touched — picking nothing is a real answer there. */
+      if (q.kind === "multi" && q.min !== 0) return v.length > 0;
+      return true;
     });
   }
 
@@ -179,39 +184,76 @@
       block.appendChild(el("div", "q-label", esc(q.label)));
       if (q.hint) block.appendChild(el("div", "q-hint", esc(q.hint)));
 
+      var multi = q.kind === "multi";
+      if (multi && !Array.isArray(answers[q.id])) answers[q.id] = [];
+
       /* FX currency lists are short and uniform — two columns reads better
          than one tall stack on a phone. */
       var twoUp = q.options.length >= 6 && q.options.every(function (o) { return o.label.length <= 4; });
-      var opts = el("div", "opts" + (twoUp ? " two" : ""));
-      opts.setAttribute("role", "radiogroup");
+      var opts = el("div", "opts" + (twoUp ? " two" : "") + (multi ? " multi" : ""));
+      opts.setAttribute("role", multi ? "group" : "radiogroup");
       opts.setAttribute("aria-label", q.label);
 
+      var counter = multi ? el("div", "q-count") : null;
+      function updateCounter() {
+        if (!counter) return;
+        var n = answers[q.id].length;
+        counter.textContent = q.max
+          ? n + " of " + q.max + " selected"
+          : (n === 0 ? "None selected" : n + " selected");
+        counter.classList.toggle("full", !!q.max && n >= q.max);
+      }
+
       q.options.forEach(function (o) {
-        var selected = answers[q.id] === o.v;
-        var b = el("button", "opt" + (selected ? " sel" : ""));
+        var isSel = multi
+          ? answers[q.id].indexOf(o.v) !== -1
+          : answers[q.id] === o.v;
+        var b = el("button", "opt" + (isSel ? " sel" : ""));
         b.type = "button";
-        b.setAttribute("role", "radio");
-        b.setAttribute("aria-checked", selected ? "true" : "false");
+        b.setAttribute("role", multi ? "checkbox" : "radio");
+        b.setAttribute("aria-checked", isSel ? "true" : "false");
         b.innerHTML =
           '<span class="tick" aria-hidden="true"></span>' +
           '<span class="opt-txt"><span class="opt-main">' + esc(o.label) + "</span>" +
           (o.sub ? '<span class="opt-sub">' + esc(o.sub) + "</span>" : "") +
           "</span>";
+
         b.addEventListener("click", function () {
-          answers[q.id] = o.v;
-          /* repaint just this group — a full re-render would scroll away */
-          Array.prototype.forEach.call(opts.children, function (c) {
-            c.classList.remove("sel");
-            c.setAttribute("aria-checked", "false");
-          });
-          b.classList.add("sel");
-          b.setAttribute("aria-checked", "true");
+          if (multi) {
+            var list = answers[q.id];
+            var at = list.indexOf(o.v);
+            if (at !== -1) {
+              list.splice(at, 1);
+            } else {
+              /* At the cap, a new pick drops the oldest rather than
+                 silently doing nothing — a dead tap reads as broken. */
+              if (q.max && list.length >= q.max) list.shift();
+              list.push(o.v);
+            }
+            /* Repaint the whole group: a capped pick can deselect another. */
+            Array.prototype.forEach.call(opts.children, function (c, idx) {
+              var on = list.indexOf(q.options[idx].v) !== -1;
+              c.classList.toggle("sel", on);
+              c.setAttribute("aria-checked", on ? "true" : "false");
+            });
+            updateCounter();
+          } else {
+            answers[q.id] = o.v;
+            /* repaint just this group — a full re-render would scroll away */
+            Array.prototype.forEach.call(opts.children, function (c) {
+              c.classList.remove("sel");
+              c.setAttribute("aria-checked", "false");
+            });
+            b.classList.add("sel");
+            b.setAttribute("aria-checked", "true");
+          }
           renderChrome();
         });
         opts.appendChild(b);
       });
 
       block.appendChild(opts);
+      if (counter) { updateCounter(); block.appendChild(counter); }
       s.appendChild(block);
     });
 
@@ -248,17 +290,32 @@
 
   function renderResults() {
     var s = el("section", "screen");
-    var mine = window.ENGINE.rank(answers)[0];
+    var ranked = window.ENGINE.rank(answers);
+    var ruledOut = ranked.filter(function (r) { return r.blocked; });
+    var mine = ranked[0];
     var responses = roomData.responses;
     var roomProfile = window.ENGINE.roomProfile(responses);
     var roomTop = window.ENGINE.rank(roomProfile)[0];
     var split = window.ENGINE.roomSplit(responses);
 
     /* --- hero: the guest's own match --- */
-    s.appendChild(el("div", "result-head",
-      '<div class="eyebrow">Your match</div>' +
-      '<h2 class="display">' + esc(mine.portfolio.name) + "</h2>" +
-      '<p class="tagline">' + esc(mine.portfolio.tagline) + "</p>"));
+    if (mine.blocked) {
+      /* Every portfolio on the shelf clashes with this guest's exclusions.
+         That is a real answer, not an error — say so plainly rather than
+         recommending something they have ruled out. */
+      s.appendChild(el("div", "result-head",
+        '<div class="eyebrow">Your match</div>' +
+        '<h2 class="display" style="font-size:clamp(28px,7vw,40px)">Nothing on the shelf fits</h2>' +
+        '<p class="tagline">Your exclusions rule out every portfolio we hold.</p>'));
+      s.appendChild(el("div", "notice",
+        "<span>&#9679;</span><div>This is worth a conversation with your advisor &mdash; " +
+        "a mandate this constrained needs a portfolio built for it.</div>"));
+    } else {
+      s.appendChild(el("div", "result-head",
+        '<div class="eyebrow">Your match</div>' +
+        '<h2 class="display">' + esc(mine.portfolio.name) + "</h2>" +
+        '<p class="tagline">' + esc(mine.portfolio.tagline) + "</p>"));
+    }
 
     var fitCard = el("div", "card");
     fitCard.innerHTML =
@@ -282,6 +339,24 @@
       mine.portfolio.traits.map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("") +
       "</div>";
     s.appendChild(traits);
+
+    /* --- the proposed book and its risk --- */
+    if (!mine.blocked) {
+      var hc = holdingsCard(mine.portfolio);
+      if (hc) s.appendChild(hc);
+      var rc = riskCard(mine.portfolio);
+      if (rc) s.appendChild(rc);
+    }
+
+    if (ruledOut.length && !mine.blocked) {
+      s.appendChild(el("div", "notice",
+        "<span>&#9679;</span><div><b>Ruled out by your exclusions:</b> " +
+        ruledOut.map(function (r) {
+          return esc(r.portfolio.name) + " <span style=\"opacity:.7\">(" +
+                 esc(r.blockedBy.join(", ")) + ")</span>";
+        }).join(" &middot; ") +
+        "</div>"));
+    }
 
     /* --- the room --- */
     s.appendChild(el("div", "result-head", '<div class="eyebrow">The room</div>' +
@@ -345,12 +420,27 @@
     picks.innerHTML = "<h3>The room&rsquo;s consensus</h3>";
     var pl = document.createElement("dl");
     pl.style.margin = "0";
-    window.AXES.filter(function (a) { return a.kind === "choice"; }).forEach(function (axis) {
+    window.AXES.filter(function (a) {
+      return a.kind === "choice" || a.kind === "multi";
+    }).forEach(function (axis) {
       var dist = window.ENGINE.distribution(responses, axis.id);
-      var top = dist.bars.slice().sort(function (a, b) { return b.count - a.count; })[0];
+      var sorted = dist.bars.slice().sort(function (a, b) { return b.count - a.count; });
+      var dd;
+      if (axis.kind === "multi") {
+        /* A multi axis has no single winner — show what the room actually
+           converged on, or say plainly that it ruled nothing out. */
+        var kept = sorted.filter(function (b) { return b.pct >= 25; }).slice(0, 3);
+        dd = kept.length
+          ? kept.map(function (b) {
+              return esc(b.label) + ' <span style="color:var(--muted);font-weight:400">' + b.pct + "%</span>";
+            }).join("<br>")
+          : '<span style="color:var(--muted);font-weight:400">no clear consensus</span>';
+      } else {
+        dd = esc(sorted[0].label) +
+             ' <span style="color:var(--muted);font-weight:400">' + sorted[0].pct + "%</span>";
+      }
       var row = el("div", "kv");
-      row.innerHTML = "<dt>" + esc(axis.label) + "</dt><dd>" + esc(top.label) +
-        ' <span style="color:var(--muted);font-weight:400">' + top.pct + "%</span></dd>";
+      row.innerHTML = "<dt>" + esc(axis.label) + "</dt><dd>" + dd + "</dd>";
       pl.appendChild(row);
     });
     picks.appendChild(pl);
@@ -378,14 +468,16 @@
     animateBars(s);
   }
 
+  var ASSET_CLASSES = [
+    { k: "equities",    label: "Equities",         c: "var(--series-equities)" },
+    { k: "fixedIncome", label: "Fixed income",     c: "var(--series-fixedincome)" },
+    { k: "notes",       label: "Structured notes", c: "var(--series-notes)" },
+    { k: "cash",        label: "Cash",             c: "var(--series-cash)" }
+  ];
+
   function allocCard(p) {
     var card = el("div", "card");
-    var keys = [
-      { k: "equities",    label: "Equities",      c: "var(--series-equities)" },
-      { k: "fixedIncome", label: "Fixed income",  c: "var(--series-fixedincome)" },
-      { k: "notes",       label: "Structured notes", c: "var(--series-notes)" },
-      { k: "cash",        label: "Cash",          c: "var(--series-cash)" }
-    ];
+    var keys = ASSET_CLASSES;
     card.innerHTML = "<h3>Allocation</h3>" +
       '<div class="alloc-bar">' +
         keys.map(function (x) {
@@ -401,12 +493,101 @@
     return card;
   }
 
+  /* The proposed book: every line the portfolio would actually hold,
+     grouped by asset class and weighted. */
+  function holdingsCard(p) {
+    if (!p.holdings || !p.holdings.length) return null;
+    var card = el("div", "card");
+    card.innerHTML = "<h3>Proposed portfolio</h3>";
+    var host = el("div", "hold");
+
+    ASSET_CLASSES.forEach(function (cls) {
+      var lines = p.holdings.filter(function (h) { return h.cls === cls.k; });
+      if (!lines.length) return;
+      var total = lines.reduce(function (a, h) { return a + h.weight; }, 0);
+
+      host.appendChild(el("div", "hold-group",
+        '<s style="background:' + cls.c + '"></s>' + esc(cls.label) + "<b>" + total + "%</b>"));
+
+      lines.forEach(function (h) {
+        var row = el("div", "hold-row");
+        row.innerHTML =
+          "<div><div class=\"hold-name\">" + esc(h.name) + "</div>" +
+          '<div class="hold-meta">' +
+            (h.ticker ? '<span class="tick-id">' + esc(h.ticker) + "</span>" : "") +
+            esc(h.detail || "") + "</div></div>" +
+          '<div class="hold-w">' + h.weight + "%</div>" +
+          '<div class="hold-bar"><i style="width:0;background:' + cls.c +
+            '" data-w="' + h.weight + '"></i></div>';
+        host.appendChild(row);
+      });
+    });
+
+    card.appendChild(host);
+    return card;
+  }
+
+  /* Risk metrics and the three-case scenario band. */
+  function riskCard(p) {
+    var r = p.risk;
+    if (!r) return null;
+    var card = el("div", "card");
+    card.innerHTML = "<h3>Risk &amp; scenarios</h3>";
+
+    var m = el("dl", "metrics");
+    [
+      { t: "Expected return", v: r.expReturn.toFixed(1), u: "% p.a." },
+      { t: "Volatility",      v: r.vol.toFixed(1),       u: "% p.a." },
+      { t: "Max drawdown",    v: r.maxDrawdown.toFixed(1), u: "%", neg: true },
+      { t: "Sharpe ratio",    v: r.sharpe.toFixed(2),    u: "" },
+      { t: "Running yield",   v: r.yield.toFixed(1),     u: "%" }
+    ].forEach(function (x) {
+      var d = el("div", "metric");
+      d.innerHTML = "<dt>" + esc(x.t) + "</dt><dd" + (x.neg ? ' class="neg"' : "") + ">" +
+        esc(x.v) + (x.u ? "<small>" + esc(x.u) + "</small>" : "") + "</dd>";
+      m.appendChild(d);
+    });
+    card.appendChild(m);
+
+    /* Bars grow from a shared zero line, scaled to the widest case either
+       way, so bull and bear are visually comparable. */
+    var span = Math.max.apply(null, r.scenarios.map(function (s) { return Math.abs(s.pct); })) || 1;
+    var zeroAt = 100 * (span / (2 * span));   /* zero sits mid-track */
+    var scen = el("div", "scen");
+    scen.style.marginTop = "18px";
+
+    r.scenarios.forEach(function (sc) {
+      var up = sc.pct >= 0;
+      var w = (Math.abs(sc.pct) / span) * 50;   /* half-track max */
+      var row = el("div", "scen-row");
+      row.innerHTML =
+        '<div class="scen-top"><span class="scen-name">' + esc(sc.label) + "</span>" +
+        '<span class="scen-val ' + (up ? "up" : "down") + '">' +
+          (up ? "+" : "") + sc.pct.toFixed(1) + "%</span></div>" +
+        '<div class="scen-track">' +
+          '<span class="scen-zero" style="left:' + zeroAt + '%"></span>' +
+          '<i style="' + (up ? "left:" + zeroAt + "%" : "right:" + (100 - zeroAt) + "%") +
+            ";width:0;background:" + (up ? "var(--pos)" : "var(--neg)") +
+            '" data-w="' + w + '"></i>' +
+        "</div>" +
+        '<div class="scen-driver">' + esc(sc.driver) + "</div>";
+      scen.appendChild(row);
+    });
+    card.appendChild(scen);
+
+    card.appendChild(el("div", "disclaim",
+      "<b>Hypothetical.</b> Return, volatility and drawdown figures are modelled " +
+      "illustrations for this session, not actual or predicted performance. " +
+      "Scenario outcomes are not probabilities and are not guaranteed."));
+    return card;
+  }
+
   /* Bars and meters start at zero and grow once painted — the motion is
      what makes the reveal land on a projector. */
   function animateBars(root) {
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
-        root.querySelectorAll(".bar-fill[data-w]").forEach(function (f) {
+        root.querySelectorAll("[data-w]").forEach(function (f) {
           f.style.width = f.getAttribute("data-w") + "%";
         });
         var meter = root.querySelector(".meter i");

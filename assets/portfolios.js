@@ -17,6 +17,74 @@ window.PORTFOLIOS = [
     expReturn: "4 – 6%",
     vol: "Low",
     traits: ["Senior secured credit", "Sub-2y duration", "100% principal protection"],
+    holdings: [
+      {
+        "name": "US 2Y Treasury Note",
+        "ticker": "T 2Y",
+        "cls": "fixedIncome",
+        "weight": 22,
+        "detail": "Sovereign \u00b7 2y"
+      },
+      {
+        "name": "Short-dated IG corporate ladder",
+        "ticker": "IG 1-3Y",
+        "cls": "fixedIncome",
+        "weight": 20,
+        "detail": "A\u2013 avg \u00b7 senior secured"
+      },
+      {
+        "name": "Covered bond basket (EUR)",
+        "ticker": "CB EUR",
+        "cls": "fixedIncome",
+        "weight": 13,
+        "detail": "AAA \u00b7 2y"
+      },
+      {
+        "name": "100% capital-protected note, 3y",
+        "ticker": "CPN 3Y",
+        "cls": "notes",
+        "weight": 25,
+        "detail": "Principal protected \u00b7 index-linked"
+      },
+      {
+        "name": "Global minimum-volatility equity",
+        "ticker": "MinVol",
+        "cls": "equities",
+        "weight": 10,
+        "detail": "Defensive equity sleeve"
+      },
+      {
+        "name": "USD money market",
+        "ticker": "MMF",
+        "cls": "cash",
+        "weight": 10,
+        "detail": "Daily liquidity"
+      }
+    ],
+    risk: {
+      "expReturn": 5,
+      "vol": 4.2,
+      "maxDrawdown": -4.5,
+      "sharpe": 0.71,
+      "yield": 4.3,
+      "scenarios": [
+        {
+          "label": "Bull",
+          "pct": 8.5,
+          "driver": "Rates rally, credit spreads tighten"
+        },
+        {
+          "label": "Base",
+          "pct": 5,
+          "driver": "Carry earned, protection unused"
+        },
+        {
+          "label": "Bear",
+          "pct": -1.5,
+          "driver": "Protection caps the loss at the note floor"
+        }
+      ]
+    },
     target: {
       horizon: 0, maxLoss: 0,
       sector: { v: "consumer", also: ["healthcare"] },
@@ -25,7 +93,10 @@ window.PORTFOLIOS = [
       credit: 0, duration: 0, rank: 0,
       fxLong: { v: "usd", also: ["chf"] },
       fxConcern: { v: "brl", also: ["jpy"] },
-      snReturn: 0, snProtection: 0
+      snReturn: 0, snProtection: 0,
+      maxPosition: 0, liquidity: 0,
+      themes: { v: "infra",    also: ["health"] },
+      exclusions: { conflicts: [], screens: [] }
     }
   },
   {
@@ -37,6 +108,81 @@ window.PORTFOLIOS = [
     expReturn: "6 – 8%",
     vol: "Low to moderate",
     traits: ["Dividend equity core", "Covered call overlay", "90% protected notes"],
+    holdings: [
+      {
+        "name": "IG corporate credit, 3-5y",
+        "ticker": "IG 3-5Y",
+        "cls": "fixedIncome",
+        "weight": 28,
+        "detail": "BBB+ avg \u00b7 senior unsecured"
+      },
+      {
+        "name": "EUR financials senior paper",
+        "ticker": "FIN SR",
+        "cls": "fixedIncome",
+        "weight": 12,
+        "detail": "Senior preferred"
+      },
+      {
+        "name": "Emerging sovereign hard currency",
+        "ticker": "EMD HC",
+        "cls": "fixedIncome",
+        "weight": 10,
+        "detail": "USD-denominated"
+      },
+      {
+        "name": "Global dividend equity",
+        "ticker": "DIV",
+        "cls": "equities",
+        "weight": 17,
+        "detail": "Yield 3.8% \u00b7 quality screen"
+      },
+      {
+        "name": "Covered-call overlay on the equity sleeve",
+        "ticker": "BXM",
+        "cls": "equities",
+        "weight": 8,
+        "detail": "Systematic call writing"
+      },
+      {
+        "name": "90% protected autocallable, 2y",
+        "ticker": "AC 2Y",
+        "cls": "notes",
+        "weight": 20,
+        "detail": "8% coupon \u00b7 90% barrier"
+      },
+      {
+        "name": "USD money market",
+        "ticker": "MMF",
+        "cls": "cash",
+        "weight": 5,
+        "detail": "Daily liquidity"
+      }
+    ],
+    risk: {
+      "expReturn": 7,
+      "vol": 6.8,
+      "maxDrawdown": -8,
+      "sharpe": 0.74,
+      "yield": 5.6,
+      "scenarios": [
+        {
+          "label": "Bull",
+          "pct": 12,
+          "driver": "Coupons paid, autocall triggers early"
+        },
+        {
+          "label": "Base",
+          "pct": 7,
+          "driver": "Carry plus dividends, calls expire worthless"
+        },
+        {
+          "label": "Bear",
+          "pct": -5.5,
+          "driver": "Barrier tested, dividends cushion the drawdown"
+        }
+      ]
+    },
     target: {
       horizon: 1, maxLoss: 1,
       sector: { v: "financials", also: ["consumer", "industrials"] },
@@ -45,7 +191,10 @@ window.PORTFOLIOS = [
       credit: 1, duration: 1, rank: 1,
       fxLong: { v: "usd", also: ["eur"] },
       fxConcern: { v: "jpy", also: ["gbp"] },
-      snReturn: 1, snProtection: 1
+      snReturn: 1, snProtection: 1,
+      maxPosition: 1, liquidity: 1,
+      themes: { v: "consumer", also: ["infra", "fintech"] },
+      exclusions: { conflicts: [], screens: ["tobacco"] }
     }
   },
   {
@@ -57,6 +206,74 @@ window.PORTFOLIOS = [
     expReturn: "7 – 9%",
     vol: "Moderate",
     traits: ["Global equity core", "5–10y IG credit", "Minimal complexity"],
+    holdings: [
+      {
+        "name": "Developed market equity core",
+        "ticker": "DM EQ",
+        "cls": "equities",
+        "weight": 30,
+        "detail": "Cap-weighted global"
+      },
+      {
+        "name": "Global industrials & infrastructure",
+        "ticker": "INFRA",
+        "cls": "equities",
+        "weight": 15,
+        "detail": "Thematic tilt"
+      },
+      {
+        "name": "IG corporate credit, 5-10y",
+        "ticker": "IG 5-10Y",
+        "cls": "fixedIncome",
+        "weight": 25,
+        "detail": "BBB+ avg \u00b7 intermediate"
+      },
+      {
+        "name": "US Treasury 7-10y",
+        "ticker": "UST 7-10",
+        "cls": "fixedIncome",
+        "weight": 15,
+        "detail": "Duration ballast"
+      },
+      {
+        "name": "90% protected note on equity index, 3y",
+        "ticker": "PN 3Y",
+        "cls": "notes",
+        "weight": 10,
+        "detail": "Soft buffer"
+      },
+      {
+        "name": "USD money market",
+        "ticker": "MMF",
+        "cls": "cash",
+        "weight": 5,
+        "detail": "Daily liquidity"
+      }
+    ],
+    risk: {
+      "expReturn": 8,
+      "vol": 9.5,
+      "maxDrawdown": -15,
+      "sharpe": 0.63,
+      "yield": 3.1,
+      "scenarios": [
+        {
+          "label": "Bull",
+          "pct": 17,
+          "driver": "Equity beta delivers, duration neutral"
+        },
+        {
+          "label": "Base",
+          "pct": 8,
+          "driver": "Equity earnings growth plus bond carry"
+        },
+        {
+          "label": "Bear",
+          "pct": -12,
+          "driver": "Equity drawdown, partly offset by duration"
+        }
+      ]
+    },
     target: {
       horizon: 2, maxLoss: 1,
       sector: { v: "industrials", also: ["tech", "healthcare"] },
@@ -65,7 +282,10 @@ window.PORTFOLIOS = [
       credit: 1, duration: 2, rank: 1,
       fxLong: { v: "usd", also: ["eur"] },
       fxConcern: { v: "gbp", also: ["brl"] },
-      snReturn: 1, snProtection: 1
+      snReturn: 1, snProtection: 1,
+      maxPosition: 1, liquidity: 1,
+      themes: { v: "infra",    also: ["ai", "health"] },
+      exclusions: { conflicts: [], screens: ["fossil", "tobacco", "defence"] }
     }
   },
   {
@@ -77,6 +297,81 @@ window.PORTFOLIOS = [
     expReturn: "9 – 12%",
     vol: "Moderate to high",
     traits: ["70% equity weight", "DM growth tilt", "Long horizon required"],
+    holdings: [
+      {
+        "name": "US large-cap growth",
+        "ticker": "US GRW",
+        "cls": "equities",
+        "weight": 30,
+        "detail": "Quality growth screen"
+      },
+      {
+        "name": "Global healthcare innovation",
+        "ticker": "HLTH",
+        "cls": "equities",
+        "weight": 15,
+        "detail": "Thematic sleeve"
+      },
+      {
+        "name": "Asia ex-Japan equity",
+        "ticker": "AXJ",
+        "cls": "equities",
+        "weight": 15,
+        "detail": "Regional diversifier"
+      },
+      {
+        "name": "Global software & semis",
+        "ticker": "TECH",
+        "cls": "equities",
+        "weight": 10,
+        "detail": "Concentrated"
+      },
+      {
+        "name": "IG corporate credit, 5-10y",
+        "ticker": "IG 5-10Y",
+        "cls": "fixedIncome",
+        "weight": 15,
+        "detail": "Ballast only"
+      },
+      {
+        "name": "Participation note on equity index, 3y",
+        "ticker": "PPN 3Y",
+        "cls": "notes",
+        "weight": 10,
+        "detail": "1.2x upside, no cap"
+      },
+      {
+        "name": "USD money market",
+        "ticker": "MMF",
+        "cls": "cash",
+        "weight": 5,
+        "detail": "Daily liquidity"
+      }
+    ],
+    risk: {
+      "expReturn": 10.5,
+      "vol": 14.5,
+      "maxDrawdown": -26,
+      "sharpe": 0.58,
+      "yield": 1.4,
+      "scenarios": [
+        {
+          "label": "Bull",
+          "pct": 26,
+          "driver": "Growth multiple expansion, note participates 1.2x"
+        },
+        {
+          "label": "Base",
+          "pct": 10.5,
+          "driver": "Earnings compound, multiples flat"
+        },
+        {
+          "label": "Bear",
+          "pct": -22,
+          "driver": "Multiple compression; little ballast to absorb it"
+        }
+      ]
+    },
     target: {
       horizon: 3, maxLoss: 2,
       sector: { v: "tech", also: ["healthcare", "industrials"] },
@@ -85,7 +380,10 @@ window.PORTFOLIOS = [
       credit: 2, duration: 2, rank: 1,
       fxLong: { v: "usd", also: ["jpy"] },
       fxConcern: { v: "eur", also: ["gbp"] },
-      snReturn: 2, snProtection: 2
+      snReturn: 2, snProtection: 2,
+      maxPosition: 2, liquidity: 1,
+      themes: { v: "ai",       also: ["health", "fintech"] },
+      exclusions: { conflicts: [], screens: ["fossil", "defence"] }
     }
   },
   {
@@ -97,6 +395,81 @@ window.PORTFOLIOS = [
     expReturn: "8 – 10%",
     vol: "Moderate",
     traits: ["High yield core", "Subordinated / Tier 2", "Carry-driven"],
+    holdings: [
+      {
+        "name": "European high yield, BB-B",
+        "ticker": "EU HY",
+        "cls": "fixedIncome",
+        "weight": 25,
+        "detail": "Senior unsecured"
+      },
+      {
+        "name": "Subordinated financials (Tier 2)",
+        "ticker": "T2",
+        "cls": "fixedIncome",
+        "weight": 20,
+        "detail": "Subordinated"
+      },
+      {
+        "name": "US high yield, short duration",
+        "ticker": "US HY SD",
+        "cls": "fixedIncome",
+        "weight": 15,
+        "detail": "2-4y"
+      },
+      {
+        "name": "Financials equity",
+        "ticker": "FIN EQ",
+        "cls": "equities",
+        "weight": 12,
+        "detail": "Banks & insurers"
+      },
+      {
+        "name": "Covered-call overlay",
+        "ticker": "BXM",
+        "cls": "equities",
+        "weight": 8,
+        "detail": "Yield enhancement"
+      },
+      {
+        "name": "Credit-linked note, 3y",
+        "ticker": "CLN 3Y",
+        "cls": "notes",
+        "weight": 15,
+        "detail": "Reference: IG index"
+      },
+      {
+        "name": "USD money market",
+        "ticker": "MMF",
+        "cls": "cash",
+        "weight": 5,
+        "detail": "Daily liquidity"
+      }
+    ],
+    risk: {
+      "expReturn": 9,
+      "vol": 8.5,
+      "maxDrawdown": -16,
+      "sharpe": 0.71,
+      "yield": 7.4,
+      "scenarios": [
+        {
+          "label": "Bull",
+          "pct": 15,
+          "driver": "Spreads compress, no defaults in the book"
+        },
+        {
+          "label": "Base",
+          "pct": 9,
+          "driver": "Carry earned, default rate near historical average"
+        },
+        {
+          "label": "Bear",
+          "pct": -13,
+          "driver": "Spread widening and subordinated paper repriced hardest"
+        }
+      ]
+    },
     target: {
       horizon: 2, maxLoss: 2,
       sector: { v: "financials", also: ["energy"] },
@@ -105,7 +478,10 @@ window.PORTFOLIOS = [
       credit: 3, duration: 2, rank: 2,
       fxLong: { v: "eur", also: ["usd"] },
       fxConcern: { v: "jpy", also: ["chf"] },
-      snReturn: 2, snProtection: 2
+      snReturn: 2, snProtection: 2,
+      maxPosition: 1, liquidity: 2,
+      themes: { v: "fintech",  also: ["energy", "infra"] },
+      exclusions: { conflicts: [], screens: ["fossil", "tobacco"] }
     }
   },
   {
@@ -117,6 +493,81 @@ window.PORTFOLIOS = [
     expReturn: "10 – 14%",
     vol: "High",
     traits: ["EM local currency", "Commodity linked equity", "FX is the main risk"],
+    holdings: [
+      {
+        "name": "Brazil local-currency sovereign (NTN-B)",
+        "ticker": "NTN-B",
+        "cls": "fixedIncome",
+        "weight": 20,
+        "detail": "BRL \u00b7 inflation-linked"
+      },
+      {
+        "name": "EM local-currency sovereign basket",
+        "ticker": "EM LC",
+        "cls": "fixedIncome",
+        "weight": 15,
+        "detail": "LatAm & Asia"
+      },
+      {
+        "name": "EM hard-currency corporates",
+        "ticker": "EM CORP",
+        "cls": "fixedIncome",
+        "weight": 10,
+        "detail": "BB avg"
+      },
+      {
+        "name": "LatAm energy & materials equity",
+        "ticker": "LATAM",
+        "cls": "equities",
+        "weight": 18,
+        "detail": "Commodity linked"
+      },
+      {
+        "name": "Global mining equity",
+        "ticker": "MINE",
+        "cls": "equities",
+        "weight": 12,
+        "detail": "Diversified miners"
+      },
+      {
+        "name": "FX-linked note, BRL/USD, 2y",
+        "ticker": "FXN 2Y",
+        "cls": "notes",
+        "weight": 15,
+        "detail": "Currency participation"
+      },
+      {
+        "name": "USD money market",
+        "ticker": "MMF",
+        "cls": "cash",
+        "weight": 10,
+        "detail": "Daily liquidity"
+      }
+    ],
+    risk: {
+      "expReturn": 12,
+      "vol": 17,
+      "maxDrawdown": -30,
+      "sharpe": 0.53,
+      "yield": 8.1,
+      "scenarios": [
+        {
+          "label": "Bull",
+          "pct": 30,
+          "driver": "BRL appreciates, commodity cycle turns up"
+        },
+        {
+          "label": "Base",
+          "pct": 12,
+          "driver": "High local carry, currency roughly flat"
+        },
+        {
+          "label": "Bear",
+          "pct": -25,
+          "driver": "Currency depreciation overwhelms the carry"
+        }
+      ]
+    },
     target: {
       horizon: 2, maxLoss: 3,
       sector: { v: "energy", also: ["financials", "industrials"] },
@@ -125,7 +576,10 @@ window.PORTFOLIOS = [
       credit: 3, duration: 1, rank: 2,
       fxLong: { v: "brl", also: ["usd"] },
       fxConcern: { v: "eur", also: ["jpy"] },
-      snReturn: 3, snProtection: 2
+      snReturn: 3, snProtection: 2,
+      maxPosition: 2, liquidity: 2,
+      themes: { v: "energy",   also: ["infra", "consumer"] },
+      exclusions: { conflicts: ["em"], screens: ["fossil"] }
     }
   },
   {
@@ -137,6 +591,81 @@ window.PORTFOLIOS = [
     expReturn: "12 – 18%",
     vol: "High",
     traits: ["Concentrated themes", "Long call overlay", "Wide outcome range"],
+    holdings: [
+      {
+        "name": "AI & automation basket",
+        "ticker": "AI",
+        "cls": "equities",
+        "weight": 25,
+        "detail": "Concentrated \u00b7 12 names"
+      },
+      {
+        "name": "Healthcare innovation basket",
+        "ticker": "BIO",
+        "cls": "equities",
+        "weight": 20,
+        "detail": "Concentrated \u00b7 10 names"
+      },
+      {
+        "name": "Financial disruption basket",
+        "ticker": "FNTK",
+        "cls": "equities",
+        "weight": 15,
+        "detail": "Payments & exchanges"
+      },
+      {
+        "name": "Long-dated calls on the theme baskets",
+        "ticker": "LEAPS",
+        "cls": "equities",
+        "weight": 15,
+        "detail": "2y calls \u00b7 convex"
+      },
+      {
+        "name": "Leveraged participation note, 3y",
+        "ticker": "LPN 3Y",
+        "cls": "notes",
+        "weight": 15,
+        "detail": "1.5x upside, no protection"
+      },
+      {
+        "name": "IG corporate credit",
+        "ticker": "IG",
+        "cls": "fixedIncome",
+        "weight": 5,
+        "detail": "Minimal ballast"
+      },
+      {
+        "name": "USD money market",
+        "ticker": "MMF",
+        "cls": "cash",
+        "weight": 5,
+        "detail": "Daily liquidity"
+      }
+    ],
+    risk: {
+      "expReturn": 15,
+      "vol": 24,
+      "maxDrawdown": -42,
+      "sharpe": 0.52,
+      "yield": 0.4,
+      "scenarios": [
+        {
+          "label": "Bull",
+          "pct": 48,
+          "driver": "Themes re-rate; calls and the 1.5x note compound the move"
+        },
+        {
+          "label": "Base",
+          "pct": 15,
+          "driver": "Themes grow into their multiples"
+        },
+        {
+          "label": "Bear",
+          "pct": -38,
+          "driver": "Calls expire worthless; concentration offers nowhere to hide"
+        }
+      ]
+    },
     target: {
       horizon: 3, maxLoss: 3,
       sector: { v: "tech", also: ["healthcare"] },
@@ -145,7 +674,10 @@ window.PORTFOLIOS = [
       credit: 2, duration: 3, rank: 3,
       fxLong: { v: "usd", also: ["jpy"] },
       fxConcern: { v: "chf", also: ["eur"] },
-      snReturn: 3, snProtection: 3
+      snReturn: 3, snProtection: 3,
+      maxPosition: 3, liquidity: 2,
+      themes: { v: "ai",       also: ["health", "fintech"] },
+      exclusions: { conflicts: [], screens: ["defence"] }
     }
   },
   {
@@ -157,6 +689,74 @@ window.PORTFOLIOS = [
     expReturn: "8 – 11%",
     vol: "Moderate",
     traits: ["Autocallable core", "70% barrier notes", "Equity-linked, not equity"],
+    holdings: [
+      {
+        "name": "Autocallable on US index, 2y",
+        "ticker": "AC 2Y",
+        "cls": "notes",
+        "weight": 20,
+        "detail": "9% coupon \u00b7 70% barrier"
+      },
+      {
+        "name": "Reverse convertible on financials basket, 1y",
+        "ticker": "RC 1Y",
+        "cls": "notes",
+        "weight": 15,
+        "detail": "11% coupon \u00b7 70% barrier"
+      },
+      {
+        "name": "Autocallable on EuroStoxx, 3y",
+        "ticker": "AC EU",
+        "cls": "notes",
+        "weight": 15,
+        "detail": "8.5% coupon \u00b7 65% barrier"
+      },
+      {
+        "name": "IG corporate credit, 1-3y",
+        "ticker": "IG 1-3Y",
+        "cls": "fixedIncome",
+        "weight": 25,
+        "detail": "Collateral sleeve"
+      },
+      {
+        "name": "US large-cap equity",
+        "ticker": "US EQ",
+        "cls": "equities",
+        "weight": 20,
+        "detail": "Unhedged residual"
+      },
+      {
+        "name": "USD money market",
+        "ticker": "MMF",
+        "cls": "cash",
+        "weight": 5,
+        "detail": "Daily liquidity"
+      }
+    ],
+    risk: {
+      "expReturn": 9.5,
+      "vol": 10.5,
+      "maxDrawdown": -22,
+      "sharpe": 0.62,
+      "yield": 9.2,
+      "scenarios": [
+        {
+          "label": "Bull",
+          "pct": 11,
+          "driver": "Notes autocall at the first observation; coupon capped"
+        },
+        {
+          "label": "Base",
+          "pct": 9.5,
+          "driver": "Coupons paid, barriers intact"
+        },
+        {
+          "label": "Bear",
+          "pct": -19,
+          "driver": "Barriers breached \u2014 full equity downside, coupons stop"
+        }
+      ]
+    },
     target: {
       horizon: 1, maxLoss: 2,
       sector: { v: "financials", also: ["tech", "consumer"] },
@@ -165,7 +765,10 @@ window.PORTFOLIOS = [
       credit: 2, duration: 1, rank: 2,
       fxLong: { v: "usd", also: ["eur"] },
       fxConcern: { v: "brl", also: ["gbp"] },
-      snReturn: 2, snProtection: 2
+      snReturn: 2, snProtection: 2,
+      maxPosition: 2, liquidity: 3,
+      themes: { v: "fintech",  also: ["ai", "consumer"] },
+      exclusions: { conflicts: ["illiquid"], screens: [] }
     }
   }
 ];
@@ -177,18 +780,65 @@ window.WEIGHTS = {
   sector: 0.8, region: 0.8, options: 1.0,
   credit: 1.2, duration: 1.0, rank: 1.0,
   fxLong: 0.6, fxConcern: 0.5,
-  snReturn: 1.2, snProtection: 1.5
+  snReturn: 1.2, snProtection: 1.5,
+  maxPosition: 0.9, liquidity: 1.1, themes: 0.8, exclusions: 1.0
 };
 
 window.ENGINE = (function () {
   var SCALE_MAX = 3;
 
-  /* One axis, one answer, one portfolio -> 0..1 */
+  /* One axis, one answer, one portfolio -> 0..1, or null to skip the axis.
+   *
+   * multi axes come in two flavours, told apart by the target's shape:
+   *   affinity  { v, also }    things the guest WANTS — sectors, themes
+   *   avoidance { conflicts }  things the guest RULES OUT — exclusions,
+   *                            where a hit means this portfolio holds
+   *                            something the guest will not own
+   */
   function scoreAxis(axis, value, target) {
     if (value === null || value === undefined) return null;
+
     if (axis.kind === "scale") {
       return 1 - Math.abs(value - target) / SCALE_MAX;
     }
+
+    if (axis.kind === "multi") {
+      var picks = Array.isArray(value) ? value : [value];
+
+      if (target && (target.conflicts || target.screens)) {
+        /* Two tiers, because they are genuinely different problems:
+         *   conflicts — the strategy cannot exist without it (an EM carry
+         *               book without emerging markets). Handled in rank()
+         *               as a hard block; scored 0 here.
+         *   screens   — the portfolio happens to hold it and could screen
+         *               it out. A real cost, not a disqualification. */
+        if (!picks.length) return 1;
+        var hard = picks.filter(function (v) {
+          return (target.conflicts || []).indexOf(v) !== -1;
+        }).length;
+        if (hard) return 0;
+        var soft = picks.filter(function (v) {
+          return (target.screens || []).indexOf(v) !== -1;
+        }).length;
+        return Math.max(0, 1 - soft * 0.25);
+      }
+
+      /* Nothing picked on an affinity axis says nothing about fit — skip
+         it rather than scoring the guest down for abstaining. */
+      if (!picks.length) return null;
+
+      var each = picks.map(function (v) {
+        if (v === target.v) return 1;
+        if ((target.also || []).indexOf(v) !== -1) return 0.55;
+        return 0.1;
+      });
+      var best = Math.max.apply(null, each);
+      var mean = each.reduce(function (a, b) { return a + b; }, 0) / each.length;
+      /* The strongest match carries the axis; unrelated extras shade it
+         down a little, so scattershot picking does not beat conviction. */
+      return 0.7 * best + 0.3 * mean;
+    }
+
     if (value === target.v) return 1;
     if ((target.also || []).indexOf(value) !== -1) return 0.55;
     return 0.1;
@@ -199,25 +849,52 @@ window.ENGINE = (function () {
    * set still produces a sensible ranking. */
   function rank(answers) {
     return window.PORTFOLIOS.map(function (p) {
-      var num = 0, den = 0, per = {};
+      var num = 0, den = 0, per = {}, blockedBy = [];
+
       window.AXES.forEach(function (axis) {
-        var s = scoreAxis(axis, answers[axis.id], p.target[axis.id]);
+        var value = answers[axis.id];
+        var target = p.target[axis.id];
+
+        /* A hard axis is a constraint, not a preference: if the guest
+           ruled out something this portfolio actually holds, no score on
+           the other fifteen axes should be able to recommend it. */
+        if (axis.hard && target && target.conflicts && Array.isArray(value)) {
+          value.forEach(function (v) {
+            if (target.conflicts.indexOf(v) !== -1) {
+              var opt = axis.options.find(function (o) { return o.v === v; });
+              blockedBy.push(opt ? opt.label : v);
+            }
+          });
+        }
+
+        var s = scoreAxis(axis, value, target);
         if (s === null) return;
         var w = window.WEIGHTS[axis.id];
         per[axis.id] = s;
         num += w * s;
         den += w;
       });
+
       return {
         portfolio: p,
         fit: den ? Math.round((num / den) * 100) : 0,
-        per: per
+        per: per,
+        blocked: blockedBy.length > 0,
+        blockedBy: blockedBy
       };
     }).sort(function (a, b) {
-      /* Ties are common once the room average settles mid-scale. Break
-       * them on the shelf's own order so the headline never flickers. */
+      /* Ruled-out portfolios sort below everything still eligible, however
+         well they score elsewhere. Ties are common once the room average
+         settles mid-scale, so break them on the shelf's own order and the
+         headline never flickers. */
+      if (a.blocked !== b.blocked) return a.blocked ? 1 : -1;
       return b.fit - a.fit || indexOf(a.portfolio) - indexOf(b.portfolio);
     });
+  }
+
+  /* The portfolios a guest is still eligible for. */
+  function eligible(answers) {
+    return rank(answers).filter(function (r) { return !r.blocked; });
   }
 
   function indexOf(p) { return window.PORTFOLIOS.indexOf(p); }
@@ -231,32 +908,69 @@ window.ENGINE = (function () {
         .map(function (r) { return r.answers[axis.id]; })
         .filter(function (v) { return v !== null && v !== undefined; });
       if (!vals.length) { profile[axis.id] = null; return; }
+
       if (axis.kind === "scale") {
         profile[axis.id] = vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
+        return;
+      }
+
+      var tally = {};
+      var respondents = 0;
+      vals.forEach(function (v) {
+        respondents++;
+        (Array.isArray(v) ? v : [v]).forEach(function (x) {
+          tally[x] = (tally[x] || 0) + 1;
+        });
+      });
+      var ranked = Object.keys(tally).sort(function (a, b) {
+        return tally[b] - tally[a] || a.localeCompare(b);
+      });
+
+      if (axis.kind === "multi") {
+        /* The room's collective pick: every option a quarter of the room
+           or more chose, and never fewer than one. */
+        var floor = respondents * 0.25;
+        var kept = ranked.filter(function (k) { return tally[k] >= floor; });
+        profile[axis.id] = kept.length ? kept : ranked.slice(0, 1);
       } else {
-        var tally = {};
-        vals.forEach(function (v) { tally[v] = (tally[v] || 0) + 1; });
-        profile[axis.id] = Object.keys(tally).sort(function (a, b) {
-          return tally[b] - tally[a] || a.localeCompare(b);
-        })[0];
+        profile[axis.id] = ranked[0];
       }
     });
     return profile;
   }
 
   /* Vote counts per option for one axis, in the schema's option order. */
+  /* Vote counts per option for one axis, in the schema's option order.
+   *
+   * `pct` is the share of RESPONDENTS who picked that option — so on a
+   * multi axis the bars legitimately sum to more than 100%, and each bar
+   * still reads as "this fraction of the room wanted this". */
   function distribution(responses, axisId) {
     var axis = window.AXIS_BY_ID[axisId];
     var tally = {};
-    var total = 0;
+    var respondents = 0;
+    var picks = 0;
+
     responses.forEach(function (r) {
       var v = r.answers[axisId];
       if (v === null || v === undefined) return;
-      tally[v] = (tally[v] || 0) + 1;
-      total++;
+      if (Array.isArray(v)) {
+        /* An empty set is a real answer on an opt-out axis ("exclude
+           nothing"), so it counts as a respondent either way. */
+        respondents++;
+        v.forEach(function (x) { tally[x] = (tally[x] || 0) + 1; picks++; });
+      } else {
+        respondents++;
+        tally[v] = (tally[v] || 0) + 1;
+        picks++;
+      }
     });
+
     return {
-      total: total,
+      total: respondents,
+      respondents: respondents,
+      picks: picks,
+      multi: axis.kind === "multi",
       bars: axis.options.map(function (o) {
         var count = tally[o.v] || 0;
         return {
@@ -264,7 +978,7 @@ window.ENGINE = (function () {
           label: o.label,
           sub: o.sub || "",
           count: count,
-          pct: total ? Math.round((count / total) * 100) : 0
+          pct: respondents ? Math.round((count / respondents) * 100) : 0
         };
       })
     };
@@ -302,6 +1016,7 @@ window.ENGINE = (function () {
 
   return {
     rank: rank,
+    eligible: eligible,
     roomProfile: roomProfile,
     roomSplit: roomSplit,
     distribution: distribution,

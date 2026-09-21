@@ -18,6 +18,10 @@
   function labelFor(axisId, value) {
     var axis = window.AXIS_BY_ID[axisId];
     if (value === null || value === undefined) return "";
+    if (Array.isArray(value)) {
+      if (!value.length) return "—";   /* a real answer on an opt-out axis */
+      return value.map(function (v) { return labelFor(axisId, v); }).join("; ");
+    }
     var opt = axis.options.find(function (o) { return o.v === value; });
     return opt ? opt.label : String(value);
   }
@@ -54,14 +58,20 @@
     }
 
     tbody.innerHTML = rows.map(function (r) {
-      var top = window.ENGINE.rank(r.answers)[0];
+      var ranked = window.ENGINE.rank(r.answers);
+      var top = ranked[0];
+      /* A guest whose exclusions rule out the whole shelf has no match —
+         show that rather than a portfolio they said they will not own. */
+      var noFit = top && top.blocked;
       return "<tr>" +
         '<td class="sticky-1">' + (r.name
           ? '<span class="a-name">' + esc(r.name) + "</span>"
           : '<span class="a-anon">anonymous</span>') + "</td>" +
         '<td class="sticky-2">' + esc(r.group || "") + "</td>" +
-        '<td class="a-match">' + esc(top ? top.portfolio.name : "") + "</td>" +
-        "<td>" + (top ? top.fit + "%" : "") + "</td>" +
+        '<td class="a-match">' + (noFit
+          ? '<span class="a-nofit">none eligible</span>'
+          : esc(top ? top.portfolio.name : "")) + "</td>" +
+        "<td>" + (top && !noFit ? top.fit + "%" : "") + "</td>" +
         window.AXES.map(function (a) {
           return "<td>" + esc(labelFor(a.id, r.answers[a.id])) + "</td>";
         }).join("") +
@@ -88,7 +98,10 @@
 
     var body = rows.map(function (r) {
       var top = window.ENGINE.rank(r.answers)[0];
-      return [r.name || "", r.group || "", top ? top.portfolio.name : "", top ? top.fit : ""]
+      var noFit = top && top.blocked;
+      return [r.name || "", r.group || "",
+              noFit ? "none eligible" : (top ? top.portfolio.name : ""),
+              noFit ? "" : (top ? top.fit : "")]
         .concat(window.AXES.map(function (a) { return labelFor(a.id, r.answers[a.id]); }))
         .concat([r.at ? new Date(r.at).toISOString() : "", r.token || r.id || ""]);
     });

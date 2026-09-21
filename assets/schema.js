@@ -1,10 +1,25 @@
 /* NextGen Portfolio Builder — question schema.
- * 5 steps, 11 axes. Edit labels/options here; the matching engine and all
- * result screens read from this file, so nothing else needs to change.
+ *
+ * Edit labels and options here. The matching engine, both result screens,
+ * the presenter breakdown and the admin export all derive from this file,
+ * so adding a question needs no other code change — only a `target` for
+ * the new axis on every portfolio, and an entry in `weights`.
  *
  * Axis kinds:
- *   "scale"  ordinal 0..3 — averaged across the room, compared by distance
- *   "choice" categorical  — room shows the modal pick, compared by identity
+ *   "scale"  ordinal 0..3  — averaged across the room, compared by distance
+ *   "choice" pick one      — room shows the modal pick, compared by identity
+ *   "multi"  pick several  — room shows what share picked each option;
+ *                            scored on the guest's best match, with a small
+ *                            penalty for unrelated extras. Optional `max`
+ *                            caps the picks; `min: 0` allows none.
+ *
+ * A multi axis marked `hard: true` is a CONSTRAINT, not a preference: a
+ * portfolio whose target lists a conflicting holding is ruled out entirely
+ * rather than merely scored down. That is what makes "I will not own fossil
+ * fuels" behave the way a client means it.
+ *
+ * Steps marked `optional: true` can be switched off in config.js (STEPS)
+ * without touching this file.
  */
 window.SCHEMA = {
   steps: [
@@ -48,8 +63,10 @@ window.SCHEMA = {
       questions: [
         {
           id: "sector",
-          kind: "choice",
-          label: "Which sector are you most constructive on?",
+          kind: "multi",
+          max: 3,
+          label: "Which sectors are you most constructive on?",
+          hint: "Pick up to three.",
           options: [
             { v: "tech",        label: "Technology" },
             { v: "financials",  label: "Financials" },
@@ -190,14 +207,95 @@ window.SCHEMA = {
           ]
         }
       ]
+    },
+    {
+      id: "construction",
+      n: 6,
+      optional: true,
+      title: "Portfolio Construction",
+      blurb: "How the book is actually put together.",
+      questions: [
+        {
+          id: "maxPosition",
+          kind: "scale",
+          label: "How large can a single position get?",
+          hint: "Concentration is where most real risk hides.",
+          options: [
+            { v: 0, label: "Under 2%",  sub: "Highly diversified" },
+            { v: 1, label: "2 – 5%",    sub: "Standard" },
+            { v: 2, label: "5 – 10%",   sub: "Concentrated" },
+            { v: 3, label: "Over 10%",  sub: "High conviction" }
+          ]
+        },
+        {
+          id: "liquidity",
+          kind: "scale",
+          label: "How quickly must you be able to get out?",
+          options: [
+            { v: 0, label: "Daily",             sub: "Fully liquid" },
+            { v: 1, label: "Within a month",    sub: "Near liquid" },
+            { v: 2, label: "Within a quarter",  sub: "Some lock-up" },
+            { v: 3, label: "Multi-year is fine", sub: "Illiquidity premium" }
+          ]
+        },
+        {
+          id: "themes",
+          kind: "multi",
+          max: 3,
+          label: "Which themes should the portfolio express?",
+          hint: "Pick up to three.",
+          options: [
+            { v: "ai",          label: "AI & automation" },
+            { v: "energy",      label: "Energy transition" },
+            { v: "health",      label: "Healthcare innovation" },
+            { v: "infra",       label: "Infrastructure" },
+            { v: "consumer",    label: "Premium consumer" },
+            { v: "fintech",     label: "Financial disruption" }
+          ]
+        },
+        {
+          id: "exclusions",
+          kind: "multi",
+          min: 0,
+          hard: true,
+          label: "Anything you would rule out entirely?",
+          hint: "Select any that apply, or none.",
+          options: [
+            { v: "tobacco",  label: "Tobacco & gambling" },
+            { v: "fossil",   label: "Fossil fuels" },
+            { v: "defence",  label: "Defence" },
+            { v: "em",       label: "Emerging markets" },
+            { v: "illiquid", label: "Anything illiquid" }
+          ]
+        }
+      ]
     }
   ]
 };
 
-/* Flat list of every axis, in order — used by the engine and result screens. */
-window.AXES = window.SCHEMA.steps.flatMap(function (s) {
+/* Steps actually in play this session. config.js may switch optional steps
+ * off (STEPS: ["profile","equities",...]) without editing the schema. */
+window.SCHEMA.activeSteps = (function () {
+  var want = window.CONFIG && window.CONFIG.STEPS;
+  var steps = window.SCHEMA.steps.filter(function (s) {
+    if (!want || want === "all") return true;
+    return want.indexOf(s.id) !== -1;
+  });
+  /* Renumber so the progress rail and "Step 3 of 5" stay honest when a
+     step is switched off. */
+  steps.forEach(function (s, i) { s.n = i + 1; });
+  return steps;
+})();
+
+/* Flat list of every active axis, in order — used by the engine and every
+ * result screen. A switched-off step contributes no axes, so it simply
+ * drops out of matching, the breakdown and the export. */
+window.AXES = window.SCHEMA.activeSteps.flatMap(function (s) {
   return s.questions.map(function (q) {
-    return { id: q.id, kind: q.kind, label: q.label, step: s.id, options: q.options };
+    return {
+      id: q.id, kind: q.kind, label: q.label, step: s.id, options: q.options,
+      max: q.max, min: q.min, hard: q.hard
+    };
   });
 });
 

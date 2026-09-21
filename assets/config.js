@@ -22,6 +22,13 @@ window.CONFIG = {
   /* How often the presenter screen refreshes, in ms. */
   POLL_MS: 3000,
 
+  /* Which steps run this session. "all" uses every step in schema.js;
+   * otherwise list the step ids you want, in order. Dropping a step also
+   * drops its questions from matching, the breakdown and the export.
+   *   Short version (the original five):
+   *   STEPS: ["profile", "equities", "fixedincome", "fx", "notes"],  */
+  STEPS: "all",
+
   /* --- who answered what ---------------------------------------------
    * "required"  guests give a name before they can start (responses are
    *             attributable in the admin export)

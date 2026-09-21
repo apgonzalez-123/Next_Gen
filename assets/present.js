@@ -11,7 +11,9 @@
  * from their old value to the new one as votes land.
  */
 (function () {
-  var slides  = Array.prototype.slice.call(document.querySelectorAll(".p-slide"));
+  var PANELS_PER_BOARD = 6;
+  var stage   = document.querySelector(".p-stage");
+  var slides  = [];
   var dots    = document.getElementById("dots");
   var current = 0;
   var last    = null;
@@ -78,10 +80,31 @@
       };
     });
 
-    /* --- breakdown boards: fixed structure, split across two slides --- */
-    var half = Math.ceil(window.AXES.length / 2);
-    var hosts = [document.getElementById("breakdownA"), document.getElementById("breakdownB")];
-    hosts.forEach(function (h) { h.innerHTML = ""; });
+    /* --- breakdown boards, generated from the schema ---
+       Six panels to a board keeps a projector-legible 3x2 whatever the
+       question count, and adding questions adds boards rather than
+       overflowing the last one. */
+    var boards = Math.ceil(window.AXES.length / PANELS_PER_BOARD);
+    var hosts = [];
+    for (var b = 0; b < boards; b++) {
+      var first = b * PANELS_PER_BOARD;
+      var axesHere = window.AXES.slice(first, first + PANELS_PER_BOARD);
+      var stepNames = axesHere.map(function (a) {
+        var st = window.SCHEMA.activeSteps.find(function (s) { return s.id === a.step; });
+        return st ? st.title : "";
+      }).filter(function (v, i, arr) { return v && arr.indexOf(v) === i; });
+
+      var sec = document.createElement("section");
+      sec.className = "p-slide";
+      sec.innerHTML =
+        '<h2 class="p-h">Answer by answer</h2>' +
+        '<p class="p-sub">' + esc(stepNames.join(" &middot; ").replace(/&amp;middot;/g, "·")) +
+        (boards > 1 ? '  <span style="opacity:.6">(' + (b + 1) + " of " + boards + ")</span>" : "") +
+        "</p>" +
+        '<div class="p-grid"></div>';
+      stage.appendChild(sec);
+      hosts.push(sec.querySelector(".p-grid"));
+    }
 
     window.AXES.forEach(function (axis, i) {
       var panel = el("div", "p-panel");
@@ -103,11 +126,24 @@
         };
       });
       panel.appendChild(bars);
-      hosts[i < half ? 0 : 1].appendChild(panel);
+      hosts[Math.floor(i / PANELS_PER_BOARD)].appendChild(panel);
       axisRows[axis.id] = { head: head, label: axis.label, bars: map };
     });
 
+    /* The deck grew — re-register slides and dots. */
+    rebuildSlides();
     built = true;
+  }
+
+  function rebuildSlides() {
+    slides = Array.prototype.slice.call(document.querySelectorAll(".p-slide"));
+    dots.innerHTML = "";
+    slides.forEach(function (_, i) {
+      var d = document.createElement("i");
+      d.addEventListener("click", function () { go(i); });
+      dots.appendChild(d);
+    });
+    go(current, true);
   }
 
   /* ---------- painting ---------- */
@@ -179,10 +215,7 @@
               return '<div><s style="background:' + x.c + '"></s>' + x.label + "<b>" + p.alloc[x.k] + "%</b></div>";
             }).join("") +
           "</div>" +
-          '<dl style="margin:22px 0 0">' +
-            '<div class="kv"><dt>Expected return</dt><dd>' + esc(p.expReturn) + "</dd></div>" +
-            '<div class="kv"><dt>Volatility</dt><dd>' + esc(p.vol) + "</dd></div>" +
-          "</dl>" +
+          riskStrip(p) +
         "</div>";
     }
     var f = document.getElementById("vFit");
@@ -191,15 +224,59 @@
     if (c) c.textContent = n;
   }
 
+  /* Headline risk numbers plus the top holdings — enough for the room to
+     see what the portfolio actually is, without a table nobody can read
+     from the back. */
+  function riskStrip(p) {
+    var r = p.risk;
+    var out = '<dl style="margin:22px 0 0">' +
+      '<div class="kv"><dt>Expected return</dt><dd>' + esc(p.expReturn) + "</dd></div>" +
+      '<div class="kv"><dt>Volatility</dt><dd>' + esc(p.vol) + "</dd></div>";
+    if (r) {
+      out += '<div class="kv"><dt>Max drawdown</dt><dd style="color:var(--neg)">' +
+             r.maxDrawdown.toFixed(1) + "%</dd></div>" +
+             '<div class="kv"><dt>Running yield</dt><dd>' + r.yield.toFixed(1) + "%</dd></div>";
+    }
+    out += "</dl>";
+
+    if (r && r.scenarios) {
+      out += '<div class="p-scen">' + r.scenarios.map(function (sc) {
+        var up = sc.pct >= 0;
+        return '<div><span class="lbl">' + esc(sc.label) + "</span>" +
+               '<span class="val ' + (up ? "up" : "down") + '">' +
+               (up ? "+" : "") + sc.pct.toFixed(1) + "%</span></div>";
+      }).join("") + "</div>";
+    }
+
+    if (p.holdings && p.holdings.length) {
+      var top = p.holdings.slice().sort(function (a, b) { return b.weight - a.weight; }).slice(0, 4);
+      out += '<div class="p-hold"><div class="p-hold-h">Largest positions</div>' +
+        top.map(function (h) {
+          return '<div class="p-hold-row"><span>' + esc(h.name) + "</span><b>" + h.weight + "%</b></div>";
+        }).join("") +
+        '<div class="p-hold-more">' + p.holdings.length + " positions in total &middot; hypothetical, for illustration</div></div>";
+    }
+    return out;
+  }
+
   function paintBreakdown(responses, roomProfile) {
     window.AXES.forEach(function (axis) {
       var panel = axisRows[axis.id];
       var dist = window.ENGINE.distribution(responses, axis.id);
       var maxPct = Math.max.apply(null, dist.bars.map(function (b) { return b.pct; }));
 
-      panel.head.innerHTML = esc(panel.label) + (axis.kind === "scale" && roomProfile[axis.id] !== null
-        ? ' <span style="color:var(--gold);font-weight:500">&middot; avg ' + roomProfile[axis.id].toFixed(1) + "</span>"
-        : "");
+      var note = "";
+      if (axis.kind === "scale" && roomProfile[axis.id] !== null) {
+        note = ' <span style="color:var(--gold);font-weight:500">&middot; avg ' +
+               roomProfile[axis.id].toFixed(1) + "</span>";
+      } else if (axis.kind === "multi") {
+        /* Bars on a multi axis sum past 100% by design — label them as a
+           share of the room so nobody on the projector reads it as a bug. */
+        var avgPicks = dist.respondents ? (dist.picks / dist.respondents) : 0;
+        note = ' <span style="color:var(--muted);font-weight:400">&middot; pick several &middot; ' +
+               avgPicks.toFixed(1) + " each</span>";
+      }
+      panel.head.innerHTML = esc(panel.label) + note;
 
       dist.bars.forEach(function (b) {
         var r = panel.bars[b.value];
@@ -214,6 +291,7 @@
   /* ---------- slides ---------- */
 
   function go(i, fromHash) {
+    if (!slides.length) { current = i; return; }
     current = (i + slides.length) % slides.length;
     slides.forEach(function (s, n) { s.classList.toggle("on", n === current); });
     Array.prototype.forEach.call(dots.children, function (d, n) {
@@ -226,12 +304,6 @@
     }
   }
 
-  slides.forEach(function (_, i) {
-    var d = document.createElement("i");
-    d.addEventListener("click", function () { go(i); });
-    dots.appendChild(d);
-  });
-
   document.addEventListener("keydown", function (e) {
     if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); go(current + 1); }
     else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); go(current - 1); }
@@ -239,7 +311,10 @@
       if (document.fullscreenElement) document.exitFullscreen();
       else document.documentElement.requestFullscreen();
     } else if (e.key === "r" || e.key === "R") { resetVotes(); }
-    else if (e.key >= "1" && e.key <= String(slides.length)) { go(parseInt(e.key, 10) - 1); }
+    else if (/^[1-9]$/.test(e.key)) {
+      var n = parseInt(e.key, 10);
+      if (n <= slides.length) go(n - 1);
+    }
   });
 
   window.addEventListener("hashchange", function () {
@@ -279,9 +354,10 @@
   document.getElementById("btnReset").addEventListener("click", resetVotes);
 
   renderQR();
+  rebuildSlides();
 
   var startAt = parseInt(location.hash.slice(1), 10);
-  go(startAt >= 1 && startAt <= slides.length ? startAt - 1 : 0, true);
+  go(startAt >= 1 ? startAt - 1 : 0, true);
 
   window.BASE.ready.then(function () {
     refresh();
