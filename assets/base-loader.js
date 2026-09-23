@@ -61,7 +61,7 @@ window.BASE = (function () {
     return problems;
   }
 
-  var ready = fetch("data/portfolios.json?v=202609231836", { cache: "no-store" })
+  var ready = fetch("data/portfolios.json?v=202609231856", { cache: "no-store" })
     .then(function (r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.json();

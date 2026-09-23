@@ -46,9 +46,11 @@
   }
 
   function renderQR() {
+    /* The address is deliberately not printed on the projector: the room
+       scans the code, and a long URL on screen only invites typos. It is
+       still logged here for whoever is driving the deck. */
     var url = guestUrl();
-    document.getElementById("joinUrl").textContent =
-      url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    console.log("[NextGen] guest URL:", url);
     new QRCode(document.getElementById("qr"), {
       text: url,
       width: 330,

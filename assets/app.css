@@ -887,3 +887,30 @@ button { font-family: inherit; color: inherit; }
   border-top: 1px solid var(--line-soft);
 }
 .stand-foot b { color: var(--accent-bright); }
+
+/* ============================================================
+   Brand mark
+   Drop the logo at assets/brand/safra-logo.svg and it appears on every
+   page. Until then the <img> removes itself and the wordmark stands
+   alone, so nothing ever shows a broken-image icon on a projector.
+   ============================================================ */
+
+.brand-mark {
+  height: 22px;
+  width: auto;
+  display: block;
+  flex: 0 0 auto;
+  /* A single-colour mark inherits the page's ink rather than fighting it.
+     Remove this line if the logo must keep its own colours. */
+  filter: brightness(0) invert(1);
+  opacity: 0.92;
+}
+.brand-sep {
+  width: 1px;
+  height: 16px;
+  background: var(--line);
+  flex: 0 0 auto;
+}
+/* The img removes itself when the file is missing, which leaves the
+   separator first in the row; hide it in that case. */
+.wordmark > .brand-sep:first-child { display: none; }
