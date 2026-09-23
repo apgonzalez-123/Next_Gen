@@ -83,12 +83,8 @@ window.SCHEMA = {
           kind: "choice",
           label: "What country of risk do you prefer?",
           options: [
-            { v: "us",     label: "United States" },
-            { v: "g7",     label: "G7",              sub: "Broad developed" },
-            { v: "europe", label: "Europe" },
-            { v: "em",     label: "Emerging markets" },
-            { v: "latam",  label: "Brazil & LatAm" },
-            { v: "asia",   label: "Asia ex-Japan" }
+            { v: "g7", label: "G7", sub: "Developed markets" },
+            { v: "em", label: "EM", sub: "Emerging markets" }
           ]
         }
       ]

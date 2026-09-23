@@ -88,7 +88,7 @@ window.PORTFOLIOS = [
     target: {
       riskProfile: 0, marketView: 0, horizon: 2,
       leverage: { v: "no" },
-      country: { v: "us", also: ["g7"] },
+      country: { v: "g7" },
       sector: { v: "consumer", also: ["healthcare"] },
       usd: 75,
       capitalIncome: { v: "income" },
@@ -183,7 +183,7 @@ window.PORTFOLIOS = [
     target: {
       riskProfile: 0, marketView: 1, horizon: 5,
       leverage: { v: "no" },
-      country: { v: "g7", also: ["us"] },
+      country: { v: "g7" },
       sector: { v: "financials", also: ["consumer", "industrials"] },
       usd: 60,
       capitalIncome: { v: "income" },
@@ -271,7 +271,7 @@ window.PORTFOLIOS = [
     target: {
       riskProfile: 1, marketView: 1, horizon: 10,
       leverage: { v: "no" },
-      country: { v: "g7", also: ["us", "europe"] },
+      country: { v: "g7" },
       sector: { v: "industrials", also: ["tech", "healthcare"] },
       usd: 55,
       capitalIncome: { v: "capital", also: ["income"] },
@@ -366,7 +366,7 @@ window.PORTFOLIOS = [
     target: {
       riskProfile: 2, marketView: 2, horizon: 20,
       leverage: { v: "no", also: ["yes"] },
-      country: { v: "us", also: ["asia", "g7"] },
+      country: { v: "g7", also: ["em"] },
       sector: { v: "tech", also: ["healthcare", "industrials"] },
       usd: 70,
       capitalIncome: { v: "capital" },
@@ -461,7 +461,7 @@ window.PORTFOLIOS = [
     target: {
       riskProfile: 1, marketView: 1, horizon: 7,
       leverage: { v: "no", also: ["yes"] },
-      country: { v: "europe", also: ["g7"] },
+      country: { v: "g7" },
       sector: { v: "financials", also: ["energy"] },
       usd: 45,
       capitalIncome: { v: "income" },
@@ -556,7 +556,7 @@ window.PORTFOLIOS = [
     target: {
       riskProfile: 2, marketView: 2, horizon: 8,
       leverage: { v: "no", also: ["yes"] },
-      country: { v: "em", also: ["latam", "asia"] },
+      country: { v: "em" },
       sector: { v: "energy", also: ["financials", "industrials"] },
       usd: 30,
       capitalIncome: { v: "income" },
@@ -651,7 +651,7 @@ window.PORTFOLIOS = [
     target: {
       riskProfile: 2, marketView: 2, horizon: 25,
       leverage: { v: "yes", also: ["no"] },
-      country: { v: "us", also: ["asia"] },
+      country: { v: "g7", also: ["em"] },
       sector: { v: "tech", also: ["healthcare"] },
       usd: 80,
       capitalIncome: { v: "capital" },
@@ -739,7 +739,7 @@ window.PORTFOLIOS = [
     target: {
       riskProfile: 1, marketView: 1, horizon: 4,
       leverage: { v: "yes", also: ["no"] },
-      country: { v: "us", also: ["europe"] },
+      country: { v: "g7" },
       sector: { v: "financials", also: ["tech", "consumer"] },
       usd: 70,
       capitalIncome: { v: "income" },
@@ -1296,7 +1296,7 @@ window.ENGINE = (function () {
       { item: products.fixedIncome.hy,   w: 0.55 * hy },
       { item: products.fixedIncome.sub,  w: 0.20 * hy }
     ];
-    if (topKeys("country")[0] === "em" || topKeys("country")[0] === "latam") {
+    if (topKeys("country")[0] === "em") {
       fiParts.push({ item: products.fixedIncome.em, w: 0.25 });
     }
     var fiLines = spread(alloc.fixedIncome, fiParts.filter(function (p) { return p.item && p.w > 0; }));
@@ -1329,9 +1329,11 @@ window.ENGINE = (function () {
       { item: products.fx.usd,   w: Math.max(0.05, usd) },
       { item: products.fx.local, w: Math.max(0.05, 1 - usd) }
     ];
-    var ctry = topKeys("country")[0];
-    if (ctry === "europe") fxParts.push({ item: products.fx.eur, w: 0.35 });
-    if (ctry === "latam")  fxParts.push({ item: products.fx.brl, w: 0.35 });
+    /* An EM-leaning room carries real local-currency risk, so the sleeve
+       is split rather than sitting entirely in dollars. */
+    if (topKeys("country")[0] === "em") {
+      fxParts.push({ item: products.fx.brl, w: 0.35 });
+    }
     buckets.push({
       key: "fx", label: "FX", weight: alloc.fx,
       lines: spread(alloc.fx, fxParts.filter(function (p) { return p.item; }))

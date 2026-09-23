@@ -1,23 +1,17 @@
 {
   "$schema": "See README, replace this file with your own portfolio base.",
-  "version": 3,
+  "version": 4,
   "weights": {
-    "horizon": 1.2,
-    "maxLoss": 1.6,
+    "riskProfile": 1.8,
+    "marketView": 1,
+    "horizon": 1.3,
+    "leverage": 0.9,
+    "country": 0.9,
     "sector": 0.8,
-    "region": 0.8,
-    "options": 1,
-    "credit": 1.2,
+    "usd": 0.8,
+    "capitalIncome": 1.2,
     "duration": 1,
-    "rank": 1,
-    "fxLong": 0.6,
-    "fxConcern": 0.5,
-    "snReturn": 1.2,
-    "snProtection": 1.5,
-    "maxPosition": 0.9,
-    "liquidity": 1.1,
-    "themes": 0.8,
-    "exclusions": 1
+    "credit": 1.2
   },
   "portfolios": [
     {
@@ -51,7 +45,7 @@
           "ticker": "IG 1-3Y",
           "cls": "fixedIncome",
           "weight": 20,
-          "detail": "A- avg, senior secured"
+          "detail": "A– avg · senior secured"
         },
         {
           "name": "Covered bond basket (EUR)",
@@ -107,54 +101,28 @@
         ]
       },
       "target": {
-        "horizon": 0,
-        "maxLoss": 0,
+        "riskProfile": 0,
+        "marketView": 0,
+        "horizon": 2,
+        "leverage": {
+          "v": "no"
+        },
+        "country": {
+          "v": "g7"
+        },
         "sector": {
           "v": "consumer",
           "also": [
             "healthcare"
           ]
         },
-        "region": {
-          "v": "global",
-          "also": [
-            "us"
-          ]
+        "usd": 75,
+        "capitalIncome": {
+          "v": "income"
         },
-        "options": {
-          "v": "protection",
-          "also": [
-            "none"
-          ]
-        },
-        "credit": 0,
-        "duration": 0,
-        "rank": 0,
-        "fxLong": {
-          "v": "usd",
-          "also": [
-            "chf"
-          ]
-        },
-        "fxConcern": {
-          "v": "brl",
-          "also": [
-            "jpy"
-          ]
-        },
-        "snReturn": 0,
-        "snProtection": 0,
-        "maxPosition": 0,
-        "liquidity": 0,
-        "themes": {
-          "v": "infra",
-          "also": [
-            "health"
-          ]
-        },
-        "exclusions": {
-          "conflicts": [],
-          "screens": []
+        "duration": 2,
+        "credit": {
+          "v": "ig"
         }
       }
     },
@@ -252,8 +220,15 @@
         ]
       },
       "target": {
-        "horizon": 1,
-        "maxLoss": 1,
+        "riskProfile": 0,
+        "marketView": 1,
+        "horizon": 5,
+        "leverage": {
+          "v": "no"
+        },
+        "country": {
+          "v": "g7"
+        },
         "sector": {
           "v": "financials",
           "also": [
@@ -261,49 +236,13 @@
             "industrials"
           ]
         },
-        "region": {
-          "v": "global",
-          "also": [
-            "us"
-          ]
+        "usd": 60,
+        "capitalIncome": {
+          "v": "income"
         },
-        "options": {
-          "v": "income",
-          "also": [
-            "none"
-          ]
-        },
-        "credit": 1,
-        "duration": 1,
-        "rank": 1,
-        "fxLong": {
-          "v": "usd",
-          "also": [
-            "eur"
-          ]
-        },
-        "fxConcern": {
-          "v": "jpy",
-          "also": [
-            "gbp"
-          ]
-        },
-        "snReturn": 1,
-        "snProtection": 1,
-        "maxPosition": 1,
-        "liquidity": 1,
-        "themes": {
-          "v": "consumer",
-          "also": [
-            "infra",
-            "fintech"
-          ]
-        },
-        "exclusions": {
-          "conflicts": [],
-          "screens": [
-            "tobacco"
-          ]
+        "duration": 5,
+        "credit": {
+          "v": "ig"
         }
       }
     },
@@ -394,8 +333,15 @@
         ]
       },
       "target": {
-        "horizon": 2,
-        "maxLoss": 1,
+        "riskProfile": 1,
+        "marketView": 1,
+        "horizon": 10,
+        "leverage": {
+          "v": "no"
+        },
+        "country": {
+          "v": "g7"
+        },
         "sector": {
           "v": "industrials",
           "also": [
@@ -403,52 +349,16 @@
             "healthcare"
           ]
         },
-        "region": {
-          "v": "global",
-          "also": [
-            "us",
-            "europe"
-          ]
-        },
-        "options": {
-          "v": "none",
+        "usd": 55,
+        "capitalIncome": {
+          "v": "capital",
           "also": [
             "income"
           ]
         },
-        "credit": 1,
-        "duration": 2,
-        "rank": 1,
-        "fxLong": {
-          "v": "usd",
-          "also": [
-            "eur"
-          ]
-        },
-        "fxConcern": {
-          "v": "gbp",
-          "also": [
-            "brl"
-          ]
-        },
-        "snReturn": 1,
-        "snProtection": 1,
-        "maxPosition": 1,
-        "liquidity": 1,
-        "themes": {
-          "v": "infra",
-          "also": [
-            "ai",
-            "health"
-          ]
-        },
-        "exclusions": {
-          "conflicts": [],
-          "screens": [
-            "fossil",
-            "tobacco",
-            "defence"
-          ]
+        "duration": 8,
+        "credit": {
+          "v": "ig"
         }
       }
     },
@@ -546,8 +456,21 @@
         ]
       },
       "target": {
-        "horizon": 3,
-        "maxLoss": 2,
+        "riskProfile": 2,
+        "marketView": 2,
+        "horizon": 20,
+        "leverage": {
+          "v": "no",
+          "also": [
+            "yes"
+          ]
+        },
+        "country": {
+          "v": "g7",
+          "also": [
+            "em"
+          ]
+        },
         "sector": {
           "v": "tech",
           "also": [
@@ -555,50 +478,15 @@
             "industrials"
           ]
         },
-        "region": {
-          "v": "us",
-          "also": [
-            "asia",
-            "global"
-          ]
+        "usd": 70,
+        "capitalIncome": {
+          "v": "capital"
         },
-        "options": {
-          "v": "leverage",
+        "duration": 7,
+        "credit": {
+          "v": "ig",
           "also": [
-            "none"
-          ]
-        },
-        "credit": 2,
-        "duration": 2,
-        "rank": 1,
-        "fxLong": {
-          "v": "usd",
-          "also": [
-            "jpy"
-          ]
-        },
-        "fxConcern": {
-          "v": "eur",
-          "also": [
-            "gbp"
-          ]
-        },
-        "snReturn": 2,
-        "snProtection": 2,
-        "maxPosition": 2,
-        "liquidity": 1,
-        "themes": {
-          "v": "ai",
-          "also": [
-            "health",
-            "fintech"
-          ]
-        },
-        "exclusions": {
-          "conflicts": [],
-          "screens": [
-            "fossil",
-            "defence"
+            "hy"
           ]
         }
       }
@@ -697,59 +585,31 @@
         ]
       },
       "target": {
-        "horizon": 2,
-        "maxLoss": 2,
+        "riskProfile": 1,
+        "marketView": 1,
+        "horizon": 7,
+        "leverage": {
+          "v": "no",
+          "also": [
+            "yes"
+          ]
+        },
+        "country": {
+          "v": "g7"
+        },
         "sector": {
           "v": "financials",
           "also": [
             "energy"
           ]
         },
-        "region": {
-          "v": "europe",
-          "also": [
-            "global",
-            "us"
-          ]
+        "usd": 45,
+        "capitalIncome": {
+          "v": "income"
         },
-        "options": {
-          "v": "income",
-          "also": [
-            "none"
-          ]
-        },
-        "credit": 3,
-        "duration": 2,
-        "rank": 2,
-        "fxLong": {
-          "v": "eur",
-          "also": [
-            "usd"
-          ]
-        },
-        "fxConcern": {
-          "v": "jpy",
-          "also": [
-            "chf"
-          ]
-        },
-        "snReturn": 2,
-        "snProtection": 2,
-        "maxPosition": 1,
-        "liquidity": 2,
-        "themes": {
-          "v": "fintech",
-          "also": [
-            "energy",
-            "infra"
-          ]
-        },
-        "exclusions": {
-          "conflicts": [],
-          "screens": [
-            "fossil",
-            "tobacco"
-          ]
+        "duration": 6,
+        "credit": {
+          "v": "hy"
         }
       }
     },
@@ -847,8 +707,18 @@
         ]
       },
       "target": {
-        "horizon": 2,
-        "maxLoss": 3,
+        "riskProfile": 2,
+        "marketView": 2,
+        "horizon": 8,
+        "leverage": {
+          "v": "no",
+          "also": [
+            "yes"
+          ]
+        },
+        "country": {
+          "v": "em"
+        },
         "sector": {
           "v": "energy",
           "also": [
@@ -856,51 +726,13 @@
             "industrials"
           ]
         },
-        "region": {
-          "v": "latam",
-          "also": [
-            "asia"
-          ]
+        "usd": 30,
+        "capitalIncome": {
+          "v": "income"
         },
-        "options": {
-          "v": "none",
-          "also": [
-            "income"
-          ]
-        },
-        "credit": 3,
-        "duration": 1,
-        "rank": 2,
-        "fxLong": {
-          "v": "brl",
-          "also": [
-            "usd"
-          ]
-        },
-        "fxConcern": {
-          "v": "eur",
-          "also": [
-            "jpy"
-          ]
-        },
-        "snReturn": 3,
-        "snProtection": 2,
-        "maxPosition": 2,
-        "liquidity": 2,
-        "themes": {
-          "v": "energy",
-          "also": [
-            "infra",
-            "consumer"
-          ]
-        },
-        "exclusions": {
-          "conflicts": [
-            "em"
-          ],
-          "screens": [
-            "fossil"
-          ]
+        "duration": 4,
+        "credit": {
+          "v": "hy"
         }
       }
     },
@@ -998,56 +830,36 @@
         ]
       },
       "target": {
-        "horizon": 3,
-        "maxLoss": 3,
+        "riskProfile": 2,
+        "marketView": 2,
+        "horizon": 25,
+        "leverage": {
+          "v": "yes",
+          "also": [
+            "no"
+          ]
+        },
+        "country": {
+          "v": "g7",
+          "also": [
+            "em"
+          ]
+        },
         "sector": {
           "v": "tech",
           "also": [
             "healthcare"
           ]
         },
-        "region": {
-          "v": "us",
-          "also": [
-            "asia"
-          ]
+        "usd": 80,
+        "capitalIncome": {
+          "v": "capital"
         },
-        "options": {
-          "v": "leverage",
-          "also": [
-            "protection"
-          ]
-        },
-        "credit": 2,
         "duration": 3,
-        "rank": 3,
-        "fxLong": {
-          "v": "usd",
+        "credit": {
+          "v": "hy",
           "also": [
-            "jpy"
-          ]
-        },
-        "fxConcern": {
-          "v": "chf",
-          "also": [
-            "eur"
-          ]
-        },
-        "snReturn": 3,
-        "snProtection": 3,
-        "maxPosition": 3,
-        "liquidity": 2,
-        "themes": {
-          "v": "ai",
-          "also": [
-            "health",
-            "fintech"
-          ]
-        },
-        "exclusions": {
-          "conflicts": [],
-          "screens": [
-            "defence"
+            "ig"
           ]
         }
       }
@@ -1134,13 +946,23 @@
           {
             "label": "Bear",
             "pct": -19,
-            "driver": "Barriers breached, full equity downside and coupons stop"
+            "driver": "Barriers breached — full equity downside, coupons stop"
           }
         ]
       },
       "target": {
-        "horizon": 1,
-        "maxLoss": 2,
+        "riskProfile": 1,
+        "marketView": 1,
+        "horizon": 4,
+        "leverage": {
+          "v": "yes",
+          "also": [
+            "no"
+          ]
+        },
+        "country": {
+          "v": "g7"
+        },
         "sector": {
           "v": "financials",
           "also": [
@@ -1148,49 +970,13 @@
             "consumer"
           ]
         },
-        "region": {
-          "v": "us",
-          "also": [
-            "europe"
-          ]
+        "usd": 70,
+        "capitalIncome": {
+          "v": "income"
         },
-        "options": {
-          "v": "income",
-          "also": [
-            "protection"
-          ]
-        },
-        "credit": 2,
-        "duration": 1,
-        "rank": 2,
-        "fxLong": {
-          "v": "usd",
-          "also": [
-            "eur"
-          ]
-        },
-        "fxConcern": {
-          "v": "brl",
-          "also": [
-            "gbp"
-          ]
-        },
-        "snReturn": 2,
-        "snProtection": 2,
-        "maxPosition": 2,
-        "liquidity": 3,
-        "themes": {
-          "v": "fintech",
-          "also": [
-            "ai",
-            "consumer"
-          ]
-        },
-        "exclusions": {
-          "conflicts": [
-            "illiquid"
-          ],
-          "screens": []
+        "duration": 3,
+        "credit": {
+          "v": "ig"
         }
       }
     }
