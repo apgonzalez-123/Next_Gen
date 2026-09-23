@@ -11,7 +11,6 @@
  * from their old value to the new one as votes land.
  */
 (function () {
-  var PANELS_PER_BOARD = 6;
   var stage   = document.querySelector(".p-stage");
   var slides  = [];
   var dots    = document.getElementById("dots");
@@ -21,7 +20,6 @@
   var built = false;      /* skeletons built? */
   var buildFailed = false;
   var splitRows = {};     /* portfolio id -> { root, fill, val, name } */
-  var axisRows  = {};     /* axis id -> { head, bars: { value -> {row, fill, val} } } */
   var lastVerdictId = null;
 
   function esc(s) {
@@ -83,68 +81,10 @@
       };
     });
 
-    /* --- breakdown boards, generated from the schema ---
-       Six panels to a board keeps a projector-legible 3x2 whatever the
-       question count, and adding questions adds boards rather than
-       overflowing the last one. */
-    var boards = Math.ceil(window.AXES.length / PANELS_PER_BOARD);
-    var hosts = [];
-    for (var b = 0; b < boards; b++) {
-      var first = b * PANELS_PER_BOARD;
-      var axesHere = window.AXES.slice(first, first + PANELS_PER_BOARD);
-      var stepNames = axesHere.map(function (a) {
-        var st = window.SCHEMA.activeSteps.find(function (s) { return s.id === a.step; });
-        return st ? st.title : "";
-      }).filter(function (v, i, arr) { return v && arr.indexOf(v) === i; });
-
-      var sec = document.createElement("section");
-      sec.className = "p-slide";
-      sec.innerHTML =
-        '<h2 class="p-h">Answer by answer</h2>' +
-        '<p class="p-sub">' + esc(stepNames.join(" &middot; ").replace(/&amp;middot;/g, "·")) +
-        (boards > 1 ? '  <span style="opacity:.6">(' + (b + 1) + " of " + boards + ")</span>" : "") +
-        "</p>" +
-        '<div class="p-grid"></div>';
-      stage.appendChild(sec);
-      hosts.push(sec.querySelector(".p-grid"));
-    }
-
-    window.AXES.forEach(function (axis, i) {
-      var panel = el("div", "p-panel");
-      var head = el("h4", "", esc(axis.label));
-      panel.appendChild(head);
-      var bars = el("div", "bars");
-      var map = {};
-      /* A range axis has no option list: its rows are the reporting bands,
-         keyed by the same band value aggDistribution reports. */
-      var rows = axis.kind === "range"
-        ? window.ENGINE.rangeBuckets(axis).map(function (b) { return { v: b.lo, label: b.label }; })
-        : axis.options.map(function (o) { return { v: o.v, label: o.label }; });
-
-      rows.forEach(function (o) {
-        var row = el("div", "bar-row");
-        row.innerHTML =
-          '<div class="bar-top"><span class="bar-name">' + esc(o.label) + "</span>" +
-          '<span class="bar-val">0%</span></div>' +
-          '<div class="bar-track"><i class="bar-fill" style="width:0"></i></div>';
-        bars.appendChild(row);
-        map[o.v] = {
-          row:  row,
-          fill: row.querySelector(".bar-fill"),
-          val:  row.querySelector(".bar-val")
-        };
-      });
-      panel.appendChild(bars);
-      hosts[Math.floor(i / PANELS_PER_BOARD)].appendChild(panel);
-      axisRows[axis.id] = { head: head, label: axis.label, bars: map };
-    });
-
-    /* The deck grew — re-register slides and dots. */
-    rebuildSlides();
     built = true;
   }
 
-  function rebuildSlides() {
+  function registerSlides() {
     slides = Array.prototype.slice.call(document.querySelectorAll(".p-slide"));
     dots.innerHTML = "";
     slides.forEach(function (_, i) {
@@ -152,7 +92,6 @@
       d.addEventListener("click", function () { go(i); });
       dots.appendChild(d);
     });
-    go(current, true);
   }
 
   /* ---------- painting ---------- */
@@ -181,7 +120,7 @@
     var roomProfile = window.ENGINE.aggProfile(agg);
     paintSplit(window.ENGINE.aggSplit(agg));
     paintVerdict(window.ENGINE.rank(roomProfile)[0], agg.count);
-    paintBreakdown(agg, roomProfile);
+    paintBook(agg);
   }
 
   function paintSplit(split) {
@@ -275,33 +214,46 @@
     return out;
   }
 
-  function paintBreakdown(agg, roomProfile) {
-    window.AXES.forEach(function (axis) {
-      var panel = axisRows[axis.id];
-      var dist = window.ENGINE.aggDistribution(agg, axis.id);
-      var maxPct = Math.max.apply(null, dist.bars.map(function (b) { return b.pct; }));
+  var BUCKET_COLOUR = {
+    equities:    "var(--series-equities)",
+    fixedIncome: "var(--series-fixedincome)",
+    notes:       "var(--series-notes)",
+    fx:          "var(--series-cash)"
+  };
 
-      var note = "";
-      if (axis.kind === "scale" && roomProfile[axis.id] !== null) {
-        note = ' <span style="color:var(--accent);font-weight:500">&middot; avg ' +
-               roomProfile[axis.id].toFixed(1) + "</span>";
-      } else if (axis.kind === "multi") {
-        /* Bars on a multi axis sum past 100% by design — label them as a
-           share of the room so nobody on the projector reads it as a bug. */
-        var avgPicks = dist.respondents ? (dist.picks / dist.respondents) : 0;
-        note = ' <span style="color:var(--muted);font-weight:400">' +
-               avgPicks.toFixed(1) + " picks each</span>";
-      }
-      panel.head.innerHTML = esc(panel.label) + note;
+  /* The room's book, one column per bucket. Repainted wholesale rather
+     than diffed: it changes shape as answers land, since a sleeve can
+     appear or drop out, and at four columns a repaint is cheap. */
+  function paintBook(agg) {
+    var host = document.getElementById("book");
+    if (!window.PRODUCTS) {
+      host.innerHTML = '<p class="p-book-empty">Product shelf not loaded.</p>';
+      return;
+    }
+    var sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS);
+    if (!sim) { host.innerHTML = ""; return; }
 
-      dist.bars.forEach(function (b) {
-        var r = panel.bars[b.value];
-        if (!r) return;
-        r.fill.style.width = b.pct + "%";
-        r.val.textContent = b.pct + "%";
-        r.row.classList.toggle("lead", b.pct === maxPct && b.pct > 0);
-      });
-    });
+    host.innerHTML = sim.buckets.map(function (b) {
+      var colour = BUCKET_COLOUR[b.key];
+      var widest = b.lines.reduce(function (m, l) { return Math.max(m, l.weight); }, 0) || 1;
+
+      var lines = b.lines.length
+        ? b.lines.map(function (l) {
+            return '<div class="p-pos">' +
+              '<div class="p-pos-top"><span class="p-pos-name">' + esc(l.item.name) + "</span>" +
+              '<span class="p-pos-w">' + l.weight + "%</span></div>" +
+              '<div class="p-pos-bar"><i style="width:' +
+                Math.round((l.weight / widest) * 100) + "%;background:" + colour + '"></i></div>' +
+              "</div>";
+          }).join("")
+        : '<p class="p-book-empty">Nothing here.</p>';
+
+      return '<div class="p-bucket">' +
+        '<div class="p-bucket-top"><s style="background:' + colour + '"></s>' +
+        "<h3>" + esc(b.label) + "</h3></div>" +
+        '<div class="p-bucket-w">' + b.weight + "%</div>" +
+        lines + "</div>";
+    }).join("");
   }
 
   /* ---------- slides ---------- */
@@ -376,7 +328,7 @@
   document.getElementById("btnReset").addEventListener("click", resetVotes);
 
   renderQR();
-  rebuildSlides();
+  registerSlides();
 
   var startAt = parseInt(location.hash.slice(1), 10);
   go(startAt >= 1 ? startAt - 1 : 0, true);

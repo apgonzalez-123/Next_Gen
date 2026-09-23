@@ -133,31 +133,66 @@ body.present {
 }
 .p-fit span { font-size: 15px; color: var(--muted); }
 
-/* --- slide 4: breakdown grid --- */
-.p-grid {
+/* --- slide 4: the room's book ---
+   Four columns, sized so the whole book reads from the back of a room
+   without scrolling. The bucket weight is the headline; each position
+   carries a bar scaled within its own bucket. */
+.p-book {
   flex: 1 1 auto;
   min-height: 0;
-  overflow-y: auto;
   display: grid;
-  /* Six panels per board -> a balanced 3x2 on a projector. */
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
   align-content: start;
-  padding-right: 6px;
+  overflow: hidden;
 }
-.p-panel {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 20px;
+
+.p-bucket { min-width: 0; display: flex; flex-direction: column; }
+.p-bucket-top {
+  display: flex; align-items: center; gap: 9px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
 }
-.p-panel h4 {
-  margin: 0 0 16px;
-  font-size: 13px;
+.p-bucket-top s { width: 10px; height: 10px; border-radius: var(--r-xs); text-decoration: none; flex: 0 0 auto; }
+.p-bucket-top h3 {
+  font-size: clamp(12px, 1.1vw, 16px);
   font-weight: 550;
-  line-height: 1.4;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--text-2);
 }
+.p-bucket-w {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(40px, 4.4vw, 76px);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--accent-bright);
+  font-variant-numeric: tabular-nums;
+  margin: clamp(18px, 2.4vh, 30px) 0 clamp(20px, 3vh, 36px);
+}
+
+.p-pos { margin-bottom: clamp(18px, 2.6vh, 32px); }
+.p-pos-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+.p-pos-name {
+  font-size: clamp(13px, 1.15vw, 19px);
+  line-height: 1.3;
+  color: var(--text-2);
+  min-width: 0;
+}
+.p-pos-w {
+  font-size: clamp(13px, 1.15vw, 19px);
+  color: var(--accent-bright);
+  font-variant-numeric: tabular-nums;
+  flex: 0 0 auto;
+}
+.p-pos-bar { height: 5px; border-radius: var(--r-xs); background: var(--line-soft); overflow: hidden; }
+.p-pos-bar i {
+  display: block; height: 100%; border-radius: var(--r-xs);
+  transition: width 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.p-book-empty { font-size: 14px; color: var(--muted); }
 
 /* --- footer / controls --- */
 .p-foot {
@@ -211,10 +246,10 @@ body.present {
 }
 
 @media (max-width: 1240px) {
-  .p-grid { grid-template-columns: repeat(2, 1fr); }
+  .p-book { grid-template-columns: repeat(2, 1fr); gap: 22px; }
 }
 @media (max-width: 1000px) {
-  .p-grid { grid-template-columns: 1fr; }
+  .p-book { grid-template-columns: repeat(2, 1fr); }
   .p-join, .p-verdict { grid-template-columns: 1fr; gap: 28px; }
   .p-bar { grid-template-columns: 150px 1fr 88px; gap: 14px; }
   .p-top, .p-stage, .p-foot { padding-left: 22px; padding-right: 22px; }
