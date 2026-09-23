@@ -1,8 +1,14 @@
 # Brand mark
 
-Drop the logo here as:
+The current mark is:
 
-    assets/brand/safra-logo.svg
+    assets/brand/safra-logo.png
+
+Sourced from a logo directory, trimmed of its transparent margin and
+resized to 552x168 (about 6x its largest on-screen size, so it stays crisp
+on a projector). Replace it with the approved asset from Safra's own brand
+library when you have it. SVG is preferred if available: update the `src`
+in index.html, present.html and admin.html.
 
 It then appears in the header of the guest flow, the presenter screen and
 the admin board. Nothing else needs changing.
