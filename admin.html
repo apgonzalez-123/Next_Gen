@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NextGen Responses</title>
 <meta name="robots" content="noindex">
-<link rel="preload" href="assets/fonts/geist-400-latin.woff2?v=202609231901" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/geist-600-latin.woff2?v=202609231901" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/app.css?v=202609231901">
-<link rel="stylesheet" href="assets/admin.css?v=202609231901">
+<link rel="preload" href="assets/fonts/geist-400-latin.woff2?v=202609231908" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist-600-latin.woff2?v=202609231908" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/app.css?v=202609231908">
+<link rel="stylesheet" href="assets/admin.css?v=202609231908">
 </head>
 <body class="admin">
 
 <header class="a-top">
-  <div class="wordmark"><img class="brand-mark" src="assets/brand/safra-logo.png?v=202609231901" alt="Safra" onerror="this.remove()"><span class="brand-sep" aria-hidden="true"></span><b>NextGen</b> <span>Responses</span></div>
+  <div class="wordmark"><img class="brand-mark" src="assets/brand/safra-logo.png?v=202609231908" alt="Safra" onerror="this.remove()"><span class="brand-sep" aria-hidden="true"></span><b>NextGen</b> <span>Responses</span></div>
   <div class="a-tools">
     <span id="srcBadge" class="p-badge"></span>
     <span class="a-stat"><b id="nCount">0</b> responses</span>
@@ -62,11 +62,20 @@
     </div>
     <div class="alloc-bar" id="allocBar"></div>
     <div class="legend" id="allocLegend"></div>
-    <p class="a-alloc-note">
-      Indicative, derived from the room&rsquo;s own answers. Risk appetite and horizon set the
-      equity share, an income mandate pulls out of it, leverage is expressed through notes, and a
-      strong dollar view either way justifies an FX sleeve. Replace with the real construction
-      rules once the portfolio shelf is built.
+  </section>
+
+  <section class="a-sim" id="simPanel">
+    <div class="a-sim-head">
+      <h2>Portfolio simulation</h2>
+      <p>What the room&rsquo;s answers build, instrument by instrument.</p>
+    </div>
+    <div class="a-sim-grid" id="simGrid"></div>
+    <p class="a-sim-note">
+      Indicative. Risk appetite and horizon set the equity share, an income mandate pulls out of it,
+      leverage is expressed through notes, and a dollar view away from neutral funds an FX sleeve.
+      Within each bucket the room&rsquo;s own answers pick the instruments: sector votes weight the
+      equity sleeves, the IG and HY split weights credit, and the duration answer sets the sovereign
+      ladder. The shelf lives in <b>data/products.json</b>; replace it with the real instruments.
     </p>
   </section>
 
@@ -79,11 +88,11 @@
   </div>
 </main>
 
-<script src="assets/config.js?v=202609231901"></script>
-<script src="assets/schema.js?v=202609231901"></script>
-<script src="assets/portfolios.js?v=202609231901"></script>
-<script src="assets/base-loader.js?v=202609231901"></script>
-<script src="assets/store.js?v=202609231901"></script>
-<script src="assets/admin.js?v=202609231901"></script>
+<script src="assets/config.js?v=202609231908"></script>
+<script src="assets/schema.js?v=202609231908"></script>
+<script src="assets/portfolios.js?v=202609231908"></script>
+<script src="assets/base-loader.js?v=202609231908"></script>
+<script src="assets/store.js?v=202609231908"></script>
+<script src="assets/admin.js?v=202609231908"></script>
 </body>
 </html>

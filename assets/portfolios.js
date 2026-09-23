@@ -1216,10 +1216,135 @@ window.ENGINE = (function () {
     return out;
   }
 
+  /* ---- the room's simulated book -------------------------------------
+   *
+   * Takes the allocation above and fills each bucket with actual products,
+   * weighted by what the room asked for: sector votes drive the equity
+   * sleeves, the IG/HY split and duration drive fixed income, leverage and
+   * risk appetite drive which notes appear, and the dollar share drives FX.
+   *
+   * The shelf itself lives in data/products.json so it can be replaced
+   * without touching this logic. Weights inside a bucket always sum to
+   * that bucket's allocation.
+   */
+  function roomPortfolio(agg, products) {
+    if (!products) return null;
+    var alloc = roomAllocation(agg);
+
+    function share(id, value) {
+      var a = agg.axes[id];
+      if (!a || !a.respondents) return 0;
+      return (a.counts[value] || 0) / a.respondents;
+    }
+    function avg(id, fallback) {
+      var a = agg.axes[id];
+      return a && a.n ? a.sum / a.n : fallback;
+    }
+    function topKeys(id) {
+      var a = agg.axes[id];
+      if (!a) return [];
+      return Object.keys(a.counts).sort(function (x, y) {
+        return a.counts[y] - a.counts[x] || x.localeCompare(y);
+      });
+    }
+
+    /* Spread a bucket's weight across picks in proportion, rounding so the
+       parts still add up to the whole. */
+    function spread(total, parts) {
+      var sum = parts.reduce(function (t, p) { return t + p.w; }, 0);
+      if (sum <= 0) return [];
+      var out = parts.map(function (p) {
+        return { item: p.item, weight: (p.w / sum) * total };
+      });
+      out.forEach(function (o) { o.weight = Math.round(o.weight * 10) / 10; });
+      var drift = Math.round((total - out.reduce(function (t, o) { return t + o.weight; }, 0)) * 10) / 10;
+      if (drift && out.length) out[0].weight = Math.round((out[0].weight + drift) * 10) / 10;
+      return out.filter(function (o) { return o.weight > 0; });
+    }
+
+    var buckets = [];
+
+    /* --- equities: the room's sector votes, plus a regional core ------- */
+    var eqLines = [];
+    var secAxis = agg.axes.sector;
+    if (secAxis && secAxis.respondents) {
+      var parts = Object.keys(secAxis.counts).map(function (k) {
+        return { item: products.equities.sectors[k], w: secAxis.counts[k] };
+      }).filter(function (p) { return p.item; });
+
+      /* The most-voted country of risk carries a core position, so the
+         book is not purely a pile of sector bets. */
+      var region = topKeys("country")[0];
+      var regionItem = region && products.equities.regions[region];
+      var coreShare = 0.4;
+      if (regionItem) {
+        eqLines = eqLines.concat(spread(alloc.equities * coreShare, [{ item: regionItem, w: 1 }]));
+        eqLines = eqLines.concat(spread(alloc.equities * (1 - coreShare), parts));
+      } else {
+        eqLines = spread(alloc.equities, parts);
+      }
+    }
+    buckets.push({ key: "equities", label: "Equities", weight: alloc.equities, lines: eqLines });
+
+    /* --- fixed income: credit quality split, duration on the sovereign - */
+    var hy = share("credit", "hy");
+    var ig = share("credit", "ig");
+    var dur = avg("duration", 5);
+    var fiParts = [
+      { item: products.fixedIncome.govt, w: 0.30 },
+      { item: products.fixedIncome.ig,   w: 0.55 * (ig || 0.5) + 0.15 },
+      { item: products.fixedIncome.hy,   w: 0.55 * hy },
+      { item: products.fixedIncome.sub,  w: 0.20 * hy }
+    ];
+    if (topKeys("country")[0] === "em" || topKeys("country")[0] === "latam") {
+      fiParts.push({ item: products.fixedIncome.em, w: 0.25 });
+    }
+    var fiLines = spread(alloc.fixedIncome, fiParts.filter(function (p) { return p.item && p.w > 0; }));
+    /* The sovereign line carries the room's duration, so say what it is. */
+    fiLines.forEach(function (l) {
+      if (l.item === products.fixedIncome.govt) {
+        l.note = Math.round(dur) + "y duration";
+      }
+    });
+    buckets.push({ key: "fixedIncome", label: "Fixed income", weight: alloc.fixedIncome, lines: fiLines });
+
+    /* --- notes: protection at the cautious end, gearing at the other --- */
+    var risk = avg("riskProfile", 1) / 2;          /* 0..1 */
+    var levered = share("leverage", "yes");
+    var noteParts = [
+      { item: products.notes.protected,     w: Math.max(0, 1 - risk * 1.6) },
+      { item: products.notes.buffered,      w: 0.6 },
+      { item: products.notes.autocall,      w: 0.4 + risk * 0.6 },
+      { item: products.notes.participation, w: levered * 0.9 },
+      { item: products.notes.reverse,       w: Math.max(0, risk - 0.4) * 1.2 }
+    ];
+    buckets.push({
+      key: "notes", label: "Structured notes", weight: alloc.notes,
+      lines: spread(alloc.notes, noteParts.filter(function (p) { return p.item && p.w > 0.05; }))
+    });
+
+    /* --- fx: the dollar share against everything else ------------------ */
+    var usd = avg("usd", 50) / 100;
+    var fxParts = [
+      { item: products.fx.usd,   w: Math.max(0.05, usd) },
+      { item: products.fx.local, w: Math.max(0.05, 1 - usd) }
+    ];
+    var ctry = topKeys("country")[0];
+    if (ctry === "europe") fxParts.push({ item: products.fx.eur, w: 0.35 });
+    if (ctry === "latam")  fxParts.push({ item: products.fx.brl, w: 0.35 });
+    buckets.push({
+      key: "fx", label: "FX", weight: alloc.fx,
+      lines: spread(alloc.fx, fxParts.filter(function (p) { return p.item; }))
+    });
+
+    return { alloc: alloc, buckets: buckets };
+  }
+
   return {
     rank: rank,
     eligible: eligible,
     roomAllocation: roomAllocation,
+    roomPortfolio: roomPortfolio,
     aggregate: aggregate,
     aggProfile: aggProfile,
     aggDistribution: aggDistribution,

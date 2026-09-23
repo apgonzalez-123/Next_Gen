@@ -1,0 +1,46 @@
+{
+  "$schema": "Product shelf for the room simulation. Replace with the real instruments; the engine only needs the keys to stay the same.",
+  "version": 1,
+
+  "equities": {
+    "sectors": {
+      "tech":        { "name": "Global technology sleeve",        "ticker": "TECH", "detail": "Software, semis and platforms" },
+      "financials":  { "name": "Financials sleeve",               "ticker": "FINS", "detail": "Banks, insurers and exchanges" },
+      "healthcare":  { "name": "Healthcare innovation sleeve",    "ticker": "HLTH", "detail": "Pharma, devices and biotech" },
+      "energy":      { "name": "Energy and materials sleeve",     "ticker": "ENMA", "detail": "Integrated energy and miners" },
+      "consumer":    { "name": "Consumer sleeve",                 "ticker": "CONS", "detail": "Staples and premium discretionary" },
+      "industrials": { "name": "Industrials and infrastructure",  "ticker": "INDU", "detail": "Capital goods and transport" }
+    },
+    "regions": {
+      "us":     { "name": "US large-cap core",            "ticker": "USLC", "detail": "Broad US market" },
+      "g7":     { "name": "Developed markets core",       "ticker": "DMEQ", "detail": "G7 cap-weighted" },
+      "europe": { "name": "European equity core",         "ticker": "EUEQ", "detail": "Developed Europe" },
+      "em":     { "name": "Emerging markets core",        "ticker": "EMEQ", "detail": "Broad EM" },
+      "latam":  { "name": "Brazil and LatAm equity",      "ticker": "LATM", "detail": "Regional large-cap" },
+      "asia":   { "name": "Asia ex-Japan equity",         "ticker": "AXJ",  "detail": "Regional large-cap" }
+    }
+  },
+
+  "fixedIncome": {
+    "govt":  { "name": "Sovereign ladder",              "ticker": "GOVT", "detail": "Government paper, matched to duration" },
+    "ig":    { "name": "Investment grade corporates",   "ticker": "IGCO", "detail": "BBB+ average, senior unsecured" },
+    "hy":    { "name": "High yield corporates",         "ticker": "HYCO", "detail": "BB-B, senior unsecured" },
+    "em":    { "name": "Emerging market debt",          "ticker": "EMD",  "detail": "Hard currency sovereign and quasi" },
+    "sub":   { "name": "Subordinated financials",       "ticker": "TIER2","detail": "Tier 2 and senior non-preferred" }
+  },
+
+  "notes": {
+    "protected":     { "name": "Capital protected note",     "ticker": "CPN", "detail": "100% principal at maturity, index linked" },
+    "buffered":      { "name": "Buffered note",              "ticker": "BUF", "detail": "90% protection, capped upside" },
+    "autocall":      { "name": "Autocallable",               "ticker": "AC",  "detail": "Coupon with a 70% barrier" },
+    "participation": { "name": "Participation note",         "ticker": "PPN", "detail": "Geared upside, no cap" },
+    "reverse":       { "name": "Reverse convertible",        "ticker": "RC",  "detail": "High coupon, equity downside at the barrier" }
+  },
+
+  "fx": {
+    "usd":   { "name": "USD cash and T-bills",      "ticker": "USD",  "detail": "Dollar liquidity sleeve" },
+    "eur":   { "name": "EUR sleeve",                "ticker": "EUR",  "detail": "Euro-denominated liquidity" },
+    "brl":   { "name": "BRL local sleeve",          "ticker": "BRL",  "detail": "Local currency, local rates" },
+    "local": { "name": "Local currency basket",     "ticker": "LCL",  "detail": "Home-currency exposure" }
+  }
+}

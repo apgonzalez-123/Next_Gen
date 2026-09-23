@@ -31,6 +31,16 @@
     return regFields().filter(function (f) { return f.id !== "name" && f.id !== "group"; });
   }
 
+  /* How far through the quiz a guest got. With sections gated a guest can
+     legitimately be part-way, and the table should show that rather than
+     implying a complete response. */
+  function answeredCount(r) {
+    return window.AXES.filter(function (a) {
+      var v = r.answers[a.id];
+      return v !== null && v !== undefined;
+    }).length;
+  }
+
   function when(ts) {
     if (!ts) return "";
     var d = new Date(ts);
@@ -51,16 +61,13 @@
       }).join("") +
       "<th><small>Matched</small>Portfolio</th>" +
       "<th><small>Fit</small>Score</th>" +
-      window.AXES.map(function (a) {
-        var step = window.SCHEMA.steps.find(function (s) { return s.id === a.step; });
-        return "<th><small>" + esc(step.title) + "</small>" + esc(a.label) + "</th>";
-      }).join("") +
+      "<th><small>Answered</small>Questions</th>" +
       "<th><small>Submitted</small>Time</th>" +
       "<th><small>Link token</small>ID</th>" +
       "</tr>";
 
     if (!rows.length) {
-      tbody.innerHTML = '<tr><td class="a-empty" colspan="' + (window.AXES.length + 6 + extraFields().length) +
+      tbody.innerHTML = '<tr><td class="a-empty" colspan="' + (7 + extraFields().length) +
         '">No responses yet. They appear here as guests finish the five steps.</td></tr>';
       return;
     }
@@ -83,9 +90,7 @@
           ? '<span class="a-nofit">none eligible</span>'
           : esc(top ? top.portfolio.name : "")) + "</td>" +
         "<td>" + (top && !noFit ? top.fit + "%" : "") + "</td>" +
-        window.AXES.map(function (a) {
-          return "<td>" + esc(labelFor(a.id, r.answers[a.id])) + "</td>";
-        }).join("") +
+        "<td>" + answeredCount(r) + " of " + window.AXES.length + "</td>" +
         "<td>" + esc(when(r.at)) + "</td>" +
         "<td>" + esc(r.token || r.id || "") + "</td>" +
         "</tr>";
@@ -223,6 +228,56 @@
     document.getElementById("allocTopSub").textContent = top ? "closest match · " + top.fit + "% fit" : "";
   }
 
+  var BUCKET_COLOUR = {
+    equities:    "var(--series-equities)",
+    fixedIncome: "var(--series-fixedincome)",
+    notes:       "var(--series-notes)",
+    fx:          "var(--series-cash)"
+  };
+
+  function paintSimulation(list) {
+    var grid = document.getElementById("simGrid");
+    if (!list.length) {
+      grid.innerHTML = '<p class="a-bucket-empty">Nothing to simulate yet. ' +
+                       'The book builds itself as guests answer.</p>';
+      return;
+    }
+    if (!window.PRODUCTS) {
+      grid.innerHTML = '<p class="a-bucket-empty">Product shelf not loaded. ' +
+                       'Check data/products.json.</p>';
+      return;
+    }
+
+    var agg = window.ENGINE.aggregate(list);
+    var sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS);
+    if (!sim) { grid.innerHTML = ""; return; }
+
+    grid.innerHTML = sim.buckets.map(function (b) {
+      var colour = BUCKET_COLOUR[b.key];
+      /* Line bars scale within their own bucket, so a 3% line in a small
+         bucket still reads as a large part of that bucket. */
+      var widest = b.lines.reduce(function (m, l) { return Math.max(m, l.weight); }, 0) || 1;
+
+      var lines = b.lines.length
+        ? b.lines.map(function (l) {
+            return '<div class="a-line">' +
+              '<div class="a-line-top"><span class="a-line-name">' + esc(l.item.name) + "</span>" +
+              '<span class="a-line-w">' + l.weight + "%</span></div>" +
+              '<div class="a-line-meta"><span class="tk">' + esc(l.item.ticker) + "</span>" +
+              esc(l.note || l.item.detail || "") + "</div>" +
+              '<div class="a-line-bar"><i style="width:' +
+                Math.round((l.weight / widest) * 100) + "%;background:" + colour + '"></i></div>' +
+              "</div>";
+          }).join("")
+        : '<p class="a-bucket-empty">No allocation.</p>';
+
+      return '<div class="a-bucket">' +
+        '<div class="a-bucket-top"><s style="background:' + colour + '"></s>' +
+        "<h3>" + esc(b.label) + "</h3><b>" + b.weight + "%</b></div>" +
+        lines + "</div>";
+    }).join("");
+  }
+
   function refresh() {
     var wasLocked = !document.getElementById("gate").hidden;
 
@@ -232,6 +287,7 @@
       document.getElementById("nCount").textContent = rows.length;
       build();
       paintAllocation(rows);
+      paintSimulation(rows);
     }).catch(function (e) {
       if (e && e.code === 401) {
         forgetKey();
@@ -345,8 +401,8 @@
       ? "<b>No backend configured.</b> This lists only the responses recorded on " +
         "<b>this device</b>. Simulated demo guests are excluded. Deploy the worker and set " +
         "<b>BACKEND_URL</b> in assets/config.js to collect the whole room here."
-      : "Live responses from every guest in the room. The table scrolls sideways through all " +
-        window.AXES.length + " questions; name and group stay pinned.";
+      : "Live responses from every guest in the room. Every answer is in the CSV and " +
+        "JSON exports; the simulation above is what those answers build.";
 
     /* With no backend the rows never left this device, so there is nothing
        to unlock. Against the live backend the worker holds the key. */

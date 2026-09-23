@@ -17,7 +17,8 @@ for f in index.html present.html admin.html qr-gen.html; do
   perl -0pi -e 's/(\b(?:src|href)="(?:assets|data)\/[^"?]+)"/$1?v='"$BUILD"'"/g' "$f"
 done
 
-# the portfolio base is fetched from JS, so stamp it there too
+# the JSON data files are fetched from JS, so stamp them there too
 perl -0pi -e 's/"data\/portfolios\.json(?:\?v=[0-9]+)?"/"data\/portfolios.json?v='"$BUILD"'"/' assets/base-loader.js
+perl -0pi -e 's/"data\/products\.json(?:\?v=[0-9]+)?"/"data\/products.json?v='"$BUILD"'"/' assets/base-loader.js
 
 echo "build $BUILD stamped"
