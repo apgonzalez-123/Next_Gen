@@ -172,7 +172,7 @@ body.present {
   margin: clamp(18px, 2.4vh, 30px) 0 clamp(20px, 3vh, 36px);
 }
 
-.p-pos { margin-bottom: clamp(18px, 2.6vh, 32px); }
+.p-pos { margin-bottom: clamp(16px, 2.2vh, 26px); }
 .p-pos-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 6px; }
 .p-pos-name {
   font-size: clamp(13px, 1.15vw, 19px);
@@ -187,6 +187,25 @@ body.present {
   flex: 0 0 auto;
 }
 .p-pos-bar { height: 5px; border-radius: var(--r-xs); background: var(--line-soft); overflow: hidden; }
+
+/* What the position actually is. Small, but sized to stay legible from
+   the back of a room rather than shrinking to a caption. */
+.p-pos-meta {
+  margin-top: 7px;
+  font-size: clamp(11px, 0.82vw, 14px);
+  line-height: 1.4;
+  color: var(--muted);
+}
+.p-tk {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+  color: var(--text-2);
+  background: var(--surface-2);
+  border-radius: var(--r-xs);
+  padding: 2px 6px;
+  margin-right: 7px;
+  white-space: nowrap;
+}
 .p-pos-bar i {
   display: block; height: 100%; border-radius: var(--r-xs);
   transition: width 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -287,3 +306,12 @@ body.present {
 /* The projector carries the mark larger than the guest screens. */
 .p-top .brand-mark { height: 28px; }
 .p-top .brand-sep { height: 20px; }
+
+/* Shown on the result slides before the room has answered. */
+.p-waiting {
+  font-size: clamp(15px, 1.35vw, 21px);
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 44ch;
+  align-self: center;
+}

@@ -62,12 +62,16 @@
       "<th><small>Matched</small>Portfolio</th>" +
       "<th><small>Fit</small>Score</th>" +
       "<th><small>Answered</small>Questions</th>" +
+      window.AXES.map(function (a) {
+        var step = window.SCHEMA.steps.find(function (s) { return s.id === a.step; });
+        return "<th><small>" + esc(step.title) + "</small>" + esc(a.label) + "</th>";
+      }).join("") +
       "<th><small>Submitted</small>Time</th>" +
       "<th><small>Link token</small>ID</th>" +
       "</tr>";
 
     if (!rows.length) {
-      tbody.innerHTML = '<tr><td class="a-empty" colspan="' + (7 + extraFields().length) +
+      tbody.innerHTML = '<tr><td class="a-empty" colspan="' + (window.AXES.length + 7 + extraFields().length) +
         '">No responses yet. They appear here as guests finish the five steps.</td></tr>';
       return;
     }
@@ -91,6 +95,9 @@
           : esc(top ? top.portfolio.name : "")) + "</td>" +
         "<td>" + (top && !noFit ? top.fit + "%" : "") + "</td>" +
         "<td>" + answeredCount(r) + " of " + window.AXES.length + "</td>" +
+        window.AXES.map(function (a) {
+          return "<td>" + esc(labelFor(a.id, r.answers[a.id])) + "</td>";
+        }).join("") +
         "<td>" + esc(when(r.at)) + "</td>" +
         "<td>" + esc(r.token || r.id || "") + "</td>" +
         "</tr>";
@@ -401,8 +408,8 @@
       ? "<b>No backend configured.</b> This lists only the responses recorded on " +
         "<b>this device</b>. Simulated demo guests are excluded. Deploy the worker and set " +
         "<b>BACKEND_URL</b> in assets/config.js to collect the whole room here."
-      : "Live responses from every guest in the room. Every answer is in the CSV and " +
-        "JSON exports; the simulation above is what those answers build.";
+      : "Live responses from every guest in the room. The table scrolls sideways through all " +
+        window.AXES.length + " questions; name and group stay pinned.";
 
     /* With no backend the rows never left this device, so there is nothing
        to unlock. Against the live backend the worker holds the key. */

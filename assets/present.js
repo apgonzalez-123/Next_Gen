@@ -111,7 +111,14 @@
         : "No backend · this device only";
     }
 
-    if (!agg.count) return;
+    if (!agg.count) {
+      /* Before the room has answered, these slides are on the projector
+         with nothing in them. Say what they are waiting for rather than
+         showing a blank screen that reads as a broken deck. */
+      showWaiting();
+      return;
+    }
+    clearWaiting();
     if (!built) {
       if (buildFailed) return;   /* do not retry a build that already threw */
       buildSkeletons();
@@ -121,6 +128,32 @@
     paintSplit(window.ENGINE.aggSplit(agg));
     paintVerdict(window.ENGINE.rank(roomProfile)[0], agg.count);
     paintBook(agg);
+  }
+
+  var WAITING = [
+    ["splitBars", "Each guest is matched on their own answers. The split appears here as they finish."],
+    ["verdict",   "Every answer averaged into one profile, then matched. Waiting on the room."],
+    ["book",      "The book the room's answers build. Waiting on the room."]
+  ];
+
+  function showWaiting() {
+    WAITING.forEach(function (w) {
+      var host = document.getElementById(w[0]);
+      if (host && !host.getAttribute("data-waiting")) {
+        host.setAttribute("data-waiting", "1");
+        host.innerHTML = '<p class="p-waiting">' + esc(w[1]) + "</p>";
+      }
+    });
+  }
+
+  function clearWaiting() {
+    WAITING.forEach(function (w) {
+      var host = document.getElementById(w[0]);
+      if (host && host.getAttribute("data-waiting")) {
+        host.removeAttribute("data-waiting");
+        host.innerHTML = "";
+      }
+    });
   }
 
   function paintSplit(split) {
@@ -239,11 +272,18 @@
 
       var lines = b.lines.length
         ? b.lines.map(function (l) {
+            /* The room's own answer wins over the shelf's generic blurb:
+               a duration note says something about THIS room. */
+            var detail = l.note || l.item.detail || "";
             return '<div class="p-pos">' +
               '<div class="p-pos-top"><span class="p-pos-name">' + esc(l.item.name) + "</span>" +
               '<span class="p-pos-w">' + l.weight + "%</span></div>" +
               '<div class="p-pos-bar"><i style="width:' +
                 Math.round((l.weight / widest) * 100) + "%;background:" + colour + '"></i></div>' +
+              '<div class="p-pos-meta">' +
+                (l.item.ticker ? '<span class="p-tk">' + esc(l.item.ticker) + "</span>" : "") +
+                esc(detail) +
+              "</div>" +
               "</div>";
           }).join("")
         : '<p class="p-book-empty">Nothing here.</p>';
@@ -319,6 +359,10 @@
     window.STORE.reset(key).then(function () {
       try { if (key) sessionStorage.setItem("nextgen:adminkey", key); } catch (e) {}
       lastVerdictId = null;
+      /* The skeletons were wiped by the waiting copy, so rebuild on the
+         next paint rather than diffing into elements that no longer exist. */
+      built = false;
+      splitRows = {};
       refresh();
     }).catch(function (e) {
       try { sessionStorage.removeItem("nextgen:adminkey"); } catch (err) {}
