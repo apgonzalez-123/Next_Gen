@@ -160,8 +160,9 @@
   function renderWelcome() {
     var s = el("section", "screen");
     var hero = el("div", "hero");
+    /* No eyebrow here: the header two lines above already says NextGen,
+       and the headline carries the rest. */
     hero.innerHTML =
-      '<div class="eyebrow">NextGen Session</div>' +
       '<h1>Build the room&rsquo;s portfolio.</h1>' +
       '<p>Five short steps. Pick what you would actually do with your own capital. ' +
       'We average every answer in the room and find the portfolio that fits it best.</p>';

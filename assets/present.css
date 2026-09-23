@@ -303,9 +303,9 @@ body.present {
 .p-hold-row b { color: var(--accent-bright); font-weight: 550; font-variant-numeric: tabular-nums; }
 .p-hold-more { font-size: 11px; color: var(--muted); margin-top: 8px; }
 
-/* The projector carries the mark larger than the guest screens. */
-.p-top .brand-mark { height: 28px; }
-.p-top .brand-sep { height: 20px; }
+/* The projector carries the lockup larger. The mark and rule are sized in
+   em, so raising the wordmark size scales all three together. */
+.p-top .wordmark { font-size: 15px; }
 
 /* Shown on the result slides before the room has answered. */
 .p-waiting {

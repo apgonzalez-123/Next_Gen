@@ -184,14 +184,24 @@ button { font-family: inherit; color: inherit; }
 
 .wordmark {
   display: flex;
-  align-items: baseline;
-  gap: 9px;
+  /* Centre, not baseline: the mark is a block image, so baseline alignment
+     put its bottom edge on the text baseline and left the logo, the rule
+     and the text each on a different line. */
+  align-items: center;
+  gap: 0;
   font-size: 13px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  line-height: 1;
   color: var(--text-2);
 }
-.wordmark b { color: var(--accent); font-weight: 600; }
+.wordmark b {
+  color: var(--accent);
+  font-weight: 600;
+  /* Uppercase tracking adds a trailing space after the last letter; pull
+     it back so the lockup is optically centred in its own box. */
+  margin-right: -0.14em;
+}
 
 .step-count {
   font-size: 12px;
@@ -896,20 +906,24 @@ button { font-family: inherit; color: inherit; }
    ============================================================ */
 
 .brand-mark {
-  height: 22px;
+  /* Sized against the cap height of the wordmark beside it rather than an
+     arbitrary pixel value, so the two scale together. */
+  height: 1.7em;
   width: auto;
   display: block;
   flex: 0 0 auto;
   /* A single-colour mark inherits the page's ink rather than fighting it.
      Remove this line if the logo must keep its own colours. */
   filter: brightness(0) invert(1);
-  opacity: 0.92;
 }
 .brand-sep {
   width: 1px;
-  height: 16px;
+  height: 1.25em;
   background: var(--line);
   flex: 0 0 auto;
+  /* The rule carries the spacing on both sides, so the gap stays even
+     whether or not the mark is present. */
+  margin: 0 1em;
 }
 /* The img removes itself when the file is missing, which leaves the
    separator first in the row; hide it in that case. */
