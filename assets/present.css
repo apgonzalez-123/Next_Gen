@@ -305,7 +305,7 @@ body.present {
 
 /* The projector carries the lockup larger. The mark and rule are sized in
    em, so raising the wordmark size scales all three together. */
-.p-top .wordmark { font-size: 15px; }
+.p-top .wordmark { font-size: 16px; }
 
 /* Shown on the result slides before the room has answered. */
 .p-waiting {

@@ -190,7 +190,9 @@ button { font-family: inherit; color: inherit; }
   align-items: center;
   gap: 0;
   font-size: 13px;
-  letter-spacing: 0.14em;
+  /* Tight enough that NEXTGEN reads as one block against the weight of the
+     Safra wordmark, rather than a scatter of letters beside it. */
+  letter-spacing: 0.11em;
   text-transform: uppercase;
   line-height: 1;
   color: var(--text-2);
@@ -200,7 +202,7 @@ button { font-family: inherit; color: inherit; }
   font-weight: 600;
   /* Uppercase tracking adds a trailing space after the last letter; pull
      it back so the lockup is optically centred in its own box. */
-  margin-right: -0.14em;
+  margin-right: -0.11em;
 }
 
 .step-count {
@@ -906,9 +908,11 @@ button { font-family: inherit; color: inherit; }
    ============================================================ */
 
 .brand-mark {
-  /* Sized against the cap height of the wordmark beside it rather than an
-     arbitrary pixel value, so the two scale together. */
-  height: 1.7em;
+  /* The Safra wordmark occupies 74% of this artwork's height, so at 1.7em
+     its cap height came out 1.75x NEXTGEN's and the two read as unrelated.
+     At 1.3em the parent mark stays dominant, as it should, while the pair
+     reads as one lockup. */
+  height: 1.3em;
   width: auto;
   display: block;
   flex: 0 0 auto;
@@ -918,7 +922,9 @@ button { font-family: inherit; color: inherit; }
 }
 .brand-sep {
   width: 1px;
-  height: 1.25em;
+  /* Matches the mark exactly, so the rule spans the lockup rather than
+     floating inside it. */
+  height: 1.3em;
   background: var(--line);
   flex: 0 0 auto;
   /* The rule carries the spacing on both sides, so the gap stays even
