@@ -16,7 +16,7 @@
   }
 
   /* One shared formatter, so the table, the CSV and the guest screens all
-     describe a value the same way — including range answers, which have no
+     describe a value the same way, including range answers, which have no
      option list to look up. */
   function labelFor(axisId, value) { return window.axisLabel(axisId, value); }
 
@@ -189,7 +189,7 @@
       bar.innerHTML = "";
       legend.innerHTML = "";
       sub.textContent = "No responses yet.";
-      document.getElementById("allocTop").textContent = "—";
+      document.getElementById("allocTop").textContent = "Not yet";
       document.getElementById("allocTopSub").textContent = "";
       return;
     }
@@ -214,14 +214,12 @@
 
     var d = a.drivers;
     sub.innerHTML = list.length + " response" + (list.length === 1 ? "" : "s") +
-      " &middot; risk " + d.risk.toFixed(1) + "/2" +
-      " &middot; horizon " + Math.round(d.horizon) + "y" +
-      " &middot; USD " + Math.round(d.usd) + "%" +
-      " &middot; " + Math.round(d.levered * 100) + "% would use leverage" +
-      " &middot; " + Math.round(d.income * 100) + "% want income";
+      "<br>risk " + d.risk.toFixed(1) + " of 2, horizon " + Math.round(d.horizon) +
+      "y, USD " + Math.round(d.usd) + "%, " + Math.round(d.levered * 100) +
+      "% would use leverage, " + Math.round(d.income * 100) + "% want income";
 
     var top = window.ENGINE.rank(window.ENGINE.aggProfile(agg))[0];
-    document.getElementById("allocTop").textContent = top ? top.portfolio.name : "—";
+    document.getElementById("allocTop").textContent = top ? top.portfolio.name : "Not yet";
     document.getElementById("allocTopSub").textContent = top ? "closest match · " + top.fit + "% fit" : "";
   }
 
@@ -284,7 +282,7 @@
 
     document.getElementById("secNote").textContent = gated
       ? "Guests can only answer the sections marked Open."
-      : "No sections are open, so the quiz is gated shut. Open the first one when you are ready — " +
+      : "No sections are open, so the quiz is gated shut. Open the first one when you are ready, " +
         "or use Open all to run it as one continuous quiz.";
   }
 

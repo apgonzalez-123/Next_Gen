@@ -209,7 +209,7 @@ window.axisLabel = function (axisId, value) {
     return axis.format ? axis.format(value) : value + (axis.unit || "");
   }
   if (Array.isArray(value)) {
-    if (!value.length) return "—";
+    if (!value.length) return "None";
     return value.map(function (v) { return window.axisLabel(axisId, v); }).join("; ");
   }
   var opt = (axis.options || []).find(function (o) { return o.v === value; });

@@ -1,5 +1,5 @@
 {
-  "$schema": "See README — replace this file with your own portfolio base.",
+  "$schema": "See README, replace this file with your own portfolio base.",
   "version": 3,
   "weights": {
     "horizon": 1.2,
@@ -31,7 +31,7 @@
         "notes": 25,
         "cash": 10
       },
-      "expReturn": "4 – 6%",
+      "expReturn": "4-6%",
       "vol": "Low",
       "traits": [
         "Senior secured credit",
@@ -51,7 +51,7 @@
           "ticker": "IG 1-3Y",
           "cls": "fixedIncome",
           "weight": 20,
-          "detail": "A– avg · senior secured"
+          "detail": "A- avg, senior secured"
         },
         {
           "name": "Covered bond basket (EUR)",
@@ -169,7 +169,7 @@
         "notes": 20,
         "cash": 5
       },
-      "expReturn": "6 – 8%",
+      "expReturn": "6-8%",
       "vol": "Low to moderate",
       "traits": [
         "Dividend equity core",
@@ -318,11 +318,11 @@
         "notes": 10,
         "cash": 5
       },
-      "expReturn": "7 – 9%",
+      "expReturn": "7-9%",
       "vol": "Moderate",
       "traits": [
         "Global equity core",
-        "5–10y IG credit",
+        "5-10y IG credit",
         "Minimal complexity"
       ],
       "holdings": [
@@ -463,7 +463,7 @@
         "notes": 10,
         "cash": 5
       },
-      "expReturn": "9 – 12%",
+      "expReturn": "9-12%",
       "vol": "Moderate to high",
       "traits": [
         "70% equity weight",
@@ -614,7 +614,7 @@
         "notes": 15,
         "cash": 5
       },
-      "expReturn": "8 – 10%",
+      "expReturn": "8-10%",
       "vol": "Moderate",
       "traits": [
         "High yield core",
@@ -764,7 +764,7 @@
         "notes": 15,
         "cash": 10
       },
-      "expReturn": "10 – 14%",
+      "expReturn": "10-14%",
       "vol": "High",
       "traits": [
         "EM local currency",
@@ -915,7 +915,7 @@
         "notes": 15,
         "cash": 5
       },
-      "expReturn": "12 – 18%",
+      "expReturn": "12-18%",
       "vol": "High",
       "traits": [
         "Concentrated themes",
@@ -1063,7 +1063,7 @@
         "notes": 50,
         "cash": 5
       },
-      "expReturn": "8 – 11%",
+      "expReturn": "8-11%",
       "vol": "Moderate",
       "traits": [
         "Autocallable core",
@@ -1134,7 +1134,7 @@
           {
             "label": "Bear",
             "pct": -19,
-            "driver": "Barriers breached — full equity downside, coupons stop"
+            "driver": "Barriers breached, full equity downside and coupons stop"
           }
         ]
       },

@@ -61,7 +61,7 @@ window.BASE = (function () {
     return problems;
   }
 
-  var ready = fetch("data/portfolios.json?v=202609231438", { cache: "no-store" })
+  var ready = fetch("data/portfolios.json?v=202609231836", { cache: "no-store" })
     .then(function (r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.json();
@@ -70,7 +70,7 @@ window.BASE = (function () {
       var problems = validate(data);
       if (problems.length) {
         console.warn(
-          "[NextGen] data/portfolios.json rejected — using the built-in base instead:\n  " +
+          "[NextGen] data/portfolios.json rejected, using the built-in base instead:\n  " +
           problems.slice(0, 12).join("\n  ")
         );
         window.BASE_SOURCE = "built-in (JSON invalid)";
@@ -84,7 +84,7 @@ window.BASE = (function () {
     })
     .catch(function (e) {
       console.warn("[NextGen] could not load data/portfolios.json (" + e.message +
-                   ") — using the built-in base.");
+                   ") and fell back to the built-in base.");
       window.BASE_SOURCE = "built-in (no JSON)";
       return DEFAULTS;
     });

@@ -32,15 +32,15 @@ body.present {
 .p-count { display: flex; align-items: baseline; gap: 9px; }
 .p-count b {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 600;
   font-size: 30px;
-  color: var(--gold-bright);
+  color: var(--accent-bright);
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 .dot {
   width: 7px; height: 7px; border-radius: 50%;
-  background: var(--gold);
+  background: var(--accent);
   display: inline-block;
   margin-right: 8px;
   animation: pulse 2.2s ease-in-out infinite;
@@ -60,7 +60,7 @@ body.present {
 
 .p-h {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(30px, 3.6vw, 52px);
   line-height: 1.05;
   margin-bottom: 8px;
@@ -78,27 +78,28 @@ body.present {
 .qr-frame {
   background: #fff;
   padding: 18px;
-  border-radius: 18px;
+  border-radius: var(--r-md);
   line-height: 0;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
 }
 .qr-frame img, .qr-frame canvas { display: block; width: clamp(220px, 24vw, 330px); height: auto; }
 .p-join h1 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(42px, 5.6vw, 84px);
   line-height: 1.02;
   margin-bottom: 22px;
 }
-.p-join h1 em { font-style: italic; color: var(--gold-bright); }
+/* Italic display words need room: leading-none clips a descender. */
+.p-join h1 em { font-style: italic; line-height: 1.12; padding-bottom: 2px; display: inline-block; }
 .p-url {
   display: inline-block;
   font-size: clamp(17px, 1.7vw, 24px);
   letter-spacing: 0.01em;
-  color: var(--gold);
+  color: var(--accent);
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: var(--r-sm);
   padding: 14px 22px;
   margin-bottom: 22px;
   word-break: break-all;
@@ -109,9 +110,9 @@ body.present {
 .p-bars { flex: 1 1 auto; display: grid; gap: 16px; align-content: center; min-height: 0; }
 .p-bar { display: grid; grid-template-columns: 250px 1fr 120px; gap: 22px; align-items: center; }
 .p-bar-name { font-size: clamp(15px, 1.4vw, 21px); color: var(--text-2); text-align: right; }
-.p-bar-track { height: 26px; border-radius: 6px; background: var(--line-soft); overflow: hidden; }
+.p-bar-track { height: 26px; border-radius: var(--r-sm); background: var(--line-soft); overflow: hidden; }
 .p-bar-fill {
-  display: block; height: 100%; border-radius: 6px;
+  display: block; height: 100%; border-radius: var(--r-sm);
   background: rgba(201, 169, 107, 0.32);
   transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -120,27 +121,27 @@ body.present {
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
-.p-bar.lead .p-bar-name { color: var(--gold-bright); font-weight: 550; }
-.p-bar.lead .p-bar-fill { background: var(--gold); }
-.p-bar.lead .p-bar-val  { color: var(--gold); }
+.p-bar.lead .p-bar-name { color: var(--accent-bright); font-weight: 550; }
+.p-bar.lead .p-bar-fill { background: var(--accent); }
+.p-bar.lead .p-bar-val  { color: var(--accent); }
 
 /* --- slide 3: the verdict --- */
 .p-verdict { flex: 1 1 auto; display: grid; grid-template-columns: 1.15fr 1fr; gap: 56px; align-items: center; }
 .p-verdict h1 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 600;
   font-size: clamp(46px, 6vw, 92px);
   line-height: 1.02;
-  color: var(--gold-bright);
+  color: var(--accent-bright);
   margin-bottom: 14px;
 }
 .p-verdict .tagline { font-size: clamp(17px, 1.6vw, 24px); font-style: italic; color: var(--text-2); margin-bottom: 26px; }
 .p-verdict .body { font-size: clamp(14px, 1.2vw, 18px); line-height: 1.65; color: var(--text-2); max-width: 52ch; }
 .p-fit { display: flex; align-items: baseline; gap: 12px; margin-bottom: 26px; }
 .p-fit b {
-  font-family: var(--font-display); font-weight: 400;
+  font-family: var(--font-display); font-weight: 600;
   font-size: clamp(56px, 7vw, 104px); line-height: 1;
-  color: var(--gold-bright); font-variant-numeric: tabular-nums;
+  color: var(--accent-bright); font-variant-numeric: tabular-nums;
 }
 .p-fit span { font-size: 15px; color: var(--muted); }
 
@@ -188,12 +189,12 @@ body.present {
   background: var(--line); cursor: pointer;
   transition: background 0.25s, transform 0.2s;
 }
-.p-dots i.on { background: var(--gold); transform: scale(1.25); }
+.p-dots i.on { background: var(--accent); transform: scale(1.25); }
 .p-keys kbd {
   font-family: var(--font-ui);
   font-size: 11px;
   border: 1px solid var(--line);
-  border-radius: 5px;
+  border-radius: var(--r-xs);
   padding: 3px 7px;
   margin: 0 2px;
   color: var(--text-2);
@@ -202,22 +203,22 @@ body.present {
   background: transparent;
   border: 1px solid var(--line);
   color: var(--text-2);
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   padding: 8px 15px;
   font-size: 12px;
   cursor: pointer;
   transition: border-color 0.2s, color 0.2s;
 }
-.p-btn:hover { border-color: var(--gold); color: var(--text); }
+.p-btn:hover { border-color: var(--accent); color: var(--text); }
 
 .p-badge {
   font-size: 10.5px;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: var(--gold);
-  border: 1px solid var(--gold-dim);
-  background: var(--gold-dim);
-  border-radius: 100px;
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  background: var(--accent-dim);
+  border-radius: var(--r-full);
   padding: 5px 11px;
 }
 
@@ -241,11 +242,11 @@ body.present {
   flex: 1;
   background: var(--surface);
   border: 1px solid var(--line-soft);
-  border-radius: 8px;
+  border-radius: var(--r-sm);
   padding: 11px 13px;
 }
 .p-scen .lbl { display: block; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
-.p-scen .val { font-family: var(--font-display); font-weight: 400; font-size: clamp(20px, 1.9vw, 28px); font-variant-numeric: tabular-nums; }
+.p-scen .val { font-family: var(--font-display); font-weight: 600; font-size: clamp(20px, 1.9vw, 28px); font-variant-numeric: tabular-nums; }
 .p-scen .val.up   { color: var(--pos); }
 .p-scen .val.down { color: var(--neg); }
 
@@ -257,5 +258,5 @@ body.present {
   color: var(--text-2);
   padding: 5px 0;
 }
-.p-hold-row b { color: var(--gold-bright); font-weight: 550; font-variant-numeric: tabular-nums; }
+.p-hold-row b { color: var(--accent-bright); font-weight: 550; font-variant-numeric: tabular-nums; }
 .p-hold-more { font-size: 11px; color: var(--muted); margin-top: 8px; }

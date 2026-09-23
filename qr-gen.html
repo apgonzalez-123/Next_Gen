@@ -3,12 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NextGen — Personal QR codes</title>
+<title>NextGen Personal QR Codes</title>
 <meta name="robots" content="noindex">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/app.css?v=202609231438">
+<link rel="preload" href="assets/fonts/geist-400-latin.woff2?v=202609231836" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist-600-latin.woff2?v=202609231836" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/app.css?v=202609231836">
 <style>
   body.qrgen { padding: 0 0 60px; }
   .g-wrap { max-width: 1100px; margin: 0 auto; padding: 0 28px; }
@@ -50,7 +49,7 @@
   <div class="g-head">
     <h1 class="display">Personal QR codes</h1>
     <p>One code per guest. Each carries a token, so every answer that guest
-       gives is recorded against their name on the admin board — no typing
+       gives is recorded against their name on the admin board with no typing
        on their part. Print the sheet and put a card at each place setting.
        If you would rather use a single shared code, project
        <code>present.html</code> instead and guests type their own name.</p>
@@ -63,7 +62,7 @@
     </label>
 
     <label class="field">
-      <span class="field-label">Guest list <em>one per line &mdash; &ldquo;Name&rdquo; or &ldquo;Name, Table 4&rdquo;</em></span>
+      <span class="field-label">Guest list <em>one per line, &ldquo;Name&rdquo; or &ldquo;Name, Table 4&rdquo;</em></span>
       <textarea class="field-input" id="guests" spellcheck="false" placeholder="Ana Ribeiro, Table 1&#10;Bruno Salles, Table 1&#10;Carla Menezes, Table 2"></textarea>
     </label>
 
@@ -78,8 +77,8 @@
   <div class="cards" id="cards"></div>
 </div>
 
-<script src="assets/vendor/qrcode.min.js?v=202609231438"></script>
-<script src="assets/config.js?v=202609231438"></script>
-<script src="assets/qr-gen.js?v=202609231438"></script>
+<script src="assets/vendor/qrcode.min.js?v=202609231836"></script>
+<script src="assets/config.js?v=202609231836"></script>
+<script src="assets/qr-gen.js?v=202609231836"></script>
 </body>
 </html>

@@ -25,7 +25,7 @@
       .slice(0, 18);
   }
   /* Slug the NAME only — the group would pad every token with the same
-     "-table-1" noise — but hash the whole line, so two guests with the
+     "-table-1" noise, but hash the whole line, so two guests with the
      same name in different groups still get distinct tokens. */
   function tokenFor(name, line) { return slug(name) + "-" + hash(line).slice(0, 4); }
 

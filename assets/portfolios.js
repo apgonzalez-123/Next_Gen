@@ -14,7 +14,7 @@ window.PORTFOLIOS = [
     tagline: "Preserve first. Return second.",
     blurb: "Short-dated investment grade paper and fully protected notes. Built for capital that cannot be impaired.",
     alloc: { equities: 10, fixedIncome: 55, notes: 25, cash: 10 },
-    expReturn: "4 – 6%",
+    expReturn: "4-6%",
     vol: "Low",
     traits: ["Senior secured credit", "Sub-2y duration", "100% principal protection"],
     holdings: [
@@ -102,7 +102,7 @@ window.PORTFOLIOS = [
     tagline: "A coupon you can plan around.",
     blurb: "Investment grade credit and dividend equity, with covered calls layered on to lift the running yield.",
     alloc: { equities: 25, fixedIncome: 50, notes: 20, cash: 5 },
-    expReturn: "6 – 8%",
+    expReturn: "6-8%",
     vol: "Low to moderate",
     traits: ["Dividend equity core", "Covered call overlay", "90% protected notes"],
     holdings: [
@@ -197,9 +197,9 @@ window.PORTFOLIOS = [
     tagline: "The middle of the road, held with conviction.",
     blurb: "A classic split between global equities and intermediate investment grade credit. No overlay, no leverage.",
     alloc: { equities: 45, fixedIncome: 40, notes: 10, cash: 5 },
-    expReturn: "7 – 9%",
+    expReturn: "7-9%",
     vol: "Moderate",
-    traits: ["Global equity core", "5–10y IG credit", "Minimal complexity"],
+    traits: ["Global equity core", "5-10y IG credit", "Minimal complexity"],
     holdings: [
       {
         "name": "Developed market equity core",
@@ -285,7 +285,7 @@ window.PORTFOLIOS = [
     tagline: "Own the compounders. Sit still.",
     blurb: "Equity-led and unapologetic about it. Developed market growth names, long horizon, drawdowns accepted.",
     alloc: { equities: 70, fixedIncome: 15, notes: 10, cash: 5 },
-    expReturn: "9 – 12%",
+    expReturn: "9-12%",
     vol: "Moderate to high",
     traits: ["70% equity weight", "DM growth tilt", "Long horizon required"],
     holdings: [
@@ -380,7 +380,7 @@ window.PORTFOLIOS = [
     tagline: "Paid to take the risk others won't.",
     blurb: "High yield and subordinated financial paper. The return comes from carry and spread compression, not from equity beta.",
     alloc: { equities: 20, fixedIncome: 60, notes: 15, cash: 5 },
-    expReturn: "8 – 10%",
+    expReturn: "8-10%",
     vol: "Moderate",
     traits: ["High yield core", "Subordinated / Tier 2", "Carry-driven"],
     holdings: [
@@ -475,7 +475,7 @@ window.PORTFOLIOS = [
     tagline: "The currency is the trade.",
     blurb: "Emerging market local debt and commodity exposure, where the FX call drives more of the return than the credit does.",
     alloc: { equities: 30, fixedIncome: 45, notes: 15, cash: 10 },
-    expReturn: "10 – 14%",
+    expReturn: "10-14%",
     vol: "High",
     traits: ["EM local currency", "Commodity linked equity", "FX is the main risk"],
     holdings: [
@@ -570,7 +570,7 @@ window.PORTFOLIOS = [
     tagline: "Concentrated, convex, uncomfortable.",
     blurb: "A small number of high-conviction themes with long-dated calls on top. The widest range of outcomes on the shelf.",
     alloc: { equities: 75, fixedIncome: 5, notes: 15, cash: 5 },
-    expReturn: "12 – 18%",
+    expReturn: "12-18%",
     vol: "High",
     traits: ["Concentrated themes", "Long call overlay", "Wide outcome range"],
     holdings: [
@@ -665,7 +665,7 @@ window.PORTFOLIOS = [
     tagline: "Structure does the work.",
     blurb: "Half the book in autocallables and reverse convertibles. Equity-linked payoffs with a barrier, rather than equity itself.",
     alloc: { equities: 20, fixedIncome: 25, notes: 50, cash: 5 },
-    expReturn: "8 – 11%",
+    expReturn: "8-11%",
     vol: "Moderate",
     traits: ["Autocallable core", "70% barrier notes", "Equity-linked, not equity"],
     holdings: [
@@ -770,7 +770,7 @@ window.ENGINE = (function () {
   }
 
   /* The bands a range axis is reported in. Few enough stops and each stop
-     is its own bar; otherwise six equal bands, so a 1–30y slider does not
+     is its own bar; otherwise six equal bands, so a 1-30y slider does not
      produce thirty unreadable bars on the projector. */
   function rangeBuckets(axis) {
     var stops = Math.round((axis.max - axis.min) / (axis.step_ || 1)) + 1;
@@ -787,7 +787,7 @@ window.ENGINE = (function () {
     for (i = 0; i < bands; i++) {
       var lo = Math.round(axis.min + i * width);
       var hi = i === bands - 1 ? axis.max : Math.round(axis.min + (i + 1) * width) - 1;
-      out.push({ lo: lo, hi: hi, label: lo + "–" + hi + (axis.unit || "") });
+      out.push({ lo: lo, hi: hi, label: lo + "-" + hi + (axis.unit || "") });
     }
     return out;
   }

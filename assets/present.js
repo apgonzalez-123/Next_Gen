@@ -19,6 +19,7 @@
   var last    = null;
 
   var built = false;      /* skeletons built? */
+  var buildFailed = false;
   var splitRows = {};     /* portfolio id -> { root, fill, val, name } */
   var axisRows  = {};     /* axis id -> { head, bars: { value -> {row, fill, val} } } */
   var lastVerdictId = null;
@@ -71,7 +72,7 @@
       row.innerHTML =
         '<div class="p-bar-name">' + esc(p.name) + "</div>" +
         '<div class="p-bar-track"><i class="p-bar-fill" style="width:0"></i></div>' +
-        '<div class="p-bar-val">0 &middot; 0%</div>';
+        '<div class="p-bar-val">0%</div>';
       host.appendChild(row);
       splitRows[p.id] = {
         root: row,
@@ -112,7 +113,13 @@
       panel.appendChild(head);
       var bars = el("div", "bars");
       var map = {};
-      axis.options.forEach(function (o) {
+      /* A range axis has no option list: its rows are the reporting bands,
+         keyed by the same band value aggDistribution reports. */
+      var rows = axis.kind === "range"
+        ? window.ENGINE.rangeBuckets(axis).map(function (b) { return { v: b.lo, label: b.label }; })
+        : axis.options.map(function (o) { return { v: o.v, label: o.label }; });
+
+      rows.forEach(function (o) {
         var row = el("div", "bar-row");
         row.innerHTML =
           '<div class="bar-top"><span class="bar-name">' + esc(o.label) + "</span>" +
@@ -164,7 +171,10 @@
     }
 
     if (!agg.count) return;
-    if (!built) buildSkeletons();
+    if (!built) {
+      if (buildFailed) return;   /* do not retry a build that already threw */
+      buildSkeletons();
+    }
 
     var roomProfile = window.ENGINE.aggProfile(agg);
     paintSplit(window.ENGINE.aggSplit(agg));
@@ -179,7 +189,7 @@
       r.root.style.order = i;                 /* reorder without rebuilding */
       r.root.classList.toggle("lead", i === 0 && row.count > 0);
       r.fill.style.width = row.pct + "%";     /* CSS transition does the rest */
-      r.val.innerHTML = row.count + " &middot; " + row.pct + "%";
+      r.val.innerHTML = row.pct + "%";
     });
   }
 
@@ -258,7 +268,7 @@
         top.map(function (h) {
           return '<div class="p-hold-row"><span>' + esc(h.name) + "</span><b>" + h.weight + "%</b></div>";
         }).join("") +
-        '<div class="p-hold-more">' + p.holdings.length + " positions in total &middot; hypothetical, for illustration</div></div>";
+        '<div class="p-hold-more">' + p.holdings.length + " positions, hypothetical</div></div>";
     }
     return out;
   }
@@ -271,14 +281,14 @@
 
       var note = "";
       if (axis.kind === "scale" && roomProfile[axis.id] !== null) {
-        note = ' <span style="color:var(--gold);font-weight:500">&middot; avg ' +
+        note = ' <span style="color:var(--accent);font-weight:500">&middot; avg ' +
                roomProfile[axis.id].toFixed(1) + "</span>";
       } else if (axis.kind === "multi") {
         /* Bars on a multi axis sum past 100% by design — label them as a
            share of the room so nobody on the projector reads it as a bug. */
         var avgPicks = dist.respondents ? (dist.picks / dist.respondents) : 0;
-        note = ' <span style="color:var(--muted);font-weight:400">&middot; pick several &middot; ' +
-               avgPicks.toFixed(1) + " each</span>";
+        note = ' <span style="color:var(--muted);font-weight:400">' +
+               avgPicks.toFixed(1) + " picks each</span>";
       }
       panel.head.innerHTML = esc(panel.label) + note;
 
@@ -331,7 +341,13 @@
   function refresh() {
     window.STORE.results()
       .then(paint)
-      .catch(function (e) { console.error("results refresh failed", e); });
+      .catch(function (e) {
+        /* A render fault used to be swallowed here, leaving `built` false
+           so every poll appended another pair of breakdown boards. Say so
+           loudly and stop rebuilding. */
+        console.error("[NextGen] presenter refresh failed", e);
+        buildFailed = true;
+      });
   }
 
   function resetVotes() {

@@ -24,7 +24,7 @@
   function sectionOpen(stepId) {
     if (openSections === null) return false;
     /* No locks configured at all means the admin is not gating this
-       session — everything runs as one continuous quiz. */
+       session, so everything runs as one continuous quiz. */
     if (!Object.keys(openSections).length) return true;
     return !!openSections[stepId];
   }
@@ -88,7 +88,7 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
     });
   }
-  function labelFor(axisId, value) { return window.axisLabel(axisId, value) || "—"; }
+  function labelFor(axisId, value) { return window.axisLabel(axisId, value) || "None"; }
 
   /* ---------- render ---------- */
 
@@ -151,7 +151,7 @@
       if (q.kind === "range") return typeof v === "number";
       if (v === undefined || v === null) return false;
       /* An opt-out multi (min: 0) counts as answered once it has been
-         touched — picking nothing is a real answer there. */
+         touched, because picking nothing is a real answer there. */
       if (q.kind === "multi" && q.min !== 0) return v.length > 0;
       return true;
     });
@@ -162,9 +162,9 @@
     var hero = el("div", "hero");
     hero.innerHTML =
       '<div class="eyebrow">NextGen Session</div>' +
-      '<h1>Build the room&rsquo;s <em>portfolio</em>.</h1>' +
-      '<p>Five short steps. Pick what you would actually do with your own capital &mdash; ' +
-      'then we average every answer in the room and find the portfolio that fits it best.</p>';
+      '<h1>Build the room&rsquo;s portfolio.</h1>' +
+      '<p>Five short steps. Pick what you would actually do with your own capital. ' +
+      'We average every answer in the room and find the portfolio that fits it best.</p>';
     s.appendChild(hero);
 
     var preview = el("div", "steps-preview");
@@ -175,8 +175,8 @@
 
     if (guest.fromLink && guest.fields.name) {
       s.appendChild(el("div", "notice",
-        "<span>&#9679;</span><div>Signed in as <b>" + esc(guest.fields.name) + "</b>" +
-        (guest.fields.group ? " &middot; " + esc(guest.fields.group) : "") + "</div>"));
+        "<div>Signed in as <b>" + esc(guest.fields.name) + "</b>" +
+        (guest.fields.group ? ", " + esc(guest.fields.group) : "") + "</div>"));
     }
 
     s.appendChild(el("p", "footnote", "Takes about two minutes."));
@@ -283,7 +283,7 @@
               list.splice(at, 1);
             } else {
               /* At the cap, a new pick drops the oldest rather than
-                 silently doing nothing — a dead tap reads as broken. */
+                 silently doing nothing, since a dead tap reads as broken. */
               if (q.max && list.length >= q.max) list.shift();
               list.push(o.v);
             }
@@ -403,14 +403,14 @@
     /* --- hero: the guest's own match --- */
     if (mine.blocked) {
       /* Every portfolio on the shelf clashes with this guest's exclusions.
-         That is a real answer, not an error — say so plainly rather than
+         That is a real answer, not an error, so say so plainly rather than
          recommending something they have ruled out. */
       s.appendChild(el("div", "result-head",
         '<div class="eyebrow">Your match</div>' +
         '<h2 class="display" style="font-size:clamp(28px,7vw,40px)">Nothing on the shelf fits</h2>' +
         '<p class="tagline">Your exclusions rule out every portfolio we hold.</p>'));
       s.appendChild(el("div", "notice",
-        "<span>&#9679;</span><div>This is worth a conversation with your advisor &mdash; " +
+        "<div>This is worth a conversation with your advisor. " +
         "a mandate this constrained needs a portfolio built for it.</div>"));
     } else {
       s.appendChild(el("div", "result-head",
@@ -454,7 +454,7 @@
 
     if (ruledOut.length && !mine.blocked) {
       s.appendChild(el("div", "notice",
-        "<span>&#9679;</span><div><b>Ruled out by your exclusions:</b> " +
+        "<div><b>Ruled out by your exclusions:</b> " +
         ruledOut.map(function (r) {
           return esc(r.portfolio.name) + " <span style=\"opacity:.7\">(" +
                  esc(r.blockedBy.join(", ")) + ")</span>";
@@ -469,12 +469,12 @@
 
     if (roomData.mode === "demo" && roomData.synthetic) {
       s.appendChild(el("div", "notice",
-        "<span>&#9679;</span><div><b>Demo mode.</b> " + roomData.synthetic +
+        "<div><b>Demo mode.</b> " + roomData.synthetic +
         " of these responses are a simulated audience so the screens are populated before the room fills up. " +
         "Connect the vote backend for live-only numbers.</div>"));
     } else if (roomData.mode === "offline") {
       s.appendChild(el("div", "notice",
-        "<span>&#9679;</span><div><b>Offline.</b> We could not reach the vote server, " +
+        "<div><b>Offline.</b> We could not reach the vote server, " +
         "so this shows your own answers only.</div>"));
     }
 
@@ -494,7 +494,7 @@
     });
     splitCard.appendChild(bars);
     splitCard.appendChild(el("p", "footnote",
-      "Each guest matched on their own answers. The headline above averages everyone into a single profile &mdash; " +
+      "Each guest matched on their own answers. The headline above averages everyone into a single profile, " +
       "which is why it can differ from the most common individual result."));
     s.appendChild(splitCard);
 
@@ -551,7 +551,7 @@
     s.appendChild(again);
 
     s.appendChild(el("p", "footnote",
-      "Illustrative only. Built for the NextGen session &mdash; not investment advice, " +
+      "Illustrative only, built for the NextGen session. Not investment advice, " +
       "not an offer, and not a recommendation to buy or sell any instrument."));
 
     app.appendChild(s);
@@ -633,7 +633,7 @@
       card.appendChild(el("p", "stand-foot",
         others > 0
           ? "<b>" + others + "</b> other guest" + (others === 1 ? "" : "s") +
-            " landed on " + esc(mine.portfolio.name) + " — " + mineRow.pct + "% of the room."
+            " landed on " + esc(mine.portfolio.name) + ", " + mineRow.pct + "% of the room."
           : "No one else landed on " + esc(mine.portfolio.name) + ". You are the only one."));
     }
     return card;
@@ -802,8 +802,8 @@
       '<div class="wait-pulse" aria-hidden="true"><span></span><span></span><span></span></div>' +
       '<div class="eyebrow">Up next</div>' +
       '<h2 class="display">' + esc(step.title) + "</h2>" +
-      "<p>Your answers so far are saved. This section opens when your host " +
-      "reaches that part of the presentation &mdash; this page will move on by itself.</p>"));
+      "<p>Your answers so far are saved. This section opens when your host reaches " +
+      "that part of the presentation, and this page moves on by itself.</p>"));
     app.appendChild(s);
   }
 
