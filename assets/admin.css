@@ -132,3 +132,26 @@ body.admin { height: 100vh; display: flex; flex-direction: column; overflow: hid
 .a-sec[disabled] { opacity: 0.5; cursor: default; }
 
 .a-sec-note { font-size: 12px; color: var(--muted); margin-top: 14px !important; line-height: 1.5; }
+
+/* --- room allocation --- */
+.a-alloc {
+  flex: 0 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin: 12px 0 6px;
+}
+.a-alloc-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; flex-wrap: wrap; margin-bottom: 16px; }
+.a-alloc-head h2 { font-size: 15px; font-weight: 600; margin-bottom: 5px; }
+.a-alloc-head p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.a-alloc-fit { text-align: right; flex: 0 0 auto; }
+.a-alloc-fit b {
+  display: block;
+  font-family: var(--font-display); font-weight: 400;
+  font-size: 24px; line-height: 1.1; color: var(--gold-bright);
+}
+.a-alloc-fit span { font-size: 11px; color: var(--muted); }
+.a-alloc .alloc-bar { height: 28px; margin-bottom: 14px; }
+.a-alloc .legend { grid-template-columns: repeat(4, 1fr); }
+.a-alloc-note { font-size: 11.5px; color: var(--muted); line-height: 1.55; margin-top: 16px !important; }

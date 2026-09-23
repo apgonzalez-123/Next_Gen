@@ -88,11 +88,7 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
     });
   }
-  function labelFor(axisId, value) {
-    var axis = window.AXIS_BY_ID[axisId];
-    var opt = axis.options.find(function (o) { return o.v === value; });
-    return opt ? opt.label : "—";
-  }
+  function labelFor(axisId, value) { return window.axisLabel(axisId, value) || "—"; }
 
   /* ---------- render ---------- */
 
@@ -152,6 +148,7 @@
   function stepComplete(i) {
     return steps[i].questions.every(function (q) {
       var v = answers[q.id];
+      if (q.kind === "range") return typeof v === "number";
       if (v === undefined || v === null) return false;
       /* An opt-out multi (min: 0) counts as answered once it has been
          touched — picking nothing is a real answer there. */
@@ -238,6 +235,12 @@
       block.appendChild(el("div", "q-label", esc(q.label)));
       if (q.hint) block.appendChild(el("div", "q-hint", esc(q.hint)));
 
+      if (q.kind === "range") {
+        block.appendChild(rangeControl(q));
+        s.appendChild(block);
+        return;
+      }
+
       var multi = q.kind === "multi";
       if (multi && !Array.isArray(answers[q.id])) answers[q.id] = [];
 
@@ -312,6 +315,49 @@
     });
 
     app.appendChild(s);
+  }
+
+  /* A slider for the continuous questions — horizon, duration, USD share.
+     The live read-out is the control's whole feedback, so it is large and
+     sits above the track rather than in a corner. */
+  function rangeControl(q) {
+    if (typeof answers[q.id] !== "number") {
+      answers[q.id] = typeof q.def === "number" ? q.def : Math.round((q.min + q.max) / 2);
+    }
+
+    var wrap = el("div", "rng");
+    var read = el("div", "rng-read");
+    var input = document.createElement("input");
+    input.type = "range";
+    input.className = "rng-input";
+    input.min = q.min;
+    input.max = q.max;
+    input.step = q.step || 1;
+    input.value = answers[q.id];
+    input.setAttribute("aria-label", q.label);
+
+    function show() {
+      var v = Number(input.value);
+      read.textContent = q.format ? q.format(v) : v + (q.unit || "");
+      /* Paint the filled part of the track up to the thumb. */
+      var pct = ((v - q.min) / ((q.max - q.min) || 1)) * 100;
+      input.style.setProperty("--fill", pct + "%");
+      input.setAttribute("aria-valuetext", read.textContent);
+    }
+
+    input.addEventListener("input", function () {
+      answers[q.id] = Number(input.value);
+      show();
+      renderChrome();
+    });
+
+    wrap.appendChild(read);
+    wrap.appendChild(input);
+    wrap.appendChild(el("div", "rng-ends",
+      "<span>" + esc(q.minLabel || q.min + (q.unit || "")) + "</span>" +
+      "<span>" + esc(q.maxLabel || q.max + (q.unit || "")) + "</span>"));
+    show();
+    return wrap;
   }
 
   /* ---------- results ---------- */
@@ -452,26 +498,8 @@
       "which is why it can differ from the most common individual result."));
     s.appendChild(splitCard);
 
-    /* --- you vs the room, on every scale axis --- */
-    var cmp = el("div", "card");
-    cmp.innerHTML = "<h3>You against the room</h3>";
-    window.AXES.filter(function (a) { return a.kind === "scale"; }).forEach(function (axis) {
-      var roomPos = window.ENGINE.scalePosition(roomProfile, axis.id);
-      var youPos  = (answers[axis.id] / 3) * 100;
-      var row = el("div", "scale-row");
-      row.innerHTML =
-        '<div class="scale-q">' + esc(axis.label) + "</div>" +
-        '<div class="scale-track">' +
-          '<span class="you" style="left:' + youPos + '%"></span>' +
-          '<span class="room" style="left:' + roomPos + '%"></span>' +
-        "</div>" +
-        '<div class="scale-ends"><span>' + esc(axis.options[0].label) + "</span>" +
-        "<span>" + esc(axis.options[axis.options.length - 1].label) + "</span></div>";
-      cmp.appendChild(row);
-    });
-    cmp.appendChild(el("div", "legend-inline",
-      '<div><s class="room"></s>Room average</div><div><s class="you"></s>You</div>'));
-    s.appendChild(cmp);
+    /* --- where this guest stands against the room --- */
+    s.appendChild(standingCard(agg, roomProfile, split, mine));
 
     /* --- what the room picked on the categorical questions --- */
     var picks = el("div", "card");
@@ -536,6 +564,80 @@
     { k: "notes",       label: "Structured notes", c: "var(--series-notes)" },
     { k: "cash",        label: "Cash",             c: "var(--series-cash)" }
   ];
+
+  /* Where this guest sits relative to everyone else.
+     A headline percentile on risk appetite, then every numeric question
+     with the guest's own answer against the room's average, and finally
+     how many others landed on the same portfolio. */
+  function standingCard(agg, roomProfile, split, mine) {
+    var card = el("div", "card");
+    card.innerHTML = "<h3>Where you stand</h3>";
+
+    var numeric = window.AXES.filter(function (a) {
+      return a.kind === "scale" || a.kind === "range";
+    });
+
+    /* Headline: risk appetite if we have it, else the first numeric axis. */
+    var lead = window.AXIS_BY_ID.riskProfile ? "riskProfile" : (numeric[0] && numeric[0].id);
+    var pct = lead ? window.ENGINE.percentile(agg, lead, answers[lead]) : null;
+    if (pct !== null && agg.count > 1) {
+      var word = pct >= 50 ? "more" : "less";
+      var side = pct >= 50 ? pct : 100 - pct;
+      card.appendChild(el("div", "stand-head",
+        "<b>" + side + "%</b> <span>of the room is " + word +
+        " cautious than you</span>"));
+    }
+
+    numeric.forEach(function (axis) {
+      var mineV = answers[axis.id];
+      var roomV = roomProfile[axis.id];
+      if (mineV === null || mineV === undefined || roomV === null) return;
+
+      var base = axis.kind === "range" ? axis.min : 0;
+      var sp = window.ENGINE.span(axis);
+      var youPos  = ((mineV - base) / sp) * 100;
+      var roomPos = ((roomV - base) / sp) * 100;
+
+      var youTxt = axis.kind === "range"
+        ? window.axisLabel(axis.id, mineV)
+        : axis.options[mineV].label;
+      /* A bare "0.9" means nothing on its own — say what it is out of. */
+      var roomTxt = axis.kind === "range"
+        ? window.axisLabel(axis.id, Math.round(roomV))
+        : roomV.toFixed(1) + " of " + (axis.options.length - 1);
+
+      var row = el("div", "scale-row");
+      row.innerHTML =
+        '<div class="scale-q">' + esc(axis.label) +
+          '<span class="scale-vals">you <b>' + esc(youTxt) + "</b> &middot; room " +
+          esc(roomTxt) + "</span></div>" +
+        '<div class="scale-track">' +
+          '<span class="you" style="left:' + youPos + '%"></span>' +
+          '<span class="room" style="left:' + roomPos + '%"></span>' +
+        "</div>" +
+        '<div class="scale-ends"><span>' +
+          esc(axis.kind === "range" ? (axis.minLabel || axis.min) : axis.options[0].label) +
+        "</span><span>" +
+          esc(axis.kind === "range" ? (axis.maxLabel || axis.max) : axis.options[axis.options.length - 1].label) +
+        "</span></div>";
+      card.appendChild(row);
+    });
+
+    card.appendChild(el("div", "legend-inline",
+      '<div><s class="room"></s>Room average</div><div><s class="you"></s>You</div>'));
+
+    /* How much company they have on their own result. */
+    var mineRow = split.filter(function (r) { return r.portfolio.id === mine.portfolio.id; })[0];
+    if (mineRow && mineRow.count > 0 && agg.complete > 1) {
+      var others = mineRow.count - 1;
+      card.appendChild(el("p", "stand-foot",
+        others > 0
+          ? "<b>" + others + "</b> other guest" + (others === 1 ? "" : "s") +
+            " landed on " + esc(mine.portfolio.name) + " — " + mineRow.pct + "% of the room."
+          : "No one else landed on " + esc(mine.portfolio.name) + ". You are the only one."));
+    }
+    return card;
+  }
 
   function allocCard(p) {
     var card = el("div", "card");

@@ -27,32 +27,15 @@ window.STORE = (function () {
   }
 
   /* Real rooms cluster around a few investor types — a flat random draw
-   * would make every distribution look like noise on the projector. */
+   * would make every distribution look like noise on the projector. Each
+   * persona is a position along the risk spectrum from 0 (most cautious)
+   * to 1 (most adventurous); every axis is derived from that, so adding or
+   * changing a question never leaves this generator stale. */
   var PERSONAS = [
-    { weight: 0.22,
-      centres: { horizon: 1.0, maxLoss: 0.8, credit: 0.9, duration: 1.0, rank: 0.9,
-                 snReturn: 1.0, snProtection: 0.8, maxPosition: 0.8, liquidity: 0.7 },
-      picks: { sector: ["consumer", "healthcare", "financials"], region: ["global", "us"],
-               options: ["none", "protection"], fxLong: ["usd", "chf"], fxConcern: ["brl", "eur"],
-               themes: ["infra", "health", "consumer"], exclusions: ["tobacco", "defence", "illiquid"] } },
-    { weight: 0.42,
-      centres: { horizon: 1.8, maxLoss: 1.4, credit: 1.4, duration: 1.7, rank: 1.3,
-                 snReturn: 1.4, snProtection: 1.3, maxPosition: 1.2, liquidity: 1.1 },
-      picks: { sector: ["tech", "financials", "industrials"], region: ["global", "us", "europe"],
-               options: ["none", "income"], fxLong: ["usd", "eur"], fxConcern: ["brl", "jpy"],
-               themes: ["ai", "infra", "fintech", "health"], exclusions: ["tobacco", "fossil"] } },
-    { weight: 0.24,
-      centres: { horizon: 2.7, maxLoss: 2.2, credit: 2.0, duration: 2.1, rank: 1.8,
-                 snReturn: 2.2, snProtection: 2.0, maxPosition: 2.0, liquidity: 1.8 },
-      picks: { sector: ["tech", "healthcare", "energy"], region: ["us", "asia", "latam"],
-               options: ["income", "leverage"], fxLong: ["usd", "brl"], fxConcern: ["eur", "gbp"],
-               themes: ["ai", "energy", "fintech"], exclusions: ["fossil"] } },
-    { weight: 0.12,
-      centres: { horizon: 3.0, maxLoss: 3.0, credit: 2.7, duration: 2.6, rank: 2.6,
-                 snReturn: 2.9, snProtection: 2.8, maxPosition: 2.9, liquidity: 2.4 },
-      picks: { sector: ["tech", "energy"], region: ["us", "latam", "asia"],
-               options: ["leverage"], fxLong: ["usd", "brl"], fxConcern: ["chf", "jpy"],
-               themes: ["ai", "fintech", "energy"], exclusions: [] } }
+    { weight: 0.22, risk: 0.18 },
+    { weight: 0.42, risk: 0.45 },
+    { weight: 0.24, risk: 0.72 },
+    { weight: 0.12, risk: 0.92 }
   ];
 
   function pickPersona(rand) {
@@ -64,10 +47,9 @@ window.STORE = (function () {
     return PERSONAS[PERSONAS.length - 1];
   }
 
-  function jitter(rand, centre) {
-    /* two draws ~ a soft bell, then clamp back onto the 0..3 grid */
-    var noise = (rand() + rand() - 1) * 1.1;
-    return Math.max(0, Math.min(3, Math.round(centre + noise)));
+  /* Two draws make a soft bell around the persona's position. */
+  function wobble(rand, centre, spread) {
+    return centre + (rand() + rand() - 1) * (spread || 0.28);
   }
 
   function syntheticRoom(size) {
@@ -76,32 +58,42 @@ window.STORE = (function () {
     for (var i = 0; i < size; i++) {
       var p = pickPersona(rand);
       var answers = {};
+
       window.AXES.forEach(function (axis) {
-        var pool = p.picks[axis.id] || axis.options.map(function (o) { return o.v; });
+        var t = Math.max(0, Math.min(1, wobble(rand, p.risk)));
 
         if (axis.kind === "scale") {
-          answers[axis.id] = jitter(rand, p.centres[axis.id] || 1.5);
+          answers[axis.id] = Math.round(t * (axis.options.length - 1));
           return;
         }
-
+        if (axis.kind === "range") {
+          var st = axis.step_ || 1;
+          var raw = axis.min + t * (axis.max - axis.min);
+          answers[axis.id] = Math.min(axis.max, Math.max(axis.min,
+            axis.min + Math.round((raw - axis.min) / st) * st));
+          return;
+        }
         if (axis.kind === "multi") {
-          /* Most people pick one or two, a few pick the cap — and on an
-             opt-out axis a good share rule nothing out at all. */
+          var pool = axis.options.map(function (o) { return o.v; });
           var cap = axis.max || 3;
           var want = axis.min === 0
             ? Math.floor(rand() * (Math.min(cap, pool.length) + 1))
             : 1 + Math.floor(rand() * Math.min(cap, pool.length));
-          var bag = pool.slice();
-          var out = [];
-          while (out.length < want && bag.length) {
-            out.push(bag.splice(Math.floor(rand() * bag.length), 1)[0]);
+          var bag = pool.slice(), picks = [];
+          while (picks.length < want && bag.length) {
+            picks.push(bag.splice(Math.floor(rand() * bag.length), 1)[0]);
           }
-          answers[axis.id] = out;
+          answers[axis.id] = picks;
           return;
         }
-
-        answers[axis.id] = pool[Math.floor(rand() * pool.length)];
+        /* choice: a two-option question reads as the risk axis; anything
+           longer is a preference, so it is drawn flat. */
+        var opts = axis.options;
+        answers[axis.id] = opts.length === 2
+          ? opts[t > 0.5 ? 1 : 0].v
+          : opts[Math.floor(rand() * opts.length)].v;
       });
+
       out.push({ id: "demo-" + i, answers: answers, synthetic: true });
     }
     return out;

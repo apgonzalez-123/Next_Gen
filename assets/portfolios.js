@@ -86,17 +86,14 @@ window.PORTFOLIOS = [
       ]
     },
     target: {
-      horizon: 0, maxLoss: 0,
+      riskProfile: 0, marketView: 0, horizon: 2,
+      leverage: { v: "no" },
+      country: { v: "us", also: ["g7"] },
       sector: { v: "consumer", also: ["healthcare"] },
-      region: { v: "global", also: ["us"] },
-      options: { v: "protection", also: ["none"] },
-      credit: 0, duration: 0, rank: 0,
-      fxLong: { v: "usd", also: ["chf"] },
-      fxConcern: { v: "brl", also: ["jpy"] },
-      snReturn: 0, snProtection: 0,
-      maxPosition: 0, liquidity: 0,
-      themes: { v: "infra",    also: ["health"] },
-      exclusions: { conflicts: [], screens: [] }
+      usd: 75,
+      capitalIncome: { v: "income" },
+      duration: 2,
+      credit: { v: "ig" }
     }
   },
   {
@@ -184,17 +181,14 @@ window.PORTFOLIOS = [
       ]
     },
     target: {
-      horizon: 1, maxLoss: 1,
+      riskProfile: 0, marketView: 1, horizon: 5,
+      leverage: { v: "no" },
+      country: { v: "g7", also: ["us"] },
       sector: { v: "financials", also: ["consumer", "industrials"] },
-      region: { v: "global", also: ["us"] },
-      options: { v: "income", also: ["none"] },
-      credit: 1, duration: 1, rank: 1,
-      fxLong: { v: "usd", also: ["eur"] },
-      fxConcern: { v: "jpy", also: ["gbp"] },
-      snReturn: 1, snProtection: 1,
-      maxPosition: 1, liquidity: 1,
-      themes: { v: "consumer", also: ["infra", "fintech"] },
-      exclusions: { conflicts: [], screens: ["tobacco"] }
+      usd: 60,
+      capitalIncome: { v: "income" },
+      duration: 5,
+      credit: { v: "ig" }
     }
   },
   {
@@ -275,17 +269,14 @@ window.PORTFOLIOS = [
       ]
     },
     target: {
-      horizon: 2, maxLoss: 1,
+      riskProfile: 1, marketView: 1, horizon: 10,
+      leverage: { v: "no" },
+      country: { v: "g7", also: ["us", "europe"] },
       sector: { v: "industrials", also: ["tech", "healthcare"] },
-      region: { v: "global", also: ["us", "europe"] },
-      options: { v: "none", also: ["income"] },
-      credit: 1, duration: 2, rank: 1,
-      fxLong: { v: "usd", also: ["eur"] },
-      fxConcern: { v: "gbp", also: ["brl"] },
-      snReturn: 1, snProtection: 1,
-      maxPosition: 1, liquidity: 1,
-      themes: { v: "infra",    also: ["ai", "health"] },
-      exclusions: { conflicts: [], screens: ["fossil", "tobacco", "defence"] }
+      usd: 55,
+      capitalIncome: { v: "capital", also: ["income"] },
+      duration: 8,
+      credit: { v: "ig" }
     }
   },
   {
@@ -373,17 +364,14 @@ window.PORTFOLIOS = [
       ]
     },
     target: {
-      horizon: 3, maxLoss: 2,
+      riskProfile: 2, marketView: 2, horizon: 20,
+      leverage: { v: "no", also: ["yes"] },
+      country: { v: "us", also: ["asia", "g7"] },
       sector: { v: "tech", also: ["healthcare", "industrials"] },
-      region: { v: "us", also: ["asia", "global"] },
-      options: { v: "leverage", also: ["none"] },
-      credit: 2, duration: 2, rank: 1,
-      fxLong: { v: "usd", also: ["jpy"] },
-      fxConcern: { v: "eur", also: ["gbp"] },
-      snReturn: 2, snProtection: 2,
-      maxPosition: 2, liquidity: 1,
-      themes: { v: "ai",       also: ["health", "fintech"] },
-      exclusions: { conflicts: [], screens: ["fossil", "defence"] }
+      usd: 70,
+      capitalIncome: { v: "capital" },
+      duration: 7,
+      credit: { v: "ig", also: ["hy"] }
     }
   },
   {
@@ -471,17 +459,14 @@ window.PORTFOLIOS = [
       ]
     },
     target: {
-      horizon: 2, maxLoss: 2,
+      riskProfile: 1, marketView: 1, horizon: 7,
+      leverage: { v: "no", also: ["yes"] },
+      country: { v: "europe", also: ["g7"] },
       sector: { v: "financials", also: ["energy"] },
-      region: { v: "europe", also: ["global", "us"] },
-      options: { v: "income", also: ["none"] },
-      credit: 3, duration: 2, rank: 2,
-      fxLong: { v: "eur", also: ["usd"] },
-      fxConcern: { v: "jpy", also: ["chf"] },
-      snReturn: 2, snProtection: 2,
-      maxPosition: 1, liquidity: 2,
-      themes: { v: "fintech",  also: ["energy", "infra"] },
-      exclusions: { conflicts: [], screens: ["fossil", "tobacco"] }
+      usd: 45,
+      capitalIncome: { v: "income" },
+      duration: 6,
+      credit: { v: "hy" }
     }
   },
   {
@@ -569,17 +554,14 @@ window.PORTFOLIOS = [
       ]
     },
     target: {
-      horizon: 2, maxLoss: 3,
+      riskProfile: 2, marketView: 2, horizon: 8,
+      leverage: { v: "no", also: ["yes"] },
+      country: { v: "em", also: ["latam", "asia"] },
       sector: { v: "energy", also: ["financials", "industrials"] },
-      region: { v: "latam", also: ["asia"] },
-      options: { v: "none", also: ["income"] },
-      credit: 3, duration: 1, rank: 2,
-      fxLong: { v: "brl", also: ["usd"] },
-      fxConcern: { v: "eur", also: ["jpy"] },
-      snReturn: 3, snProtection: 2,
-      maxPosition: 2, liquidity: 2,
-      themes: { v: "energy",   also: ["infra", "consumer"] },
-      exclusions: { conflicts: ["em"], screens: ["fossil"] }
+      usd: 30,
+      capitalIncome: { v: "income" },
+      duration: 4,
+      credit: { v: "hy" }
     }
   },
   {
@@ -667,17 +649,14 @@ window.PORTFOLIOS = [
       ]
     },
     target: {
-      horizon: 3, maxLoss: 3,
+      riskProfile: 2, marketView: 2, horizon: 25,
+      leverage: { v: "yes", also: ["no"] },
+      country: { v: "us", also: ["asia"] },
       sector: { v: "tech", also: ["healthcare"] },
-      region: { v: "us", also: ["asia"] },
-      options: { v: "leverage", also: ["protection"] },
-      credit: 2, duration: 3, rank: 3,
-      fxLong: { v: "usd", also: ["jpy"] },
-      fxConcern: { v: "chf", also: ["eur"] },
-      snReturn: 3, snProtection: 3,
-      maxPosition: 3, liquidity: 2,
-      themes: { v: "ai",       also: ["health", "fintech"] },
-      exclusions: { conflicts: [], screens: ["defence"] }
+      usd: 80,
+      capitalIncome: { v: "capital" },
+      duration: 3,
+      credit: { v: "hy", also: ["ig"] }
     }
   },
   {
@@ -758,17 +737,14 @@ window.PORTFOLIOS = [
       ]
     },
     target: {
-      horizon: 1, maxLoss: 2,
+      riskProfile: 1, marketView: 1, horizon: 4,
+      leverage: { v: "yes", also: ["no"] },
+      country: { v: "us", also: ["europe"] },
       sector: { v: "financials", also: ["tech", "consumer"] },
-      region: { v: "us", also: ["europe"] },
-      options: { v: "income", also: ["protection"] },
-      credit: 2, duration: 1, rank: 2,
-      fxLong: { v: "usd", also: ["eur"] },
-      fxConcern: { v: "brl", also: ["gbp"] },
-      snReturn: 2, snProtection: 2,
-      maxPosition: 2, liquidity: 3,
-      themes: { v: "fintech",  also: ["ai", "consumer"] },
-      exclusions: { conflicts: ["illiquid"], screens: [] }
+      usd: 70,
+      capitalIncome: { v: "income" },
+      duration: 3,
+      credit: { v: "ig" }
     }
   }
 ];
@@ -776,16 +752,45 @@ window.PORTFOLIOS = [
 /* How much each answer moves the match. Risk appetite and protection
  * dominate; the FX opinion is flavour, not structure. */
 window.WEIGHTS = {
-  horizon: 1.2, maxLoss: 1.6,
-  sector: 0.8, region: 0.8, options: 1.0,
-  credit: 1.2, duration: 1.0, rank: 1.0,
-  fxLong: 0.6, fxConcern: 0.5,
-  snReturn: 1.2, snProtection: 1.5,
-  maxPosition: 0.9, liquidity: 1.1, themes: 0.8, exclusions: 1.0
+  riskProfile: 1.8, marketView: 1.0, horizon: 1.3,
+  leverage: 0.9, country: 0.9,
+  sector: 0.8,
+  usd: 0.8,
+  capitalIncome: 1.2, duration: 1.0, credit: 1.2
 };
 
 window.ENGINE = (function () {
-  var SCALE_MAX = 3;
+
+  /* How far apart two values on this axis can possibly be — the
+     denominator that turns a distance into a 0..1 score. A scale spans its
+     option count, a range spans min..max. */
+  function span(axis) {
+    if (axis.kind === "range") return (axis.max - axis.min) || 1;
+    return ((axis.options || []).length - 1) || 1;
+  }
+
+  /* The bands a range axis is reported in. Few enough stops and each stop
+     is its own bar; otherwise six equal bands, so a 1–30y slider does not
+     produce thirty unreadable bars on the projector. */
+  function rangeBuckets(axis) {
+    var stops = Math.round((axis.max - axis.min) / (axis.step_ || 1)) + 1;
+    var out = [], i;
+    if (stops <= 8) {
+      for (i = 0; i < stops; i++) {
+        var v = axis.min + i * (axis.step_ || 1);
+        out.push({ lo: v, hi: v, label: axis.format ? axis.format(v) : v + (axis.unit || "") });
+      }
+      return out;
+    }
+    var bands = 6;
+    var width = (axis.max - axis.min + 1) / bands;
+    for (i = 0; i < bands; i++) {
+      var lo = Math.round(axis.min + i * width);
+      var hi = i === bands - 1 ? axis.max : Math.round(axis.min + (i + 1) * width) - 1;
+      out.push({ lo: lo, hi: hi, label: lo + "–" + hi + (axis.unit || "") });
+    }
+    return out;
+  }
 
   /* One axis, one answer, one portfolio -> 0..1, or null to skip the axis.
    *
@@ -798,8 +803,8 @@ window.ENGINE = (function () {
   function scoreAxis(axis, value, target) {
     if (value === null || value === undefined) return null;
 
-    if (axis.kind === "scale") {
-      return 1 - Math.abs(value - target) / SCALE_MAX;
+    if (axis.kind === "scale" || axis.kind === "range") {
+      return 1 - Math.abs(value - target) / span(axis);
     }
 
     if (axis.kind === "multi") {
@@ -909,7 +914,7 @@ window.ENGINE = (function () {
         .filter(function (v) { return v !== null && v !== undefined; });
       if (!vals.length) { profile[axis.id] = null; return; }
 
-      if (axis.kind === "scale") {
+      if (axis.kind === "scale" || axis.kind === "range") {
         profile[axis.id] = vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
         return;
       }
@@ -1008,10 +1013,13 @@ window.ENGINE = (function () {
     });
   }
 
-  /* Where the room sits on a 0..3 axis, as a percentage along the track. */
+  /* Where a value sits along an axis's track, as a percentage. */
   function scalePosition(profile, axisId) {
     var v = profile[axisId];
-    return v === null || v === undefined ? null : (v / SCALE_MAX) * 100;
+    if (v === null || v === undefined) return null;
+    var axis = window.AXIS_BY_ID[axisId];
+    var base = axis.kind === "range" ? axis.min : 0;
+    return ((v - base) / span(axis)) * 100;
   }
 
   /* ---- aggregate views -------------------------------------------
@@ -1051,7 +1059,7 @@ window.ENGINE = (function () {
       var a = agg.axes[axis.id];
       if (!a || !a.respondents) { profile[axis.id] = null; return; }
 
-      if (axis.kind === "scale") {
+      if (axis.kind === "scale" || axis.kind === "range") {
         profile[axis.id] = a.n ? a.sum / a.n : null;
         return;
       }
@@ -1074,19 +1082,54 @@ window.ENGINE = (function () {
     var axis = window.AXIS_BY_ID[axisId];
     var a = agg.axes[axisId] || { counts: {}, respondents: 0 };
     var picks = Object.keys(a.counts).reduce(function (t, k) { return t + a.counts[k]; }, 0);
-    return {
-      total: a.respondents,
-      respondents: a.respondents,
-      picks: picks,
-      multi: axis.kind === "multi",
-      bars: axis.options.map(function (o) {
+    var bars;
+
+    if (axis.kind === "range") {
+      /* Slider values are counted individually, then collected into the
+         reporting bands. */
+      bars = rangeBuckets(axis).map(function (b) {
+        var count = 0;
+        Object.keys(a.counts).forEach(function (k) {
+          var v = Number(k);
+          if (v >= b.lo && v <= b.hi) count += a.counts[k];
+        });
+        return {
+          value: b.lo, label: b.label, sub: "", count: count,
+          pct: a.respondents ? Math.round((count / a.respondents) * 100) : 0
+        };
+      });
+    } else {
+      bars = axis.options.map(function (o) {
         var count = a.counts[o.v] || a.counts[String(o.v)] || 0;
         return {
           value: o.v, label: o.label, sub: o.sub || "", count: count,
           pct: a.respondents ? Math.round((count / a.respondents) * 100) : 0
         };
-      })
+      });
+    }
+
+    return {
+      total: a.respondents,
+      respondents: a.respondents,
+      picks: picks,
+      multi: axis.kind === "multi",
+      bars: bars
     };
+  }
+
+  /* Where one guest sits against the room on a numeric axis: the share of
+     the room at or below their answer. */
+  function percentile(agg, axisId, value) {
+    var a = agg.axes[axisId];
+    if (!a || !a.respondents || value === null || value === undefined) return null;
+    var below = 0, total = 0;
+    Object.keys(a.counts).forEach(function (k) {
+      var n = a.counts[k];
+      total += n;
+      if (Number(k) < value) below += n;
+      else if (Number(k) === value) below += n / 2;   /* ties sit mid-band */
+    });
+    return total ? Math.round((below / total) * 100) : null;
   }
 
   function aggSplit(agg) {
@@ -1099,13 +1142,91 @@ window.ENGINE = (function () {
     });
   }
 
+  /* ---- where the room landed, as an allocation ----------------------
+   *
+   * An INDICATIVE breakdown across the four sleeves, derived from the
+   * room's own answers. It exists so the admin board can show where the
+   * room collectively sits before the real portfolio shelf is built;
+   * replace this with the real construction rules when it is.
+   *
+   * Everything is read from the aggregate rather than from a modal pick,
+   * so the bar moves smoothly as answers come in instead of jumping when
+   * one option overtakes another.
+   */
+  function roomAllocation(agg) {
+    function avg(id, fallback) {
+      var a = agg.axes[id];
+      return a && a.n ? a.sum / a.n : fallback;
+    }
+    function share(id, value) {
+      var a = agg.axes[id];
+      if (!a || !a.respondents) return 0;
+      return (a.counts[value] || 0) / a.respondents;
+    }
+
+    var risk    = avg("riskProfile", 1);      /* 0..2 */
+    var view    = avg("marketView", 1);       /* 0..2 */
+    var horizon = avg("horizon", 10);         /* 1..30 */
+    var usd     = avg("usd", 50);             /* 0..100 */
+    var levered = share("leverage", "yes");   /* 0..1  */
+    var income  = share("capitalIncome", "income");
+
+    /* Carve out the specialist sleeves FIRST, then split what is left
+       between equity and fixed income. Adding them on top instead made the
+       split non-monotonic: a levered room ended up with LESS equity than
+       an income-seeking one, purely because its notes sleeve squeezed the
+       remainder. */
+
+    /* Leverage is expressed through structured notes rather than margin. */
+    var notes = 8 + levered * 14;
+
+    /* A strong dollar view either way justifies a real FX sleeve;
+       indifference at 50% does not. */
+    var fx = 5 + (Math.abs(usd - 50) / 50) * 12;
+
+    /* What share of the remaining risk budget belongs in equity. */
+    var equityShare = 0.15
+      + (risk / 2) * 0.60
+      + (view - 1) * 0.08
+      + Math.max(-0.10, Math.min(0.10, ((horizon - 10) / 20) * 0.10))
+      - income * 0.16;
+    equityShare = Math.max(0.05, Math.min(0.90, equityShare));
+
+    var remaining = 100 - notes - fx;
+    var equity = remaining * equityShare;
+    var fixedIncome = remaining - equity;
+
+    var raw = { equities: equity, fixedIncome: fixedIncome, notes: notes, fx: fx };
+    var total = raw.equities + raw.fixedIncome + raw.notes + raw.fx;
+
+    /* Round to whole percent and put any rounding drift on the largest
+       sleeve, so the four always read as exactly 100. */
+    var out = {};
+    Object.keys(raw).forEach(function (k) { out[k] = Math.round((raw[k] / total) * 100); });
+    var sum = Object.keys(out).reduce(function (t, k) { return t + out[k]; }, 0);
+    if (sum !== 100) {
+      var biggest = Object.keys(out).reduce(function (a, b) { return out[a] >= out[b] ? a : b; });
+      out[biggest] += 100 - sum;
+    }
+
+    out.drivers = {
+      risk: risk, view: view, horizon: horizon, usd: usd,
+      levered: levered, income: income
+    };
+    return out;
+  }
+
   return {
     rank: rank,
     eligible: eligible,
+    roomAllocation: roomAllocation,
     aggregate: aggregate,
     aggProfile: aggProfile,
     aggDistribution: aggDistribution,
     aggSplit: aggSplit,
+    percentile: percentile,
+    rangeBuckets: rangeBuckets,
+    span: span,
     roomProfile: roomProfile,
     roomSplit: roomSplit,
     distribution: distribution,

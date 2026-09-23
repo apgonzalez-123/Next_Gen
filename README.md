@@ -65,38 +65,59 @@ nothing to configure — deploy it anywhere and the code points to the right pla
 
 ---
 
-## The steps
+## The ten questions
 
-| Step | Questions |
+| Section | Questions |
 |---|---|
-| 1 · Quick Profile | Investment horizon · acceptable loss |
-| 2 · Equities & Options | Sectors *(pick 3)* · country of risk · options overlay |
-| 3 · Fixed Income | IG or HY · duration · bond rank |
-| 4 · FX | Currency backed · currency of concern |
-| 5 · Structured Notes | Target return · protection level |
-| 6 · Portfolio Construction | Concentration · liquidity · themes *(pick 3)* · exclusions |
+| 1 · Risk Profile | Risk profile · market view · investment horizon *(1–30y)* |
+| 2 · Positioning | Leverage · country of risk |
+| 3 · Equities | Sector exposure *(pick 3)* |
+| 4 · FX | USD share *(0–100%, quarters)* |
+| 5 · Fixed Income | Capital or income · duration *(1–30y)* · IG or HY |
 
-Sixteen answers across three question kinds:
+Four question kinds:
 
 | Kind | Behaviour | Room view |
 |---|---|---|
-| `scale` | ordinal 0–3, pick one | averaged |
+| `scale` | pick one on an ordered list, any length | averaged |
+| `range` | a number on a slider (`min`/`max`/`step`/`unit`/`def`) | averaged; reported in bands |
 | `choice` | pick one | modal pick |
-| `multi` | pick several (`max` caps, `min: 0` allows none) | share of the room per option — bars legitimately exceed 100% |
+| `multi` | pick several (`max` caps, `min: 0` allows none) | share of the room per option — bars exceed 100% by design |
 
-Step 6 is marked `optional: true`. To run the original five, set
-`STEPS: ["profile","equities","fixedincome","fx","notes"]` in `config.js`;
-the step, its questions and its columns drop out of matching, the breakdown
-and the export, and the progress rail renumbers itself.
+A `range` axis with few enough stops gets one bar per stop (USD, in quarters);
+a wide one is collected into six bands (1–30y becomes 1–5y, 6–10y, …) so the
+projector shows something readable rather than thirty bars.
 
 ### Adding your own questions
 
-Add the question to the right step in `assets/schema.js`, then give every
-portfolio a `target` for it and add a `weights` entry. Nothing else changes —
-the guest flow, the presenter breakdown (which paginates into as many boards
-as it needs, six panels each) and the CSV export all derive from the schema.
+Add it to the right section in `assets/schema.js`, then give every portfolio a
+`target` for it and add a `weights` entry. Nothing else changes — the guest
+flow, the presenter breakdown, the admin table and the CSV all derive from the
+schema, and the presenter paginates into as many boards as it needs.
 
----
+## Where the room landed
+
+Once guests have answered, the admin board shows the room's collective
+allocation across **Equities · Fixed income · Structured notes · FX**, with the
+drivers behind it and the portfolio the averaged profile matches.
+
+That split is **indicative**, computed by `ENGINE.roomAllocation()` from the
+room's own answers: risk appetite, market view and horizon set the equity share
+of the risk budget, an income mandate pulls out of it, leverage is expressed
+through structured notes, and a dollar view far from neutral justifies an FX
+sleeve. The specialist sleeves are carved out first and equity/fixed income
+split what remains — adding them on top instead made the result non-monotonic.
+
+Replace that function with the real construction rules once the portfolio shelf
+is built.
+
+## Where each guest stands
+
+Every guest's result ends with their standing against the room: what share of
+the room is more or less cautious than they are, their own answer against the
+room average on each numeric question, and how many others landed on the same
+portfolio. It is computed from the same aggregate counts every other room
+screen uses, so it never exposes another guest's answers.
 
 ## How matching works
 

@@ -15,16 +15,10 @@
     });
   }
 
-  function labelFor(axisId, value) {
-    var axis = window.AXIS_BY_ID[axisId];
-    if (value === null || value === undefined) return "";
-    if (Array.isArray(value)) {
-      if (!value.length) return "—";   /* a real answer on an opt-out axis */
-      return value.map(function (v) { return labelFor(axisId, v); }).join("; ");
-    }
-    var opt = axis.options.find(function (o) { return o.v === value; });
-    return opt ? opt.label : String(value);
-  }
+  /* One shared formatter, so the table, the CSV and the guest screens all
+     describe a value the same way — including range answers, which have no
+     option list to look up. */
+  function labelFor(axisId, value) { return window.axisLabel(axisId, value); }
 
   /* name and group have dedicated columns; everything else the
      registration step collects gets one generated for it. */
@@ -183,6 +177,54 @@
     document.getElementById("gateMsg").textContent = "";
   }
 
+  /* The room's collective allocation across the four sleeves, plus the
+     portfolio the averaged profile matches. */
+  function paintAllocation(list) {
+    var agg = window.ENGINE.aggregate(list);
+    var bar = document.getElementById("allocBar");
+    var legend = document.getElementById("allocLegend");
+    var sub = document.getElementById("allocSub");
+
+    if (!list.length) {
+      bar.innerHTML = "";
+      legend.innerHTML = "";
+      sub.textContent = "No responses yet.";
+      document.getElementById("allocTop").textContent = "—";
+      document.getElementById("allocTopSub").textContent = "";
+      return;
+    }
+
+    var a = window.ENGINE.roomAllocation(agg);
+    var keys = [
+      { k: "equities",    label: "Equities",         c: "var(--series-equities)" },
+      { k: "fixedIncome", label: "Fixed income",     c: "var(--series-fixedincome)" },
+      { k: "notes",       label: "Structured notes", c: "var(--series-notes)" },
+      { k: "fx",          label: "FX",               c: "var(--series-cash)" }
+    ];
+
+    bar.innerHTML = keys.map(function (x) {
+      return '<i style="flex:' + a[x.k] + ' 0 0;background:' + x.c + '" title="' +
+             esc(x.label) + " " + a[x.k] + '%"></i>';
+    }).join("");
+
+    legend.innerHTML = keys.map(function (x) {
+      return '<div><s style="background:' + x.c + '"></s>' + esc(x.label) +
+             "<b>" + a[x.k] + "%</b></div>";
+    }).join("");
+
+    var d = a.drivers;
+    sub.innerHTML = list.length + " response" + (list.length === 1 ? "" : "s") +
+      " &middot; risk " + d.risk.toFixed(1) + "/2" +
+      " &middot; horizon " + Math.round(d.horizon) + "y" +
+      " &middot; USD " + Math.round(d.usd) + "%" +
+      " &middot; " + Math.round(d.levered * 100) + "% would use leverage" +
+      " &middot; " + Math.round(d.income * 100) + "% want income";
+
+    var top = window.ENGINE.rank(window.ENGINE.aggProfile(agg))[0];
+    document.getElementById("allocTop").textContent = top ? top.portfolio.name : "—";
+    document.getElementById("allocTopSub").textContent = top ? "closest match · " + top.fit + "% fit" : "";
+  }
+
   function refresh() {
     var wasLocked = !document.getElementById("gate").hidden;
 
@@ -191,6 +233,7 @@
       rows = list;
       document.getElementById("nCount").textContent = rows.length;
       build();
+      paintAllocation(rows);
     }).catch(function (e) {
       if (e && e.code === 401) {
         forgetKey();
