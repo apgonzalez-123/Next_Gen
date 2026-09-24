@@ -315,3 +315,69 @@ body.present {
   max-width: 44ch;
   align-self: center;
 }
+
+/* --- why this portfolio ---
+   Sits under the verdict at roughly a fifth of the slide. Large enough to
+   read from the back, short enough that nobody stops listening. */
+.p-why {
+  flex: 0 0 auto;
+  margin-top: clamp(12px, 1.6vh, 20px);
+  padding-top: clamp(11px, 1.4vh, 16px);
+  border-top: 1px solid var(--line);
+}
+.p-why-head {
+  font-size: clamp(10px, 0.85vw, 12px);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 7px;
+}
+.p-why-line {
+  font-size: clamp(14px, 1.25vw, 20px);
+  line-height: 1.4; color: var(--text);
+  max-width: 92ch; margin-bottom: clamp(9px, 1.2vh, 14px);
+}
+.p-why-line b { color: var(--accent-bright); font-weight: 600; }
+
+.p-why-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(24px, 4vw, 64px); }
+@media (max-width: 1000px) { .p-why-grid { grid-template-columns: 1fr; gap: 20px; } }
+
+.p-why-sub {
+  font-size: clamp(9px, 0.78vw, 11px);
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 6px;
+}
+.p-drv {
+  display: grid; grid-template-columns: 16px 1fr auto;
+  gap: 9px; align-items: baseline;
+  font-size: clamp(12px, 1vw, 16px);
+  color: var(--text-2); padding: 2px 0;
+}
+.p-arw { color: var(--accent-bright); font-size: 0.95em; }
+.p-drv b {
+  color: var(--accent-bright); font-weight: 550;
+  font-size: 0.86em; letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+.p-conv {
+  font-size: clamp(12px, 1.05vw, 17px);
+  line-height: 1.45; color: var(--text);
+}
+.p-conv i { font-style: normal; color: var(--muted); font-size: 0.82em; }
+.p-conv em { font-style: normal; color: var(--muted); margin: 0 8px; }
+.p-conv.p-weak { color: var(--muted); font-size: clamp(12px, 1.05vw, 16px); }
+
+/* The verdict gives up its spare height so the why section sits above the
+   fold. Slide 4 carries the positions in full, so the verdict does not
+   repeat them. */
+.p-slide[data-slide="2"] .p-verdict { flex: 0 1 auto; align-items: start; }
+.p-slide[data-slide="2"] .p-verdict h1 { font-size: clamp(38px, 4.6vw, 68px); }
+.p-slide[data-slide="2"] .p-verdict .body { display: none; }
+.p-slide[data-slide="2"] .p-fit { margin-bottom: 16px; }
+.p-slide[data-slide="2"] .p-fit b { font-size: clamp(40px, 4.6vw, 66px); }
+.p-slide[data-slide="2"] .kv { padding: 7px 0; font-size: 13px; }
+.p-slide[data-slide="2"] .p-scen { margin-top: 12px; }
+.p-slide[data-slide="2"] .p-scen > div { padding: 8px 11px; }
+.p-slide[data-slide="2"] .p-scen .val { font-size: clamp(17px, 1.5vw, 22px); }
+.p-slide[data-slide="2"] .alloc-bar { height: 24px; }
+
+/* The why block holds its own height rather than being squeezed out. */
+.p-slide[data-slide="2"] .p-why { margin-top: auto; }

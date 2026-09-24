@@ -57,9 +57,9 @@
     ],
     notes: [
       ["Instrument", function (p) { return name2(p, p.note); }],
-      ["Linked to", function (p) {
-        return p.isIndex ? '<span class="m-pill m-idx">Index</span>'
-                         : '<span class="m-pill">Single name</span>'; }],
+      ["Desk pick", function (p) {
+        return p.isCore ? '<span class="m-pill m-idx">Core</span>'
+                        : '<span class="m-pill">Satellite</span>'; }],
       ["Type",    function (p) { return pill(p.type); }],
       ["Tenor",   function (p) { return p.tenor; }],
       ["Barrier", function (p) { return p.barrier || "&mdash;"; }],
@@ -286,11 +286,11 @@
         "<h4>" + esc(b.label) + "</h4><b>" + b.weight + "%</b></div>" +
         (b.lines.length ? b.lines.map(function (l) {
           return '<div class="m-bk-line"><span>' + esc(l.item.name) +
-            (l.item.isIndex ? ' <span class="m-idx-dot" title="index-linked"></span>' : "") +
+            (l.item.isCore ? ' <span class="m-idx-dot" title="desk core pick"></span>' : "") +
             "</span><b>" + l.weight + "%</b></div>";
         }).join("") : '<div class="m-bk-line"><span class="m-sub">nothing</span></div>') +
         (b.indexShare !== undefined
-          ? '<div class="m-bk-rule">index-linked ' + b.indexShare + '% of the sleeve</div>' : "") +
+          ? '<div class="m-bk-rule">core picks ' + b.indexShare + '% of the sleeve</div>' : "") +
         "</div>";
     }).join("");
 
@@ -332,16 +332,71 @@
       "the guest and presenter screens call, so if these numbers are wrong they are wrong everywhere.";
   }
 
+  /* ---------- 06 backtest ---------- */
+  function renderBacktest(agg) {
+    var sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS);
+    if (!sim) return;
+    var bt = window.ENGINE.backtest(sim, window.PRODUCTS.asOf);
+    if (!bt) return;
+
+    var pct = function (v) { return v === null ? "n/a" : (v > 0 ? "+" : "") + n(v, 2) + "%"; };
+    var cls = function (v) { return v === null ? "" : (v >= 0 ? "m-pos" : "m-neg"); };
+
+    el("btLead").innerHTML =
+      "The book as if it had been bought on 1 January and left alone. " +
+      "<b>" + n(bt.coveredWeight, 1) + "%</b> of it can be measured against real prices; " +
+      "the remaining <b>" + n(bt.excludedWeight, 1) + "%</b> cannot and is excluded rather " +
+      "than assumed flat.";
+
+    el("btHead").innerHTML =
+      '<div class="m-btcard"><span>Price only</span><b class="' + cls(bt.scaledReturn) + '">' +
+        pct(bt.scaledReturn) + "</b><em>measured weight, dividends and coupons excluded</em></div>" +
+      '<div class="m-btcard"><span>Price plus accrued coupon</span><b class="' + cls(bt.scaledTotal) + '">' +
+        pct(bt.scaledTotal) + "</b><em>bond yield accrued over " + Math.round(bt.elapsed * 100) +
+        "% of the year</em></div>";
+
+    var rows = bt.bySleeve.map(function (sv) {
+      var head = '<tr class="m-btsleeve"><td colspan="6"><b>' + esc(sv.label) + "</b> " +
+        n(sv.weight, 1) + "% of the book &middot; measured " + n(sv.covered, 1) + "%" +
+        (sv.excluded ? " &middot; excluded " + n(sv.excluded, 1) + "%" : "") +
+        (sv.sleeveReturn !== null
+          ? ' &middot; <span class="' + cls(sv.sleeveReturn) + '">' + pct(sv.sleeveReturn) + "</span>"
+          : "") + "</td></tr>";
+
+      var lines = sv.lines.map(function (l) {
+        return "<tr>" +
+          '<td><span class="m-tk">' + esc(l.item.ticker) + "</span></td>" +
+          '<td><span class="m-name">' + esc(l.item.name) + "</span>" +
+            (l.proxy ? '<br><span class="m-sub">priced via ' + esc(l.proxy) + ", " +
+                       esc(l.proxyNote || "") + "</span>" : "") + "</td>" +
+          '<td class="num">' + n(l.weight, 1) + "%</td>" +
+          '<td class="num ' + cls(l.ytd) + '">' + (l.ytd === null ? "&mdash;" : pct(l.ytd)) + "</td>" +
+          '<td class="num">' + (l.carry ? "+" + n(l.carry, 2) + "%" : "") + "</td>" +
+          '<td class="num">' + (l.ytd === null
+            ? '<span class="m-sub">' + esc(l.why) + "</span>"
+            : '<span class="' + cls(l.contribution) + '">' + pct(l.contribution) + "</span>") + "</td>" +
+          "</tr>";
+      }).join("");
+      return head + lines;
+    }).join("");
+
+    el("btTable").innerHTML =
+      "<thead><tr><th></th><th>Instrument</th><th class=\"num\">Weight</th>" +
+      "<th class=\"num\">Price YTD</th><th class=\"num\">Carry</th>" +
+      "<th class=\"num\">Contribution</th></tr></thead><tbody>" + rows + "</tbody>";
+  }
+
   function recompute() {
     if (mode === "custom") {
       el("modeNote").textContent = "A hypothetical room where everyone answers this way.";
-      paintBook(window.ENGINE.aggregate([{ id: "s", answers: scenario }]));
+      var sAgg = window.ENGINE.aggregate([{ id: "s", answers: scenario }]);
+      paintBook(sAgg); renderBacktest(sAgg);
     } else {
       window.STORE.results().then(function (res) {
         el("modeNote").textContent = res.agg.count
           ? res.agg.count + " response" + (res.agg.count === 1 ? "" : "s") + " in the room right now."
           : "No responses yet. Switch to a custom scenario to exercise the engine.";
-        if (res.agg.count) paintBook(res.agg);
+        if (res.agg.count) { paintBook(res.agg); renderBacktest(res.agg); }
         else { el("sbBook").innerHTML = ""; el("scoreTables").innerHTML = ""; }
       }).catch(function () { el("modeNote").textContent = "Could not reach the vote backend."; });
     }

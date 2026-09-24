@@ -125,15 +125,18 @@
     }
 
     var roomProfile = window.ENGINE.aggProfile(agg);
-    paintSplit(window.ENGINE.aggSplit(agg));
+    var split = window.ENGINE.aggSplit(agg);
+    paintSplit(split);
     paintVerdict(window.ENGINE.rank(roomProfile)[0], agg.count);
+    renderWhy(agg, window.ENGINE.roomAllocation(agg), split);
     paintBook(agg);
   }
 
   var WAITING = [
     ["splitBars", "Each guest is matched on their own answers. The split appears here as they finish."],
     ["verdict",   "Every answer averaged into one profile, then matched. Waiting on the room."],
-    ["book",      "The book the room's answers build. Waiting on the room."]
+    ["book",      "The book the room's answers build. Waiting on the room."],
+    ["why",       ""]
   ];
 
   function showWaiting() {
@@ -236,14 +239,6 @@
       }).join("") + "</div>";
     }
 
-    if (p.holdings && p.holdings.length) {
-      var top = p.holdings.slice().sort(function (a, b) { return b.weight - a.weight; }).slice(0, 4);
-      out += '<div class="p-hold"><div class="p-hold-h">Largest positions</div>' +
-        top.map(function (h) {
-          return '<div class="p-hold-row"><span>' + esc(h.name) + "</span><b>" + h.weight + "%</b></div>";
-        }).join("") +
-        '<div class="p-hold-more">' + p.holdings.length + " positions, hypothetical</div></div>";
-    }
     return out;
   }
 
@@ -294,6 +289,164 @@
         '<div class="p-bucket-w">' + b.weight + "%</div>" +
         lines + "</div>";
     }).join("");
+  }
+
+  /* ---------- why this portfolio ----------
+   *
+   * A plain-language read of what the room said and which of those views
+   * actually moved the allocation. Every number comes from the same
+   * aggregate and the same ENGINE.roomAllocation() the book is built
+   * from; nothing here is a separate model.
+   */
+
+  function band(v, cuts, words) {
+    for (var i = 0; i < cuts.length; i++) if (v < cuts[i]) return words[i];
+    return words[words.length - 1];
+  }
+
+  /* One sentence describing the room, built from its own averages. */
+  function describeRoom(alloc) {
+    var d = alloc.drivers;
+    var risk = band(d.risk, [0.7, 1.35], ["cautious", "moderately positioned", "risk-seeking"]);
+    var hor  = band(d.horizon, [6, 13], ["short-dated", "medium-term", "long-term"]);
+    var view = band(d.view, [0.7, 1.35], ["bearish", "neutral", "bullish"]);
+
+    var lead = alloc.equities >= alloc.fixedIncome ? "equity-led" : "income-led";
+    var tail = alloc.equities >= alloc.fixedIncome
+      ? (alloc.fixedIncome >= 25 ? "with real fixed-income ballast behind it"
+                                 : "with little ballast behind it")
+      : (alloc.equities >= 25 ? "with a meaningful equity sleeve alongside"
+                              : "with equities kept small");
+
+    return "The room was " + risk + ", " + hor + " and " + view +
+           ". That produced " + (lead === "equity-led" ? "an " : "an ") + lead +
+           " portfolio " + tail + ".";
+  }
+
+  /* Which views actually moved the allocation, and where. The magnitudes
+     mirror the coefficients in roomAllocation(): risk carries 0.60 of the
+     equity share, income pulls 0.16 out of it, and so on. */
+  function drivers(alloc) {
+    var d = alloc.drivers;
+    var out = [];
+
+    out.push({ mag: Math.abs(d.risk - 1) * 0.60,
+               up: d.risk >= 1,
+               label: (d.risk >= 1 ? "Risk appetite" : "Caution"),
+               to: d.risk >= 1 ? "Equities" : "Fixed income" });
+
+    out.push({ mag: Math.min(0.10, Math.abs(d.horizon - 10) / 20 * 0.10),
+               up: d.horizon >= 10,
+               label: d.horizon >= 10 ? "Long horizon" : "Short horizon",
+               to: d.horizon >= 10 ? "Equities" : "Fixed income" });
+
+    out.push({ mag: Math.abs(d.view - 1) * 0.08,
+               up: d.view >= 1,
+               label: d.view >= 1 ? "Bullish view" : "Bearish view",
+               to: d.view >= 1 ? "Equities" : "Fixed income" });
+
+    if (d.income > 0.15) {
+      out.push({ mag: d.income * 0.16, up: true,
+                 label: "Income preference", to: "Fixed income" });
+    }
+    if (d.levered > 0.15) {
+      out.push({ mag: d.levered * 0.14, up: true,
+                 label: "Leverage appetite", to: "Structured notes" });
+    }
+    var dollarPull = Math.abs(d.usd - 50) / 50;
+    if (dollarPull > 0.35) {
+      out.push({ mag: dollarPull * 0.12, up: true,
+                 label: d.usd >= 50 ? "Dollar conviction" : "Away from the dollar",
+                 to: "FX" });
+    }
+
+    /* Only what actually moved the needle, strongest first. */
+    return out.filter(function (x) { return x.mag > 0.02; })
+              .sort(function (a, b) { return b.mag - a.mag; })
+              .slice(0, 3);
+  }
+
+  /* Where the room genuinely agreed. A 51/49 split is not consensus, so
+     the bar is a clear majority on a question that has a winner. */
+  function conviction(agg) {
+    var out = [];
+    window.AXES.forEach(function (axis) {
+      var dist = window.ENGINE.aggDistribution(agg, axis.id);
+      if (!dist.respondents) return;
+      var top = dist.bars.slice().sort(function (a, b) { return b.pct - a.pct; })[0];
+      if (!top || top.pct < 60) return;
+      /* A multi axis lets everyone pick three, so a high share there is a
+         weaker signal; hold it to a higher bar. */
+      if (axis.kind === "multi" && top.pct < 70) return;
+      out.push({ pct: top.pct, label: top.label, axis: axis.id });
+    });
+    return out.sort(function (a, b) { return b.pct - a.pct; }).slice(0, 3);
+  }
+
+  /* The one question the room was most split on, among the ones that
+     actually change the book. */
+  function divided(agg) {
+    var WATCH = ["credit", "capitalIncome", "country", "riskProfile", "marketView", "leverage"];
+    var worst = null;
+    WATCH.forEach(function (id) {
+      var axis = window.AXIS_BY_ID[id];
+      if (!axis) return;
+      var dist = window.ENGINE.aggDistribution(agg, id);
+      if (dist.respondents < 4) return;
+      var bars = dist.bars.slice().sort(function (a, b) { return b.pct - a.pct; });
+      if (bars.length < 2 || !bars[1].pct) return;
+      var gap = bars[0].pct - bars[1].pct;
+      if (bars[0].pct > 55 || gap > 15) return;      /* someone clearly won */
+      if (!worst || gap < worst.gap) {
+        worst = { gap: gap, a: bars[0].label, b: bars[1].label, label: axis.label };
+      }
+    });
+    return worst;
+  }
+
+  function renderWhy(agg, alloc, split) {
+    var host = document.getElementById("why");
+    if (!agg.count) { host.innerHTML = ""; return; }
+
+    /* Too few people to claim anything about a room. */
+    var thin = agg.count < 4;
+
+    var drv = drivers(alloc);
+    var conv = thin ? [] : conviction(agg);
+    var div = thin ? null : divided(agg);
+
+    /* The averaged profile can look calm while the individuals did not. */
+    var lead = split && split[0];
+    var dispersed = !thin && lead && lead.pct < 35;
+
+    host.innerHTML =
+      '<div class="p-why-head">Why this portfolio</div>' +
+      '<p class="p-why-line">' + esc(describeRoom(alloc)) +
+        (dispersed ? ' <b>The average looks settled. The room was not.</b>' : "") + "</p>" +
+
+      '<div class="p-why-grid">' +
+        '<div class="p-why-col">' +
+          '<div class="p-why-sub">What moved it</div>' +
+          drv.map(function (x) {
+            return '<div class="p-drv"><span class="p-arw">' + (x.up ? "&uarr;" : "&darr;") +
+              "</span><span>" + esc(x.label) + '</span><b>' + esc(x.to) + "</b></div>";
+          }).join("") +
+        "</div>" +
+
+        '<div class="p-why-col">' +
+          (conv.length
+            ? '<div class="p-why-sub">Strongest conviction</div>' +
+              '<div class="p-conv">' + conv.map(function (c) {
+                return "<span>" + esc(c.label) + ' <i>' + c.pct + "%</i></span>";
+              }).join('<em>·</em>') + "</div>"
+            : '<div class="p-why-sub">Conviction</div><div class="p-conv p-weak">' +
+              (thin ? "Too few responses to call it yet" : "No clear majority anywhere") + "</div>") +
+          (div
+            ? '<div class="p-why-sub" style="margin-top:14px">Most divided</div>' +
+              '<div class="p-conv">' + esc(div.a) + ' <em>vs</em> ' + esc(div.b) + "</div>"
+            : "") +
+        "</div>" +
+      "</div>";
   }
 
   /* ---------- slides ---------- */

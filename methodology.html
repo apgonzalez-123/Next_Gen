@@ -125,6 +125,26 @@
     <p class="m-lead" id="liveLead" style="margin-top:14px"></p>
   </section>
 
+  <!-- 6 · BACKTEST -->
+  <section class="m-sec">
+    <h2><span class="m-n">06</span>Struck on 1 January</h2>
+    <p class="m-lead" id="btLead">Reading the room&hellip;</p>
+    <div class="m-bt" id="btHead"></div>
+    <div class="m-scroll">
+      <table class="m-table" id="btTable"></table>
+    </div>
+    <div class="m-note">
+      <b>Price returns.</b> Every figure above is the instrument&rsquo;s price move since
+      1 January, taken from TradingView. Dividends are not in it. For bonds the coupon is
+      most of the return, so accrued yield is added back as a second column and labelled;
+      equity dividends are still missing because the feed carries no yield for these funds.
+      Individual bonds have no price series here, so each is stood in for by a matched
+      ETF, named on its row. Structured notes have no public price at all and option
+      payoffs are not linear in their underlying, so both are reported as excluded weight
+      rather than quietly counted as zero.
+    </div>
+  </section>
+
   <p class="m-disclaim">
     Prices, beta, one-year performance, volatility and expense ratios are a TradingView
     snapshot taken on the date in the header. This is a static page and does not refresh

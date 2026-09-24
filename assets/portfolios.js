@@ -1382,15 +1382,14 @@ window.ENGINE = (function () {
     var nt = scoreShelf(agg, products.notes);
     var picks = nt.picked.slice();
 
-    /* House rule: at least half the notes sleeve sits in index-linked
-       structures. Single-name notes concentrate issuer risk in a sleeve
-       that is already the most complex thing in the book. */
-    var FLOOR = (products.notes.selection || {}).indexFloor || 0.5;
-    var isIdx = function (p) { return !!p.item.isIndex; };
+    /* House rule: at least half the notes sleeve sits in the desk's core
+       picks, which are the rows highlighted in the source file. */
+    var FLOOR = (products.notes.selection || {}).coreFloor || 0.5;
+    var isIdx = function (p) { return !!p.item.isCore; };
 
     if (!picks.some(isIdx)) {
-      /* Nothing index-linked was selected, so promote the best one that
-         was not, in place of the weakest single-name pick. */
+      /* No core pick was selected, so promote the best-scoring one in
+         place of the weakest non-core pick. */
       var best = nt.all.filter(isIdx)[0];
       if (best) picks[picks.length - 1] = best;
     }
@@ -1401,7 +1400,7 @@ window.ENGINE = (function () {
 
     var idxW = ntLines.filter(isIdx).reduce(function (t, l) { return t + l.weight; }, 0);
     if (alloc.notes > 0 && idxW < alloc.notes * FLOOR) {
-      /* Scale the two groups so the index side reaches the floor exactly,
+      /* Scale the two groups so the core side reaches the floor exactly,
          keeping the relative weights inside each group unchanged. */
       var want = alloc.notes * FLOOR;
       var restW = alloc.notes - idxW;
@@ -1410,7 +1409,7 @@ window.ENGINE = (function () {
       ntLines.forEach(function (l) {
         l.weight = Math.round(l.weight * (isIdx(l) ? upIdx : dnRest) * 10) / 10;
       });
-      /* Put rounding drift on the largest index line so the floor holds. */
+      /* Put rounding drift on the largest core line so the floor holds. */
       var sum = ntLines.reduce(function (t, l) { return t + l.weight; }, 0);
       var drift = Math.round((alloc.notes - sum) * 10) / 10;
       if (drift) {
@@ -1423,7 +1422,7 @@ window.ENGINE = (function () {
     ntLines.forEach(function (l) {
       var m = picks.filter(function (p) { return p.item === l.item; })[0];
       if (m) { l.score = m.score; l.per = m.per; }
-      l.note = l.item.isIndex ? "index-linked" : "single name";
+      l.note = l.item.isCore ? "core pick" : "satellite";
     });
 
     buckets.push({
@@ -1452,11 +1451,93 @@ window.ENGINE = (function () {
     return { alloc: alloc, buckets: buckets };
   }
 
+  /* ---- backtest ------------------------------------------------------
+   *
+   * The book as if it had been struck on 1 January and held: each line's
+   * weight multiplied by that instrument's year-to-date move.
+   *
+   * Two things are deliberately NOT hidden. The figures are PRICE returns,
+   * so dividends and coupons are excluded. And not every sleeve can be
+   * measured this way: a structured note has no public price history, and
+   * an option's payoff is not linear in its underlying. Those weights are
+   * reported as excluded rather than quietly assumed to be zero.
+   */
+  /* Fraction of the year elapsed since 1 January, used to accrue coupon.
+     Computed from the data's own as-of date so it does not drift. */
+  function yearElapsed(asOf) {
+    var d = asOf ? new Date(asOf + "T00:00:00Z") : new Date();
+    var start = Date.UTC(d.getUTCFullYear(), 0, 1);
+    return Math.max(0, Math.min(1, (d.getTime() - start) / (365 * 864e5)));
+  }
+
+  function backtest(sim, asOf) {
+    if (!sim) return null;
+    var elapsed = yearElapsed(asOf);
+    var coveredW = 0, excludedW = 0, contribution = 0, carryTotal = 0;
+
+    var bySleeve = sim.buckets.map(function (b) {
+      var cw = 0, ew = 0, contrib = 0;
+      var carry = 0;
+      var lines = b.lines.map(function (l) {
+        var d = l.item.data || {};
+        var ytd = typeof d.ytd === "number" ? d.ytd : null;
+        if (ytd === null) {
+          ew += l.weight;
+          return { item: l.item, weight: l.weight, ytd: null,
+                   why: d.ytdExcluded || "no price history" };
+        }
+        cw += l.weight;
+        contrib += (l.weight / 100) * ytd;
+
+        /* A bond's coupon is most of its return, and a price series misses
+           it entirely. Accrue the instrument's own yield over the elapsed
+           part of the year and report it separately. */
+        var lineCarry = typeof d.ytw === "number" ? d.ytw * elapsed : 0;
+        carry += (l.weight / 100) * lineCarry;
+
+        return { item: l.item, weight: l.weight, ytd: ytd,
+                 contribution: (l.weight / 100) * ytd,
+                 carry: lineCarry || null,
+                 proxy: d.ytdProxy || null, proxyNote: d.ytdProxyNote || null };
+      });
+      coveredW += cw; excludedW += ew; contribution += contrib; carryTotal += carry;
+      return {
+        key: b.key, label: b.label, weight: b.weight,
+        covered: Math.round(cw * 10) / 10, excluded: Math.round(ew * 10) / 10,
+        contribution: Math.round(contrib * 100) / 100,
+        carry: Math.round(carry * 100) / 100,
+        /* What that sleeve returned on its own measurable part. */
+        sleeveReturn: cw > 0 ? Math.round((contrib / (cw / 100)) * 100) / 100 : null,
+        sleeveTotal: cw > 0 ? Math.round(((contrib + carry) / (cw / 100)) * 100) / 100 : null,
+        lines: lines
+      };
+    });
+
+    return {
+      asOf: asOf || null,
+      elapsed: Math.round(elapsed * 1000) / 1000,
+      coveredWeight: Math.round(coveredW * 10) / 10,
+      excludedWeight: Math.round(excludedW * 10) / 10,
+      /* Price contribution to the whole book from the measurable part. */
+      contribution: Math.round(contribution * 100) / 100,
+      /* Accrued coupon over the same period, on the same lines. */
+      carry: Math.round(carryTotal * 100) / 100,
+      /* Price only, restated as if the measurable part were the whole book. */
+      scaledReturn: coveredW > 0 ? Math.round((contribution / (coveredW / 100)) * 100) / 100 : null,
+      /* Price plus accrued coupon, same basis. Equity dividends are still
+         excluded: the feed does not carry a yield for these funds. */
+      scaledTotal: coveredW > 0
+        ? Math.round(((contribution + carryTotal) / (coveredW / 100)) * 100) / 100 : null,
+      bySleeve: bySleeve
+    };
+  }
+
   return {
     rank: rank,
     eligible: eligible,
     roomAllocation: roomAllocation,
     roomPortfolio: roomPortfolio,
+    backtest: backtest,
     scoreEquityShelf: scoreEquityShelf,
     scoreShelf: scoreShelf,
     aggregate: aggregate,

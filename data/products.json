@@ -6,148 +6,33 @@
   "equities": {
     "shelf": [
       {
-        "id": "tsm",
-        "ticker": "TSM",
-        "name": "Taiwan Semiconductor",
-        "data": {
-          "price": 448.68,
-          "currency": "USD"
-        },
-        "sleeve": "Compute",
-        "role": "Foundry",
-        "sector": "tech",
-        "region": "em",
-        "usdExposure": 20,
-        "riskBand": 2,
-        "note": "Compute \u00b7 Foundry",
-        "fit": {
-          "sector": {
-            "tech": 1.0,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 0.25,
-            "em": 1.0
-          },
-          "riskProfile": {
-            "target": 2
-          },
-          "usd": {
-            "target": 20
-          },
-          "capitalIncome": {
-            "capital": 1.0,
-            "income": 0.35
-          }
-        }
-      },
-      {
-        "id": "nvda",
-        "ticker": "NVDA",
-        "name": "NVIDIA",
-        "data": {
-          "price": 223.8,
-          "currency": "USD"
-        },
-        "sleeve": "Compute",
-        "role": "GPU compute",
-        "sector": "tech",
-        "region": "g7",
-        "usdExposure": 100,
-        "riskBand": 2,
-        "note": "Compute \u00b7 GPU compute",
-        "fit": {
-          "sector": {
-            "tech": 1.0,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 2
-          },
-          "usd": {
-            "target": 100
-          },
-          "capitalIncome": {
-            "capital": 1.0,
-            "income": 0.35
-          }
-        }
-      },
-      {
-        "id": "avgo",
-        "ticker": "AVGO",
-        "name": "Broadcom",
-        "data": {
-          "price": 349.64,
-          "currency": "USD"
-        },
-        "sleeve": "Compute",
-        "role": "Custom silicon",
-        "sector": "tech",
-        "region": "g7",
-        "usdExposure": 100,
-        "riskBand": 2,
-        "note": "Compute \u00b7 Custom silicon",
-        "fit": {
-          "sector": {
-            "tech": 1.0,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 2
-          },
-          "usd": {
-            "target": 100
-          },
-          "capitalIncome": {
-            "capital": 1.0,
-            "income": 0.35
-          }
-        }
-      },
-      {
-        "id": "glw",
-        "ticker": "GLW",
-        "name": "Corning",
-        "data": {
-          "price": 154.19,
-          "currency": "USD"
-        },
-        "sleeve": "Compute",
-        "role": "Optical",
-        "sector": "industrials",
+        "id": "ivv",
+        "ticker": "IVV",
+        "exchange": "AMEX",
+        "name": "iShares Core S&P 500",
+        "sleeve": "Core",
+        "sector": "core",
         "region": "g7",
         "usdExposure": 100,
         "riskBand": 1,
-        "note": "Compute \u00b7 Optical",
+        "note": "Core",
+        "data": {
+          "price": 770.69,
+          "currency": "USD",
+          "ytd": 11.9,
+          "perf1y": 15.42,
+          "beta1y": 1.018,
+          "volatility": 0.66,
+          "expenseRatio": 0.03
+        },
         "fit": {
           "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 1.0
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
           },
           "country": {
             "g7": 1.0,
@@ -161,25 +46,300 @@
           },
           "capitalIncome": {
             "capital": 1.0,
-            "income": 0.35
+            "income": 0.5
           }
         }
       },
       {
-        "id": "ceg",
-        "ticker": "CEG",
-        "name": "Constellation Energy",
+        "id": "usmv",
+        "ticker": "USMV",
+        "exchange": "CBOE",
+        "name": "iShares MSCI USA Min Volatility",
+        "sleeve": "Defensive",
+        "sector": "core",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 0,
+        "note": "Defensive",
         "data": {
-          "price": 262.19,
-          "currency": "USD"
+          "price": 98.45,
+          "currency": "USD",
+          "ytd": 4.37,
+          "perf1y": 4.61,
+          "beta1y": 0.398,
+          "volatility": 0.6,
+          "expenseRatio": 0.15
         },
-        "sleeve": "Power",
-        "role": "Nuclear PPAs",
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 0
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "schd",
+        "ticker": "SCHD",
+        "exchange": "AMEX",
+        "name": "Schwab US Dividend Equity",
+        "sleeve": "Income",
+        "sector": "core",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 0,
+        "note": "Income",
+        "data": {
+          "price": 33.17,
+          "currency": "USD",
+          "ytd": 20.6,
+          "perf1y": 22.04,
+          "beta1y": 0.26,
+          "volatility": 0.77,
+          "expenseRatio": 0.06
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 0
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.45
+          }
+        }
+      },
+      {
+        "id": "vym",
+        "ticker": "VYM",
+        "exchange": "AMEX",
+        "name": "Vanguard High Dividend Yield",
+        "sleeve": "Income",
+        "sector": "core",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 0,
+        "note": "Income",
+        "data": {
+          "price": 157.05,
+          "currency": "USD",
+          "ytd": 9.05,
+          "perf1y": 11.6,
+          "beta1y": 0.552,
+          "volatility": 0.66,
+          "expenseRatio": 0.04
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 0
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.45
+          }
+        }
+      },
+      {
+        "id": "xlk",
+        "ticker": "XLK",
+        "exchange": "AMEX",
+        "name": "Technology Select Sector SPDR",
+        "sleeve": "Sector",
+        "sector": "tech",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 2,
+        "note": "Sector",
+        "data": {
+          "price": 194.39,
+          "currency": "USD",
+          "ytd": 33.48,
+          "perf1y": 38.37,
+          "beta1y": 1.69,
+          "volatility": 1.31,
+          "expenseRatio": 0.08
+        },
+        "fit": {
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "xlf",
+        "ticker": "XLF",
+        "exchange": "AMEX",
+        "name": "Financial Select Sector SPDR",
+        "sleeve": "Sector",
+        "sector": "financials",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 1,
+        "note": "Sector",
+        "data": {
+          "price": 54.47,
+          "currency": "USD",
+          "ytd": -0.65,
+          "perf1y": 1.19,
+          "beta1y": 0.665,
+          "volatility": 1.17,
+          "expenseRatio": 0.08
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.2,
+            "financials": 1.0,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 1
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "xlv",
+        "ticker": "XLV",
+        "exchange": "AMEX",
+        "name": "Health Care Select Sector SPDR",
+        "sleeve": "Sector",
+        "sector": "healthcare",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 0,
+        "note": "Sector",
+        "data": {
+          "price": 170.14,
+          "currency": "USD",
+          "ytd": 9.86,
+          "perf1y": 24.35,
+          "beta1y": 0.187,
+          "volatility": 1.13,
+          "expenseRatio": 0.08
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.2,
+            "financials": 0.2,
+            "healthcare": 1.0,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 0
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "xle",
+        "ticker": "XLE",
+        "exchange": "AMEX",
+        "name": "Energy Select Sector SPDR",
+        "sleeve": "Sector",
         "sector": "energy",
         "region": "g7",
         "usdExposure": 100,
         "riskBand": 2,
-        "note": "Power \u00b7 Nuclear PPAs",
+        "note": "Sector",
+        "data": {
+          "price": 62.69,
+          "currency": "USD",
+          "ytd": 40.17,
+          "perf1y": 39.59,
+          "beta1y": -0.786,
+          "volatility": 1.81,
+          "expenseRatio": 0.08
+        },
         "fit": {
           "sector": {
             "tech": 0.2,
@@ -200,74 +360,84 @@
             "target": 100
           },
           "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
+            "capital": 1.0,
+            "income": 0.5
           }
         }
       },
       {
-        "id": "eqix",
-        "ticker": "EQIX",
-        "name": "Equinix",
-        "data": {
-          "price": 1039.4,
-          "currency": "USD"
-        },
-        "sleeve": "Power",
-        "role": "Data-centre REIT",
-        "sector": "industrials",
+        "id": "xlp",
+        "ticker": "XLP",
+        "exchange": "AMEX",
+        "name": "Consumer Staples Select Sector SPDR",
+        "sleeve": "Defensive",
+        "sector": "consumer",
         "region": "g7",
         "usdExposure": 100,
-        "riskBand": 1,
-        "note": "Power \u00b7 Data-centre REIT",
+        "riskBand": 0,
+        "note": "Defensive",
+        "data": {
+          "price": 82.18,
+          "currency": "USD",
+          "ytd": 5.75,
+          "perf1y": 4.92,
+          "beta1y": 0.082,
+          "volatility": 0.81,
+          "expenseRatio": 0.08
+        },
         "fit": {
           "sector": {
             "tech": 0.2,
             "financials": 0.2,
             "healthcare": 0.2,
             "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 1.0
+            "consumer": 1.0,
+            "industrials": 0.2
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 1
+            "target": 0
           },
           "usd": {
             "target": 100
           },
           "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
+            "capital": 1.0,
+            "income": 0.5
           }
         }
       },
       {
-        "id": "gev",
-        "ticker": "GEV",
-        "name": "GE Vernova",
-        "data": {
-          "price": 951.78,
-          "currency": "USD"
-        },
-        "sleeve": "Power",
-        "role": "Power generation, grid",
-        "sector": "industrials",
+        "id": "xly",
+        "ticker": "XLY",
+        "exchange": "AMEX",
+        "name": "Consumer Discretionary Select SPDR",
+        "sleeve": "Sector",
+        "sector": "consumer",
         "region": "g7",
         "usdExposure": 100,
         "riskBand": 2,
-        "note": "Power \u00b7 Power generation, grid",
+        "note": "Sector",
+        "data": {
+          "price": 110.5,
+          "currency": "USD",
+          "ytd": -7.98,
+          "perf1y": -7.53,
+          "beta1y": 1.27,
+          "volatility": 1.09,
+          "expenseRatio": 0.08
+        },
         "fit": {
           "sector": {
             "tech": 0.2,
             "financials": 0.2,
             "healthcare": 0.2,
             "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 1.0
+            "consumer": 1.0,
+            "industrials": 0.2
           },
           "country": {
             "g7": 1.0,
@@ -280,26 +450,31 @@
             "target": 100
           },
           "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
+            "capital": 1.0,
+            "income": 0.5
           }
         }
       },
       {
-        "id": "etn",
-        "ticker": "ETN",
-        "name": "Eaton",
-        "data": {
-          "price": 436.64,
-          "currency": "USD"
-        },
-        "sleeve": "Power",
-        "role": "Electrical equipment",
+        "id": "xli",
+        "ticker": "XLI",
+        "exchange": "AMEX",
+        "name": "Industrial Select Sector SPDR",
+        "sleeve": "Sector",
         "sector": "industrials",
         "region": "g7",
         "usdExposure": 100,
         "riskBand": 1,
-        "note": "Power \u00b7 Electrical equipment",
+        "note": "Sector",
+        "data": {
+          "price": 168.99,
+          "currency": "USD",
+          "ytd": 8.59,
+          "perf1y": 10.18,
+          "beta1y": 0.703,
+          "volatility": 1.19,
+          "expenseRatio": 0.08
+        },
         "fit": {
           "sector": {
             "tech": 0.2,
@@ -320,26 +495,391 @@
             "target": 100
           },
           "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "ixj",
+        "ticker": "IXJ",
+        "exchange": "AMEX",
+        "name": "iShares Global Healthcare",
+        "sleeve": "Sector",
+        "sector": "healthcare",
+        "region": "g7",
+        "usdExposure": 60,
+        "riskBand": 0,
+        "note": "Sector",
+        "data": {
+          "price": 103.55,
+          "currency": "USD",
+          "ytd": 6.16,
+          "perf1y": 18.56,
+          "beta1y": 0.275,
+          "volatility": 0.95,
+          "expenseRatio": 0.38
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.2,
+            "financials": 0.2,
+            "healthcare": 1.0,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 0
+          },
+          "usd": {
+            "target": 60
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "ixn",
+        "ticker": "IXN",
+        "exchange": "AMEX",
+        "name": "iShares Global Tech",
+        "sleeve": "Sector",
+        "sector": "tech",
+        "region": "g7",
+        "usdExposure": 70,
+        "riskBand": 2,
+        "note": "Sector",
+        "data": {
+          "price": 146.96,
+          "currency": "USD",
+          "ytd": 38.03,
+          "perf1y": 43.32,
+          "beta1y": 1.74,
+          "volatility": 1.3,
+          "expenseRatio": 0.37
+        },
+        "fit": {
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 70
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "vgk",
+        "ticker": "VGK",
+        "exchange": "AMEX",
+        "name": "Vanguard FTSE Europe",
+        "sleeve": "Non-USD",
+        "sector": "core",
+        "region": "g7",
+        "usdExposure": 5,
+        "riskBand": 1,
+        "note": "Non-USD",
+        "data": {
+          "price": 88.08,
+          "currency": "USD",
+          "ytd": 4.34,
+          "perf1y": 11.58,
+          "beta1y": 0.864,
+          "volatility": 0.77,
+          "expenseRatio": 0.06
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 1
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "ewj",
+        "ticker": "EWJ",
+        "exchange": "AMEX",
+        "name": "iShares MSCI Japan",
+        "sleeve": "Non-USD",
+        "sector": "core",
+        "region": "g7",
+        "usdExposure": 5,
+        "riskBand": 1,
+        "note": "Non-USD",
+        "data": {
+          "price": 95.7,
+          "currency": "USD",
+          "ytd": 17.41,
+          "perf1y": 17.96,
+          "beta1y": 1.055,
+          "volatility": 0.99,
+          "expenseRatio": 0.49
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 1
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "ewu",
+        "ticker": "EWU",
+        "exchange": "AMEX",
+        "name": "iShares MSCI United Kingdom",
+        "sleeve": "Non-USD",
+        "sector": "core",
+        "region": "g7",
+        "usdExposure": 5,
+        "riskBand": 0,
+        "note": "Non-USD",
+        "data": {
+          "price": 47.16,
+          "currency": "USD",
+          "ytd": 6.13,
+          "perf1y": 14.04,
+          "beta1y": 0.538,
+          "volatility": 0.73,
+          "expenseRatio": 0.5
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 0
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "efa",
+        "ticker": "EFA",
+        "exchange": "AMEX",
+        "name": "iShares MSCI EAFE",
+        "sleeve": "Non-USD",
+        "sector": "core",
+        "region": "g7",
+        "usdExposure": 15,
+        "riskBand": 1,
+        "note": "Non-USD",
+        "data": {
+          "price": 104.5,
+          "currency": "USD",
+          "ytd": 7.7,
+          "perf1y": 12.74,
+          "beta1y": 0.868,
+          "volatility": 0.76,
+          "expenseRatio": 0.32
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 1
+          },
+          "usd": {
+            "target": 15
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "eem",
+        "ticker": "EEM",
+        "exchange": "AMEX",
+        "name": "iShares MSCI Emerging Markets",
+        "sleeve": "EM",
+        "sector": "core",
+        "region": "em",
+        "usdExposure": 20,
+        "riskBand": 2,
+        "note": "EM",
+        "data": {
+          "price": 67.22,
+          "currency": "USD",
+          "ytd": 20.26,
+          "perf1y": 26.2,
+          "beta1y": 1.292,
+          "volatility": 1.01,
+          "expenseRatio": 0.72
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 0.25,
+            "em": 1.0
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 20
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "ewz",
+        "ticker": "EWZ",
+        "exchange": "AMEX",
+        "name": "iShares MSCI Brazil",
+        "sleeve": "EM",
+        "sector": "core",
+        "region": "em",
+        "usdExposure": 5,
+        "riskBand": 2,
+        "note": "EM",
+        "data": {
+          "price": 36.98,
+          "currency": "USD",
+          "ytd": 14.49,
+          "perf1y": 18.74,
+          "beta1y": 0.54,
+          "volatility": 1.95,
+          "expenseRatio": 0.59
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 0.25,
+            "em": 1.0
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
           }
         }
       },
       {
         "id": "ewy",
         "ticker": "EWY",
+        "exchange": "AMEX",
         "name": "iShares MSCI South Korea",
+        "sleeve": "EM",
+        "sector": "tech",
+        "region": "em",
+        "usdExposure": 5,
+        "riskBand": 2,
+        "note": "EM",
         "data": {
-          "price": 182.47,
-          "currency": "USD"
+          "price": 182.34,
+          "currency": "USD",
+          "ytd": 80.53,
+          "perf1y": 126.31,
+          "beta1y": 2.437,
+          "volatility": 2.21,
+          "expenseRatio": 0.59
         },
-        "sleeve": "Korea",
-        "role": "Korea broad ETF",
-        "sector": "tech",
-        "region": "em",
-        "usdExposure": 5,
-        "riskBand": 2,
-        "note": "Korea \u00b7 Korea broad ETF",
         "fit": {
           "sector": {
             "tech": 1.0,
@@ -361,30 +901,38 @@
           },
           "capitalIncome": {
             "capital": 1.0,
-            "income": 0.35
+            "income": 0.5
           }
         }
       },
       {
-        "id": "smsn",
-        "ticker": "SMSN",
-        "name": "Samsung Electronics",
-        "data": {},
-        "sleeve": "Korea",
-        "role": "HBM memory, local line",
-        "sector": "tech",
+        "id": "fxi",
+        "ticker": "FXI",
+        "exchange": "BATS",
+        "name": "iShares China Large-Cap",
+        "sleeve": "EM",
+        "sector": "core",
         "region": "em",
-        "usdExposure": 5,
+        "usdExposure": 10,
         "riskBand": 2,
-        "note": "Korea \u00b7 HBM memory, local line",
+        "note": "EM",
+        "data": {
+          "price": 34.22,
+          "currency": "USD",
+          "ytd": -13.27,
+          "perf1y": -15.64,
+          "beta1y": 0.737,
+          "volatility": 0.78,
+          "expenseRatio": 0.74
+        },
         "fit": {
           "sector": {
-            "tech": 1.0,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
           },
           "country": {
             "g7": 0.25,
@@ -394,66 +942,34 @@
             "target": 2
           },
           "usd": {
-            "target": 5
+            "target": 10
           },
           "capitalIncome": {
             "capital": 1.0,
-            "income": 0.35
-          }
-        }
-      },
-      {
-        "id": "dram",
-        "ticker": "DRAM",
-        "name": "Memory and storage ETF",
-        "data": {},
-        "sleeve": "Korea",
-        "role": "Memory cycle",
-        "sector": "tech",
-        "region": "em",
-        "usdExposure": 20,
-        "riskBand": 2,
-        "note": "Korea \u00b7 Memory cycle",
-        "fit": {
-          "sector": {
-            "tech": 1.0,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 0.25,
-            "em": 1.0
-          },
-          "riskProfile": {
-            "target": 2
-          },
-          "usd": {
-            "target": 20
-          },
-          "capitalIncome": {
-            "capital": 1.0,
-            "income": 0.35
+            "income": 0.5
           }
         }
       },
       {
         "id": "iau",
         "ticker": "IAU",
+        "exchange": "AMEX",
         "name": "iShares Gold Trust",
-        "data": {
-          "price": 80.26,
-          "currency": "USD"
-        },
-        "sleeve": "Metals",
-        "role": "Gold",
+        "sleeve": "Real asset",
         "sector": "energy",
         "region": "g7",
         "usdExposure": 50,
-        "riskBand": 0,
-        "note": "Metals \u00b7 Gold",
+        "riskBand": 1,
+        "note": "Real asset",
+        "data": {
+          "price": 80.31,
+          "currency": "USD",
+          "ytd": -2.36,
+          "perf1y": 13.11,
+          "beta1y": 0.774,
+          "volatility": 1.35,
+          "expenseRatio": 0.25
+        },
         "fit": {
           "sector": {
             "tech": 0.2,
@@ -468,734 +984,14 @@
             "em": 0.25
           },
           "riskProfile": {
-            "target": 0
+            "target": 1
           },
           "usd": {
             "target": 50
           },
           "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "cper",
-        "ticker": "CPER",
-        "name": "US Copper Index Fund",
-        "data": {
-          "price": 40.62,
-          "currency": "USD"
-        },
-        "sleeve": "Commodities",
-        "role": "Copper, electrification",
-        "sector": "energy",
-        "region": "g7",
-        "usdExposure": 60,
-        "riskBand": 2,
-        "note": "Commodities \u00b7 Copper, electrification",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 1.0,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 2
-          },
-          "usd": {
-            "target": 60
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "pdbc",
-        "ticker": "PDBC",
-        "name": "Optimum Yield Diversified Commodity",
-        "data": {
-          "price": 19.71,
-          "currency": "USD"
-        },
-        "sleeve": "Commodities",
-        "role": "Broad commodity basket",
-        "sector": "energy",
-        "region": "g7",
-        "usdExposure": 60,
-        "riskBand": 1,
-        "note": "Commodities \u00b7 Broad commodity basket",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 1.0,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 1
-          },
-          "usd": {
-            "target": 60
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "dbmf",
-        "ticker": "DBMF",
-        "name": "Managed Futures Strategy",
-        "data": {
-          "price": 32.64,
-          "currency": "USD"
-        },
-        "sleeve": "Alternatives",
-        "role": "Managed futures",
-        "sector": "financials",
-        "region": "g7",
-        "usdExposure": 70,
-        "riskBand": 1,
-        "note": "Alternatives \u00b7 Managed futures",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 1.0,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 1
-          },
-          "usd": {
-            "target": 70
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "ief",
-        "ticker": "IEF",
-        "name": "iShares 7-10 Year Treasury",
-        "data": {
-          "price": 89.94,
-          "currency": "USD"
-        },
-        "sleeve": "Alternatives",
-        "role": "Intermediate treasuries",
-        "sector": "financials",
-        "region": "g7",
-        "usdExposure": 100,
-        "riskBand": 0,
-        "note": "Alternatives \u00b7 Intermediate treasuries",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 1.0,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 0
-          },
-          "usd": {
-            "target": 100
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "msft",
-        "ticker": "MSFT",
-        "name": "Microsoft",
-        "data": {
-          "price": 496.39,
-          "currency": "USD"
-        },
-        "sleeve": "Anchor",
-        "role": "Hyperscaler anchor",
-        "sector": "tech",
-        "region": "g7",
-        "usdExposure": 100,
-        "riskBand": 1,
-        "note": "Anchor \u00b7 Hyperscaler anchor",
-        "fit": {
-          "sector": {
-            "tech": 1.0,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 1
-          },
-          "usd": {
-            "target": 100
-          },
-          "capitalIncome": {
             "capital": 1.0,
-            "income": 0.35
-          }
-        }
-      },
-      {
-        "id": "novn",
-        "ticker": "NOVN",
-        "name": "Novartis",
-        "data": {
-          "price": 118.96,
-          "currency": "CHF"
-        },
-        "sleeve": "Healthcare",
-        "role": "Swiss pharma, CHF",
-        "sector": "healthcare",
-        "region": "g7",
-        "usdExposure": 5,
-        "riskBand": 0,
-        "note": "Healthcare \u00b7 Swiss pharma, CHF",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 1.0,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 0
-          },
-          "usd": {
-            "target": 5
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "azn",
-        "ticker": "AZN",
-        "name": "AstraZeneca",
-        "data": {
-          "price": 12400.0,
-          "currency": "GBp"
-        },
-        "sleeve": "Healthcare",
-        "role": "UK pharma, GBP",
-        "sector": "healthcare",
-        "region": "g7",
-        "usdExposure": 5,
-        "riskBand": 1,
-        "note": "Healthcare \u00b7 UK pharma, GBP",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 1.0,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 1
-          },
-          "usd": {
-            "target": 5
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "nesn",
-        "ticker": "NESN",
-        "name": "Nestle",
-        "data": {
-          "price": 77.94,
-          "currency": "CHF"
-        },
-        "sleeve": "Consumer",
-        "role": "Swiss staples, CHF",
-        "sector": "consumer",
-        "region": "g7",
-        "usdExposure": 5,
-        "riskBand": 0,
-        "note": "Consumer \u00b7 Swiss staples, CHF",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 1.0,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 0
-          },
-          "usd": {
-            "target": 5
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "ulvr",
-        "ticker": "ULVR",
-        "name": "Unilever",
-        "data": {
-          "price": 4708.5,
-          "currency": "GBp"
-        },
-        "sleeve": "Consumer",
-        "role": "UK staples, GBP",
-        "sector": "consumer",
-        "region": "g7",
-        "usdExposure": 5,
-        "riskBand": 0,
-        "note": "Consumer \u00b7 UK staples, GBP",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 1.0,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 0
-          },
-          "usd": {
-            "target": 5
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "mc",
-        "ticker": "MC",
-        "name": "LVMH",
-        "data": {
-          "price": 397.1,
-          "currency": "EUR"
-        },
-        "sleeve": "Consumer",
-        "role": "European luxury, EUR",
-        "sector": "consumer",
-        "region": "g7",
-        "usdExposure": 5,
-        "riskBand": 1,
-        "note": "Consumer \u00b7 European luxury, EUR",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 1.0,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 1
-          },
-          "usd": {
-            "target": 5
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "7203",
-        "ticker": "7203",
-        "name": "Toyota Motor",
-        "data": {
-          "price": 2969.0,
-          "currency": "JPY"
-        },
-        "sleeve": "Consumer",
-        "role": "Japanese autos, JPY",
-        "sector": "consumer",
-        "region": "g7",
-        "usdExposure": 5,
-        "riskBand": 1,
-        "note": "Consumer \u00b7 Japanese autos, JPY",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 1.0,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 1
-          },
-          "usd": {
-            "target": 5
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "asml",
-        "ticker": "ASML",
-        "name": "ASML Holding",
-        "data": {
-          "price": 1503.2,
-          "currency": "EUR"
-        },
-        "sleeve": "Compute",
-        "role": "Lithography, EUR",
-        "sector": "tech",
-        "region": "g7",
-        "usdExposure": 5,
-        "riskBand": 2,
-        "note": "Compute \u00b7 Lithography, EUR",
-        "fit": {
-          "sector": {
-            "tech": 1.0,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 2
-          },
-          "usd": {
-            "target": 5
-          },
-          "capitalIncome": {
-            "capital": 1.0,
-            "income": 0.35
-          }
-        }
-      },
-      {
-        "id": "sap",
-        "ticker": "SAP",
-        "name": "SAP SE",
-        "data": {
-          "price": 184.18,
-          "currency": "EUR"
-        },
-        "sleeve": "Compute",
-        "role": "Enterprise software, EUR",
-        "sector": "tech",
-        "region": "g7",
-        "usdExposure": 5,
-        "riskBand": 1,
-        "note": "Compute \u00b7 Enterprise software, EUR",
-        "fit": {
-          "sector": {
-            "tech": 1.0,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 1
-          },
-          "usd": {
-            "target": 5
-          },
-          "capitalIncome": {
-            "capital": 1.0,
-            "income": 0.35
-          }
-        }
-      },
-      {
-        "id": "shel",
-        "ticker": "SHEL",
-        "name": "Shell",
-        "data": {
-          "price": 3641.0,
-          "currency": "GBp"
-        },
-        "sleeve": "Power",
-        "role": "Integrated oil, GBP",
-        "sector": "energy",
-        "region": "g7",
-        "usdExposure": 5,
-        "riskBand": 1,
-        "note": "Power \u00b7 Integrated oil, GBP",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 1.0,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 1
-          },
-          "usd": {
-            "target": 5
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "lly",
-        "ticker": "LLY",
-        "name": "Eli Lilly",
-        "data": {
-          "price": 1190.24,
-          "currency": "USD"
-        },
-        "sleeve": "Healthcare",
-        "role": "US pharma",
-        "sector": "healthcare",
-        "region": "g7",
-        "usdExposure": 100,
-        "riskBand": 2,
-        "note": "Healthcare \u00b7 US pharma",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 1.0,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 2
-          },
-          "usd": {
-            "target": 100
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "unh",
-        "ticker": "UNH",
-        "name": "UnitedHealth Group",
-        "data": {
-          "price": 374.19,
-          "currency": "USD"
-        },
-        "sleeve": "Healthcare",
-        "role": "Managed care",
-        "sector": "healthcare",
-        "region": "g7",
-        "usdExposure": 100,
-        "riskBand": 1,
-        "note": "Healthcare \u00b7 Managed care",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 1.0,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 1
-          },
-          "usd": {
-            "target": 100
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "pg",
-        "ticker": "PG",
-        "name": "Procter & Gamble",
-        "data": {
-          "price": 147.47,
-          "currency": "USD"
-        },
-        "sleeve": "Consumer",
-        "role": "US staples",
-        "sector": "consumer",
-        "region": "g7",
-        "usdExposure": 100,
-        "riskBand": 0,
-        "note": "Consumer \u00b7 US staples",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 1.0,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 0
-          },
-          "usd": {
-            "target": 100
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
-          }
-        }
-      },
-      {
-        "id": "cost",
-        "ticker": "COST",
-        "name": "Costco Wholesale",
-        "data": {
-          "price": 899.32,
-          "currency": "USD"
-        },
-        "sleeve": "Consumer",
-        "role": "US retail",
-        "sector": "consumer",
-        "region": "g7",
-        "usdExposure": 100,
-        "riskBand": 1,
-        "note": "Consumer \u00b7 US retail",
-        "fit": {
-          "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 1.0,
-            "industrials": 0.2
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": {
-            "target": 1
-          },
-          "usd": {
-            "target": 100
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.7
+            "income": 0.5
           }
         }
       }
@@ -1229,7 +1025,10 @@
         "data": {
           "ytw": 4.8132,
           "duration": 2.2738,
-          "coupon": 4.35
+          "coupon": 4.35,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "BBB \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
@@ -1269,7 +1068,10 @@
         "data": {
           "ytw": 9.3345,
           "duration": 5.0946,
-          "coupon": 4.125
+          "coupon": 4.125,
+          "ytd": -4.28,
+          "ytdProxy": "EMB",
+          "ytdProxyNote": "USD emerging market sovereign"
         },
         "note": "B- \u00b7 Sr Unsecured \u00b7 AR",
         "fit": {
@@ -1309,7 +1111,10 @@
         "data": {
           "ytw": 6.0374,
           "duration": 5.6826,
-          "coupon": 6.45
+          "coupon": 6.45,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "BBB+ \u00b7 Jr Subordinated \u00b7 US",
         "fit": {
@@ -1349,7 +1154,10 @@
         "data": {
           "ytw": 5.8985,
           "duration": 3.7596,
-          "coupon": 5.375
+          "coupon": 5.375,
+          "ytd": -4.28,
+          "ytdProxy": "EMB",
+          "ytdProxyNote": "USD emerging market sovereign"
         },
         "note": "BB \u00b7 Sr Unsecured \u00b7 BR",
         "fit": {
@@ -1389,7 +1197,10 @@
         "data": {
           "ytw": 7.339,
           "duration": 6.6268,
-          "coupon": 7.25
+          "coupon": 7.25,
+          "ytd": -3.45,
+          "ytdProxy": "HYG",
+          "ytdProxyNote": "USD high yield"
         },
         "note": "BB+ \u00b7 Jr Subordinated \u00b7 ES",
         "fit": {
@@ -1429,7 +1240,10 @@
         "data": {
           "ytw": 7.4939,
           "duration": 11.6891,
-          "coupon": 7.25
+          "coupon": 7.25,
+          "ytd": -4.28,
+          "ytdProxy": "EMB",
+          "ytdProxyNote": "USD emerging market sovereign"
         },
         "note": "BB \u00b7 Sr Unsecured \u00b7 BR",
         "fit": {
@@ -1469,7 +1283,10 @@
         "data": {
           "ytw": 6.6892,
           "duration": 6.9633,
-          "coupon": 6.25
+          "coupon": 6.25,
+          "ytd": -4.28,
+          "ytdProxy": "EMB",
+          "ytdProxyNote": "USD emerging market sovereign"
         },
         "note": "BB \u00b7 Sr Unsecured \u00b7 BR",
         "fit": {
@@ -1509,7 +1326,10 @@
         "data": {
           "ytw": 5.5216,
           "duration": 6.1005,
-          "coupon": 5.45
+          "coupon": 5.45,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "BBB+ \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
@@ -1549,7 +1369,10 @@
         "data": {
           "ytw": 5.1539,
           "duration": 3.099,
-          "coupon": 2.75
+          "coupon": 2.75,
+          "ytd": -4.28,
+          "ytdProxy": "EMB",
+          "ytdProxyNote": "USD emerging market sovereign"
         },
         "note": "A- \u00b7 Sr Unsecured \u00b7 MX",
         "fit": {
@@ -1589,7 +1412,10 @@
         "data": {
           "ytw": 6.9835,
           "duration": 12.577,
-          "coupon": 5.625
+          "coupon": 5.625,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "AA- \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
@@ -1629,7 +1455,10 @@
         "data": {
           "ytw": 4.7051,
           "duration": 1.9418,
-          "coupon": 4.2
+          "coupon": 4.2,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "BBB \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
@@ -1669,7 +1498,10 @@
         "data": {
           "ytw": 5.9469,
           "duration": 7.1918,
-          "coupon": 5.065
+          "coupon": 5.065,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "A- \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
@@ -1709,7 +1541,10 @@
         "data": {
           "ytw": 6.7775,
           "duration": 3.8223,
-          "coupon": 6.75
+          "coupon": 6.75,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "BBB- \u00b7 Jr Subordinated \u00b7 GB",
         "fit": {
@@ -1749,7 +1584,10 @@
         "data": {
           "ytw": 4.6796,
           "duration": 1.7021,
-          "coupon": 5.449
+          "coupon": 5.449,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "A \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
@@ -1789,7 +1627,10 @@
         "data": {
           "ytw": 6.1781,
           "duration": 7.1016,
-          "coupon": 5.314
+          "coupon": 5.314,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "A- \u00b7 Subordinated \u00b7 US",
         "fit": {
@@ -1829,7 +1670,10 @@
         "data": {
           "ytw": 5.0372,
           "duration": 5.0713,
-          "coupon": 3.9
+          "coupon": 3.9,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "A+ \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
@@ -1869,7 +1713,10 @@
         "data": {
           "ytw": 5.6457,
           "duration": 9.0969,
-          "coupon": 4.1
+          "coupon": 4.1,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "A \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
@@ -1909,7 +1756,10 @@
         "data": {
           "ytw": 6.2332,
           "duration": 5.7145,
-          "coupon": 6.251
+          "coupon": 6.251,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "BBB+ \u00b7 Subordinated \u00b7 FR",
         "fit": {
@@ -1949,7 +1799,10 @@
         "data": {
           "ytw": 6.1318,
           "duration": 3.6168,
-          "coupon": 6.0
+          "coupon": 6.0,
+          "ytd": -4.28,
+          "ytdProxy": "EMB",
+          "ytdProxyNote": "USD emerging market sovereign"
         },
         "note": "BB+ \u00b7 Sr Subordinated \u00b7 BR",
         "fit": {
@@ -1989,7 +1842,10 @@
         "data": {
           "ytw": 8.3325,
           "duration": 6.6096,
-          "coupon": 8.45
+          "coupon": 8.45,
+          "ytd": -4.28,
+          "ytdProxy": "EMB",
+          "ytdProxyNote": "USD emerging market sovereign"
         },
         "note": "BB- \u00b7 Jr Subordinated \u00b7 MX",
         "fit": {
@@ -2029,7 +1885,10 @@
         "data": {
           "ytw": 7.1529,
           "duration": 5.0644,
-          "coupon": 8.45
+          "coupon": 8.45,
+          "ytd": -4.28,
+          "ytdProxy": "EMB",
+          "ytdProxyNote": "USD emerging market sovereign"
         },
         "note": "BB+ \u00b7 Subordinated \u00b7 MX",
         "fit": {
@@ -2069,7 +1928,10 @@
         "data": {
           "ytw": 5.2922,
           "duration": 6.1541,
-          "coupon": 4.875
+          "coupon": 4.875,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "AA- \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
@@ -2109,7 +1971,10 @@
         "data": {
           "ytw": 5.18,
           "duration": 3.99,
-          "coupon": 6.0
+          "coupon": 6.0,
+          "ytd": -3.84,
+          "ytdProxy": "IGOV",
+          "ytdProxyNote": "unhedged international sovereign"
         },
         "note": "BBB- \u00b7 Jr Subordinated \u00b7 ES",
         "fit": {
@@ -2149,7 +2014,10 @@
         "data": {
           "ytw": 4.7,
           "duration": 4.21,
-          "coupon": 4.375
+          "coupon": 4.375,
+          "ytd": -3.84,
+          "ytdProxy": "IGOV",
+          "ytdProxyNote": "unhedged international sovereign"
         },
         "note": "BB \u00b7 Jr Subordinated \u00b7 FR",
         "fit": {
@@ -2189,7 +2057,10 @@
         "data": {
           "ytw": 5.81,
           "duration": 5.56,
-          "coupon": 5.625
+          "coupon": 5.625,
+          "ytd": -3.84,
+          "ytdProxy": "IGOV",
+          "ytdProxyNote": "unhedged international sovereign"
         },
         "note": "BBB- \u00b7 Jr Subordinated \u00b7 FR",
         "fit": {
@@ -2229,7 +2100,10 @@
         "data": {
           "ytw": 5.46,
           "duration": 6.05,
-          "coupon": 5.994
+          "coupon": 5.994,
+          "ytd": -3.84,
+          "ytdProxy": "IGOV",
+          "ytdProxyNote": "unhedged international sovereign"
         },
         "note": "BBB- \u00b7 Jr Subordinated \u00b7 NL",
         "fit": {
@@ -2269,7 +2143,10 @@
         "data": {
           "ytw": 4.5,
           "duration": 6.87,
-          "coupon": 4.5
+          "coupon": 4.5,
+          "ytd": -3.84,
+          "ytdProxy": "IGOV",
+          "ytdProxyNote": "unhedged international sovereign"
         },
         "note": "A- \u00b7 Jr Subordinated \u00b7 FR",
         "fit": {
@@ -2309,7 +2186,10 @@
         "data": {
           "ytw": 6.15,
           "duration": 7.18,
-          "coupon": 6.125
+          "coupon": 6.125,
+          "ytd": -3.84,
+          "ytdProxy": "IGOV",
+          "ytdProxyNote": "unhedged international sovereign"
         },
         "note": "BB+ \u00b7 Jr Subordinated \u00b7 GB",
         "fit": {
@@ -2349,7 +2229,10 @@
         "data": {
           "ytw": 5.31,
           "duration": 1.66,
-          "coupon": 6.25
+          "coupon": 6.25,
+          "ytd": -3.84,
+          "ytdProxy": "IGOV",
+          "ytdProxyNote": "unhedged international sovereign"
         },
         "note": "BBB+ \u00b7 Subordinated \u00b7 NL",
         "fit": {
@@ -2389,7 +2272,10 @@
         "data": {
           "ytw": 5.95,
           "duration": 5.55,
-          "coupon": 5.375
+          "coupon": 5.375,
+          "ytd": -3.84,
+          "ytdProxy": "IGOV",
+          "ytdProxyNote": "unhedged international sovereign"
         },
         "note": "BBB+ \u00b7 Subordinated \u00b7 FR",
         "fit": {
@@ -2429,7 +2315,10 @@
         "data": {
           "ytw": 5.72,
           "duration": 9.08,
-          "coupon": 6.375
+          "coupon": 6.375,
+          "ytd": -3.84,
+          "ytdProxy": "IGOV",
+          "ytdProxyNote": "unhedged international sovereign"
         },
         "note": "A \u00b7 Sr Unsecured \u00b7 GB",
         "fit": {
@@ -2469,7 +2358,10 @@
         "data": {
           "ytw": 6.35,
           "duration": 4.08,
-          "coupon": 8.0
+          "coupon": 8.0,
+          "ytd": -3.84,
+          "ytdProxy": "IGOV",
+          "ytdProxyNote": "unhedged international sovereign"
         },
         "note": "BB+ \u00b7 Jr Subordinated \u00b7 GB",
         "fit": {
@@ -2509,7 +2401,10 @@
         "data": {
           "ytw": 6.21,
           "duration": 2.41,
-          "coupon": 5.875
+          "coupon": 5.875,
+          "ytd": -3.84,
+          "ytdProxy": "IGOV",
+          "ytdProxyNote": "unhedged international sovereign"
         },
         "note": "BB- \u00b7 Jr Subordinated \u00b7 FR",
         "fit": {
@@ -2549,7 +2444,10 @@
         "data": {
           "ytw": 6.38,
           "duration": 2.04,
-          "coupon": 9.25
+          "coupon": 9.25,
+          "ytd": -3.84,
+          "ytdProxy": "IGOV",
+          "ytdProxyNote": "unhedged international sovereign"
         },
         "note": "BB+ \u00b7 Jr Subordinated \u00b7 GB",
         "fit": {
@@ -2589,7 +2487,10 @@
         "data": {
           "ytw": 5.22,
           "duration": 6.84,
-          "coupon": 5.85
+          "coupon": 5.85,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "A \u00b7 Sr Unsecured \u00b7 JP",
         "fit": {
@@ -2629,7 +2530,10 @@
         "data": {
           "ytw": 5.8,
           "duration": 7.53,
-          "coupon": 5.875
+          "coupon": 5.875,
+          "ytd": -4.28,
+          "ytdProxy": "EMB",
+          "ytdProxyNote": "USD emerging market sovereign"
         },
         "note": "BBB \u00b7 Sr Unsecured \u00b7 KR",
         "fit": {
@@ -2669,7 +2573,10 @@
         "data": {
           "ytw": 5.63,
           "duration": 6.97,
-          "coupon": 5.816
+          "coupon": 5.816,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "A- \u00b7 Subordinated \u00b7 AU",
         "fit": {
@@ -2709,7 +2616,10 @@
         "data": {
           "ytw": 5.81,
           "duration": 6.11,
-          "coupon": 5.875
+          "coupon": 5.875,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "A- \u00b7 Subordinated \u00b7 JP",
         "fit": {
@@ -2749,7 +2659,10 @@
         "data": {
           "ytw": 5.83,
           "duration": 6.66,
-          "coupon": 6.2
+          "coupon": 6.2,
+          "ytd": -6.24,
+          "ytdProxy": "LQD",
+          "ytdProxyNote": "USD investment grade"
         },
         "note": "A- \u00b7 Subordinated \u00b7 JP",
         "fit": {
@@ -2782,7 +2695,7 @@
         "country": 0.8,
         "capitalIncome": 0.7
       },
-      "topN": 5
+      "topN": 6
     }
   },
   "notes": {
@@ -2798,7 +2711,10 @@
         "coupon": "11.5%mem",
         "riskBand": 2,
         "region": "EM",
-        "isIndex": true,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "2Y \u00b7 50/50",
         "fit": {
           "riskProfile": {
@@ -2831,7 +2747,10 @@
         "coupon": "24%mem",
         "riskBand": 3,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "1Y \u00b7 50/50",
         "fit": {
           "riskProfile": {
@@ -2868,7 +2787,10 @@
         "coupon": "9.50%mem",
         "riskBand": 3,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "2Y \u00b7 50/50",
         "fit": {
           "riskProfile": {
@@ -2909,7 +2831,10 @@
         "coupon": "11%mem",
         "riskBand": 2,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "2Y \u00b7 60/60",
         "fit": {
           "riskProfile": {
@@ -2950,7 +2875,10 @@
         "coupon": "7.50%mem",
         "riskBand": 1,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "2Y \u00b7 70/70",
         "fit": {
           "riskProfile": {
@@ -2991,7 +2919,10 @@
         "coupon": "15.50%mem",
         "riskBand": 3,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "2Y \u00b7 60/60",
         "fit": {
           "riskProfile": {
@@ -3032,7 +2963,10 @@
         "coupon": "9%mem",
         "riskBand": 2,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "2Y \u00b7 60/60",
         "fit": {
           "riskProfile": {
@@ -3073,7 +3007,10 @@
         "coupon": "19%mem",
         "riskBand": 3,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "2Y \u00b7 60/60",
         "fit": {
           "riskProfile": {
@@ -3114,7 +3051,10 @@
         "coupon": "17.50%mem",
         "riskBand": 3,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "2Y \u00b7 60/60",
         "fit": {
           "riskProfile": {
@@ -3155,7 +3095,10 @@
         "coupon": "9% Max",
         "riskBand": 1,
         "region": "US",
-        "isIndex": true,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "3y \u00b7 150%/ 70%",
         "fit": {
           "riskProfile": {
@@ -3188,7 +3131,10 @@
         "coupon": "7.00%",
         "riskBand": 1,
         "region": "US",
-        "isIndex": true,
+        "isCore": true,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "3y \u00b7 65%/ 65%",
         "fit": {
           "riskProfile": {
@@ -3221,7 +3167,10 @@
         "coupon": "19%mem",
         "riskBand": 3,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "3y \u00b7 50/50",
         "fit": {
           "riskProfile": {
@@ -3258,7 +3207,10 @@
         "coupon": "11.5%mem",
         "riskBand": 2,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "3Y \u00b7 50/50",
         "fit": {
           "riskProfile": {
@@ -3299,7 +3251,10 @@
         "coupon": "14.50%mem",
         "riskBand": 3,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "3Y \u00b7 60/60",
         "fit": {
           "riskProfile": {
@@ -3340,7 +3295,10 @@
         "coupon": "12%mem",
         "riskBand": 3,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "3Y \u00b7 70/70",
         "fit": {
           "riskProfile": {
@@ -3377,7 +3335,10 @@
         "coupon": "30%cap",
         "riskBand": 1,
         "region": "US",
-        "isIndex": true,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "3.5Y \u00b7 no barrier",
         "fit": {
           "riskProfile": {
@@ -3410,7 +3371,10 @@
         "coupon": "9.00%",
         "riskBand": 1,
         "region": "US",
-        "isIndex": true,
+        "isCore": true,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "3Y \u00b7 60/60",
         "fit": {
           "riskProfile": {
@@ -3443,7 +3407,10 @@
         "coupon": "10%mem",
         "riskBand": 2,
         "region": "US",
-        "isIndex": true,
+        "isCore": true,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "2Y \u00b7 70/70",
         "fit": {
           "riskProfile": {
@@ -3476,7 +3443,10 @@
         "coupon": "7.50%",
         "riskBand": 1,
         "region": "US",
-        "isIndex": true,
+        "isCore": true,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "3Y \u00b7 50/50",
         "fit": {
           "riskProfile": {
@@ -3509,7 +3479,10 @@
         "coupon": "6.15%",
         "riskBand": 2,
         "region": "EM",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "7Y \u00b7 no barrier",
         "fit": {
           "riskProfile": {
@@ -3542,7 +3515,10 @@
         "coupon": "11.50%mem",
         "riskBand": 2,
         "region": "US",
-        "isIndex": true,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "2Y \u00b7 65/65",
         "fit": {
           "riskProfile": {
@@ -3575,7 +3551,10 @@
         "coupon": "11.85%",
         "riskBand": 2,
         "region": "EM",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "10Y \u00b7 no barrier",
         "fit": {
           "riskProfile": {
@@ -3608,7 +3587,10 @@
         "coupon": "19%mem",
         "riskBand": 3,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "2Y \u00b7 50/50",
         "fit": {
           "riskProfile": {
@@ -3645,7 +3627,10 @@
         "coupon": "11.50%mem",
         "riskBand": 3,
         "region": "EM",
-        "isIndex": true,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "3Y \u00b7 60/60",
         "fit": {
           "riskProfile": {
@@ -3678,7 +3663,10 @@
         "coupon": "7.50%",
         "riskBand": 1,
         "region": "US",
-        "isIndex": true,
+        "isCore": true,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "3Y \u00b7 70/70",
         "fit": {
           "riskProfile": {
@@ -3711,7 +3699,10 @@
         "coupon": "30.00%",
         "riskBand": 3,
         "region": "US",
-        "isIndex": false,
+        "isCore": false,
+        "data": {
+          "ytdExcluded": "a structured note has no public price history"
+        },
         "note": "3Y \u00b7 100/60",
         "fit": {
           "riskProfile": {
@@ -3738,6 +3729,7 @@
         }
       }
     ],
+    "$rule": "At least 50% of the notes allocation sits in the desk's highlighted core picks.",
     "selection": {
       "weights": {
         "riskProfile": 1.3,
@@ -3746,10 +3738,9 @@
         "capitalIncome": 0.8,
         "sector": 0.8
       },
-      "topN": 4,
-      "indexFloor": 0.5
-    },
-    "$rule": "At least 50% of the notes allocation sits in index-linked structures."
+      "topN": 6,
+      "coreFloor": 0.5
+    }
   },
   "fx": {
     "shelf": [
@@ -3781,6 +3772,10 @@
             "capital": 1.0,
             "income": 0.2
           }
+        },
+        "data": {
+          "ytd": -1.26,
+          "pair": "XAUUSD"
         }
       },
       {
@@ -3811,6 +3806,9 @@
             "capital": 1.0,
             "income": 0.2
           }
+        },
+        "data": {
+          "ytdExcluded": "option payoff is not linear in the pair"
         }
       },
       {
@@ -3841,6 +3839,10 @@
             "capital": 1.0,
             "income": 0.2
           }
+        },
+        "data": {
+          "ytd": 1.35,
+          "pair": "USDJPY"
         }
       },
       {
@@ -3871,6 +3873,10 @@
             "capital": 1.0,
             "income": 0.2
           }
+        },
+        "data": {
+          "ytd": -3.23,
+          "pair": "EURUSD"
         }
       },
       {
@@ -3901,6 +3907,9 @@
             "capital": 1.0,
             "income": 0.2
           }
+        },
+        "data": {
+          "ytdExcluded": "option payoff is not linear in the pair"
         }
       },
       {
@@ -3931,6 +3940,10 @@
             "income": 1.0,
             "capital": 0.2
           }
+        },
+        "data": {
+          "ytd": 5.28,
+          "pair": "USDBRL"
         }
       },
       {
@@ -3961,6 +3974,9 @@
             "capital": 1.0,
             "income": 0.2
           }
+        },
+        "data": {
+          "ytdExcluded": "option payoff is not linear in the pair"
         }
       },
       {
@@ -3991,6 +4007,10 @@
             "capital": 1.0,
             "income": 0.2
           }
+        },
+        "data": {
+          "ytd": -1.71,
+          "pair": "USDMXN"
         }
       }
     ],
@@ -4002,7 +4022,7 @@
         "leverage": 0.8,
         "horizon": 0.6
       },
-      "topN": 3
+      "topN": 6
     }
   }
 }
