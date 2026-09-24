@@ -1378,18 +1378,61 @@ window.ENGINE = (function () {
       lines: fiLines, scored: fi.all
     });
 
-    /* --- structured notes: scored off the desk's own shelf ----------- */
+    /* --- structured notes: scored, then held to the index-note floor -- */
     var nt = scoreShelf(agg, products.notes);
-    var ntLines = spread(alloc.notes, nt.picked.map(function (p) {
+    var picks = nt.picked.slice();
+
+    /* House rule: at least half the notes sleeve sits in index-linked
+       structures. Single-name notes concentrate issuer risk in a sleeve
+       that is already the most complex thing in the book. */
+    var FLOOR = (products.notes.selection || {}).indexFloor || 0.5;
+    var isIdx = function (p) { return !!p.item.isIndex; };
+
+    if (!picks.some(isIdx)) {
+      /* Nothing index-linked was selected, so promote the best one that
+         was not, in place of the weakest single-name pick. */
+      var best = nt.all.filter(isIdx)[0];
+      if (best) picks[picks.length - 1] = best;
+    }
+
+    var ntLines = spread(alloc.notes, picks.map(function (p) {
       return { item: p.item, w: p.score };
     }));
+
+    var idxW = ntLines.filter(isIdx).reduce(function (t, l) { return t + l.weight; }, 0);
+    if (alloc.notes > 0 && idxW < alloc.notes * FLOOR) {
+      /* Scale the two groups so the index side reaches the floor exactly,
+         keeping the relative weights inside each group unchanged. */
+      var want = alloc.notes * FLOOR;
+      var restW = alloc.notes - idxW;
+      var upIdx = idxW > 0 ? want / idxW : 0;
+      var dnRest = restW > 0 ? (alloc.notes - want) / restW : 0;
+      ntLines.forEach(function (l) {
+        l.weight = Math.round(l.weight * (isIdx(l) ? upIdx : dnRest) * 10) / 10;
+      });
+      /* Put rounding drift on the largest index line so the floor holds. */
+      var sum = ntLines.reduce(function (t, l) { return t + l.weight; }, 0);
+      var drift = Math.round((alloc.notes - sum) * 10) / 10;
+      if (drift) {
+        var big = ntLines.filter(isIdx).sort(function (a, b) { return b.weight - a.weight; })[0]
+               || ntLines[0];
+        if (big) big.weight = Math.round((big.weight + drift) * 10) / 10;
+      }
+    }
+
     ntLines.forEach(function (l) {
-      var m = nt.picked.filter(function (p) { return p.item === l.item; })[0];
+      var m = picks.filter(function (p) { return p.item === l.item; })[0];
       if (m) { l.score = m.score; l.per = m.per; }
+      l.note = l.item.isIndex ? "index-linked" : "single name";
     });
+
     buckets.push({
       key: "notes", label: "Structured notes", weight: alloc.notes,
-      lines: ntLines, scored: nt.all
+      lines: ntLines, scored: nt.all,
+      indexShare: alloc.notes > 0
+        ? Math.round((ntLines.filter(isIdx).reduce(function (t, l) { return t + l.weight; }, 0)
+                      / alloc.notes) * 100)
+        : 0
     });
 
     /* --- fx: the desk scores these itself, translated in the shelf --- */

@@ -42,6 +42,7 @@
       ["Sector",  function (p) { return p.sector; }],
       ["Region",  function (p) { return p.region.toUpperCase(); }],
       ["USD %",   function (p) { return p.usdExposure; }, "num"],
+      ["Ccy",     function (p) { return (p.data && p.data.currency) || ""; }],
       ["Price",   function (p) { return p.data && p.data.price ? n(p.data.price) : "&mdash;"; }, "num"]
     ],
     fixedIncome: [
@@ -56,6 +57,9 @@
     ],
     notes: [
       ["Instrument", function (p) { return name2(p, p.note); }],
+      ["Linked to", function (p) {
+        return p.isIndex ? '<span class="m-pill m-idx">Index</span>'
+                         : '<span class="m-pill">Single name</span>'; }],
       ["Type",    function (p) { return pill(p.type); }],
       ["Tenor",   function (p) { return p.tenor; }],
       ["Barrier", function (p) { return p.barrier || "&mdash;"; }],
@@ -119,9 +123,14 @@
           }).join("") + "</tr>";
       }).join("") + "</tbody>";
 
-    el("shelfNote").innerHTML =
-      "Top <b>" + esc((cfg.selection || {}).topN || 4) + "</b> by score make the book, " +
+    var note = "Top <b>" + esc((cfg.selection || {}).topN || 4) + "</b> by score make the book, " +
       "weighted in proportion to those scores.";
+    if (cfg.$rule) {
+      note += " <b>House rule:</b> " + esc(cfg.$rule) +
+        " If the scores alone do not reach it, the index lines are scaled up and the " +
+        "single-name lines down until they do, keeping the order within each group.";
+    }
+    el("shelfNote").innerHTML = note;
   }
 
   function renderUniLead(P) {
@@ -276,8 +285,13 @@
       return '<div><div class="m-bk-top"><s style="background:' + colour + '"></s>' +
         "<h4>" + esc(b.label) + "</h4><b>" + b.weight + "%</b></div>" +
         (b.lines.length ? b.lines.map(function (l) {
-          return '<div class="m-bk-line"><span>' + esc(l.item.name) + "</span><b>" + l.weight + "%</b></div>";
-        }).join("") : '<div class="m-bk-line"><span class="m-sub">nothing</span></div>') + "</div>";
+          return '<div class="m-bk-line"><span>' + esc(l.item.name) +
+            (l.item.isIndex ? ' <span class="m-idx-dot" title="index-linked"></span>' : "") +
+            "</span><b>" + l.weight + "%</b></div>";
+        }).join("") : '<div class="m-bk-line"><span class="m-sub">nothing</span></div>') +
+        (b.indexShare !== undefined
+          ? '<div class="m-bk-rule">index-linked ' + b.indexShare + '% of the sleeve</div>' : "") +
+        "</div>";
     }).join("");
 
     /* One score table per sleeve, so every selection is inspectable. */

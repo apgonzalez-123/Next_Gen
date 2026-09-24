@@ -224,3 +224,14 @@ body.meth { min-height: 100vh; }
 .m-scoretables { margin-top: 8px; }
 .m-scoretables .m-sub3 { margin-top: 24px; }
 .m-scoretables .m-sub3:first-child { margin-top: 0; }
+
+/* --- index-linked marker --- */
+.m-pill.m-idx { border-color: var(--series-notes); color: var(--series-notes); }
+.m-idx-dot {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--series-notes); margin-left: 5px; vertical-align: middle;
+}
+.m-bk-rule {
+  margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line-soft);
+  font-size: 11px; color: var(--muted);
+}

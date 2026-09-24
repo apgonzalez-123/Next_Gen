@@ -100,6 +100,15 @@ NOTE_TYPE = {"AC": "Autocallable", "IC": "Income certificate", "CTPL": "Capital 
 NOTE_SECTOR = {"TECH": "tech", "FINANCIAL": "financials", "HY": None,
                "USA": None, "World": None, "MEXICO": None, "BRAZIL": None}
 
+# Index and broad-ETF underlyings. A note on one of these is an index note;
+# anything else is a single-name or basket structure.
+INDEX_TOKENS = {"SPX", "SPY", "IWM", "QQQ", "RTY", "SX5E", "EWY", "EWZ",
+                "XLE", "XLF", "XLK", "NDX", "DAX", "UKX"}
+
+def is_index_note(underlying):
+    toks = [t for t in re.split(r"[\s/,]+", str(underlying).upper()) if t]
+    return bool(toks) and all(t in INDEX_TOKENS for t in toks)
+
 def build_notes(path):
     ws = openpyxl.load_workbook(path, data_only=True)["Sheet1"]
     out = []
@@ -141,6 +150,7 @@ def build_notes(path):
             "barrier": barrier if barrier != "-" else "",
             "coupon": (f"{coupon*100:.2f}%" if isinstance(coupon, float) and coupon < 1 else str(coupon or "")),
             "riskBand": int(risk), "region": country.upper(),
+            "isIndex": is_index_note(under),
             "note": f"{tenor} · {barrier if barrier!='-' else 'no barrier'}",
             "fit": fit,
         })
@@ -240,6 +250,25 @@ EQ = [
   ("DBMF",  "Managed Futures Strategy",    "Alternatives", "Managed futures",         "financials",  "g7", 70, 1),
   ("IEF",   "iShares 7-10 Year Treasury",  "Alternatives", "Intermediate treasuries", "financials",  "g7", 100, 0),
   ("MSFT",  "Microsoft",                   "Anchor",       "Hyperscaler anchor",      "tech",        "g7", 100, 1),
+
+  # --- European, Swiss, UK and Japanese lines, quoted in their own currency.
+  #     These close the gap where a developed-market room wanting out of the
+  #     dollar had nothing to buy in equities.
+  ("NOVN",  "Novartis",                    "Healthcare",   "Swiss pharma, CHF",       "healthcare",  "g7", 5,  0),
+  ("AZN",   "AstraZeneca",                 "Healthcare",   "UK pharma, GBP",          "healthcare",  "g7", 5,  1),
+  ("NESN",  "Nestle",                      "Consumer",     "Swiss staples, CHF",      "consumer",    "g7", 5,  0),
+  ("ULVR",  "Unilever",                    "Consumer",     "UK staples, GBP",         "consumer",    "g7", 5,  0),
+  ("MC",    "LVMH",                        "Consumer",     "European luxury, EUR",    "consumer",    "g7", 5,  1),
+  ("7203",  "Toyota Motor",                "Consumer",     "Japanese autos, JPY",     "consumer",    "g7", 5,  1),
+  ("ASML",  "ASML Holding",                "Compute",      "Lithography, EUR",        "tech",        "g7", 5,  2),
+  ("SAP",   "SAP SE",                      "Compute",      "Enterprise software, EUR","tech",        "g7", 5,  1),
+  ("SHEL",  "Shell",                       "Power",        "Integrated oil, GBP",     "energy",      "g7", 5,  1),
+
+  # --- US healthcare and consumer, so the sectors are covered in dollars too.
+  ("LLY",   "Eli Lilly",                   "Healthcare",   "US pharma",               "healthcare",  "g7", 100, 2),
+  ("UNH",   "UnitedHealth Group",          "Healthcare",   "Managed care",            "healthcare",  "g7", 100, 1),
+  ("PG",    "Procter & Gamble",            "Consumer",     "US staples",              "consumer",    "g7", 100, 0),
+  ("COST",  "Costco Wholesale",            "Consumer",     "US retail",               "consumer",    "g7", 100, 1),
 ]
 SECTORS = ["tech", "financials", "healthcare", "energy", "consumer", "industrials"]
 
@@ -249,6 +278,14 @@ EQ_PRICE = {
   "TSM": 448.68, "NVDA": 223.80, "AVGO": 349.64, "GLW": 154.19, "CEG": 262.19,
   "EQIX": 1039.40, "GEV": 951.78, "ETN": 436.64, "EWY": 182.47, "IAU": 80.26,
   "CPER": 40.62, "PDBC": 19.71, "DBMF": 32.64, "IEF": 89.94, "MSFT": 496.39,
+  # Local-currency lines: the price is in the listing's own currency, not USD.
+  "NOVN": 118.96, "AZN": 12400.0, "NESN": 77.94, "ULVR": 4708.50, "MC": 397.10,
+  "7203": 2969.0, "ASML": 1503.20, "SAP": 184.18, "SHEL": 3641.0,
+  "LLY": 1190.24, "UNH": 374.19, "PG": 147.47, "COST": 899.32,
+}
+EQ_CCY = {
+  "NOVN": "CHF", "NESN": "CHF", "AZN": "GBp", "ULVR": "GBp", "SHEL": "GBp",
+  "MC": "EUR", "ASML": "EUR", "SAP": "EUR", "7203": "JPY", "SMSN": "KRW",
 }
 
 def build_equities():
@@ -256,7 +293,8 @@ def build_equities():
     for (tk, name, sleeve, role, sec, reg, usdx, risk) in EQ:
         out.append({
             "id": slug(tk, 12), "ticker": tk, "name": name,
-            "data": ({"price": EQ_PRICE[tk]} if tk in EQ_PRICE else {}),
+            "data": ({"price": EQ_PRICE[tk], "currency": EQ_CCY.get(tk, "USD")}
+                     if tk in EQ_PRICE else {}),
             "sleeve": sleeve, "role": role, "sector": sec, "region": reg,
             "usdExposure": usdx, "riskBand": risk, "note": f"{sleeve} · {role}",
             "fit": {
@@ -270,32 +308,12 @@ def build_equities():
         })
     return out
 
-# ---------------------------------------------------------------- liquidity (CD ladder)
-LADDER = [
-  ("TBILL3M", "3-month T-Bill",  3,  3.71),
-  ("CD6M",    "6-month CD",      6,  4.24),
-  ("CD12M",   "12-month CD",     12, 4.68),
-  ("CD24M",   "24-month CD",     24, 4.84),
-]
-
-def build_liquidity():
-    return [{
-        "id": slug(tk, 12), "ticker": tk, "name": name,
-        "tenorMonths": m, "ratePa": rate,
-        "note": f"{m} month · {rate:.2f}% p.a.",
-        "fit": {"horizon": {"target": max(1, round(m / 12))},
-                "usd": {"target": 100},
-                "capitalIncome": {"income": 1.0, "capital": 0.5},
-                "credit": {"ig": 1.0, "hy": 0.2}},
-    } for (tk, name, m, rate) in LADDER]
-
 # ---------------------------------------------------------------- main
 def main():
     fx    = build_fx(os.path.join(SRC, "FX_Assets.xlsx"))
     notes = build_notes(os.path.join(SRC, "next gen picks.xlsx"))
     bonds = build_bonds(os.path.join(SRC, "Securities-2026-09-24.xlsx")) + build_non_usd()
     eq    = build_equities()
-    liq   = build_liquidity()
 
     doc = {
         "$note": ("Built by tools/build_products.py from the desk's own source files. "
@@ -314,22 +332,21 @@ def main():
                         "country": 0.8, "capitalIncome": 0.7},
             "topN": 5}},
 
-        "notes": {"shelf": notes, "selection": {
-            "weights": {"riskProfile": 1.3, "horizon": 1.0, "country": 0.9,
-                        "capitalIncome": 0.8, "sector": 0.8},
-            "topN": 4}},
+        "notes": {"shelf": notes,
+            "$rule": "At least 50% of the notes allocation sits in index-linked structures.",
+            "selection": {
+                "weights": {"riskProfile": 1.3, "horizon": 1.0, "country": 0.9,
+                            "capitalIncome": 0.8, "sector": 0.8},
+                "topN": 4, "indexFloor": 0.5}},
 
         "fx": {"shelf": fx, "selection": {
             "weights": {"usd": 1.4, "riskProfile": 1.1, "country": 1.0,
                         "leverage": 0.8, "horizon": 0.6},
             "topN": 3}},
-
-        "liquidity": {"shelf": liq, "selection": {
-            "weights": {"horizon": 1.2, "capitalIncome": 0.8}, "topN": 3}},
     }
 
     # drop null fits so the scorer never sees an empty axis
-    for bucket in ("equities", "fixedIncome", "notes", "fx", "liquidity"):
+    for bucket in ("equities", "fixedIncome", "notes", "fx"):
         for item in doc[bucket]["shelf"]:
             item["fit"] = {k: v for k, v in item["fit"].items() if v}
 
@@ -337,7 +354,7 @@ def main():
     # silently merge two instruments. Two bonds from one issuer can slug the
     # same way once punctuation is stripped (A and A- both become "a").
     seen = {}
-    for bucket in ("equities", "fixedIncome", "notes", "fx", "liquidity"):
+    for bucket in ("equities", "fixedIncome", "notes", "fx"):
         for item in doc[bucket]["shelf"]:
             base = item["id"]
             if base in seen:
@@ -354,7 +371,7 @@ def main():
         json.dump(doc, f, indent=2)
         f.write("\n")
 
-    for b in ("equities", "fixedIncome", "notes", "fx", "liquidity"):
+    for b in ("equities", "fixedIncome", "notes", "fx"):
         print(f"  {b:14} {len(doc[b]['shelf']):>3} instruments")
 
 if __name__ == "__main__":
