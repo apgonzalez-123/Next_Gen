@@ -128,15 +128,21 @@
     var split = window.ENGINE.aggSplit(agg);
     paintSplit(split);
     paintVerdict(window.ENGINE.rank(roomProfile)[0], agg.count);
-    renderWhy(agg, window.ENGINE.roomAllocation(agg), split);
+    var alloc = window.ENGINE.roomAllocation(agg);
+    renderWhy(agg, alloc, split);
     paintBook(agg);
+    paintSleeves(agg, alloc);
   }
 
   var WAITING = [
     ["splitBars", "Each guest is matched on their own answers. The split appears here as they finish."],
     ["verdict",   "Every answer averaged into one profile, then matched. Waiting on the room."],
     ["book",      "The book the room's answers build. Waiting on the room."],
-    ["why",       ""]
+    ["why",       ""],
+    ["sleeveEquities",    "Why the equity sleeve is the size it is, and why these funds. Waiting on the room."],
+    ["sleeveFixedIncome", "Why the fixed-income sleeve is the size it is, and why these bonds. Waiting on the room."],
+    ["sleeveNotes",       "Why the notes sleeve is the size it is, and why these structures. Waiting on the room."],
+    ["sleeveFx",          "Why the FX sleeve is the size it is, and why these pairs. Waiting on the room."]
   ];
 
   function showWaiting() {
@@ -448,6 +454,317 @@
             : "") +
         "</div>" +
       "</div>";
+  }
+
+
+  /* ---------- one slide per sleeve ----------
+   *
+   * Two questions a client always asks: why this much of it, and why these
+   * instruments. Both answers are read back out of the same allocation and
+   * the same scores the book itself is built from — this is a restatement
+   * of the engine, never a second opinion about it. If the arithmetic below
+   * ever stops matching ENGINE.roomAllocation(), the slide is wrong and the
+   * engine is right.
+   */
+
+  var SLEEVE_SLIDES = [
+    { key: "equities",    host: "sleeveEquities",    badge: "swEquities" },
+    { key: "fixedIncome", host: "sleeveFixedIncome", badge: "swFixedIncome" },
+    { key: "notes",       host: "sleeveNotes",       badge: "swNotes" },
+    { key: "fx",          host: "sleeveFx",          badge: "swFx" }
+  ];
+
+  function pct(x) { return (Math.round(x * 10) / 10) + "%"; }
+  function signed(x) {
+    var v = Math.round(x * 10) / 10;
+    return (v > 0 ? "+" : v === 0 ? "" : "") + v + "%";
+  }
+
+  /* The allocation arithmetic, restated term by term. Mirrors
+     ENGINE.roomAllocation() exactly. */
+  function allocTerms(alloc) {
+    var d = alloc.drivers;
+    var notesRaw = 8 + d.levered * 14;
+    var fxRaw    = 5 + (Math.abs(d.usd - 50) / 50) * 12;
+    var left     = 100 - notesRaw - fxRaw;
+
+    var eqRisk = (d.risk / 2) * 0.60;
+    var eqView = (d.view - 1) * 0.08;
+    var eqHor  = Math.max(-0.10, Math.min(0.10, ((d.horizon - 10) / 20) * 0.10));
+    var eqInc  = -d.income * 0.16;
+    var share  = Math.max(0.05, Math.min(0.90, 0.15 + eqRisk + eqView + eqHor + eqInc));
+
+    var riskWord = band(d.risk, [0.7, 1.35], ["cautious", "moderate", "risk-seeking"]);
+    var viewWord = band(d.view, [0.7, 1.35], ["bearish", "neutral", "bullish"]);
+
+    return {
+      equities: {
+        rows: [
+          ["Starting risk budget", "every room begins here", signed(15)],
+          ["Risk appetite &mdash; " + riskWord,
+           "averaged " + (Math.round(d.risk * 100) / 100) + " of 2", signed(eqRisk * 100)],
+          ["Market view &mdash; " + viewWord,
+           "averaged " + (Math.round(d.view * 100) / 100) + " of 2", signed(eqView * 100)],
+          ["Horizon &mdash; " + Math.round(d.horizon) + " years",
+           "against a 10-year baseline", signed(eqHor * 100)],
+          ["Income seekers",
+           Math.round(d.income * 100) + "% of the room wanted income", signed(eqInc * 100)]
+        ],
+        sum:   ["Equity share of what is left", pct(share * 100)],
+        total: ["of the " + pct(left) + " outside notes and FX", alloc.equities + "%"]
+      },
+      fixedIncome: {
+        rows: [
+          ["Equities take their share first", "driven by the room's risk appetite", pct(share * 100)],
+          ["Fixed income takes the rest", "it is the residual, not a target", pct((1 - share) * 100)]
+        ],
+        sum:   ["Share of what is left", pct((1 - share) * 100)],
+        total: ["of the " + pct(left) + " outside notes and FX", alloc.fixedIncome + "%"]
+      },
+      notes: {
+        rows: [
+          ["Base allocation", "a standing place in the book", signed(8)],
+          ["Leverage appetite",
+           Math.round(d.levered * 100) + "% of the room said yes &mdash; expressed through notes, not margin",
+           signed(d.levered * 14)]
+        ],
+        total: ["Structured notes", alloc.notes + "%"]
+      },
+      fx: {
+        rows: [
+          ["Base allocation", "a standing place in the book", signed(5)],
+          ["Dollar conviction",
+           "the room averaged " + Math.round(d.usd) + "% in dollars, " +
+           Math.round(Math.abs(d.usd - 50)) + " points off indifference",
+           signed((Math.abs(d.usd - 50) / 50) * 12)]
+        ],
+        total: ["FX", alloc.fx + "%"]
+      }
+    };
+  }
+
+  var SECTOR_WORD = {
+    core: "broad market", tech: "technology", financials: "financials",
+    healthcare: "healthcare", energy: "energy and materials",
+    consumer: "consumer", industrials: "industrials"
+  };
+
+  /* Why THIS instrument, in concrete terms. A reason that could be printed
+     against any line in the sleeve is not a reason, so each one names the
+     actual fact that earned the place: the sector, the rating, the tenor,
+     the dollar weight. */
+  function axisPhrase(axisId, agg, item) {
+    var f = item.fit || {}, d = item.data || {};
+    function roomLeads(k) {
+      var c = (agg.axes[axisId] || {}).counts || {}, best = null;
+      Object.keys(c).forEach(function (x) { if (!best || c[x] > c[best]) best = x; });
+      return best === k;
+    }
+    switch (axisId) {
+      case "sector": {
+        var w = SECTOR_WORD[item.sector] || item.sector;
+        if (!w) return "the sector mix the room asked for";
+        var asked = ((agg.axes.sector || {}).counts || {})[item.sector];
+        return w + (asked ? " &mdash; a sector the room chose" : ", for breadth");
+      }
+      case "country":
+        return (item.region === "em" || item.region === "EM")
+          ? "emerging markets" : "developed markets";
+      case "usd": {
+        var t = f.usd && f.usd.target;
+        if (t === undefined) return "the dollar weight the room wanted";
+        return t >= 95 ? "fully dollar-denominated"
+             : t <= 10 ? "priced outside the dollar"
+             : Math.round(t) + "% dollar exposure";
+      }
+      case "riskProfile": {
+        var r = f.riskProfile && f.riskProfile.target;
+        if (r === undefined) return "sits where the room's risk sits";
+        return r >= 1.5 ? "high beta, which the room asked for"
+             : r <= 0.5 ? "defensive, as the room asked"
+             : "mid risk, where the room landed";
+      }
+      case "capitalIncome": return roomLeads("income") ? "pays a coupon" : "held for capital growth";
+      case "duration":      return d.duration ? (Math.round(d.duration * 10) / 10) + "-year duration" : "the duration the room asked for";
+      case "credit":        return item.rating ? "rated " + item.rating : (roomLeads("hy") ? "the credit risk the room accepted" : "investment grade, as asked");
+      case "horizon":       return item.tenor ? item.tenor + " tenor" : "tenor matches the room's horizon";
+      case "leverage":      return "carries the gearing the room wanted";
+      default:              return axisId;
+    }
+  }
+
+  /* Rank the axes an instrument is unusually strong on, measured against
+     the rest of its own shelf. */
+  function edges(line, scored, W) {
+    var per = line.per || {}, axes = Object.keys(per);
+    var mean = {};
+    axes.forEach(function (ax) {
+      var t = 0, n = 0;
+      scored.forEach(function (r) {
+        if (r.per && r.per[ax] !== undefined) { t += r.per[ax]; n++; }
+      });
+      mean[ax] = n ? t / n : 0;
+    });
+    return axes.map(function (ax) {
+      return { ax: ax, edge: (W[ax] || 1) * (per[ax] - mean[ax]), score: per[ax] };
+    }).filter(function (x) { return x.edge > 0.015 && x.score >= 0.45; })
+      .sort(function (a, b) { return b.edge - a.edge; });
+  }
+
+  /* Reasons are assigned across the whole sleeve at once. Five lines that
+     each say "matches the room's risk" tell a client nothing, so once an
+     angle is used it is not repeated while another one is still available. */
+  /* What a line IS, for when what it is good at has already been claimed
+     by something above it. */
+  function identityPhrase(item, used) {
+    var f = item.fit || {}, d = item.data || {};
+    var cands = [];
+    if (item.sector && SECTOR_WORD[item.sector]) {
+      cands.push(SECTOR_WORD[item.sector] + " &mdash; breadth beyond the lead exposures");
+    }
+    if (item.rating) cands.push("rated " + item.rating + ", spreading issuer risk");
+    if (item.tenor)  cands.push(item.tenor + " tenor, laddering the sleeve");
+    if (d.duration)  cands.push((Math.round(d.duration * 10) / 10) + "-year duration, laddering the sleeve");
+    if (item.region) cands.push((item.region === "em" || item.region === "EM"
+      ? "emerging market" : "developed market") + " exposure, for spread");
+    cands.push("closest remaining fit once the sleeve was diversified");
+    for (var i = 0; i < cands.length; i++) {
+      if (!used[cands[i]]) { used[cands[i]] = 1; return cands[i]; }
+    }
+    return cands[cands.length - 1];
+  }
+
+  function reasonsForSleeve(lines, scored, W, agg) {
+    /* Tracked by wording, not by axis. Two funds can both be strongest on
+       sector and still earn different sentences ("technology", "healthcare"),
+       but four funds that are all simply mid-risk produce the same sentence
+       four times, which reads as the deck having nothing to say. */
+    var used = {};
+    function take(e, line) {
+      for (var i = 0; i < e.length; i++) {
+        var phrase = axisPhrase(e[i].ax, agg, line.item);
+        if (!used[phrase]) { used[phrase] = 1; return { phrase: phrase, edge: e[i].edge }; }
+      }
+      return null;
+    }
+
+    return lines.map(function (l) {
+      var out = [], e = edges(l, scored, W);
+
+      var first = take(e, l);
+      if (first) out.push(first.phrase);
+
+      /* A second angle only when it is genuinely strong and not already
+         said somewhere else in this sleeve. */
+      var second = take(e.filter(function (x) { return x.edge >= 0.05; }), l);
+      if (second) out.push(second.phrase);
+
+      if (l.shelfRank && l.rank && l.shelfRank > l.rank + 1) {
+        out.push("#" + l.shelfRank + (l.shelfOf ? " of " + l.shelfOf : "") +
+                 " on fit alone &mdash; held for breadth");
+      }
+      if (l.item && l.item.isCore) out.push("index-linked, counts toward the 50% floor");
+
+      /* Nothing distinctive left to say is itself the honest answer — the
+         sleeve had already taken the obvious exposures — but it should
+         still name what this line adds rather than repeating a shrug. */
+      if (!out.length) out.push(identityPhrase(l.item, used));
+      return out;
+    });
+  }
+
+  function paintSleeves(agg, alloc) {
+    if (!window.PRODUCTS) return;
+    var sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS);
+    if (!sim) return;
+    var terms = allocTerms(alloc);
+
+    SLEEVE_SLIDES.forEach(function (S) {
+      var host = document.getElementById(S.host);
+      var badge = document.getElementById(S.badge);
+      if (!host) return;
+
+      var bucket = null;
+      sim.buckets.forEach(function (b) { if (b.key === S.key) bucket = b; });
+      if (!bucket) { host.innerHTML = ""; return; }
+
+      if (badge) badge.textContent = bucket.weight + "%";
+
+      var cfg = window.PRODUCTS[S.key] || {};
+      var W = (cfg.selection || {}).weights || {};
+      var scored = bucket.scored || [];
+      if (!scored.length) {
+        try { scored = window.ENGINE.scoreShelf(agg, cfg, { allocation: bucket.weight }).all; }
+        catch (e) { scored = []; }
+      }
+
+      var T = terms[S.key] || { rows: [] };
+      var colour = BUCKET_COLOUR[S.key];
+
+      var whyMuch =
+        '<div class="p-sl-head">Why ' + bucket.weight + '%</div>' +
+        T.rows.map(function (r) {
+          return '<div class="p-term">' +
+            '<span class="p-term-l">' + r[0] + '<i>' + r[1] + "</i></span>" +
+            '<b>' + r[2] + "</b></div>";
+        }).join("") +
+        (T.sum ? '<div class="p-term p-term-sum"><span class="p-term-l">' + T.sum[0] +
+                 "</span><b>" + T.sum[1] + "</b></div>" : "") +
+        (T.total ? '<div class="p-term p-term-tot"><span class="p-term-l">' + T.total[0] +
+                 "</span><b>" + T.total[1] + "</b></div>" : "");
+
+      var n = bucket.lines.length;
+      var heading = n === 1 ? "Why this one"
+                  : n === 2 ? "Why these two"
+                  : n === 3 ? "Why these three"
+                  : "Why these " + n;
+
+      /* The same three axes down the whole sleeve, so the bars can be read
+         against each other. Picking each line's own best three made every
+         row a different chart. */
+      var present = {};
+      bucket.lines.forEach(function (l) {
+        Object.keys(l.per || {}).forEach(function (ax) { present[ax] = 1; });
+      });
+      var showAxes = Object.keys(present).sort(function (a, b) {
+        return (W[b] || 1) - (W[a] || 1);
+      }).slice(0, 3);
+
+      var allReasons = reasonsForSleeve(bucket.lines, scored, W, agg);
+
+      var picks = bucket.lines.length
+        ? bucket.lines.map(function (l, idx) {
+            var per = l.per || {};
+            var bars = showAxes.map(function (ax) {
+              var v = per[ax];
+              return '<span class="p-ax"><em>' + esc(shortAxis(ax)) + "</em>" +
+                '<i><u style="width:' + (v === undefined ? 0 : Math.round(v * 100)) +
+                "%;background:" + colour + '"></u></i></span>';
+            }).join("");
+
+            return '<div class="p-pk">' +
+              '<div class="p-pk-top"><i class="p-rank">' + (l.rank || "") + "</i>" +
+                '<span class="p-pk-name">' + esc(l.item.name) + "</span>" +
+                '<b class="p-pk-w">' + l.weight + "%</b></div>" +
+              '<div class="p-pk-why">' + allReasons[idx].join(" <em>&middot;</em> ") + "</div>" +
+              '<div class="p-pk-axes">' + bars + "</div>" +
+              "</div>";
+          }).join("")
+        : '<p class="p-book-empty">Nothing in this sleeve.</p>';
+
+      host.innerHTML =
+        '<div class="p-sl-col p-sl-why">' + whyMuch + "</div>" +
+        '<div class="p-sl-col p-sl-picks"><div class="p-sl-head">' + heading + "</div>" +
+          picks + "</div>";
+    });
+  }
+
+  /* Axis labels are full questions; a bar needs a word. */
+  function shortAxis(id) {
+    return ({ riskProfile: "risk", marketView: "view", horizon: "horizon",
+              leverage: "gearing", country: "region", sector: "sector",
+              usd: "dollar", capitalIncome: "income", duration: "duration",
+              credit: "credit" })[id] || id;
   }
 
   /* ---------- slides ---------- */

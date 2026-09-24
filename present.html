@@ -6,15 +6,15 @@
 <title>NextGen Presenter</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0A1220">
-<link rel="preload" href="assets/fonts/geist-400-latin.woff2?v=202609242035" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/geist-600-latin.woff2?v=202609242035" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/app.css?v=202609242035">
-<link rel="stylesheet" href="assets/present.css?v=202609242035">
+<link rel="preload" href="assets/fonts/geist-400-latin.woff2?v=202609242048" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist-600-latin.woff2?v=202609242048" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/app.css?v=202609242048">
+<link rel="stylesheet" href="assets/present.css?v=202609242048">
 </head>
 <body class="present">
 
 <header class="p-top">
-  <div class="wordmark"><img class="brand-mark" src="assets/brand/safra-logo.png?v=202609242035" alt="Safra" onerror="this.remove()"><span class="brand-sep" aria-hidden="true"></span><b>NextGen</b></div>
+  <div class="wordmark"><img class="brand-mark" src="assets/brand/safra-logo.png?v=202609242048" alt="Safra" onerror="this.remove()"><span class="brand-sep" aria-hidden="true"></span><b>NextGen</b></div>
   <div class="p-live">
     <span id="modeBadge" class="p-badge" hidden>Demo mode</span>
     <div class="p-count"><b id="liveCount">0</b><span><span class="dot"></span>responses</span></div>
@@ -57,6 +57,34 @@
     <div class="p-book" id="book"></div>
   </section>
 
+  <!-- 5-8 · ONE SLEEVE AT A TIME
+       Each answers the two questions a client asks about a sleeve: why this
+       much of it, and why these instruments. Both are read back out of the
+       same allocation and the same scores the book is built from. -->
+  <section class="p-slide" data-slide="4">
+    <h2 class="p-h">Equities <i class="p-h-w" id="swEquities"></i></h2>
+    <p class="p-sub">Why this much, and why these.</p>
+    <div class="p-sleeve" id="sleeveEquities"></div>
+  </section>
+
+  <section class="p-slide" data-slide="5">
+    <h2 class="p-h">Fixed income <i class="p-h-w" id="swFixedIncome"></i></h2>
+    <p class="p-sub">Why this much, and why these.</p>
+    <div class="p-sleeve" id="sleeveFixedIncome"></div>
+  </section>
+
+  <section class="p-slide" data-slide="6">
+    <h2 class="p-h">Structured notes <i class="p-h-w" id="swNotes"></i></h2>
+    <p class="p-sub">Why this much, and why these.</p>
+    <div class="p-sleeve" id="sleeveNotes"></div>
+  </section>
+
+  <section class="p-slide" data-slide="7">
+    <h2 class="p-h">FX <i class="p-h-w" id="swFx"></i></h2>
+    <p class="p-sub">Why this much, and why these.</p>
+    <div class="p-sleeve" id="sleeveFx"></div>
+  </section>
+
 </main>
 
 <footer class="p-foot">
@@ -69,12 +97,12 @@
   <button class="p-btn" id="btnReset" type="button">Reset votes</button>
 </footer>
 
-<script src="assets/vendor/qrcode.min.js?v=202609242035"></script>
-<script src="assets/config.js?v=202609242035"></script>
-<script src="assets/schema.js?v=202609242035"></script>
-<script src="assets/portfolios.js?v=202609242035"></script>
-<script src="assets/base-loader.js?v=202609242035"></script>
-<script src="assets/store.js?v=202609242035"></script>
-<script src="assets/present.js?v=202609242035"></script>
+<script src="assets/vendor/qrcode.min.js?v=202609242048"></script>
+<script src="assets/config.js?v=202609242048"></script>
+<script src="assets/schema.js?v=202609242048"></script>
+<script src="assets/portfolios.js?v=202609242048"></script>
+<script src="assets/base-loader.js?v=202609242048"></script>
+<script src="assets/store.js?v=202609242048"></script>
+<script src="assets/present.js?v=202609242048"></script>
 </body>
 </html>

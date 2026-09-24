@@ -1485,7 +1485,7 @@ window.ENGINE = (function () {
     }
 
     /* Rank on the shelf, by raw fit, for the validation page. */
-    all.forEach(function (r, i) { r.rank = i + 1; });
+    all.forEach(function (r, i) { r.rank = i + 1; r.shelfOf = all.length; });
 
     var n = picked.length;
     return { all: all, picked: picked, selected: n, cut: cut, best: best };
@@ -1566,7 +1566,8 @@ window.ENGINE = (function () {
        each holding is here. */
     eqLines.forEach(function (l) {
       var m = eq.picked.filter(function (p) { return p.item === l.item; })[0];
-      if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank; }
+      if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank;
+               l.adjusted = m.adjusted; l.shelfOf = m.shelfOf; }
     });
     buckets.push({
       key: "equities", label: "Equities", weight: alloc.equities,
@@ -1580,7 +1581,8 @@ window.ENGINE = (function () {
     }));
     fiLines.forEach(function (l) {
       var m = fi.picked.filter(function (p) { return p.item === l.item; })[0];
-      if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank; }
+      if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank;
+               l.adjusted = m.adjusted; l.shelfOf = m.shelfOf; }
     });
     buckets.push({
       key: "fixedIncome", label: "Fixed income", weight: alloc.fixedIncome,
@@ -1630,7 +1632,8 @@ window.ENGINE = (function () {
 
     ntLines.forEach(function (l) {
       var m = picks.filter(function (p) { return p.item === l.item; })[0];
-      if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank; }
+      if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank;
+               l.adjusted = m.adjusted; l.shelfOf = m.shelfOf; }
       l.note = l.item.isCore ? "core pick" : "satellite";
     });
 
@@ -1650,7 +1653,8 @@ window.ENGINE = (function () {
     }));
     fxLines.forEach(function (l) {
       var m = fxr.picked.filter(function (p) { return p.item === l.item; })[0];
-      if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank; }
+      if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank;
+               l.adjusted = m.adjusted; l.shelfOf = m.shelfOf; }
     });
     buckets.push({
       key: "fx", label: "FX", weight: alloc.fx,
