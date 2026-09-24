@@ -1234,7 +1234,7 @@ window.ENGINE = (function () {
    * much that question counts. One number per product, fully decomposable:
    * the validation page renders exactly this breakdown.
    */
-  function scoreShelf(agg, config) {
+  function scoreShelf(agg, config, opts) {
     var eqc = config;
     if (!eqc || !eqc.shelf) return { all: [], picked: [] };
 
@@ -1265,9 +1265,31 @@ window.ENGINE = (function () {
         if (!a || !a.n) return null;
         var axis = window.AXIS_BY_ID[axisId];
         if (!axis) return null;
-        var roomAvg = a.sum / a.n;
         var reach = (axis.max - axis.min) || 1;
-        return Math.max(0, 1 - Math.abs(roomAvg - fit.target) / reach);
+
+        /* Score against every answer in the room and average the result,
+           rather than scoring the room's average once.
+           
+           Those are not the same number, and the difference decided the
+           book. Collapsing the room to its mean first makes a mid-range
+           instrument close to almost any room, so the engine kept buying
+           60-70% dollar funds and could not reach the US shelf at all:
+           XLK, VGT, QQQ, XLV, SCHD and USMV all sit at 100 and were picked
+           in none of 400 test rooms. It is also simply the wrong question
+           to ask of a split room — half at 0% and half at 100% averages to
+           50%, and the engine bought the one fund nobody had voted for.
+           Averaging the scores instead lets a divided room register as
+           divided: both extremes score equally, and the middle earns no
+           artificial premium. */
+        var tot = 0, wsum = 0;
+        Object.keys(a.counts).forEach(function (k) {
+          var v = Number(k);
+          if (!isFinite(v)) return;
+          var c = a.counts[k];
+          tot += c * Math.max(0, 1 - Math.abs(v - fit.target) / reach);
+          wsum += c;
+        });
+        return wsum ? tot / wsum : null;
       }
 
       var sh = shares(axisId);
@@ -1282,49 +1304,196 @@ window.ENGINE = (function () {
       return mass > 0 ? total / mass : null;
     }
 
-    var all = eqc.shelf.map(function (item) {
-      var per = {}, num = 0, den = 0;
-      Object.keys(W).forEach(function (axisId) {
-        var sc = axisScore(axisId, item.fit[axisId]);
-        if (sc === null) return;
-        per[axisId] = sc;
-        num += W[axisId] * sc;
-        den += W[axisId];
+    /* Axes the room actually answered. An instrument is judged on all of
+       them, not only the ones it happens to carry a fit for: scoring each
+       instrument over its own subset rewarded thin description, because an
+       instrument matched on one easy axis averaged 1.0 while one honestly
+       scored on five could not. Where an instrument says nothing about an
+       axis it is filled with that shelf's average for it — no information
+       means typical, not perfect. */
+    var liveAxes = Object.keys(W).filter(function (axisId) {
+      return eqc.shelf.some(function (it) {
+        return axisScore(axisId, it.fit[axisId]) !== null;
       });
-      return {
-        item: item,
-        per: per,
-        score: den ? num / den : 0
-      };
-    }).sort(function (a, b) {
-      return b.score - a.score || a.item.ticker.localeCompare(b.item.ticker);
     });
 
-    /* How many make the book is a question of fit, not a fixed count.
-     * Everything scoring within `relative` of the best is in, floored at
-     * minN so a sleeve is never a single line, and capped at maxN so the
-     * projector stays readable. A room with one obvious answer gets a
-     * short, concentrated list; a room pulling in several directions gets
-     * a broader one. */
-    var minN = sel.minN || 3;
-    var maxN = sel.maxN || sel.topN || 6;
+    var raw = eqc.shelf.map(function (item) {
+      var per = {};
+      liveAxes.forEach(function (axisId) {
+        var sc = axisScore(axisId, item.fit[axisId]);
+        if (sc !== null) per[axisId] = sc;
+      });
+      return { item: item, per: per };
+    });
+
+    var neutral = {};
+    liveAxes.forEach(function (axisId) {
+      var vals = raw.map(function (r) { return r.per[axisId]; })
+                    .filter(function (v) { return v !== undefined; });
+      neutral[axisId] = vals.length
+        ? vals.reduce(function (t, v) { return t + v; }, 0) / vals.length : 0.5;
+    });
+
+    /* A plain weighted average lets one strong axis buy off a terrible one.
+       It showed: a room that asked for technology and healthcare was offered
+       an energy fund scoring 0.10 on sector, because a good risk match more
+       than paid for the worst possible sector match. Averaging is the wrong
+       shape for a question the room answered deliberately.
+
+       Blending in a weighted geometric mean fixes that. A geometric mean
+       collapses when any one term is near zero, so an instrument has to be
+       at least passable on every axis rather than excellent on most. The
+       blend is set per sleeve by selection.balance: 0 is the old arithmetic
+       behaviour, 1 is fully geometric. */
+    var balance = sel.balance === undefined ? 0.45 : sel.balance;
+
+    var all = raw.map(function (r) {
+      var num = 0, den = 0, known = 0, logs = 0;
+      liveAxes.forEach(function (axisId) {
+        var sc = r.per[axisId];
+        if (sc === undefined) sc = neutral[axisId]; else known++;
+        num += W[axisId] * sc;
+        den += W[axisId];
+        /* floored so a single zero cannot annihilate the whole score */
+        logs += W[axisId] * Math.log(Math.max(sc, 0.02));
+      });
+      var arith = den ? num / den : 0;
+      var geo = den ? Math.exp(logs / den) : 0;
+      var blended = den ? Math.pow(arith, 1 - balance) * Math.pow(geo, balance) : 0;
+      return {
+        item: r.item,
+        per: r.per,
+        /* how much of the score rests on stated facts rather than the fill */
+        covered: liveAxes.length ? known / liveAxes.length : 0,
+        /* kept for the validation page: how lopsided the fit is */
+        balancePenalty: Math.round((arith - blended) * 1000) / 1000,
+        score: blended
+      };
+    }).sort(function (a, b) {
+      /* Ties used to fall through to the ticker, so an equal-scoring shelf
+         came out in alphabetical order and looked hand-arranged. Prefer the
+         instrument the shelf actually knows more about, and only then fix
+         the order for reproducibility. */
+      return b.score - a.score
+          || b.covered - a.covered
+          || a.item.ticker.localeCompare(b.item.ticker);
+    });
+
+    /* ---- selection ----
+     *
+     * Taking the top N by score alone is not portfolio construction. Across
+     * a sweep of rooms it produced sleeves that were 100% one sector and
+     * routinely held near-substitutes side by side: SOXX with SMH, SCHD
+     * with VYM. Both are the same exposure bought twice.
+     *
+     * Selection is therefore greedy on MARGINAL fit: each pick is scored on
+     * how well it fits the room, discounted by how much it duplicates what
+     * has already been chosen. A second semiconductor fund has to be much
+     * better than the alternatives to earn its place; a first one does not.
+     */
+    function similarity(a, b) {
+      if (a.group && b.group && a.group === b.group) return 1;      /* substitutes */
+      var sameSector = a.sector && b.sector && a.sector === b.sector;
+      var sameRegion = a.region && b.region && a.region === b.region;
+      if (sameSector && sameRegion) return 0.5;
+      if (sameSector) return 0.32;
+      if (sameRegion) return 0.14;
+      return 0;
+    }
+
+    /* ---- how many lines this sleeve should hold ----
+     *
+     * A fixed 3-to-6 band for every asset class is an arbitrary house rule,
+     * and it showed: a sleeve taking 45% of the book held the same number of
+     * positions as one taking 6%. Size is driven instead by what the sleeve
+     * is being asked to carry and by how much the room agrees.
+     *
+     *   - budget: a holding should be worth owning. At ~8% of the book per
+     *     line, a 45% sleeve earns six lines and an 8% sleeve earns one.
+     *   - dispersion: a room that answered with one voice gets a tight,
+     *     high-conviction book. A room that split needs to span the views
+     *     its members actually hold, so it gets more lines.
+     *
+     * Both knobs live in data/products.json under selection.sizing, per
+     * sleeve, so the desk can retune without touching this file.
+     */
+    var sizing = sel.sizing || {};
+    var perLine = sizing.pctPerLine || 8;
+    var minN = sizing.minN !== undefined ? sizing.minN : (sel.minN || 3);
+    var maxN = sizing.maxN !== undefined ? sizing.maxN : (sel.maxN || sel.topN || 6);
     var rel  = sel.relative || 0.86;
+
+    /* How split the room is on this sleeve's most important axis, 0..1. */
+    function dispersion() {
+      var lead = Object.keys(W).sort(function (a, b) { return W[b] - W[a]; })[0];
+      var a = lead && agg.axes[lead];
+      if (!a || !a.respondents) return 0;
+      var ks = Object.keys(a.counts);
+      if (ks.length < 2) return 0;
+      var h = 0;
+      ks.forEach(function (k) {
+        var pk = a.counts[k] / a.respondents;
+        if (pk > 0) h -= pk * Math.log(pk);
+      });
+      return Math.min(1, h / Math.log(ks.length));
+    }
+
+    var budget = opts && opts.allocation
+      ? Math.round(opts.allocation / perLine)
+      : maxN;
+    var spreadBonus = Math.round(dispersion() * (sizing.disperseTo || 2));
+    maxN = Math.max(minN, Math.min(maxN, budget + spreadBonus));
+    /* How hard duplication is punished. At 0.55 a perfect substitute keeps
+       under half its score, which is usually enough to lose its place. */
+    var lambda = sel.diversify === undefined ? 0.55 : sel.diversify;
+    var sectorCap = sel.sectorCap === undefined ? 0.6 : sel.sectorCap;
 
     var best = all.length ? all[0].score : 0;
     var cut = best * rel;
-    var n = all.filter(function (r) { return r.score >= cut; }).length;
-    n = Math.max(minN, Math.min(maxN, n, all.length));
 
-    /* Rank is the order by score, carried onto the line so every surface
-       shows the same ordinal. */
+    var pool = all.slice(), picked = [];
+    while (picked.length < maxN && pool.length) {
+      var bestIdx = -1, bestAdj = -1;
+      for (var i = 0; i < pool.length; i++) {
+        var dup = 0;
+        for (var j = 0; j < picked.length; j++) {
+          dup = Math.max(dup, similarity(pool[i].item, picked[j].item));
+        }
+        var adj = pool[i].score * (1 - lambda * dup);
+        if (adj > bestAdj) { bestAdj = adj; bestIdx = i; }
+      }
+      if (bestIdx === -1) break;
+      /* A room that asks for one sector still should not be handed a sleeve
+         that is only that sector: concentration risk is not something the
+         audience votes away. No more than sectorCap of the lines may share
+         a sector, so the requested theme leads the book without being the
+         whole of it. */
+      if (sectorCap < 1 && picked.length) {
+        var cand = pool[bestIdx].item.sector;
+        var same = picked.filter(function (q) { return q.item.sector === cand; }).length;
+        if (cand && same >= Math.max(1, Math.ceil(maxN * sectorCap))) {
+          pool.splice(bestIdx, 1);
+          continue;
+        }
+      }
+      /* Past the floor, only keep taking while the marginal pick still
+         clears the quality bar on its own merits. */
+      if (picked.length >= minN && pool[bestIdx].score < cut) break;
+      var chosen = pool.splice(bestIdx, 1)[0];
+      chosen.adjusted = Math.round(bestAdj * 1000) / 1000;
+      picked.push(chosen);
+    }
+
+    /* Rank on the shelf, by raw fit, for the validation page. */
     all.forEach(function (r, i) { r.rank = i + 1; });
 
-    return { all: all, picked: all.slice(0, n), selected: n, cut: cut, best: best };
+    var n = picked.length;
+    return { all: all, picked: picked, selected: n, cut: cut, best: best };
   }
 
   /* Kept for callers that only want equities. */
-  function scoreEquityShelf(agg, products) {
-    return scoreShelf(agg, products && products.equities);
+  function scoreEquityShelf(agg, products, opts) {
+    return scoreShelf(agg, products && products.equities, opts);
   }
 
   function roomPortfolio(agg, products) {
@@ -1352,7 +1521,29 @@ window.ENGINE = (function () {
 
     /* Spread a bucket's weight across picks in proportion, rounding so the
        parts still add up to the whole. */
-    function spread(total, parts) {
+    /* Scores cluster in the top few percent, so weighting straight in
+       proportion to them produced sleeves that were effectively equal
+       weighted: across a sweep, 301 of 400 had less than 15% between the
+       largest and smallest line. Raising the ratio to a power restores a
+       real ordering without letting the best line dominate. */
+    function amplify(parts, conviction) {
+      var k = conviction === undefined ? 7 : conviction;
+      var top = parts.reduce(function (m, p) { return Math.max(m, p.w); }, 0);
+      if (top <= 0) return parts;
+      return parts.map(function (p) {
+        return { item: p.item, w: Math.pow(p.w / top, k) };
+      });
+    }
+
+    /* Conviction, like every other selection knob, is read from
+       data/products.json so a sleeve can be retuned without editing this
+       file. Fixed income holds a flatter book than equities on purpose. */
+    function spreadFor(total, cfg, rawParts) {
+      return spread(total, rawParts, ((cfg || {}).selection || {}).conviction);
+    }
+
+    function spread(total, rawParts, conviction) {
+      var parts = amplify(rawParts, conviction);
       var sum = parts.reduce(function (t, p) { return t + p.w; }, 0);
       if (sum <= 0) return [];
       var out = parts.map(function (p) {
@@ -1367,8 +1558,8 @@ window.ENGINE = (function () {
     var buckets = [];
 
     /* --- equities: score the shelf against the room ------------------- */
-    var eq = scoreEquityShelf(agg, products);
-    var eqLines = spread(alloc.equities, eq.picked.map(function (p) {
+    var eq = scoreEquityShelf(agg, products, { allocation: alloc.equities });
+    var eqLines = spreadFor(alloc.equities, products.equities, eq.picked.map(function (p) {
       return { item: p.item, w: p.score };
     }));
     /* Carry the score onto the line so the validation page can show why
@@ -1383,8 +1574,8 @@ window.ENGINE = (function () {
     });
 
     /* --- fixed income: scored off its own shelf, same machinery -------- */
-    var fi = scoreShelf(agg, products.fixedIncome);
-    var fiLines = spread(alloc.fixedIncome, fi.picked.map(function (p) {
+    var fi = scoreShelf(agg, products.fixedIncome, { allocation: alloc.fixedIncome });
+    var fiLines = spreadFor(alloc.fixedIncome, products.fixedIncome, fi.picked.map(function (p) {
       return { item: p.item, w: p.score };
     }));
     fiLines.forEach(function (l) {
@@ -1397,7 +1588,7 @@ window.ENGINE = (function () {
     });
 
     /* --- structured notes: scored, then held to the index-note floor -- */
-    var nt = scoreShelf(agg, products.notes);
+    var nt = scoreShelf(agg, products.notes, { allocation: alloc.notes });
     var picks = nt.picked.slice();
 
     /* House rule: at least half the notes sleeve sits in the desk's core
@@ -1412,7 +1603,7 @@ window.ENGINE = (function () {
       if (best) picks[picks.length - 1] = best;
     }
 
-    var ntLines = spread(alloc.notes, picks.map(function (p) {
+    var ntLines = spreadFor(alloc.notes, products.notes, picks.map(function (p) {
       return { item: p.item, w: p.score };
     }));
 
@@ -1453,8 +1644,8 @@ window.ENGINE = (function () {
     });
 
     /* --- fx: the desk scores these itself, translated in the shelf --- */
-    var fxr = scoreShelf(agg, products.fx);
-    var fxLines = spread(alloc.fx, fxr.picked.map(function (p) {
+    var fxr = scoreShelf(agg, products.fx, { allocation: alloc.fx });
+    var fxLines = spreadFor(alloc.fx, products.fx, fxr.picked.map(function (p) {
       return { item: p.item, w: p.score };
     }));
     fxLines.forEach(function (l) {

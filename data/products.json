@@ -13,6 +13,7 @@
         "sleeve": "Core",
         "sector": "core",
         "region": "g7",
+        "group": "us-core",
         "usdExposure": 100,
         "riskBand": 1,
         "note": "Core",
@@ -39,7 +40,7 @@
             "em": 0.25
           },
           "riskProfile": {
-            "target": 1
+            "target": 0.76
           },
           "usd": {
             "target": 100
@@ -58,6 +59,7 @@
         "sleeve": "Defensive",
         "sector": "core",
         "region": "g7",
+        "group": "us-lowvol",
         "usdExposure": 100,
         "riskBand": 0,
         "note": "Defensive",
@@ -84,7 +86,7 @@
             "em": 0.25
           },
           "riskProfile": {
-            "target": 0
+            "target": 0.08
           },
           "usd": {
             "target": 100
@@ -103,6 +105,7 @@
         "sleeve": "Income",
         "sector": "core",
         "region": "g7",
+        "group": "us-dividend",
         "usdExposure": 100,
         "riskBand": 0,
         "note": "Income",
@@ -129,7 +132,7 @@
             "em": 0.25
           },
           "riskProfile": {
-            "target": 0
+            "target": 0.08
           },
           "usd": {
             "target": 100
@@ -148,6 +151,7 @@
         "sleeve": "Income",
         "sector": "core",
         "region": "g7",
+        "group": "us-dividend",
         "usdExposure": 100,
         "riskBand": 0,
         "note": "Income",
@@ -174,7 +178,7 @@
             "em": 0.25
           },
           "riskProfile": {
-            "target": 0
+            "target": 0.15
           },
           "usd": {
             "target": 100
@@ -193,6 +197,7 @@
         "sleeve": "Sector",
         "sector": "tech",
         "region": "g7",
+        "group": "us-tech-large",
         "usdExposure": 100,
         "riskBand": 2,
         "note": "Sector",
@@ -208,18 +213,18 @@
         "fit": {
           "sector": {
             "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
             "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "energy": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 2
+            "target": 1.61
           },
           "usd": {
             "target": 100
@@ -238,6 +243,7 @@
         "sleeve": "Sector",
         "sector": "financials",
         "region": "g7",
+        "group": "financials",
         "usdExposure": 100,
         "riskBand": 1,
         "note": "Sector",
@@ -252,19 +258,19 @@
         },
         "fit": {
           "sector": {
-            "tech": 0.2,
             "financials": 1.0,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "industrials": 0.32,
+            "energy": 0.26,
+            "consumer": 0.22,
+            "tech": 0.2,
+            "healthcare": 0.15
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 1
+            "target": 0.77
           },
           "usd": {
             "target": 100
@@ -283,6 +289,7 @@
         "sleeve": "Sector",
         "sector": "healthcare",
         "region": "g7",
+        "group": "healthcare",
         "usdExposure": 100,
         "riskBand": 0,
         "note": "Sector",
@@ -297,19 +304,19 @@
         },
         "fit": {
           "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
             "healthcare": 1.0,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "consumer": 0.34,
+            "tech": 0.24,
+            "industrials": 0.16,
+            "financials": 0.15,
+            "energy": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 0
+            "target": 0.15
           },
           "usd": {
             "target": 100
@@ -328,6 +335,7 @@
         "sleeve": "Sector",
         "sector": "energy",
         "region": "g7",
+        "group": "energy",
         "usdExposure": 100,
         "riskBand": 2,
         "note": "Sector",
@@ -342,19 +350,19 @@
         },
         "fit": {
           "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
             "energy": 1.0,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "industrials": 0.4,
+            "financials": 0.26,
+            "consumer": 0.16,
+            "tech": 0.1,
+            "healthcare": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 2
+            "target": 0.9
           },
           "usd": {
             "target": 100
@@ -373,6 +381,7 @@
         "sleeve": "Defensive",
         "sector": "consumer",
         "region": "g7",
+        "group": "staples",
         "usdExposure": 100,
         "riskBand": 0,
         "note": "Defensive",
@@ -387,19 +396,19 @@
         },
         "fit": {
           "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
             "consumer": 1.0,
-            "industrials": 0.2
+            "healthcare": 0.32,
+            "industrials": 0.3,
+            "tech": 0.28,
+            "financials": 0.2,
+            "energy": 0.15
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 0
+            "target": 0.03
           },
           "usd": {
             "target": 100
@@ -418,6 +427,7 @@
         "sleeve": "Sector",
         "sector": "consumer",
         "region": "g7",
+        "group": "discretionary",
         "usdExposure": 100,
         "riskBand": 2,
         "note": "Sector",
@@ -432,19 +442,19 @@
         },
         "fit": {
           "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
             "consumer": 1.0,
-            "industrials": 0.2
+            "healthcare": 0.32,
+            "industrials": 0.3,
+            "tech": 0.28,
+            "financials": 0.2,
+            "energy": 0.15
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 2
+            "target": 1.41
           },
           "usd": {
             "target": 100
@@ -463,6 +473,7 @@
         "sleeve": "Sector",
         "sector": "industrials",
         "region": "g7",
+        "group": "industrials",
         "usdExposure": 100,
         "riskBand": 1,
         "note": "Sector",
@@ -477,19 +488,19 @@
         },
         "fit": {
           "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 1.0
+            "industrials": 1.0,
+            "energy": 0.4,
+            "tech": 0.34,
+            "financials": 0.3,
+            "consumer": 0.3,
+            "healthcare": 0.16
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 1
+            "target": 0.79
           },
           "usd": {
             "target": 100
@@ -508,6 +519,7 @@
         "sleeve": "Sector",
         "sector": "healthcare",
         "region": "g7",
+        "group": "healthcare",
         "usdExposure": 60,
         "riskBand": 0,
         "note": "Sector",
@@ -522,19 +534,19 @@
         },
         "fit": {
           "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
             "healthcare": 1.0,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "consumer": 0.34,
+            "tech": 0.24,
+            "industrials": 0.16,
+            "financials": 0.15,
+            "energy": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 0
+            "target": 0.13
           },
           "usd": {
             "target": 60
@@ -553,6 +565,7 @@
         "sleeve": "Sector",
         "sector": "tech",
         "region": "g7",
+        "group": "us-tech-large",
         "usdExposure": 70,
         "riskBand": 2,
         "note": "Sector",
@@ -568,18 +581,18 @@
         "fit": {
           "sector": {
             "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
             "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "energy": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 2
+            "target": 1.62
           },
           "usd": {
             "target": 70
@@ -598,6 +611,7 @@
         "sleeve": "Non-USD",
         "sector": "core",
         "region": "g7",
+        "group": "europe",
         "usdExposure": 5,
         "riskBand": 1,
         "note": "Non-USD",
@@ -624,7 +638,7 @@
             "em": 0.25
           },
           "riskProfile": {
-            "target": 1
+            "target": 0.74
           },
           "usd": {
             "target": 5
@@ -643,6 +657,7 @@
         "sleeve": "Non-USD",
         "sector": "core",
         "region": "g7",
+        "group": "japan",
         "usdExposure": 5,
         "riskBand": 1,
         "note": "Non-USD",
@@ -669,7 +684,7 @@
             "em": 0.25
           },
           "riskProfile": {
-            "target": 1
+            "target": 0.86
           },
           "usd": {
             "target": 5
@@ -688,6 +703,7 @@
         "sleeve": "Non-USD",
         "sector": "core",
         "region": "g7",
+        "group": "uk",
         "usdExposure": 5,
         "riskBand": 0,
         "note": "Non-USD",
@@ -714,7 +730,7 @@
             "em": 0.25
           },
           "riskProfile": {
-            "target": 0
+            "target": 0.17
           },
           "usd": {
             "target": 5
@@ -733,6 +749,7 @@
         "sleeve": "Non-USD",
         "sector": "core",
         "region": "g7",
+        "group": "dev-intl",
         "usdExposure": 15,
         "riskBand": 1,
         "note": "Non-USD",
@@ -759,7 +776,7 @@
             "em": 0.25
           },
           "riskProfile": {
-            "target": 1
+            "target": 0.74
           },
           "usd": {
             "target": 15
@@ -778,6 +795,7 @@
         "sleeve": "EM",
         "sector": "core",
         "region": "em",
+        "group": "em-broad",
         "usdExposure": 20,
         "riskBand": 2,
         "note": "EM",
@@ -804,7 +822,7 @@
             "em": 1.0
           },
           "riskProfile": {
-            "target": 2
+            "target": 1.4
           },
           "usd": {
             "target": 20
@@ -823,6 +841,7 @@
         "sleeve": "EM",
         "sector": "core",
         "region": "em",
+        "group": "brazil",
         "usdExposure": 5,
         "riskBand": 2,
         "note": "EM",
@@ -849,7 +868,7 @@
             "em": 1.0
           },
           "riskProfile": {
-            "target": 2
+            "target": 1.38
           },
           "usd": {
             "target": 5
@@ -868,6 +887,7 @@
         "sleeve": "EM",
         "sector": "tech",
         "region": "em",
+        "group": "korea",
         "usdExposure": 5,
         "riskBand": 2,
         "note": "EM",
@@ -883,18 +903,18 @@
         "fit": {
           "sector": {
             "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
             "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "energy": 0.1
           },
           "country": {
             "g7": 0.25,
             "em": 1.0
           },
           "riskProfile": {
-            "target": 2
+            "target": 2.0
           },
           "usd": {
             "target": 5
@@ -913,6 +933,7 @@
         "sleeve": "EM",
         "sector": "core",
         "region": "em",
+        "group": "china",
         "usdExposure": 10,
         "riskBand": 2,
         "note": "EM",
@@ -939,7 +960,7 @@
             "em": 1.0
           },
           "riskProfile": {
-            "target": 2
+            "target": 1.15
           },
           "usd": {
             "target": 10
@@ -958,6 +979,7 @@
         "sleeve": "Real asset",
         "sector": "energy",
         "region": "g7",
+        "group": "gold",
         "usdExposure": 50,
         "riskBand": 1,
         "note": "Real asset",
@@ -972,19 +994,19 @@
         },
         "fit": {
           "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
             "energy": 1.0,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "industrials": 0.4,
+            "financials": 0.26,
+            "consumer": 0.16,
+            "tech": 0.1,
+            "healthcare": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 1
+            "target": 0.86
           },
           "usd": {
             "target": 50
@@ -1003,6 +1025,7 @@
         "sleeve": "Semis",
         "sector": "tech",
         "region": "g7",
+        "group": "semis",
         "usdExposure": 100,
         "riskBand": 2,
         "note": "Semis",
@@ -1018,18 +1041,18 @@
         "fit": {
           "sector": {
             "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
             "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "energy": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 2
+            "target": 2.0
           },
           "usd": {
             "target": 100
@@ -1048,6 +1071,7 @@
         "sleeve": "Semis",
         "sector": "tech",
         "region": "g7",
+        "group": "semis",
         "usdExposure": 100,
         "riskBand": 2,
         "note": "Semis",
@@ -1063,18 +1087,18 @@
         "fit": {
           "sector": {
             "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
             "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "energy": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 2
+            "target": 1.89
           },
           "usd": {
             "target": 100
@@ -1093,6 +1117,7 @@
         "sleeve": "Growth",
         "sector": "tech",
         "region": "g7",
+        "group": "us-tech-large",
         "usdExposure": 100,
         "riskBand": 2,
         "note": "Growth",
@@ -1108,18 +1133,18 @@
         "fit": {
           "sector": {
             "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
             "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "energy": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 2
+            "target": 1.44
           },
           "usd": {
             "target": 100
@@ -1138,6 +1163,7 @@
         "sleeve": "Growth",
         "sector": "tech",
         "region": "g7",
+        "group": "us-tech-large",
         "usdExposure": 100,
         "riskBand": 2,
         "note": "Growth",
@@ -1153,18 +1179,18 @@
         "fit": {
           "sector": {
             "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
             "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "energy": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 2
+            "target": 1.57
           },
           "usd": {
             "target": 100
@@ -1183,6 +1209,7 @@
         "sleeve": "Growth",
         "sector": "tech",
         "region": "g7",
+        "group": "us-software",
         "usdExposure": 100,
         "riskBand": 2,
         "note": "Growth",
@@ -1198,18 +1225,18 @@
         "fit": {
           "sector": {
             "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
             "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "energy": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 2
+            "target": 1.79
           },
           "usd": {
             "target": 100
@@ -1228,6 +1255,7 @@
         "sleeve": "High beta",
         "sector": "tech",
         "region": "g7",
+        "group": "thematic-growth",
         "usdExposure": 100,
         "riskBand": 2,
         "note": "High beta",
@@ -1243,18 +1271,18 @@
         "fit": {
           "sector": {
             "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
             "financials": 0.2,
-            "healthcare": 0.2,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "energy": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 2
+            "target": 1.95
           },
           "usd": {
             "target": 100
@@ -1273,6 +1301,7 @@
         "sleeve": "High beta",
         "sector": "healthcare",
         "region": "g7",
+        "group": "biotech",
         "usdExposure": 100,
         "riskBand": 2,
         "note": "High beta",
@@ -1287,19 +1316,19 @@
         },
         "fit": {
           "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
             "healthcare": 1.0,
-            "energy": 0.2,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "consumer": 0.34,
+            "tech": 0.24,
+            "industrials": 0.16,
+            "financials": 0.15,
+            "energy": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 2
+            "target": 1.64
           },
           "usd": {
             "target": 100
@@ -1318,6 +1347,7 @@
         "sleeve": "Defensive",
         "sector": "energy",
         "region": "g7",
+        "group": "utilities",
         "usdExposure": 100,
         "riskBand": 0,
         "note": "Defensive",
@@ -1332,19 +1362,19 @@
         },
         "fit": {
           "sector": {
-            "tech": 0.2,
-            "financials": 0.2,
-            "healthcare": 0.2,
             "energy": 1.0,
-            "consumer": 0.2,
-            "industrials": 0.2
+            "industrials": 0.4,
+            "financials": 0.26,
+            "consumer": 0.16,
+            "tech": 0.1,
+            "healthcare": 0.1
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
           "riskProfile": {
-            "target": 0
+            "target": 0.1
           },
           "usd": {
             "target": 100
@@ -1364,9 +1394,15 @@
         "usd": 1.0,
         "capitalIncome": 0.9
       },
-      "minN": 3,
-      "maxN": 6,
-      "relative": 0.86
+      "relative": 0.86,
+      "diversify": 0.55,
+      "conviction": 7,
+      "sizing": {
+        "pctPerLine": 8,
+        "minN": 3,
+        "maxN": 7,
+        "disperseTo": 2
+      }
     }
   },
   "fixedIncome": {
@@ -1383,6 +1419,7 @@
         "sector": "Communications",
         "country": "US",
         "usdExposure": 100,
+        "group": "at-t-inc-USD",
         "source": "Securities export",
         "data": {
           "ytw": 4.8132,
@@ -1395,8 +1432,11 @@
         "note": "BBB \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.751,
+            "hy": 0.417
+          },
+          "riskProfile": {
+            "target": 0.98
           },
           "country": {
             "em": 0.35,
@@ -1407,10 +1447,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1426,6 +1462,7 @@
         "sector": "Government",
         "country": "AR",
         "usdExposure": 100,
+        "group": "republic-of-argentin-USD",
         "source": "Securities export",
         "data": {
           "ytw": 9.3345,
@@ -1438,8 +1475,11 @@
         "note": "B- \u00b7 Sr Unsecured \u00b7 AR",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "hy": 0.75,
+            "ig": 0.12
+          },
+          "riskProfile": {
+            "target": 2.0
           },
           "country": {
             "em": 1.0,
@@ -1450,10 +1490,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1469,6 +1505,7 @@
         "sector": "Energy",
         "country": "US",
         "usdExposure": 100,
+        "group": "bp-capital-markets-p-USD",
         "source": "Securities export",
         "data": {
           "ytw": 6.0374,
@@ -1481,8 +1518,11 @@
         "note": "BBB+ \u00b7 Jr Subordinated \u00b7 US",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.782,
+            "hy": 0.383
+          },
+          "riskProfile": {
+            "target": 1.26
           },
           "country": {
             "em": 0.35,
@@ -1493,10 +1533,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1512,6 +1548,7 @@
         "sector": "Financial",
         "country": "BR",
         "usdExposure": 100,
+        "group": "banco-bradesco-cayma-USD",
         "source": "Securities export",
         "data": {
           "ytw": 5.8985,
@@ -1524,8 +1561,11 @@
         "note": "BB \u00b7 Sr Unsecured \u00b7 BR",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "hy": 1.0,
+            "ig": 0.32
+          },
+          "riskProfile": {
+            "target": 1.45
           },
           "country": {
             "em": 1.0,
@@ -1536,10 +1576,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1555,6 +1591,7 @@
         "sector": "Financial",
         "country": "ES",
         "usdExposure": 100,
+        "group": "banco-santander-sa-USD",
         "source": "Securities export",
         "data": {
           "ytw": 7.339,
@@ -1567,8 +1604,11 @@
         "note": "BB+ \u00b7 Jr Subordinated \u00b7 ES",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "hy": 1.0,
+            "ig": 0.37
+          },
+          "riskProfile": {
+            "target": 1.74
           },
           "country": {
             "em": 0.35,
@@ -1579,10 +1619,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1598,6 +1634,7 @@
         "sector": "Government",
         "country": "BR",
         "usdExposure": 100,
+        "group": "fed-republic-of-braz-USD",
         "source": "Securities export",
         "data": {
           "ytw": 7.4939,
@@ -1610,8 +1647,11 @@
         "note": "BB \u00b7 Sr Unsecured \u00b7 BR",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "hy": 1.0,
+            "ig": 0.32
+          },
+          "riskProfile": {
+            "target": 1.58
           },
           "country": {
             "em": 1.0,
@@ -1622,10 +1662,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1641,6 +1677,7 @@
         "sector": "Government",
         "country": "BR",
         "usdExposure": 100,
+        "group": "fed-republic-of-braz-USD",
         "source": "Securities export",
         "data": {
           "ytw": 6.6892,
@@ -1653,8 +1690,11 @@
         "note": "BB \u00b7 Sr Unsecured \u00b7 BR",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "hy": 1.0,
+            "ig": 0.32
+          },
+          "riskProfile": {
+            "target": 1.52
           },
           "country": {
             "em": 1.0,
@@ -1665,10 +1705,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1684,6 +1720,7 @@
         "sector": "Consumer, Non-cyclical",
         "country": "US",
         "usdExposure": 100,
+        "group": "coca-cola-consolidat-USD",
         "source": "Securities export",
         "data": {
           "ytw": 5.5216,
@@ -1696,8 +1733,11 @@
         "note": "BBB+ \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.782,
+            "hy": 0.383
+          },
+          "riskProfile": {
+            "target": 0.92
           },
           "country": {
             "em": 0.35,
@@ -1708,10 +1748,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1727,6 +1763,7 @@
         "sector": "Consumer, Non-cyclical",
         "country": "MX",
         "usdExposure": 100,
+        "group": "coca-cola-femsa-sab--USD",
         "source": "Securities export",
         "data": {
           "ytw": 5.1539,
@@ -1739,8 +1776,11 @@
         "note": "A- \u00b7 Sr Unsecured \u00b7 MX",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.813,
+            "hy": 0.35
+          },
+          "riskProfile": {
+            "target": 0.76
           },
           "country": {
             "em": 1.0,
@@ -1751,10 +1791,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1770,6 +1806,7 @@
         "sector": "Communications",
         "country": "US",
         "usdExposure": 100,
+        "group": "meta-platforms-inc-USD",
         "source": "Securities export",
         "data": {
           "ytw": 6.9835,
@@ -1782,8 +1819,11 @@
         "note": "AA- \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.907,
+            "hy": 0.25
+          },
+          "riskProfile": {
+            "target": 0.54
           },
           "country": {
             "em": 0.35,
@@ -1794,10 +1834,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1813,6 +1849,7 @@
         "sector": "Consumer, Cyclical",
         "country": "US",
         "usdExposure": 100,
+        "group": "general-motors-finl--USD",
         "source": "Securities export",
         "data": {
           "ytw": 4.7051,
@@ -1825,8 +1862,11 @@
         "note": "BBB \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.751,
+            "hy": 0.417
+          },
+          "riskProfile": {
+            "target": 0.98
           },
           "country": {
             "em": 0.35,
@@ -1837,10 +1877,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1856,6 +1892,7 @@
         "sector": "Financial",
         "country": "US",
         "usdExposure": 100,
+        "group": "goldman-sachs-group--USD",
         "source": "Securities export",
         "data": {
           "ytw": 5.9469,
@@ -1868,8 +1905,11 @@
         "note": "A- \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.813,
+            "hy": 0.35
+          },
+          "riskProfile": {
+            "target": 0.83
           },
           "country": {
             "em": 0.35,
@@ -1880,10 +1920,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1899,6 +1935,7 @@
         "sector": "Financial",
         "country": "GB",
         "usdExposure": 100,
+        "group": "hsbc-holdings-plc-USD",
         "source": "Securities export",
         "data": {
           "ytw": 6.7775,
@@ -1911,8 +1948,11 @@
         "note": "BBB- \u00b7 Jr Subordinated \u00b7 GB",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.72,
+            "hy": 0.45
+          },
+          "riskProfile": {
+            "target": 1.57
           },
           "country": {
             "em": 0.35,
@@ -1923,10 +1963,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1942,6 +1978,7 @@
         "sector": "Financial",
         "country": "US",
         "usdExposure": 100,
+        "group": "morgan-stanley-USD",
         "source": "Securities export",
         "data": {
           "ytw": 4.6796,
@@ -1954,8 +1991,11 @@
         "note": "A \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.844,
+            "hy": 0.317
+          },
+          "riskProfile": {
+            "target": 0.6
           },
           "country": {
             "em": 0.35,
@@ -1966,10 +2006,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -1985,6 +2021,7 @@
         "sector": "Financial",
         "country": "US",
         "usdExposure": 100,
+        "group": "morgan-stanley-USD",
         "source": "Securities export",
         "data": {
           "ytw": 6.1781,
@@ -1997,8 +2034,11 @@
         "note": "A- \u00b7 Subordinated \u00b7 US",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.813,
+            "hy": 0.35
+          },
+          "riskProfile": {
+            "target": 1.15
           },
           "country": {
             "em": 0.35,
@@ -2009,10 +2049,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2028,6 +2064,7 @@
         "sector": "Consumer, Non-cyclical",
         "country": "US",
         "usdExposure": 100,
+        "group": "pepsico-inc-USD",
         "source": "Securities export",
         "data": {
           "ytw": 5.0372,
@@ -2040,8 +2077,11 @@
         "note": "A+ \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.876,
+            "hy": 0.283
+          },
+          "riskProfile": {
+            "target": 0.5
           },
           "country": {
             "em": 0.35,
@@ -2052,10 +2092,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2071,6 +2107,7 @@
         "sector": "Consumer, Non-cyclical",
         "country": "US",
         "usdExposure": 100,
+        "group": "pfizer-inc-USD",
         "source": "Securities export",
         "data": {
           "ytw": 5.6457,
@@ -2083,8 +2120,11 @@
         "note": "A \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.844,
+            "hy": 0.317
+          },
+          "riskProfile": {
+            "target": 0.68
           },
           "country": {
             "em": 0.35,
@@ -2095,10 +2135,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2114,6 +2150,7 @@
         "sector": "Financial",
         "country": "FR",
         "usdExposure": 100,
+        "group": "credit-agricole-sa-USD",
         "source": "Securities export",
         "data": {
           "ytw": 6.2332,
@@ -2126,8 +2163,11 @@
         "note": "BBB+ \u00b7 Subordinated \u00b7 FR",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.782,
+            "hy": 0.383
+          },
+          "riskProfile": {
+            "target": 1.28
           },
           "country": {
             "em": 0.35,
@@ -2138,10 +2178,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2157,6 +2193,7 @@
         "sector": "Basic Materials",
         "country": "BR",
         "usdExposure": 100,
+        "group": "vale-overseas-limite-USD",
         "source": "Securities export",
         "data": {
           "ytw": 6.1318,
@@ -2169,8 +2206,11 @@
         "note": "BB+ \u00b7 Sr Subordinated \u00b7 BR",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "hy": 1.0,
+            "ig": 0.37
+          },
+          "riskProfile": {
+            "target": 1.64
           },
           "country": {
             "em": 1.0,
@@ -2181,10 +2221,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2200,6 +2236,7 @@
         "sector": "Financial",
         "country": "MX",
         "usdExposure": 100,
+        "group": "banco-mercantil-de-n-USD",
         "source": "Securities export",
         "data": {
           "ytw": 8.3325,
@@ -2212,8 +2249,11 @@
         "note": "BB- \u00b7 Jr Subordinated \u00b7 MX",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "hy": 1.0,
+            "ig": 0.27
+          },
+          "riskProfile": {
+            "target": 2.0
           },
           "country": {
             "em": 1.0,
@@ -2224,10 +2264,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2243,6 +2279,7 @@
         "sector": "Financial",
         "country": "MX",
         "usdExposure": 100,
+        "group": "bbva-mex-banca-grupo-USD",
         "source": "Securities export",
         "data": {
           "ytw": 7.1529,
@@ -2255,8 +2292,11 @@
         "note": "BB+ \u00b7 Subordinated \u00b7 MX",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "hy": 1.0,
+            "ig": 0.37
+          },
+          "riskProfile": {
+            "target": 1.73
           },
           "country": {
             "em": 1.0,
@@ -2267,10 +2307,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2286,6 +2322,7 @@
         "sector": "Consumer, Non-cyclical",
         "country": "US",
         "usdExposure": 100,
+        "group": "nestle-capital-corp-USD",
         "source": "Securities export",
         "data": {
           "ytw": 5.2922,
@@ -2298,8 +2335,11 @@
         "note": "AA- \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.907,
+            "hy": 0.25
+          },
+          "riskProfile": {
+            "target": 0.4
           },
           "country": {
             "em": 0.35,
@@ -2310,10 +2350,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2329,6 +2365,7 @@
         "sector": "Financial",
         "country": "ES",
         "usdExposure": 5,
+        "group": "banco-santander-EUR",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 5.18,
@@ -2341,8 +2378,11 @@
         "note": "BBB- \u00b7 Jr Subordinated \u00b7 ES",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "ig": 0.72,
+            "hy": 0.45
+          },
+          "riskProfile": {
+            "target": 1.44
           },
           "country": {
             "em": 0.35,
@@ -2353,10 +2393,6 @@
           },
           "usd": {
             "target": 5
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2372,6 +2408,7 @@
         "sector": "Utilities",
         "country": "FR",
         "usdExposure": 5,
+        "group": "electricite-de-franc-EUR",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 4.7,
@@ -2384,8 +2421,11 @@
         "note": "BB \u00b7 Jr Subordinated \u00b7 FR",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "hy": 1.0,
+            "ig": 0.32
+          },
+          "riskProfile": {
+            "target": 1.65
           },
           "country": {
             "em": 0.35,
@@ -2396,10 +2436,6 @@
           },
           "usd": {
             "target": 5
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2415,6 +2451,7 @@
         "sector": "Financial",
         "country": "FR",
         "usdExposure": 5,
+        "group": "bnp-paribas-EUR",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 5.81,
@@ -2427,8 +2464,11 @@
         "note": "BBB- \u00b7 Jr Subordinated \u00b7 FR",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "ig": 0.72,
+            "hy": 0.45
+          },
+          "riskProfile": {
+            "target": 1.49
           },
           "country": {
             "em": 0.35,
@@ -2439,10 +2479,6 @@
           },
           "usd": {
             "target": 5
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2458,6 +2494,7 @@
         "sector": "Consumer, Cyclical",
         "country": "NL",
         "usdExposure": 5,
+        "group": "volkswagen-intl-EUR",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 5.46,
@@ -2470,8 +2507,11 @@
         "note": "BBB- \u00b7 Jr Subordinated \u00b7 NL",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "ig": 0.72,
+            "hy": 0.45
+          },
+          "riskProfile": {
+            "target": 1.46
           },
           "country": {
             "em": 0.35,
@@ -2482,10 +2522,6 @@
           },
           "usd": {
             "target": 5
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2501,6 +2537,7 @@
         "sector": "Energy",
         "country": "FR",
         "usdExposure": 5,
+        "group": "totalenergies-se-EUR",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 4.5,
@@ -2513,8 +2550,11 @@
         "note": "A- \u00b7 Jr Subordinated \u00b7 FR",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.813,
+            "hy": 0.35
+          },
+          "riskProfile": {
+            "target": 1.01
           },
           "country": {
             "em": 0.35,
@@ -2525,10 +2565,6 @@
           },
           "usd": {
             "target": 5
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2544,6 +2580,7 @@
         "sector": "Financial",
         "country": "GB",
         "usdExposure": 5,
+        "group": "barclays-plc-EUR",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 6.15,
@@ -2556,8 +2593,11 @@
         "note": "BB+ \u00b7 Jr Subordinated \u00b7 GB",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "hy": 1.0,
+            "ig": 0.37
+          },
+          "riskProfile": {
+            "target": 1.65
           },
           "country": {
             "em": 0.35,
@@ -2568,10 +2608,6 @@
           },
           "usd": {
             "target": 5
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2587,6 +2623,7 @@
         "sector": "Financial",
         "country": "NL",
         "usdExposure": 5,
+        "group": "ing-groep-nv-GBP",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 5.31,
@@ -2599,8 +2636,11 @@
         "note": "BBB+ \u00b7 Subordinated \u00b7 NL",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.782,
+            "hy": 0.383
+          },
+          "riskProfile": {
+            "target": 1.2
           },
           "country": {
             "em": 0.35,
@@ -2611,10 +2651,6 @@
           },
           "usd": {
             "target": 5
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2630,6 +2666,7 @@
         "sector": "Financial",
         "country": "FR",
         "usdExposure": 5,
+        "group": "credit-agricole-sa-GBP",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 5.95,
@@ -2642,8 +2679,11 @@
         "note": "BBB+ \u00b7 Subordinated \u00b7 FR",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.782,
+            "hy": 0.383
+          },
+          "riskProfile": {
+            "target": 1.25
           },
           "country": {
             "em": 0.35,
@@ -2654,10 +2694,6 @@
           },
           "usd": {
             "target": 5
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2673,6 +2709,7 @@
         "sector": "Consumer, Non-cyc",
         "country": "GB",
         "usdExposure": 5,
+        "group": "glaxosmithkline-GBP",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 5.72,
@@ -2685,8 +2722,11 @@
         "note": "A \u00b7 Sr Unsecured \u00b7 GB",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.844,
+            "hy": 0.317
+          },
+          "riskProfile": {
+            "target": 0.68
           },
           "country": {
             "em": 0.35,
@@ -2697,10 +2737,6 @@
           },
           "usd": {
             "target": 5
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2716,6 +2752,7 @@
         "sector": "Communications",
         "country": "GB",
         "usdExposure": 5,
+        "group": "vodafone-group-GBP",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 6.35,
@@ -2728,8 +2765,11 @@
         "note": "BB+ \u00b7 Jr Subordinated \u00b7 GB",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "hy": 1.0,
+            "ig": 0.37
+          },
+          "riskProfile": {
+            "target": 1.66
           },
           "country": {
             "em": 0.35,
@@ -2740,10 +2780,6 @@
           },
           "usd": {
             "target": 5
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2759,6 +2795,7 @@
         "sector": "Utilities",
         "country": "FR",
         "usdExposure": 5,
+        "group": "electricite-de-franc-GBP",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 6.21,
@@ -2771,8 +2808,11 @@
         "note": "BB- \u00b7 Jr Subordinated \u00b7 FR",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "hy": 1.0,
+            "ig": 0.27
+          },
+          "riskProfile": {
+            "target": 1.9
           },
           "country": {
             "em": 0.35,
@@ -2783,10 +2823,6 @@
           },
           "usd": {
             "target": 5
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2802,6 +2838,7 @@
         "sector": "Financial",
         "country": "GB",
         "usdExposure": 5,
+        "group": "barclays-plc-GBP",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 6.38,
@@ -2814,8 +2851,11 @@
         "note": "BB+ \u00b7 Jr Subordinated \u00b7 GB",
         "fit": {
           "credit": {
-            "ig": 0.25,
-            "hy": 1.0
+            "hy": 1.0,
+            "ig": 0.37
+          },
+          "riskProfile": {
+            "target": 1.67
           },
           "country": {
             "em": 0.35,
@@ -2826,10 +2866,6 @@
           },
           "usd": {
             "target": 5
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2845,6 +2881,7 @@
         "sector": "Consumer, Non-cyc",
         "country": "JP",
         "usdExposure": 100,
+        "group": "japan-tobacco-USD",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 5.22,
@@ -2857,8 +2894,11 @@
         "note": "A \u00b7 Sr Unsecured \u00b7 JP",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.844,
+            "hy": 0.317
+          },
+          "riskProfile": {
+            "target": 0.64
           },
           "country": {
             "em": 0.35,
@@ -2869,10 +2909,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2888,6 +2924,7 @@
         "sector": "Consumer, Cyclical",
         "country": "KR",
         "usdExposure": 100,
+        "group": "lg-energy-solution-USD",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 5.8,
@@ -2900,8 +2937,11 @@
         "note": "BBB \u00b7 Sr Unsecured \u00b7 KR",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.751,
+            "hy": 0.417
+          },
+          "riskProfile": {
+            "target": 1.07
           },
           "country": {
             "em": 1.0,
@@ -2912,10 +2952,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2931,6 +2967,7 @@
         "sector": "Financial",
         "country": "AU",
         "usdExposure": 100,
+        "group": "aust-nz-bank-USD",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 5.63,
@@ -2943,8 +2980,11 @@
         "note": "A- \u00b7 Subordinated \u00b7 AU",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.813,
+            "hy": 0.35
+          },
+          "riskProfile": {
+            "target": 1.1
           },
           "country": {
             "em": 0.35,
@@ -2955,10 +2995,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -2974,6 +3010,7 @@
         "sector": "Financial",
         "country": "JP",
         "usdExposure": 100,
+        "group": "sumitomo-life-USD",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 5.81,
@@ -2986,8 +3023,11 @@
         "note": "A- \u00b7 Subordinated \u00b7 JP",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.813,
+            "hy": 0.35
+          },
+          "riskProfile": {
+            "target": 1.12
           },
           "country": {
             "em": 0.35,
@@ -2998,10 +3038,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       },
@@ -3017,6 +3053,7 @@
         "sector": "Financial",
         "country": "JP",
         "usdExposure": 100,
+        "group": "dai-ichi-life-USD",
         "source": "Desk non-USD ideas",
         "data": {
           "ytw": 5.83,
@@ -3029,8 +3066,11 @@
         "note": "A- \u00b7 Subordinated \u00b7 JP",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.813,
+            "hy": 0.35
+          },
+          "riskProfile": {
+            "target": 1.12
           },
           "country": {
             "em": 0.35,
@@ -3041,10 +3081,6 @@
           },
           "usd": {
             "target": 100
-          },
-          "capitalIncome": {
-            "income": 1.0,
-            "capital": 0.55
           }
         }
       }
@@ -3054,12 +3090,18 @@
         "credit": 1.2,
         "duration": 1.1,
         "usd": 1.0,
-        "country": 0.8,
-        "capitalIncome": 0.7
+        "riskProfile": 0.9,
+        "country": 0.8
       },
-      "minN": 3,
-      "maxN": 6,
-      "relative": 0.92
+      "relative": 0.92,
+      "diversify": 0.35,
+      "conviction": 5,
+      "sizing": {
+        "pctPerLine": 6,
+        "minN": 3,
+        "maxN": 8,
+        "disperseTo": 2
+      }
     }
   },
   "notes": {
@@ -3075,6 +3117,7 @@
         "coupon": "11.5%mem",
         "riskBand": 2,
         "region": "EM",
+        "group": "ewy-rty-sx5e-ic",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3082,10 +3125,10 @@
         "note": "2Y \u00b7 50/50",
         "fit": {
           "riskProfile": {
-            "target": 1.0
+            "target": 0.76
           },
           "horizon": {
-            "target": 3
+            "target": 2
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3094,9 +3137,6 @@
           "country": {
             "em": 1.0,
             "g7": 0.3
-          },
-          "usd": {
-            "target": 100
           }
         }
       },
@@ -3111,6 +3151,7 @@
         "coupon": "24%mem",
         "riskBand": 3,
         "region": "US",
+        "group": "orcl-spcx-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3121,7 +3162,7 @@
             "target": 2.0
           },
           "horizon": {
-            "target": 3
+            "target": 1
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3130,9 +3171,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           },
           "credit": {
             "hy": 1.0,
@@ -3151,6 +3189,7 @@
         "coupon": "9.50%mem",
         "riskBand": 3,
         "region": "US",
+        "group": "msft-nvda-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3158,10 +3197,10 @@
         "note": "2Y \u00b7 50/50",
         "fit": {
           "riskProfile": {
-            "target": 2.0
+            "target": 1.93
           },
           "horizon": {
-            "target": 3
+            "target": 2
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3170,9 +3209,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           },
           "sector": {
             "tech": 1.0,
@@ -3195,6 +3231,7 @@
         "coupon": "11%mem",
         "riskBand": 2,
         "region": "US",
+        "group": "bac-jpm-c-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3202,10 +3239,10 @@
         "note": "2Y \u00b7 60/60",
         "fit": {
           "riskProfile": {
-            "target": 1.0
+            "target": 0.86
           },
           "horizon": {
-            "target": 3
+            "target": 2
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3214,9 +3251,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           },
           "sector": {
             "tech": 0.2,
@@ -3239,6 +3273,7 @@
         "coupon": "7.50%mem",
         "riskBand": 1,
         "region": "US",
+        "group": "bac-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3246,10 +3281,10 @@
         "note": "2Y \u00b7 70/70",
         "fit": {
           "riskProfile": {
-            "target": 0.0
+            "target": 0.29
           },
           "horizon": {
-            "target": 3
+            "target": 2
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3258,9 +3293,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           },
           "sector": {
             "tech": 0.2,
@@ -3283,6 +3315,7 @@
         "coupon": "15.50%mem",
         "riskBand": 3,
         "region": "US",
+        "group": "googl-aapl-meta-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3290,10 +3323,10 @@
         "note": "2Y \u00b7 60/60",
         "fit": {
           "riskProfile": {
-            "target": 2.0
+            "target": 1.96
           },
           "horizon": {
-            "target": 3
+            "target": 2
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3302,9 +3335,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           },
           "sector": {
             "tech": 1.0,
@@ -3327,6 +3357,7 @@
         "coupon": "9%mem",
         "riskBand": 2,
         "region": "US",
+        "group": "ma-v-axp-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3334,10 +3365,10 @@
         "note": "2Y \u00b7 60/60",
         "fit": {
           "riskProfile": {
-            "target": 1.0
+            "target": 0.81
           },
           "horizon": {
-            "target": 3
+            "target": 2
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3346,9 +3377,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           },
           "sector": {
             "tech": 0.2,
@@ -3371,6 +3399,7 @@
         "coupon": "19%mem",
         "riskBand": 3,
         "region": "US",
+        "group": "amzn-googl-tsla-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3381,7 +3410,7 @@
             "target": 2.0
           },
           "horizon": {
-            "target": 3
+            "target": 2
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3390,9 +3419,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           },
           "sector": {
             "tech": 1.0,
@@ -3415,6 +3441,7 @@
         "coupon": "17.50%mem",
         "riskBand": 3,
         "region": "US",
+        "group": "aapl-nvda-meta-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3425,7 +3452,7 @@
             "target": 2.0
           },
           "horizon": {
-            "target": 3
+            "target": 2
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3434,9 +3461,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           },
           "sector": {
             "tech": 1.0,
@@ -3459,6 +3483,7 @@
         "coupon": "9% Max",
         "riskBand": 1,
         "region": "US",
+        "group": "spx-ctpl",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3478,9 +3503,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           }
         }
       },
@@ -3495,6 +3517,7 @@
         "coupon": "7.00%",
         "riskBand": 1,
         "region": "US",
+        "group": "spy-ic",
         "isCore": true,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3502,7 +3525,7 @@
         "note": "3y \u00b7 65%/ 65%",
         "fit": {
           "riskProfile": {
-            "target": 0.0
+            "target": 0.07
           },
           "horizon": {
             "target": 3
@@ -3514,9 +3537,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           }
         }
       },
@@ -3531,6 +3551,7 @@
         "coupon": "19%mem",
         "riskBand": 3,
         "region": "US",
+        "group": "tsla-amd-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3551,9 +3572,6 @@
             "g7": 1.0,
             "em": 0.3
           },
-          "usd": {
-            "target": 100
-          },
           "credit": {
             "hy": 1.0,
             "ig": 0.3
@@ -3571,6 +3589,7 @@
         "coupon": "11.5%mem",
         "riskBand": 2,
         "region": "US",
+        "group": "goog-aapl-amzn-msft-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3578,7 +3597,7 @@
         "note": "3Y \u00b7 50/50",
         "fit": {
           "riskProfile": {
-            "target": 1.0
+            "target": 0.76
           },
           "horizon": {
             "target": 3
@@ -3590,9 +3609,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           },
           "sector": {
             "tech": 1.0,
@@ -3615,6 +3631,7 @@
         "coupon": "14.50%mem",
         "riskBand": 3,
         "region": "US",
+        "group": "aapl-amzn-goog-msft-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3622,7 +3639,7 @@
         "note": "3Y \u00b7 60/60",
         "fit": {
           "riskProfile": {
-            "target": 2.0
+            "target": 1.94
           },
           "horizon": {
             "target": 3
@@ -3634,9 +3651,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           },
           "sector": {
             "tech": 1.0,
@@ -3659,6 +3673,7 @@
         "coupon": "12%mem",
         "riskBand": 3,
         "region": "US",
+        "group": "nvda-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3679,9 +3694,6 @@
             "g7": 1.0,
             "em": 0.3
           },
-          "usd": {
-            "target": 100
-          },
           "credit": {
             "hy": 1.0,
             "ig": 0.3
@@ -3699,6 +3711,7 @@
         "coupon": "30%cap",
         "riskBand": 1,
         "region": "US",
+        "group": "spx-ppn",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3709,7 +3722,7 @@
             "target": 0.0
           },
           "horizon": {
-            "target": 3
+            "target": 4
           },
           "capitalIncome": {
             "capital": 1.0,
@@ -3718,9 +3731,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           }
         }
       },
@@ -3735,6 +3745,7 @@
         "coupon": "9.00%",
         "riskBand": 1,
         "region": "US",
+        "group": "spy-iwm-qqq-ac",
         "isCore": true,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3754,9 +3765,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           }
         }
       },
@@ -3771,6 +3779,7 @@
         "coupon": "10%mem",
         "riskBand": 2,
         "region": "US",
+        "group": "spy-iwm-qqq-ac",
         "isCore": true,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3778,10 +3787,10 @@
         "note": "2Y \u00b7 70/70",
         "fit": {
           "riskProfile": {
-            "target": 1.0
+            "target": 0.95
           },
           "horizon": {
-            "target": 3
+            "target": 2
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3790,9 +3799,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           }
         }
       },
@@ -3807,6 +3813,7 @@
         "coupon": "7.50%",
         "riskBand": 1,
         "region": "US",
+        "group": "spy-iwm-qqq-ac",
         "isCore": true,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3826,9 +3833,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           }
         }
       },
@@ -3843,6 +3847,7 @@
         "coupon": "6.15%",
         "riskBand": 2,
         "region": "EM",
+        "group": "mexico-cln",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3850,10 +3855,10 @@
         "note": "7Y \u00b7 no barrier",
         "fit": {
           "riskProfile": {
-            "target": 1.0
+            "target": 0.96
           },
           "horizon": {
-            "target": 3
+            "target": 7
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3862,9 +3867,6 @@
           "country": {
             "em": 1.0,
             "g7": 0.3
-          },
-          "usd": {
-            "target": 100
           }
         }
       },
@@ -3879,6 +3881,7 @@
         "coupon": "11.50%mem",
         "riskBand": 2,
         "region": "US",
+        "group": "xle-xlf-xlk-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3886,10 +3889,10 @@
         "note": "2Y \u00b7 65/65",
         "fit": {
           "riskProfile": {
-            "target": 1.0
+            "target": 0.92
           },
           "horizon": {
-            "target": 3
+            "target": 2
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3898,9 +3901,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           }
         }
       },
@@ -3915,6 +3915,7 @@
         "coupon": "11.85%",
         "riskBand": 2,
         "region": "EM",
+        "group": "brazil-lifter-cln-cln",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3922,10 +3923,10 @@
         "note": "10Y \u00b7 no barrier",
         "fit": {
           "riskProfile": {
-            "target": 1.0
+            "target": 0.56
           },
           "horizon": {
-            "target": 3
+            "target": 10
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3934,9 +3935,6 @@
           "country": {
             "em": 1.0,
             "g7": 0.3
-          },
-          "usd": {
-            "target": 100
           }
         }
       },
@@ -3951,6 +3949,7 @@
         "coupon": "19%mem",
         "riskBand": 3,
         "region": "US",
+        "group": "orcl-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3961,7 +3960,7 @@
             "target": 2.0
           },
           "horizon": {
-            "target": 3
+            "target": 2
           },
           "capitalIncome": {
             "income": 1.0,
@@ -3970,9 +3969,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           },
           "credit": {
             "hy": 1.0,
@@ -3991,6 +3987,7 @@
         "coupon": "11.50%mem",
         "riskBand": 3,
         "region": "EM",
+        "group": "spy-iwm-ewz-ac",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -3998,7 +3995,7 @@
         "note": "3Y \u00b7 60/60",
         "fit": {
           "riskProfile": {
-            "target": 2.0
+            "target": 1.87
           },
           "horizon": {
             "target": 3
@@ -4010,9 +4007,6 @@
           "country": {
             "em": 1.0,
             "g7": 0.3
-          },
-          "usd": {
-            "target": 100
           }
         }
       },
@@ -4027,6 +4021,7 @@
         "coupon": "7.50%",
         "riskBand": 1,
         "region": "US",
+        "group": "spy-ac",
         "isCore": true,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -4034,7 +4029,7 @@
         "note": "3Y \u00b7 70/70",
         "fit": {
           "riskProfile": {
-            "target": 0.0
+            "target": 0.13
           },
           "horizon": {
             "target": 3
@@ -4046,9 +4041,6 @@
           "country": {
             "g7": 1.0,
             "em": 0.3
-          },
-          "usd": {
-            "target": 100
           }
         }
       },
@@ -4063,6 +4055,7 @@
         "coupon": "30.00%",
         "riskBand": 3,
         "region": "US",
+        "group": "spcx-cat",
         "isCore": false,
         "data": {
           "ytdExcluded": "a structured note has no public price history"
@@ -4083,9 +4076,6 @@
             "g7": 1.0,
             "em": 0.3
           },
-          "usd": {
-            "target": 100
-          },
           "credit": {
             "hy": 1.0,
             "ig": 0.3
@@ -4102,10 +4092,16 @@
         "capitalIncome": 0.8,
         "sector": 0.8
       },
-      "minN": 3,
-      "maxN": 6,
       "relative": 0.88,
-      "coreFloor": 0.5
+      "coreFloor": 0.5,
+      "diversify": 0.55,
+      "conviction": 7,
+      "sizing": {
+        "pctPerLine": 7,
+        "minN": 2,
+        "maxN": 6,
+        "disperseTo": 2
+      }
     }
   },
   "fx": {
@@ -4139,6 +4135,7 @@
             "income": 0.2
           }
         },
+        "group": "XAUUSD",
         "data": {
           "ytd": -1.26,
           "pair": "XAUUSD"
@@ -4173,6 +4170,7 @@
             "income": 0.2
           }
         },
+        "group": "long-xau-usd",
         "data": {
           "ytdExcluded": "option payoff is not linear in the pair"
         }
@@ -4206,6 +4204,7 @@
             "income": 0.2
           }
         },
+        "group": "USDJPY",
         "data": {
           "ytd": 1.35,
           "pair": "USDJPY"
@@ -4240,6 +4239,7 @@
             "income": 0.2
           }
         },
+        "group": "EURUSD",
         "data": {
           "ytd": -3.23,
           "pair": "EURUSD"
@@ -4274,6 +4274,7 @@
             "income": 0.2
           }
         },
+        "group": "long-eur-usd",
         "data": {
           "ytdExcluded": "option payoff is not linear in the pair"
         }
@@ -4307,6 +4308,7 @@
             "capital": 0.2
           }
         },
+        "group": "USDBRL",
         "data": {
           "ytd": 5.28,
           "pair": "USDBRL"
@@ -4341,6 +4343,7 @@
             "income": 0.2
           }
         },
+        "group": "long-usd-mxn",
         "data": {
           "ytdExcluded": "option payoff is not linear in the pair"
         }
@@ -4374,6 +4377,7 @@
             "income": 0.2
           }
         },
+        "group": "USDMXN",
         "data": {
           "ytd": -1.71,
           "pair": "USDMXN"
@@ -4388,9 +4392,15 @@
         "leverage": 0.8,
         "horizon": 0.6
       },
-      "minN": 2,
-      "maxN": 4,
-      "relative": 0.82
+      "relative": 0.82,
+      "diversify": 0.4,
+      "conviction": 5,
+      "sizing": {
+        "pctPerLine": 5,
+        "minN": 2,
+        "maxN": 4,
+        "disperseTo": 1
+      }
     }
   }
 }

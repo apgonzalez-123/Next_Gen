@@ -23,7 +23,13 @@ OUT = os.path.join(os.path.dirname(__file__), "..", "data", "products.json")
 
 # ---------------------------------------------------------------- helpers
 def num(v, default=None):
-    return float(v) if isinstance(v, (int, float)) else default
+    """Spreadsheet cells arrive as numbers OR as strings like "2" or "11.5%".
+    The earlier version only accepted the former and silently returned the
+    default for the latter, which collapsed every note tenor to 3 years."""
+    if isinstance(v, (int, float)):
+        return float(v)
+    m = re.search(r"-?\d+(?:\.\d+)?", str(v or ""))
+    return float(m.group()) if m else default
 
 def slug(s, n=28):
     return re.sub(r"[^a-z0-9]+", "-", str(s).lower()).strip("-")[:n]
@@ -84,6 +90,7 @@ def build_fx(path):
             "id": slug(name), "ticker": _fx_ticker(name, kind),
             "name": str(name).title(),
             "kind": kind, "note": _fx_note(name), "fit": fit,
+            "group": (pair or slug(name, 12)),
             "data": ({"ytd": ytd, "pair": pair} if ytd is not None
                      else {"ytdExcluded": "option payoff is not linear in the pair"}),
         })
@@ -127,6 +134,7 @@ NOTE_SECTOR = {"TECH": "tech", "FINANCIAL": "financials", "HY": None,
 # The desk marks its preferred notes by highlighting the row. That
 # highlight is the source of truth for the core allocation, not anything
 # inferred from the underlying, so it is read off the cell fill.
+PROTECTED = re.compile(r"protect", re.I)
 HIGHLIGHT = "FFFFFF00"
 
 def row_is_highlighted(ws, r):
@@ -148,6 +156,7 @@ def build_notes(path):
         if not under:
             continue
         typ = str(ws.cell(r, 4).value or "").strip()
+        typ_full = NOTE_TYPE.get(typ, typ)
         tenor = str(ws.cell(r, 5).value or "").strip()
         barrier = str(ws.cell(r, 6).value or "").strip()
         coupon = ws.cell(r, 7).value
@@ -156,16 +165,35 @@ def build_notes(path):
         capinc = str(ws.cell(r, 11).value or "income").strip().lower()
         country = str(ws.cell(r, 12).value or "US").strip().lower()
 
-        yrs = num(re.sub(r"[^0-9.]", "", tenor) or 0, 3) or 3
+        yrs = num(tenor, 3) or 3
         sec = NOTE_SECTOR.get(sector, None)
 
+        # A note's risk is not the desk's 1-3 band alone. Two autocalls can
+        # share a band and be very different trades: a 50% barrier on three
+        # indices is not a 70% barrier on one semiconductor name. Barrier
+        # depth, coupon and how concentrated the basket is all move it, so
+        # they are read off the term sheet rather than rounded away. Without
+        # this the 26 notes collapsed into three score classes and the room's
+        # answers could not move the book off the same six lines.
+        barr = num(barrier.split("/")[-1], None)     # protection leg
+        cpn = num(coupon, None)
+        names = len(str(under).split())
+        risk_c = (risk - 1)                               # 0..2 from the desk
+        if barr:
+            risk_c += (barr - 55) / 90.0                  # 70/70 riskier than 50/50
+        if cpn:
+            risk_c += (cpn - 10) / 45.0                   # the coupon prices the risk
+        if PROTECTED.search(typ_full):
+            risk_c -= 0.75                                # principal back at maturity
+        risk_c += 0.18 if names <= 1 else (-0.22 if names >= 3 else 0)
+        risk_c = max(0.0, min(2.0, risk_c))
+
         fit = {
-            "riskProfile": {"target": round((risk - 1), 2)},        # 1..3 -> 0..2
+            "riskProfile": {"target": round(risk_c, 2)},
             "horizon": {"target": max(1, round(yrs))},
             "capitalIncome": ({"capital": 1.0, "income": 0.3} if capinc == "capital"
                               else {"income": 1.0, "capital": 0.4}),
             "country": ({"em": 1.0, "g7": 0.3} if country == "em" else {"g7": 1.0, "em": 0.3}),
-            "usd": {"target": 100},                                  # all USD-settled
         }
         if sec:
             fit["sector"] = {s: (1.0 if s == sec else 0.2) for s in
@@ -181,6 +209,7 @@ def build_notes(path):
             "barrier": barrier if barrier != "-" else "",
             "coupon": (f"{coupon*100:.2f}%" if isinstance(coupon, float) and coupon < 1 else str(coupon or "")),
             "riskBand": int(risk), "region": country.upper(),
+            "group": slug(str(under) + "-" + typ, 26),
             "isCore": row_is_highlighted(ws_style, r),
             "data": {"ytdExcluded": "a structured note has no public price history"},
             "note": f"{tenor} · {barrier if barrier!='-' else 'no barrier'}",
@@ -225,6 +254,42 @@ BOND_PROXY = {
 }
 BOND_PROXY_EM = ("EMB", -4.28, "USD emerging market sovereign")
 
+# The export carries a full composite rating for every line, and the earlier
+# build threw all of it away, scoring 39 bonds on a single IG/HY flag. That
+# left four-deep ties at identical scores, so the order fell through to the
+# sheet and the same issuers came up every time. A rating ladder restores the
+# resolution that was already in the data.
+RATING_LADDER = ["AAA", "AA+", "AA", "AA-", "A+", "A", "A-", "BBB+", "BBB", "BBB-",
+                 "BB+", "BB", "BB-", "B+", "B", "B-", "CCC+", "CCC", "CCC-", "CC", "C", "D"]
+IG_FLOOR = 9  # BBB-
+
+def _notch(rating):
+    r = re.sub(r"[^A-Za-z+-]", "", str(rating or "")).upper()
+    return RATING_LADDER.index(r) if r in RATING_LADDER else None
+
+def _credit_fit(ighy, notch):
+    if notch is None:
+        return {"ig": 1.0 if ighy == "ig" else 0.25, "hy": 1.0 if ighy == "hy" else 0.3}
+    if notch <= IG_FLOOR:                       # investment grade
+        deep = (IG_FLOOR - notch) / float(IG_FLOOR)   # 1.0 at AAA, 0 at BBB-
+        return {"ig": round(0.72 + 0.28 * deep, 3),
+                "hy": round(max(0.15, 0.45 - 0.30 * deep), 3)}
+    over = min(1.0, (notch - IG_FLOOR) / 6.0)   # 0 just below IG, 1 deep in HY
+    return {"hy": round(1.0 - 0.25 * max(0.0, over - 0.5) * 2, 3),
+            "ig": round(max(0.12, 0.42 - 0.30 * over), 3)}
+
+def _bond_risk(notch, ighy, rank, ytw):
+    """0..2 on the same scale the room answers risk on."""
+    if notch is None:
+        base = 1.4 if ighy == "hy" else 0.5
+    else:
+        base = notch / 8.0                      # AAA 0, BBB- ~1.1, B ~1.8
+    if re.search(r"sub|junior|tier|perp", str(rank or ""), re.I):
+        base += 0.3                             # subordinated ranks behind
+    if ytw:
+        base += max(-0.2, min(0.4, (ytw - 5.0) / 12.0))
+    return round(max(0.0, min(2.0, base)), 2)
+
 def _bond(issuer, ccy, ighy, ytw, mdur, coupon, rank, rating, sector, country, em, isin="", source=""):
     usd_exposure = 100 if ccy == "USD" else 5
     if em and ccy == "USD":
@@ -239,12 +304,21 @@ def _bond(issuer, ccy, ighy, ytw, mdur, coupon, rank, rating, sector, country, e
         "name": issuer, "isin": isin,
         "currency": ccy, "credit": ighy, "rating": rating, "rank": rank,
         "sector": sector, "country": country, "usdExposure": usd_exposure,
+        "group": slug(issuer, 20) + "-" + ccy,
         "source": source,
         "data": {"ytw": ytw, "duration": mdur, "coupon": coupon,
                  "ytd": proxy[1], "ytdProxy": proxy[0], "ytdProxyNote": proxy[2]},
         "note": f"{rating or ighy.upper()} · {rank or 'Sr Unsecured'} · {country}",
         "fit": {
-            "credit": {"ig": 1.0 if ighy == "ig" else 0.25, "hy": 1.0 if ighy == "hy" else 0.3},
+            # Graded off the rating rather than the IG/HY flag: a room asking
+            # for investment grade should prefer AA to BBB-, and one asking
+            # for yield should prefer BB to CCC rather than treating every
+            # sub-IG line as interchangeable.
+            "credit": _credit_fit(ighy, _notch(rating)),
+            # Without this the room's risk answer did not reach the bond
+            # sleeve at all: every room got the same bonds for a given
+            # currency and credit flag.
+            "riskProfile": {"target": _bond_risk(_notch(rating), ighy, rank, ytw)},
             "country": {"em": 1.0 if em else 0.35, "g7": 0.35 if em else 1.0},
             "duration": {"target": max(1, round(mdur))} if mdur else None,
             "usd": {"target": usd_exposure},
@@ -326,16 +400,54 @@ EQ = [
 ]
 SECTORS = ["tech", "financials", "healthcare", "energy", "consumer", "industrials"]
 
+# Scoring a sector fund as 1.0 for its own sector and 0.2 for every other one
+# says energy and utilities are equally wrong for a room that asked for
+# healthcare. They are not, and the flat 0.2 left thirteen funds tied on the
+# same score, so the order fell through to the ticker and the same names came
+# up every time. These are rough economic adjacencies, not a factor model:
+# enough to rank the near-misses ahead of the unrelated.
+SECTOR_NEAR = {
+  "tech":        {"tech": 1.0, "industrials": .35, "consumer": .30, "healthcare": .22, "financials": .20, "energy": .10},
+  "financials":  {"financials": 1.0, "industrials": .32, "energy": .26, "consumer": .22, "tech": .20, "healthcare": .15},
+  "healthcare":  {"healthcare": 1.0, "consumer": .34, "tech": .24, "industrials": .16, "financials": .15, "energy": .10},
+  "energy":      {"energy": 1.0, "industrials": .40, "financials": .26, "consumer": .16, "tech": .10, "healthcare": .10},
+  "consumer":    {"consumer": 1.0, "healthcare": .32, "industrials": .30, "tech": .28, "financials": .20, "energy": .15},
+  "industrials": {"industrials": 1.0, "energy": .40, "tech": .34, "financials": .30, "consumer": .30, "healthcare": .16},
+}
+
+# Two funds in the same group hold substantially the same thing. Selection
+# treats them as substitutes so a sleeve does not end up as five versions
+# of one exposure.
+EQ_GROUP = {
+  "IVV": "us-core", "USMV": "us-lowvol", "SCHD": "us-dividend", "VYM": "us-dividend",
+  "XLK": "us-tech-large", "IXN": "us-tech-large", "VGT": "us-tech-large", "QQQ": "us-tech-large",
+  "SOXX": "semis", "SMH": "semis", "IGV": "us-software", "ARKK": "thematic-growth",
+  "XLF": "financials", "XLV": "healthcare", "IXJ": "healthcare", "XBI": "biotech",
+  "XLE": "energy", "XLU": "utilities", "XLP": "staples", "XLY": "discretionary",
+  "XLI": "industrials", "VGK": "europe", "EWJ": "japan", "EWU": "uk",
+  "EFA": "dev-intl", "EEM": "em-broad", "EWZ": "brazil", "EWY": "korea",
+  "FXI": "china", "IAU": "gold",
+}
+
 # Live prices pulled from TradingView on the asOf date. Samsung's local
 # Korean line is deliberately absent rather than guessed at.
 def build_equities():
     out = []
     for (tk, ex, name, sleeve, sec, reg, usdx, risk, px, ytd, p1y, beta, vol, fee) in EQ:
         sfit = ({s: 0.5 for s in SECTORS} if sec == "core"
-                else {s: (1.0 if s == sec else 0.2) for s in SECTORS})
+                else SECTOR_NEAR.get(sec, {s: (1.0 if s == sec else 0.2) for s in SECTORS}))
+
+        # The desk's 0/1/2 band is only three values across thirty funds, so
+        # most of the shelf scored identically on risk. The feed already
+        # carries each fund's beta and realised volatility; blend them with
+        # the band so the axis can actually separate USMV from ARKK instead
+        # of calling both "2".
+        derived = 0.62 * num(beta, 1.0) + 0.38 * ((num(vol, 1.2) - 0.8) / 0.8)
+        risk_c = max(0.0, min(2.0, 0.45 * risk + 0.55 * derived))
         out.append({
             "id": slug(tk, 12), "ticker": tk, "exchange": ex, "name": name,
             "sleeve": sleeve, "sector": sec, "region": reg,
+            "group": EQ_GROUP.get(tk, "eq-" + tk.lower()),
             "usdExposure": usdx, "riskBand": risk, "note": sleeve,
             "data": {"price": px, "currency": "USD", "ytd": ytd, "perf1y": p1y,
                      "beta1y": beta, "volatility": vol, "expenseRatio": fee},
@@ -343,7 +455,7 @@ def build_equities():
                 "sector": sfit,
                 "country": {"g7": 1.0 if reg == "g7" else 0.25,
                             "em": 1.0 if reg == "em" else 0.25},
-                "riskProfile": {"target": risk},
+                "riskProfile": {"target": round(risk_c, 2)},
                 "usd": {"target": usdx},
                 "capitalIncome": ({"income": 1.0, "capital": 0.45} if sleeve == "Income"
                                   else {"capital": 1.0, "income": 0.5}),
@@ -368,30 +480,62 @@ def main():
         "equities": {"shelf": eq, "selection": {
             "weights": {"riskProfile": 1.2, "sector": 1.0, "country": 1.0,
                         "usd": 1.0, "capitalIncome": 0.9},
-            "minN": 3, "maxN": 6, "relative": 0.86}},
+            "relative": 0.86,
+            "diversify": 0.55, "conviction": 7,
+            "sizing": {"pctPerLine": 8, "minN": 3, "maxN": 7, "disperseTo": 2}}},
 
         "fixedIncome": {"shelf": bonds, "selection": {
             "weights": {"credit": 1.2, "duration": 1.1, "usd": 1.0,
-                        "country": 0.8, "capitalIncome": 0.7},
-            "minN": 3, "maxN": 6, "relative": 0.92}},
+                        "riskProfile": 0.9, "country": 0.8, "capitalIncome": 0.7},
+            "relative": 0.92,
+            "diversify": 0.35, "conviction": 5,
+            "sizing": {"pctPerLine": 6, "minN": 3, "maxN": 8, "disperseTo": 2}}},
 
         "notes": {"shelf": notes,
             "$rule": "At least 50% of the notes allocation sits in the desk's highlighted core picks.",
             "selection": {
                 "weights": {"riskProfile": 1.3, "horizon": 1.0, "country": 0.9,
                             "capitalIncome": 0.8, "sector": 0.8},
-                "minN": 3, "maxN": 6, "relative": 0.88, "coreFloor": 0.5}},
+                "relative": 0.88, "coreFloor": 0.5,
+                "diversify": 0.55, "conviction": 7,
+                "sizing": {"pctPerLine": 7, "minN": 2, "maxN": 6, "disperseTo": 2}}},
 
         "fx": {"shelf": fx, "selection": {
             "weights": {"usd": 1.4, "riskProfile": 1.1, "country": 1.0,
                         "leverage": 0.8, "horizon": 0.6},
-            "minN": 2, "maxN": 4, "relative": 0.82}},
+            "relative": 0.82,
+            "diversify": 0.40, "conviction": 5,
+            "sizing": {"pctPerLine": 5, "minN": 2, "maxN": 4, "disperseTo": 1}}},
     }
 
     # drop null fits so the scorer never sees an empty axis
     for bucket in ("equities", "fixedIncome", "notes", "fx"):
         for item in doc[bucket]["shelf"]:
             item["fit"] = {k: v for k, v in item["fit"].items() if v}
+
+    # An axis every instrument on a shelf answers identically cannot separate
+    # them: it adds the same number to every score and dilutes the axes that
+    # do discriminate. All 26 notes were USD-settled, so "usd" was pure noise
+    # in that sleeve. Drop those, and report what is left, so the shelf's real
+    # resolving power is visible rather than assumed.
+    for bucket in ("equities", "fixedIncome", "notes", "fx"):
+        shelf = doc[bucket]["shelf"]
+        axes = {k for i in shelf for k in i["fit"]}
+        dropped, kept = [], {}
+        for ax in sorted(axes):
+            vals = {json.dumps(i["fit"].get(ax), sort_keys=True) for i in shelf}
+            if len(vals) <= 1:
+                dropped.append(ax)
+                for i in shelf:
+                    i["fit"].pop(ax, None)
+            else:
+                kept[ax] = len(vals)
+        w = doc[bucket]["selection"]["weights"]
+        for ax in dropped:
+            w.pop(ax, None)
+        print(f"  {bucket:<13} {len(shelf):>3} instruments  "
+              f"distinct fit values: {kept}"
+              + (f"  dropped (constant): {dropped}" if dropped else ""))
 
     # Ids address a holding when weights are looked up, so a collision would
     # silently merge two instruments. Two bonds from one issuer can slug the

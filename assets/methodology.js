@@ -124,10 +124,36 @@
       }).join("") + "</tbody>";
 
     var sel = cfg.selection || {};
-    var note = "How many make the book depends on fit, not a fixed count: every instrument " +
-      "scoring within <b>" + Math.round((sel.relative || 0.86) * 100) + "%</b> of the best is in, " +
-      "floored at <b>" + esc(sel.minN || 3) + "</b> so a sleeve is never one line and capped at <b>" +
-      esc(sel.maxN || 6) + "</b> so it stays readable. They are weighted in proportion to their scores.";
+    var sz = sel.sizing || {};
+    var note =
+      "<b>How many lines.</b> Not a fixed count, and not the same for every asset class. " +
+      "A holding should be worth owning, so this sleeve aims for one line per <b>" +
+      esc(sz.pctPerLine || 8) + "%</b> of the book it is asked to carry — between <b>" +
+      esc(sz.minN !== undefined ? sz.minN : (sel.minN || 3)) + "</b> and <b>" +
+      esc(sz.maxN !== undefined ? sz.maxN : (sel.maxN || 6)) + "</b> lines. " +
+      "A room that answered with one voice gets a tighter book; a room that split gets up to <b>" +
+      esc(sz.disperseTo || 2) + "</b> more lines, so the book spans the views people actually hold." +
+
+      "<p><b>Which lines.</b> Picked one at a time on marginal fit, not by taking the top scores. " +
+      "Each pick is discounted by how much it duplicates what is already in the sleeve, so a " +
+      "second fund tracking the same exposure has to be markedly better to earn its place, and " +
+      "no more than <b>" + Math.round((sel.sectorCap === undefined ? 0.6 : sel.sectorCap) * 100) +
+      "%</b> of the lines may share a sector — concentration risk is not something a room can " +
+      "vote away. Past the floor, a candidate must still score within <b>" +
+      Math.round((sel.relative || 0.86) * 100) + "%</b> of the best to be added at all." +
+
+      "<p><b>How the score is built.</b> Each instrument is judged on every axis the room " +
+      "answered, not only the ones it happens to carry data for, so being thinly described is " +
+      "not an advantage. A continuous axis is scored against every answer in the room and " +
+      "averaged, rather than against the room's average — a room split between 0% and 100% " +
+      "dollars is a divided room, not a 50% room. The axis scores are then combined as a blend " +
+      "of an arithmetic and a geometric mean, so an instrument has to be at least passable " +
+      "everywhere rather than excellent on most axes and wrong on one." +
+
+      "<p><b>Weights.</b> Scores cluster near the top, so weighting in direct proportion " +
+      "produces a sleeve that is equal-weighted in all but name. The ratio to the best-fitting " +
+      "line is raised to the power of <b>" + esc(sel.conviction === undefined ? 7 : sel.conviction) +
+      "</b> instead, which restores a real ordering without letting one line dominate.";
     if (cfg.$rule) {
       note += " <b>House rule:</b> " + esc(cfg.$rule) +
         " If the scores alone do not reach it, the index lines are scaled up and the " +
