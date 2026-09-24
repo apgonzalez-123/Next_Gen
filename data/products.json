@@ -994,6 +994,366 @@
             "income": 0.5
           }
         }
+      },
+      {
+        "id": "soxx",
+        "ticker": "SOXX",
+        "exchange": "NASDAQ",
+        "name": "iShares Semiconductor",
+        "sleeve": "Semis",
+        "sector": "tech",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 2,
+        "note": "Semis",
+        "data": {
+          "price": 565.12,
+          "currency": "USD",
+          "ytd": 83.15,
+          "perf1y": 110.28,
+          "beta1y": 2.197,
+          "volatility": 2.2,
+          "expenseRatio": 0.33
+        },
+        "fit": {
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "smh",
+        "ticker": "SMH",
+        "exchange": "NASDAQ",
+        "name": "VanEck Semiconductor",
+        "sleeve": "Semis",
+        "sector": "tech",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 2,
+        "note": "Semis",
+        "data": {
+          "price": 599.9,
+          "currency": "USD",
+          "ytd": 62.6,
+          "perf1y": 86.66,
+          "beta1y": 2.013,
+          "volatility": 1.98,
+          "expenseRatio": 0.35
+        },
+        "fit": {
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "qqq",
+        "ticker": "QQQ",
+        "exchange": "NASDAQ",
+        "name": "Invesco QQQ Trust",
+        "sleeve": "Growth",
+        "sector": "tech",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 2,
+        "note": "Growth",
+        "data": {
+          "price": 741.66,
+          "currency": "USD",
+          "ytd": 19.61,
+          "perf1y": 23.7,
+          "beta1y": 1.409,
+          "volatility": 1.01,
+          "expenseRatio": 0.18
+        },
+        "fit": {
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "vgt",
+        "ticker": "VGT",
+        "exchange": "AMEX",
+        "name": "Vanguard Information Technology",
+        "sleeve": "Growth",
+        "sector": "tech",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 2,
+        "note": "Growth",
+        "data": {
+          "price": 125.33,
+          "currency": "USD",
+          "ytd": 31.59,
+          "perf1y": 34.24,
+          "beta1y": 1.614,
+          "volatility": 1.26,
+          "expenseRatio": 0.09
+        },
+        "fit": {
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "igv",
+        "ticker": "IGV",
+        "exchange": "CBOE",
+        "name": "iShares Expanded Tech-Software",
+        "sleeve": "Growth",
+        "sector": "tech",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 2,
+        "note": "Growth",
+        "data": {
+          "price": 107.67,
+          "currency": "USD",
+          "ytd": 1.11,
+          "perf1y": -7.8,
+          "beta1y": 1.47,
+          "volatility": 2.29,
+          "expenseRatio": 0.38
+        },
+        "fit": {
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "arkk",
+        "ticker": "ARKK",
+        "exchange": "CBOE",
+        "name": "ARK Innovation",
+        "sleeve": "High beta",
+        "sector": "tech",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 2,
+        "note": "High beta",
+        "data": {
+          "price": 91.49,
+          "currency": "USD",
+          "ytd": 17.08,
+          "perf1y": 8.46,
+          "beta1y": 2.02,
+          "volatility": 2.19,
+          "expenseRatio": 0.75
+        },
+        "fit": {
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "xbi",
+        "ticker": "XBI",
+        "exchange": "AMEX",
+        "name": "SPDR S&P Biotech",
+        "sleeve": "High beta",
+        "sector": "healthcare",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 2,
+        "note": "High beta",
+        "data": {
+          "price": 156.75,
+          "currency": "USD",
+          "ytd": 28.2,
+          "perf1y": 61.16,
+          "beta1y": 0.97,
+          "volatility": 2.35,
+          "expenseRatio": 0.35
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.2,
+            "financials": 0.2,
+            "healthcare": 1.0,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "xlu",
+        "ticker": "XLU",
+        "exchange": "AMEX",
+        "name": "Utilities Select Sector SPDR",
+        "sleeve": "Defensive",
+        "sector": "energy",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 0,
+        "note": "Defensive",
+        "data": {
+          "price": 39.48,
+          "currency": "USD",
+          "ytd": -7.95,
+          "perf1y": -7.97,
+          "beta1y": -0.1,
+          "volatility": 1.31,
+          "expenseRatio": 0.08
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.2,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 1.0,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 0
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
       }
     ],
     "selection": {
@@ -1004,7 +1364,9 @@
         "usd": 1.0,
         "capitalIncome": 0.9
       },
-      "topN": 6
+      "minN": 3,
+      "maxN": 6,
+      "relative": 0.86
     }
   },
   "fixedIncome": {
@@ -2695,7 +3057,9 @@
         "country": 0.8,
         "capitalIncome": 0.7
       },
-      "topN": 6
+      "minN": 3,
+      "maxN": 6,
+      "relative": 0.92
     }
   },
   "notes": {
@@ -3738,7 +4102,9 @@
         "capitalIncome": 0.8,
         "sector": 0.8
       },
-      "topN": 6,
+      "minN": 3,
+      "maxN": 6,
+      "relative": 0.88,
       "coreFloor": 0.5
     }
   },
@@ -4022,7 +4388,9 @@
         "leverage": 0.8,
         "horizon": 0.6
       },
-      "topN": 6
+      "minN": 2,
+      "maxN": 4,
+      "relative": 0.82
     }
   }
 }

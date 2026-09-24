@@ -248,3 +248,9 @@ body.meth { min-height: 100vh; }
 .m-btcard em { display: block; font-style: normal; font-size: 11px; color: var(--muted); margin-top: 6px; line-height: 1.45; }
 .m-btsleeve td { background: var(--surface-2); font-size: 12px; color: var(--muted); }
 .m-btsleeve b { color: var(--text-2); }
+
+.m-rank {
+  font-style: normal; display: inline-block; min-width: 1.4em;
+  margin-right: 6px; color: var(--muted);
+  font-variant-numeric: tabular-nums; font-size: 0.85em;
+}

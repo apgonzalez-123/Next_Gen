@@ -271,7 +271,8 @@
                a duration note says something about THIS room. */
             var detail = l.note || l.item.detail || "";
             return '<div class="p-pos">' +
-              '<div class="p-pos-top"><span class="p-pos-name">' + esc(l.item.name) + "</span>" +
+              '<div class="p-pos-top"><span class="p-pos-name">' +
+                '<i class="p-rank">' + (l.rank || "") + "</i>" + esc(l.item.name) + "</span>" +
               '<span class="p-pos-w">' + l.weight + "%</span></div>" +
               '<div class="p-pos-bar"><i style="width:' +
                 Math.round((l.weight / widest) * 100) + "%;background:" + colour + '"></i></div>' +

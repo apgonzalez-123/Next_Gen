@@ -1240,7 +1240,6 @@ window.ENGINE = (function () {
 
     var sel = eqc.selection || {};
     var W = sel.weights || {};
-    var topN = sel.topN || 6;
 
     function shares(axisId) {
       var a = agg.axes[axisId];
@@ -1301,7 +1300,26 @@ window.ENGINE = (function () {
       return b.score - a.score || a.item.ticker.localeCompare(b.item.ticker);
     });
 
-    return { all: all, picked: all.slice(0, topN) };
+    /* How many make the book is a question of fit, not a fixed count.
+     * Everything scoring within `relative` of the best is in, floored at
+     * minN so a sleeve is never a single line, and capped at maxN so the
+     * projector stays readable. A room with one obvious answer gets a
+     * short, concentrated list; a room pulling in several directions gets
+     * a broader one. */
+    var minN = sel.minN || 3;
+    var maxN = sel.maxN || sel.topN || 6;
+    var rel  = sel.relative || 0.86;
+
+    var best = all.length ? all[0].score : 0;
+    var cut = best * rel;
+    var n = all.filter(function (r) { return r.score >= cut; }).length;
+    n = Math.max(minN, Math.min(maxN, n, all.length));
+
+    /* Rank is the order by score, carried onto the line so every surface
+       shows the same ordinal. */
+    all.forEach(function (r, i) { r.rank = i + 1; });
+
+    return { all: all, picked: all.slice(0, n), selected: n, cut: cut, best: best };
   }
 
   /* Kept for callers that only want equities. */
@@ -1357,7 +1375,7 @@ window.ENGINE = (function () {
        each holding is here. */
     eqLines.forEach(function (l) {
       var m = eq.picked.filter(function (p) { return p.item === l.item; })[0];
-      if (m) { l.score = m.score; l.per = m.per; }
+      if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank; }
     });
     buckets.push({
       key: "equities", label: "Equities", weight: alloc.equities,
@@ -1371,7 +1389,7 @@ window.ENGINE = (function () {
     }));
     fiLines.forEach(function (l) {
       var m = fi.picked.filter(function (p) { return p.item === l.item; })[0];
-      if (m) { l.score = m.score; l.per = m.per; }
+      if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank; }
     });
     buckets.push({
       key: "fixedIncome", label: "Fixed income", weight: alloc.fixedIncome,
@@ -1421,7 +1439,7 @@ window.ENGINE = (function () {
 
     ntLines.forEach(function (l) {
       var m = picks.filter(function (p) { return p.item === l.item; })[0];
-      if (m) { l.score = m.score; l.per = m.per; }
+      if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank; }
       l.note = l.item.isCore ? "core pick" : "satellite";
     });
 
@@ -1441,11 +1459,23 @@ window.ENGINE = (function () {
     }));
     fxLines.forEach(function (l) {
       var m = fxr.picked.filter(function (p) { return p.item === l.item; })[0];
-      if (m) { l.score = m.score; l.per = m.per; }
+      if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank; }
     });
     buckets.push({
       key: "fx", label: "FX", weight: alloc.fx,
       lines: fxLines, scored: fxr.all
+    });
+
+    /* Present each sleeve in score order and number the lines 1..n.
+       The shelf-wide rank is not the right label here: a note promoted to
+       meet the core floor carries its rank from the full shelf, which
+       would read as "#14" in a list of six. */
+    buckets.forEach(function (b) {
+      b.lines.sort(function (x, y) { return (y.score || 0) - (x.score || 0); });
+      b.lines.forEach(function (l, i) {
+        l.shelfRank = l.rank;      /* kept for the validation page */
+        l.rank = i + 1;
+      });
     });
 
     return { alloc: alloc, buckets: buckets };

@@ -123,8 +123,11 @@
           }).join("") + "</tr>";
       }).join("") + "</tbody>";
 
-    var note = "Top <b>" + esc((cfg.selection || {}).topN || 4) + "</b> by score make the book, " +
-      "weighted in proportion to those scores.";
+    var sel = cfg.selection || {};
+    var note = "How many make the book depends on fit, not a fixed count: every instrument " +
+      "scoring within <b>" + Math.round((sel.relative || 0.86) * 100) + "%</b> of the best is in, " +
+      "floored at <b>" + esc(sel.minN || 3) + "</b> so a sleeve is never one line and capped at <b>" +
+      esc(sel.maxN || 6) + "</b> so it stays readable. They are weighted in proportion to their scores.";
     if (cfg.$rule) {
       note += " <b>House rule:</b> " + esc(cfg.$rule) +
         " If the scores alone do not reach it, the index lines are scaled up and the " +
@@ -285,7 +288,8 @@
       return '<div><div class="m-bk-top"><s style="background:' + colour + '"></s>' +
         "<h4>" + esc(b.label) + "</h4><b>" + b.weight + "%</b></div>" +
         (b.lines.length ? b.lines.map(function (l) {
-          return '<div class="m-bk-line"><span>' + esc(l.item.name) +
+          return '<div class="m-bk-line"><span><i class="m-rank">' + (l.rank || "") + "</i>" +
+            esc(l.item.name) +
             (l.item.isCore ? ' <span class="m-idx-dot" title="desk core pick"></span>' : "") +
             "</span><b>" + l.weight + "%</b></div>";
         }).join("") : '<div class="m-bk-line"><span class="m-sub">nothing</span></div>') +

@@ -311,6 +311,18 @@ EQ = [
   ("EWY",  "AMEX", "iShares MSCI South Korea",          "EM",         "tech",        "em",   5, 2, 182.34, 80.53,126.31, 2.437, 2.21, 0.59),
   ("FXI",  "BATS", "iShares China Large-Cap",           "EM",         "core",        "em",  10, 2,  34.22,-13.27,-15.64, 0.737, 0.78, 0.74),
   ("IAU",  "AMEX", "iShares Gold Trust",                "Real asset", "energy",      "g7",  50, 1,  80.31, -2.36, 13.11, 0.774, 1.35, 0.25),
+
+  # --- Semiconductors, broader tech and the high-volatility end. These are
+  #     the lines a risk-seeking room should be able to reach; SOXX and XBI
+  #     carry the highest beta and volatility on the shelf.
+  ("SOXX", "NASDAQ","iShares Semiconductor",            "Semis",      "tech",        "g7", 100, 2, 565.12, 83.15,110.28, 2.197, 2.20, 0.33),
+  ("SMH",  "NASDAQ","VanEck Semiconductor",             "Semis",      "tech",        "g7", 100, 2, 599.90, 62.60, 86.66, 2.013, 1.98, 0.35),
+  ("QQQ",  "NASDAQ","Invesco QQQ Trust",                "Growth",     "tech",        "g7", 100, 2, 741.66, 19.61, 23.70, 1.409, 1.01, 0.18),
+  ("VGT",  "AMEX", "Vanguard Information Technology",   "Growth",     "tech",        "g7", 100, 2, 125.33, 31.59, 34.24, 1.614, 1.26, 0.09),
+  ("IGV",  "CBOE", "iShares Expanded Tech-Software",    "Growth",     "tech",        "g7", 100, 2, 107.67,  1.11, -7.80, 1.470, 2.29, 0.38),
+  ("ARKK", "CBOE", "ARK Innovation",                    "High beta",  "tech",        "g7", 100, 2,  91.49, 17.08,  8.46, 2.020, 2.19, 0.75),
+  ("XBI",  "AMEX", "SPDR S&P Biotech",                  "High beta",  "healthcare",  "g7", 100, 2, 156.75, 28.20, 61.16, 0.970, 2.35, 0.35),
+  ("XLU",  "AMEX", "Utilities Select Sector SPDR",      "Defensive",  "energy",      "g7", 100, 0,  39.48, -7.95, -7.97, -0.100, 1.31, 0.08),
 ]
 SECTORS = ["tech", "financials", "healthcare", "energy", "consumer", "industrials"]
 
@@ -356,24 +368,24 @@ def main():
         "equities": {"shelf": eq, "selection": {
             "weights": {"riskProfile": 1.2, "sector": 1.0, "country": 1.0,
                         "usd": 1.0, "capitalIncome": 0.9},
-            "topN": 6}},
+            "minN": 3, "maxN": 6, "relative": 0.86}},
 
         "fixedIncome": {"shelf": bonds, "selection": {
             "weights": {"credit": 1.2, "duration": 1.1, "usd": 1.0,
                         "country": 0.8, "capitalIncome": 0.7},
-            "topN": 6}},
+            "minN": 3, "maxN": 6, "relative": 0.92}},
 
         "notes": {"shelf": notes,
             "$rule": "At least 50% of the notes allocation sits in the desk's highlighted core picks.",
             "selection": {
                 "weights": {"riskProfile": 1.3, "horizon": 1.0, "country": 0.9,
                             "capitalIncome": 0.8, "sector": 0.8},
-                "topN": 6, "coreFloor": 0.5}},
+                "minN": 3, "maxN": 6, "relative": 0.88, "coreFloor": 0.5}},
 
         "fx": {"shelf": fx, "selection": {
             "weights": {"usd": 1.4, "riskProfile": 1.1, "country": 1.0,
                         "leverage": 0.8, "horizon": 0.6},
-            "topN": 6}},
+            "minN": 2, "maxN": 4, "relative": 0.82}},
     }
 
     # drop null fits so the scorer never sees an empty axis

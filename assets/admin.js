@@ -268,7 +268,8 @@
       var lines = b.lines.length
         ? b.lines.map(function (l) {
             return '<div class="a-line">' +
-              '<div class="a-line-top"><span class="a-line-name">' + esc(l.item.name) + "</span>" +
+              '<div class="a-line-top"><span class="a-line-name">' +
+                '<i class="a-rank">' + (l.rank || "") + "</i>" + esc(l.item.name) + "</span>" +
               '<span class="a-line-w">' + l.weight + "%</span></div>" +
               '<div class="a-line-meta"><span class="tk">' + esc(l.item.ticker) + "</span>" +
               esc(l.note || l.item.detail || "") + "</div>" +

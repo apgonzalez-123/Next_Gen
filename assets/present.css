@@ -381,3 +381,14 @@ body.present {
 
 /* The why block holds its own height rather than being squeezed out. */
 .p-slide[data-slide="2"] .p-why { margin-top: auto; }
+
+/* Rank inside a sleeve, so the room can see the order of conviction. */
+.p-rank {
+  font-style: normal;
+  display: inline-block;
+  min-width: 1.5em;
+  margin-right: 8px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.82em;
+}

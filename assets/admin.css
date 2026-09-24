@@ -207,3 +207,9 @@ body.admin { height: 100vh; display: flex; flex-direction: column; overflow: hid
 
 /* The methodology link sits in the toolbar with the export buttons. */
 a.p-btn { text-decoration: none; display: inline-block; }
+
+.a-rank {
+  font-style: normal; display: inline-block; min-width: 1.4em;
+  margin-right: 6px; color: var(--muted);
+  font-variant-numeric: tabular-nums; font-size: 0.85em;
+}
