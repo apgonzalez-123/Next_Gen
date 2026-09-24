@@ -1,50 +1,698 @@
 {
   "$schema": "Product shelf for the room simulation. Replace with the real instruments; the engine only needs the keys to stay the same.",
-  "version": 1,
+  "version": 2,
   "equities": {
-    "sectors": {
-      "tech": {
-        "name": "Global technology sleeve",
-        "ticker": "TECH",
-        "detail": "Software, semis and platforms"
+    "$note": "Live TradingView data, captured once and stamped below. It is a snapshot, not a feed: this is a static site and cannot refresh it.",
+    "asOf": "2026-09-24",
+    "source": "TradingView",
+    "shelf": [
+      {
+        "id": "ivv",
+        "ticker": "IVV",
+        "exchange": "AMEX",
+        "name": "iShares Core S&P 500",
+        "sector": "core",
+        "region": "g7",
+        "style": "core",
+        "note": "The developed-market default. Lowest fee on the shelf.",
+        "data": {
+          "price": 771.36,
+          "beta1y": 1.02,
+          "perf1y": 15.52,
+          "volatility": 0.66,
+          "expenseRatio": 0.03
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.42,
+            0.94,
+            0.68
+          ],
+          "marketView": [
+            0.6,
+            0.95,
+            0.9
+          ],
+          "capitalIncome": {
+            "capital": 0.9,
+            "income": 0.6
+          }
+        }
       },
-      "financials": {
-        "name": "Financials sleeve",
-        "ticker": "FINS",
-        "detail": "Banks, insurers and exchanges"
+      {
+        "id": "efa",
+        "ticker": "EFA",
+        "exchange": "AMEX",
+        "name": "iShares MSCI EAFE",
+        "sector": "core",
+        "region": "g7",
+        "style": "core",
+        "note": "Developed markets outside the US, for a room that is not all-in on America.",
+        "data": {
+          "price": 104.72,
+          "beta1y": 0.87,
+          "perf1y": 12.98,
+          "volatility": 0.76,
+          "expenseRatio": 0.32
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.46,
+            0.98,
+            0.65
+          ],
+          "marketView": [
+            0.6,
+            0.95,
+            0.9
+          ],
+          "capitalIncome": {
+            "capital": 0.9,
+            "income": 0.6
+          }
+        }
       },
-      "healthcare": {
-        "name": "Healthcare innovation sleeve",
-        "ticker": "HLTH",
-        "detail": "Pharma, devices and biotech"
+      {
+        "id": "eem",
+        "ticker": "EEM",
+        "exchange": "AMEX",
+        "name": "iShares MSCI Emerging Markets",
+        "sector": "core",
+        "region": "em",
+        "style": "core",
+        "note": "Broad EM in one line. Highest beta of the core holdings.",
+        "data": {
+          "price": 67.53,
+          "beta1y": 1.29,
+          "perf1y": 26.79,
+          "volatility": 1.01,
+          "expenseRatio": 0.72
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 0.2,
+            "em": 1.0
+          },
+          "riskProfile": [
+            0.23,
+            0.76,
+            0.82
+          ],
+          "marketView": [
+            0.6,
+            0.95,
+            0.9
+          ],
+          "capitalIncome": {
+            "capital": 0.9,
+            "income": 0.6
+          }
+        }
       },
-      "energy": {
-        "name": "Energy and materials sleeve",
-        "ticker": "ENMA",
-        "detail": "Integrated energy and miners"
+      {
+        "id": "qqq",
+        "ticker": "QQQ",
+        "exchange": "NASDAQ",
+        "name": "Invesco QQQ Trust",
+        "sector": "tech",
+        "region": "g7",
+        "style": "growth",
+        "note": "Growth proxy. Concentrated in large-cap tech without being a sector fund.",
+        "data": {
+          "price": 741.27,
+          "beta1y": 1.41,
+          "perf1y": 23.63,
+          "volatility": 1.01,
+          "expenseRatio": 0.18
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.8,
+            "financials": 0.4,
+            "healthcare": 0.4,
+            "energy": 0.4,
+            "consumer": 0.4,
+            "industrials": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.18,
+            0.71,
+            0.86
+          ],
+          "marketView": [
+            0.25,
+            0.7,
+            1.0
+          ],
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.15
+          }
+        }
       },
-      "consumer": {
-        "name": "Consumer sleeve",
-        "ticker": "CONS",
-        "detail": "Staples and premium discretionary"
+      {
+        "id": "xlk",
+        "ticker": "XLK",
+        "exchange": "AMEX",
+        "name": "Technology Select Sector SPDR",
+        "sector": "tech",
+        "region": "g7",
+        "style": "growth",
+        "note": "Highest beta and the strongest year on the shelf. The aggressive tech expression.",
+        "data": {
+          "price": 194.87,
+          "beta1y": 1.69,
+          "perf1y": 38.71,
+          "volatility": 1.31,
+          "expenseRatio": 0.08
+        },
+        "fit": {
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.15,
+            "healthcare": 0.15,
+            "energy": 0.15,
+            "consumer": 0.15,
+            "industrials": 0.15
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.15,
+            0.53,
+            0.99
+          ],
+          "marketView": [
+            0.25,
+            0.7,
+            1.0
+          ],
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.15
+          }
+        }
       },
-      "industrials": {
-        "name": "Industrials and infrastructure",
-        "ticker": "INDU",
-        "detail": "Capital goods and transport"
+      {
+        "id": "xlf",
+        "ticker": "XLF",
+        "exchange": "AMEX",
+        "name": "Financial Select Sector SPDR",
+        "sector": "financials",
+        "region": "g7",
+        "style": "cyclical",
+        "note": "Rate-sensitive. Flat over the year despite moderate beta.",
+        "data": {
+          "price": 54.54,
+          "beta1y": 0.67,
+          "perf1y": 1.31,
+          "volatility": 1.17,
+          "expenseRatio": 0.08
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.15,
+            "financials": 1.0,
+            "healthcare": 0.15,
+            "energy": 0.15,
+            "consumer": 0.15,
+            "industrials": 0.15
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.47,
+            0.99,
+            0.64
+          ],
+          "marketView": [
+            0.35,
+            0.75,
+            1.0
+          ],
+          "capitalIncome": {
+            "capital": 0.9,
+            "income": 0.6
+          }
+        }
+      },
+      {
+        "id": "xlv",
+        "ticker": "XLV",
+        "exchange": "AMEX",
+        "name": "Health Care Select Sector SPDR",
+        "sector": "healthcare",
+        "region": "g7",
+        "style": "defensive",
+        "note": "Near-zero beta with a strong year. Defensive exposure that still performed.",
+        "data": {
+          "price": 169.65,
+          "beta1y": 0.19,
+          "perf1y": 24.0,
+          "volatility": 1.13,
+          "expenseRatio": 0.08
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.15,
+            "financials": 0.15,
+            "healthcare": 1.0,
+            "energy": 0.15,
+            "consumer": 0.15,
+            "industrials": 0.15
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.69,
+            0.8,
+            0.48
+          ],
+          "marketView": [
+            1.0,
+            0.75,
+            0.45
+          ],
+          "capitalIncome": {
+            "capital": 0.6,
+            "income": 0.85
+          }
+        }
+      },
+      {
+        "id": "xle",
+        "ticker": "XLE",
+        "exchange": "AMEX",
+        "name": "Energy Select Sector SPDR",
+        "sector": "energy",
+        "region": "g7",
+        "style": "cyclical",
+        "note": "Negative one-year beta and the highest volatility here. A genuine diversifier.",
+        "data": {
+          "price": 62.72,
+          "beta1y": -0.79,
+          "perf1y": 39.67,
+          "volatility": 1.81,
+          "expenseRatio": 0.08
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.15,
+            "financials": 0.15,
+            "healthcare": 0.15,
+            "energy": 1.0,
+            "consumer": 0.15,
+            "industrials": 0.15
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.29,
+            0.81,
+            0.78
+          ],
+          "marketView": [
+            0.35,
+            0.75,
+            1.0
+          ],
+          "capitalIncome": {
+            "capital": 0.9,
+            "income": 0.6
+          }
+        }
+      },
+      {
+        "id": "xlp",
+        "ticker": "XLP",
+        "exchange": "AMEX",
+        "name": "Consumer Staples Select Sector SPDR",
+        "sector": "consumer",
+        "region": "g7",
+        "style": "defensive",
+        "note": "The most defensive equity line. Low beta, low volatility, modest return.",
+        "data": {
+          "price": 82.26,
+          "beta1y": 0.08,
+          "perf1y": 5.01,
+          "volatility": 0.81,
+          "expenseRatio": 0.08
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.15,
+            "financials": 0.15,
+            "healthcare": 0.15,
+            "energy": 0.15,
+            "consumer": 1.0,
+            "industrials": 0.15
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.8,
+            0.69,
+            0.4
+          ],
+          "marketView": [
+            1.0,
+            0.75,
+            0.45
+          ],
+          "capitalIncome": {
+            "capital": 0.6,
+            "income": 0.85
+          }
+        }
+      },
+      {
+        "id": "xly",
+        "ticker": "XLY",
+        "exchange": "AMEX",
+        "name": "Consumer Discretionary Select Sector SPDR",
+        "sector": "consumer",
+        "region": "g7",
+        "style": "cyclical",
+        "note": "The only negative one-year performer among developed sectors.",
+        "data": {
+          "price": 110.68,
+          "beta1y": 1.27,
+          "perf1y": -7.38,
+          "volatility": 1.09,
+          "expenseRatio": 0.08
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.15,
+            "financials": 0.15,
+            "healthcare": 0.15,
+            "energy": 0.15,
+            "consumer": 1.0,
+            "industrials": 0.15
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.22,
+            0.75,
+            0.82
+          ],
+          "marketView": [
+            0.35,
+            0.75,
+            1.0
+          ],
+          "capitalIncome": {
+            "capital": 0.9,
+            "income": 0.6
+          }
+        }
+      },
+      {
+        "id": "xli",
+        "ticker": "XLI",
+        "exchange": "AMEX",
+        "name": "Industrial Select Sector SPDR",
+        "sector": "industrials",
+        "region": "g7",
+        "style": "cyclical",
+        "note": "Capital goods and transport. Mid-beta, mid-return.",
+        "data": {
+          "price": 169.61,
+          "beta1y": 0.7,
+          "perf1y": 10.59,
+          "volatility": 1.19,
+          "expenseRatio": 0.08
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.15,
+            "financials": 0.15,
+            "healthcare": 0.15,
+            "energy": 0.15,
+            "consumer": 0.15,
+            "industrials": 1.0
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.45,
+            0.97,
+            0.65
+          ],
+          "marketView": [
+            0.35,
+            0.75,
+            1.0
+          ],
+          "capitalIncome": {
+            "capital": 0.9,
+            "income": 0.6
+          }
+        }
+      },
+      {
+        "id": "schd",
+        "ticker": "SCHD",
+        "exchange": "AMEX",
+        "name": "Schwab US Dividend Equity",
+        "sector": "core",
+        "region": "g7",
+        "style": "income",
+        "note": "Quality dividend screen. Low beta with an equity-like year.",
+        "data": {
+          "price": 33.17,
+          "beta1y": 0.26,
+          "perf1y": 22.06,
+          "volatility": 0.77,
+          "expenseRatio": 0.06
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.73,
+            0.76,
+            0.45
+          ],
+          "marketView": [
+            0.9,
+            0.8,
+            0.55
+          ],
+          "capitalIncome": {
+            "capital": 0.4,
+            "income": 1.0
+          }
+        }
+      },
+      {
+        "id": "vym",
+        "ticker": "VYM",
+        "exchange": "AMEX",
+        "name": "Vanguard High Dividend Yield",
+        "sector": "core",
+        "region": "g7",
+        "style": "income",
+        "note": "The lowest volatility on the shelf. Income without a sector bet.",
+        "data": {
+          "price": 157.25,
+          "beta1y": 0.55,
+          "perf1y": 11.74,
+          "volatility": 0.66,
+          "expenseRatio": 0.04
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.63,
+            0.86,
+            0.53
+          ],
+          "marketView": [
+            0.9,
+            0.8,
+            0.55
+          ],
+          "capitalIncome": {
+            "capital": 0.4,
+            "income": 1.0
+          }
+        }
+      },
+      {
+        "id": "ewz",
+        "ticker": "EWZ",
+        "exchange": "AMEX",
+        "name": "iShares MSCI Brazil",
+        "sector": "core",
+        "region": "em",
+        "style": "cyclical",
+        "note": "Single-country Brazil. The most volatile line here.",
+        "data": {
+          "price": 37.12,
+          "beta1y": 0.54,
+          "perf1y": 19.2,
+          "volatility": 1.95,
+          "expenseRatio": 0.59
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 0.2,
+            "em": 1.0
+          },
+          "riskProfile": [
+            0.37,
+            0.89,
+            0.72
+          ],
+          "marketView": [
+            0.35,
+            0.75,
+            1.0
+          ],
+          "capitalIncome": {
+            "capital": 0.9,
+            "income": 0.6
+          }
+        }
+      },
+      {
+        "id": "fxi",
+        "ticker": "FXI",
+        "exchange": "BATS",
+        "name": "iShares China Large-Cap",
+        "sector": "core",
+        "region": "em",
+        "style": "cyclical",
+        "note": "Single-country China. The worst one-year performer on the shelf.",
+        "data": {
+          "price": 34.31,
+          "beta1y": 0.74,
+          "perf1y": -15.41,
+          "volatility": 0.78,
+          "expenseRatio": 0.74
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 0.2,
+            "em": 1.0
+          },
+          "riskProfile": [
+            0.52,
+            0.97,
+            0.61
+          ],
+          "marketView": [
+            0.35,
+            0.75,
+            1.0
+          ],
+          "capitalIncome": {
+            "capital": 0.9,
+            "income": 0.6
+          }
+        }
       }
-    },
-    "regions": {
-      "g7": {
-        "name": "Developed markets core",
-        "ticker": "DMEQ",
-        "detail": "G7 cap-weighted"
+    ],
+    "selection": {
+      "$note": "How much each question counts when scoring an equity product, and how many make the book.",
+      "weights": {
+        "riskProfile": 1.2,
+        "sector": 1.0,
+        "country": 1.0,
+        "capitalIncome": 0.9,
+        "marketView": 0.7
       },
-      "em": {
-        "name": "Emerging markets core",
-        "ticker": "EMEQ",
-        "detail": "Broad EM"
-      }
+      "topN": 6,
+      "minWeightPct": 1.0
     }
   },
   "fixedIncome": {

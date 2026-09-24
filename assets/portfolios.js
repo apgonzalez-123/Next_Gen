@@ -1227,6 +1227,67 @@ window.ENGINE = (function () {
    * without touching this logic. Weights inside a bucket always sum to
    * that bucket's allocation.
    */
+  /* Score every equity product on the shelf against the room's answers.
+   *
+   * For each question, the room's share of each answer is multiplied by how
+   * well the product fits that answer, and the result is weighted by how
+   * much that question counts. One number per product, fully decomposable:
+   * the validation page renders exactly this breakdown.
+   */
+  function scoreEquityShelf(agg, products) {
+    var eqc = products && products.equities;
+    if (!eqc || !eqc.shelf) return { all: [], picked: [] };
+
+    var sel = eqc.selection || {};
+    var W = sel.weights || {};
+    var topN = sel.topN || 6;
+
+    function shares(axisId) {
+      var a = agg.axes[axisId];
+      if (!a || !a.respondents) return null;
+      var out = {};
+      Object.keys(a.counts).forEach(function (k) {
+        out[k] = a.counts[k] / a.respondents;
+      });
+      return out;
+    }
+
+    /* A scale axis is reported as an index, so its fit array is indexed the
+       same way; a choice or multi axis is reported by key. */
+    function axisScore(axisId, fit) {
+      var sh = shares(axisId);
+      if (!sh || !fit) return null;
+      var total = 0, mass = 0;
+      Object.keys(sh).forEach(function (k) {
+        var f = Array.isArray(fit) ? fit[Number(k)] : fit[k];
+        if (f === undefined || f === null) return;
+        total += sh[k] * f;
+        mass += sh[k];
+      });
+      return mass > 0 ? total / mass : null;
+    }
+
+    var all = eqc.shelf.map(function (item) {
+      var per = {}, num = 0, den = 0;
+      Object.keys(W).forEach(function (axisId) {
+        var sc = axisScore(axisId, item.fit[axisId]);
+        if (sc === null) return;
+        per[axisId] = sc;
+        num += W[axisId] * sc;
+        den += W[axisId];
+      });
+      return {
+        item: item,
+        per: per,
+        score: den ? num / den : 0
+      };
+    }).sort(function (a, b) {
+      return b.score - a.score || a.item.ticker.localeCompare(b.item.ticker);
+    });
+
+    return { all: all, picked: all.slice(0, topN) };
+  }
+
   function roomPortfolio(agg, products) {
     if (!products) return null;
     var alloc = roomAllocation(agg);
@@ -1264,27 +1325,21 @@ window.ENGINE = (function () {
 
     var buckets = [];
 
-    /* --- equities: the room's sector votes, plus a regional core ------- */
-    var eqLines = [];
-    var secAxis = agg.axes.sector;
-    if (secAxis && secAxis.respondents) {
-      var parts = Object.keys(secAxis.counts).map(function (k) {
-        return { item: products.equities.sectors[k], w: secAxis.counts[k] };
-      }).filter(function (p) { return p.item; });
-
-      /* The most-voted country of risk carries a core position, so the
-         book is not purely a pile of sector bets. */
-      var region = topKeys("country")[0];
-      var regionItem = region && products.equities.regions[region];
-      var coreShare = 0.4;
-      if (regionItem) {
-        eqLines = eqLines.concat(spread(alloc.equities * coreShare, [{ item: regionItem, w: 1 }]));
-        eqLines = eqLines.concat(spread(alloc.equities * (1 - coreShare), parts));
-      } else {
-        eqLines = spread(alloc.equities, parts);
-      }
-    }
-    buckets.push({ key: "equities", label: "Equities", weight: alloc.equities, lines: eqLines });
+    /* --- equities: score the shelf against the room ------------------- */
+    var eq = scoreEquityShelf(agg, products);
+    var eqLines = spread(alloc.equities, eq.picked.map(function (p) {
+      return { item: p.item, w: p.score };
+    }));
+    /* Carry the score onto the line so the validation page can show why
+       each holding is here. */
+    eqLines.forEach(function (l) {
+      var m = eq.picked.filter(function (p) { return p.item === l.item; })[0];
+      if (m) { l.score = m.score; l.per = m.per; }
+    });
+    buckets.push({
+      key: "equities", label: "Equities", weight: alloc.equities,
+      lines: eqLines, scored: eq.all
+    });
 
     /* --- fixed income: credit quality split, duration on the sovereign - */
     var hy = share("credit", "hy");
@@ -1347,6 +1402,7 @@ window.ENGINE = (function () {
     eligible: eligible,
     roomAllocation: roomAllocation,
     roomPortfolio: roomPortfolio,
+    scoreEquityShelf: scoreEquityShelf,
     aggregate: aggregate,
     aggProfile: aggProfile,
     aggDistribution: aggDistribution,

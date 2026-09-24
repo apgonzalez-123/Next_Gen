@@ -197,13 +197,11 @@ button { font-family: inherit; color: inherit; }
   line-height: 1;
   color: var(--text-2);
 }
-.wordmark b {
-  color: var(--accent);
-  font-weight: 600;
-  /* Uppercase tracking adds a trailing space after the last letter; pull
-     it back so the lockup is optically centred in its own box. */
-  margin-right: -0.11em;
-}
+.wordmark b { color: var(--accent); font-weight: 600; }
+/* Uppercase tracking adds a trailing space after the last letter. Pull it
+   back only when nothing follows, or it swallows the real space before a
+   page label and renders "NEXTGENRESPONSES". */
+.wordmark b:last-child { margin-right: -0.11em; }
 
 .step-count {
   font-size: 12px;

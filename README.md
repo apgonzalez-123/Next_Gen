@@ -16,7 +16,8 @@ Entirely static — **no bank network, no server required** to run the session.
 | `index.html` | Guests, by QR | Registration, the questions, and each guest's own portfolio |
 | `present.html` | Presenter, on the projector | QR to join, live counter, and the reveal (5 slides) |
 | `admin.html` | You | Every response, one row per guest, CSV / JSON export |
-| `qr-gen.html` | You, before the event | *Optional* — printable personal QR codes, one per guest |
+| `qr-gen.html` | You, before the event | *Optional* &mdash; printable personal QR codes, one per guest |
+| `methodology.html` | You | The audit trail: the equity shelf, its market data, the fit matrix, the weights, and a live worked example |
 
 ---
 

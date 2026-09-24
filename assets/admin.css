@@ -204,3 +204,6 @@ body.admin { height: 100vh; display: flex; flex-direction: column; overflow: hid
 
 .a-sim-note { font-size: 11.5px; color: var(--muted); line-height: 1.6; margin-top: 18px !important; }
 .a-sim-note b { color: var(--text-2); font-weight: 500; }
+
+/* The methodology link sits in the toolbar with the export buttons. */
+a.p-btn { text-decoration: none; display: inline-block; }

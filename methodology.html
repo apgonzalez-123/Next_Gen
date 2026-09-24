@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NextGen Methodology</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B0F14">
+<link rel="preload" href="assets/fonts/geist-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/methodology.css">
+</head>
+<body class="meth">
+
+<header class="m-top">
+  <div class="wordmark">
+    <img class="brand-mark" src="assets/brand/safra-logo.png" alt="Safra" onerror="this.remove()">
+    <span class="brand-sep" aria-hidden="true"></span>
+    <b>NextGen</b> <span>Methodology</span>
+  </div>
+  <div class="m-asof" id="asOf"></div>
+</header>
+
+<main class="m-wrap">
+
+  <section class="m-intro">
+    <h1>How the room&rsquo;s portfolio is built</h1>
+    <p>
+      Every number the guests and the projector see comes from the code on this page.
+      This is the audit trail: the equity shelf and where its data came from, how each
+      product is scored against the ten questions, how much each question counts, and a
+      worked example against whatever the room has answered so far.
+    </p>
+  </section>
+
+  <!-- 1 · BUCKETS -->
+  <section class="m-sec">
+    <h2><span class="m-n">01</span>From answers to buckets</h2>
+    <p class="m-lead">
+      Four sleeves. The specialist ones are carved out first, then equities and fixed
+      income split what is left. Adding them on top instead made the result
+      non-monotonic: a levered room ended up with less equity than an income-seeking one.
+    </p>
+    <div class="m-formula" id="bucketFormula"></div>
+    <div class="m-note">
+      Every input is read from the aggregate rather than a modal pick, so the split moves
+      smoothly as answers land instead of jumping when one option overtakes another.
+    </div>
+  </section>
+
+  <!-- 2 · SHELF -->
+  <section class="m-sec">
+    <h2><span class="m-n">02</span>The equity shelf</h2>
+    <p class="m-lead" id="shelfLead"></p>
+    <div class="m-scroll">
+      <table class="m-table" id="shelfTable"></table>
+    </div>
+  </section>
+
+  <!-- 3 · SCORING -->
+  <section class="m-sec">
+    <h2><span class="m-n">03</span>How a product is scored</h2>
+    <p class="m-lead">
+      For each question, the room&rsquo;s share of every answer is multiplied by how well
+      the product fits that answer. Those are averaged, then weighted by how much the
+      question counts. One number per product, fully decomposable.
+    </p>
+    <div class="m-eq">
+      score(product) = [ &Sigma;<sub>question</sub> w<sub>q</sub> &middot;
+      ( &Sigma;<sub>answer</sub> share<sub>a</sub> &middot; fit<sub>product,a</sub> ) ]
+      &nbsp;/&nbsp; &Sigma;<sub>question</sub> w<sub>q</sub>
+    </div>
+    <div class="m-weights" id="weightBars"></div>
+    <div class="m-note" id="selNote"></div>
+  </section>
+
+  <!-- 4 · MATRIX -->
+  <section class="m-sec">
+    <h2><span class="m-n">04</span>The fit matrix</h2>
+    <p class="m-lead">
+      Every product against every answer. Risk and market-view fits are derived from the
+      measured beta and volatility in the table above rather than asserted, so the scores
+      track the data beside them.
+    </p>
+    <div class="m-scroll">
+      <table class="m-table m-matrix" id="matrixTable"></table>
+    </div>
+  </section>
+
+  <!-- 5 · WORKED EXAMPLE -->
+  <section class="m-sec">
+    <h2><span class="m-n">05</span>Worked example</h2>
+    <p class="m-lead" id="liveLead">Reading the room&hellip;</p>
+    <div class="m-scroll">
+      <table class="m-table" id="liveTable"></table>
+    </div>
+    <div class="m-note">
+      This runs the same <code>ENGINE.scoreEquityShelf()</code> the guest and presenter
+      screens call. If the numbers here are wrong, they are wrong everywhere.
+    </div>
+  </section>
+
+  <p class="m-disclaim">
+    Prices, beta, one-year performance, volatility and expense ratios are a TradingView
+    snapshot taken on the date in the header. This is a static page and does not refresh
+    them. Nothing here is investment advice, an offer, or a recommendation to buy or sell
+    any instrument.
+  </p>
+</main>
+
+<script src="assets/config.js"></script>
+<script src="assets/schema.js"></script>
+<script src="assets/portfolios.js"></script>
+<script src="assets/base-loader.js"></script>
+<script src="assets/store.js"></script>
+<script src="assets/methodology.js"></script>
+</body>
+</html>
