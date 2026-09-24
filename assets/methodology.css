@@ -127,3 +127,69 @@ body.meth { min-height: 100vh; }
 @media (max-width: 800px) {
   .m-top, .m-wrap { padding-left: 22px; padding-right: 22px; }
 }
+
+/* --- the other three shelves --- */
+.m-shelves { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+@media (max-width: 900px) { .m-shelves { grid-template-columns: 1fr; } }
+.m-shelf {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-md); padding: 18px 20px;
+}
+.m-shelf h4 {
+  display: flex; align-items: center; gap: 9px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--text-2); margin: 0 0 6px;
+}
+.m-shelf h4 s { width: 9px; height: 9px; border-radius: var(--r-xs); text-decoration: none; }
+.m-shelf > p { font-size: 11.5px; color: var(--muted); line-height: 1.55; margin: 0 0 14px; }
+.m-item { padding: 10px 0; border-bottom: 1px solid var(--line-soft); }
+.m-item:last-child { border-bottom: 0; }
+.m-item .n { font-size: 13px; color: var(--text); }
+.m-item .d { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+.m-item .d .m-tk { margin-right: 7px; }
+
+/* --- sandbox --- */
+.m-modes { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+.m-mode {
+  background: transparent; border: 1px solid var(--line); color: var(--text-2);
+  border-radius: var(--r-sm); padding: 8px 15px; font-size: 12.5px; cursor: pointer;
+  transition: border-color .18s, color .18s, background .18s;
+}
+.m-mode:hover { border-color: var(--accent); color: var(--text); }
+.m-mode.on { background: var(--accent); border-color: var(--accent); color: #11161d; font-weight: 550; }
+.m-modenote { font-size: 12px; color: var(--muted); }
+
+.m-controls {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px 22px;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-md); padding: 20px 22px; margin-bottom: 24px;
+}
+.m-ctl label { display: block; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.m-seg { display: flex; flex-wrap: wrap; gap: 5px; }
+.m-seg button {
+  background: var(--ink-2); border: 1px solid var(--line); color: var(--text-2);
+  border-radius: var(--r-xs); padding: 6px 10px; font-size: 12px; cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.m-seg button:hover { border-color: var(--accent); }
+.m-seg button.on { background: var(--accent); border-color: var(--accent); color: #11161d; font-weight: 550; }
+.m-range { display: flex; align-items: center; gap: 12px; }
+.m-range input { flex: 1 1 auto; }
+.m-range b { font-size: 13px; color: var(--accent-bright); font-variant-numeric: tabular-nums; min-width: 62px; text-align: right; }
+
+.m-out { display: grid; grid-template-columns: 300px 1fr; gap: 26px; margin-bottom: 30px; align-items: start; }
+@media (max-width: 900px) { .m-out { grid-template-columns: 1fr; } }
+.m-alloc .alloc-bar { height: 30px; margin-bottom: 14px; }
+.m-alloc .legend { grid-template-columns: 1fr; gap: 8px; }
+
+.m-book { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+@media (max-width: 700px) { .m-book { grid-template-columns: 1fr; } }
+.m-bk-top { display: flex; align-items: baseline; gap: 8px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--line); }
+.m-bk-top s { width: 8px; height: 8px; border-radius: var(--r-xs); text-decoration: none; align-self: center; }
+.m-bk-top h4 { font-size: 11.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-2); margin: 0; }
+.m-bk-top b { margin-left: auto; font-size: 14px; color: var(--accent-bright); font-variant-numeric: tabular-nums; }
+.m-bk-line { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; font-size: 12.5px; }
+.m-bk-line span { color: var(--text-2); min-width: 0; }
+.m-bk-line b { color: var(--text); font-variant-numeric: tabular-nums; flex: 0 0 auto; font-weight: 500; }
+
+.m-sub3 { font-size: 13px; font-weight: 600; color: var(--text-2); margin: 0 0 12px; }

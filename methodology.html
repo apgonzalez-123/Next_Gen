@@ -88,17 +88,47 @@
     </div>
   </section>
 
-  <!-- 5 · WORKED EXAMPLE -->
+  <!-- 5 · THE REST OF THE SHELF -->
   <section class="m-sec">
-    <h2><span class="m-n">05</span>Worked example</h2>
-    <p class="m-lead" id="liveLead">Reading the room&hellip;</p>
+    <h2><span class="m-n">05</span>The other three sleeves</h2>
+    <p class="m-lead">
+      Fixed income, structured notes and FX are picked by rule rather than by score,
+      because each sleeve has few enough lines that a rule is clearer than a matrix.
+      Every instrument that can appear in a book is listed here.
+    </p>
+    <div class="m-shelves" id="otherShelves"></div>
+  </section>
+
+  <!-- 6 · SANDBOX -->
+  <section class="m-sec">
+    <h2><span class="m-n">06</span>Check the engine</h2>
+    <p class="m-lead">
+      Set any combination of answers and watch the whole book rebuild. This calls the
+      same <code>ENGINE.roomPortfolio()</code> the guest and presenter screens use, so
+      whatever you see here is what a room answering this way would get.
+    </p>
+
+    <div class="m-modes">
+      <button class="m-mode on" id="modeLive" type="button">Live room</button>
+      <button class="m-mode" id="modeCustom" type="button">Custom scenario</button>
+      <span class="m-modenote" id="modeNote"></span>
+    </div>
+
+    <div class="m-controls" id="controls" hidden></div>
+
+    <div class="m-out">
+      <div class="m-alloc">
+        <div class="alloc-bar" id="sbBar"></div>
+        <div class="legend" id="sbLegend"></div>
+      </div>
+      <div class="m-book" id="sbBook"></div>
+    </div>
+
+    <h3 class="m-sub3">Equity scores behind that book</h3>
     <div class="m-scroll">
       <table class="m-table" id="liveTable"></table>
     </div>
-    <div class="m-note">
-      This runs the same <code>ENGINE.scoreEquityShelf()</code> the guest and presenter
-      screens call. If the numbers here are wrong, they are wrong everywhere.
-    </div>
+    <p class="m-lead" id="liveLead" style="margin-top:14px"></p>
   </section>
 
   <p class="m-disclaim">

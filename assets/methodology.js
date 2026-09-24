@@ -136,7 +136,7 @@
   }
 
   /* ---------- 05 worked example ---------- */
-  function renderLive(agg, eqc) {
+  function renderLive(agg, eqc, sim) {
     var lead = el("liveLead");
     if (!agg.count) {
       lead.textContent = "No responses yet. Once the room answers, every product's score appears here with its breakdown.";
@@ -145,15 +145,16 @@
     }
 
     var scored = window.ENGINE.scoreEquityShelf(agg, window.PRODUCTS);
-    var sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS);
+    sim = sim || window.ENGINE.roomPortfolio(agg, window.PRODUCTS);
     var eqBucket = sim.buckets[0];
     var picked = {};
     eqBucket.lines.forEach(function (l) { picked[l.item.id] = l.weight; });
 
-    lead.innerHTML = "Scored against <b>" + agg.count + "</b> response" +
-      (agg.count === 1 ? "" : "s") + " in the room right now. The equity sleeve is <b>" +
-      eqBucket.weight + "%</b> of the book; the top " + esc((eqc.selection || {}).topN || 6) +
-      " products share it in proportion to their scores.";
+    lead.innerHTML = "The equity sleeve is <b>" + eqBucket.weight +
+      "%</b> of the book, and the top " + esc((eqc.selection || {}).topN || 6) +
+      " products by score share it in proportion. Highlighted rows made the book. " +
+      "This is the same <code>ENGINE.scoreEquityShelf()</code> the guest and presenter " +
+      "screens call, so if these numbers are wrong they are wrong everywhere.";
 
     var axes = ["riskProfile", "sector", "country", "capitalIncome", "marketView"];
     var axisLabel = {
@@ -181,6 +182,153 @@
     el("liveTable").innerHTML = "<thead>" + head + "</thead><tbody>" + body + "</tbody>";
   }
 
+  /* ---------- 05 the other shelves ---------- */
+  var BUCKET_COLOUR = {
+    equities: "var(--series-equities)", fixedIncome: "var(--series-fixedincome)",
+    notes: "var(--series-notes)", fx: "var(--series-cash)"
+  };
+
+  function renderOtherShelves(products) {
+    var groups = [
+      ["fixedIncome", "Fixed income", "Weighted by the IG and HY split. The sovereign line carries the room's duration answer; EM debt appears only for an EM room."],
+      ["notes", "Structured notes", "Risk appetite slides the sleeve from capital-protected toward autocallables and reverse convertibles. Leverage adds the participation note."],
+      ["fx", "FX", "The dollar share splits USD against a local-currency basket. An EM room adds a BRL sleeve."]
+    ];
+    el("otherShelves").innerHTML = groups.map(function (g) {
+      var shelf = products[g[0]] || {};
+      var items = Object.keys(shelf).map(function (k) {
+        var it = shelf[k];
+        if (!it || !it.name) return "";
+        return '<div class="m-item"><div class="n">' + esc(it.name) + "</div>" +
+          '<div class="d"><span class="m-tk">' + esc(it.ticker) + "</span>" + esc(it.detail || "") + "</div></div>";
+      }).join("");
+      return '<div class="m-shelf"><h4><s style="background:' + BUCKET_COLOUR[g[0]] + '"></s>' +
+        esc(g[1]) + "</h4><p>" + esc(g[2]) + "</p>" + items + "</div>";
+    }).join("");
+  }
+
+  /* ---------- 06 sandbox ---------- */
+  var mode = "live";
+  var scenario = {};
+
+  function defaultScenario() {
+    var a = {};
+    window.AXES.forEach(function (ax) {
+      if (ax.kind === "range") a[ax.id] = typeof ax.def === "number" ? ax.def : Math.round((ax.min + ax.max) / 2);
+      else if (ax.kind === "scale") a[ax.id] = Math.floor(ax.options.length / 2);
+      else if (ax.kind === "multi") a[ax.id] = [ax.options[0].v];
+      else a[ax.id] = ax.options[0].v;
+    });
+    return a;
+  }
+
+  function renderControls() {
+    var host = el("controls");
+    host.innerHTML = window.AXES.map(function (ax) {
+      var body;
+      if (ax.kind === "range") {
+        body = '<div class="m-range"><input type="range" class="rng-input" data-ax="' + ax.id +
+          '" min="' + ax.min + '" max="' + ax.max + '" step="' + (ax.step_ || 1) +
+          '" value="' + scenario[ax.id] + '"><b id="rv-' + ax.id + '">' +
+          esc(window.axisLabel(ax.id, scenario[ax.id])) + "</b></div>";
+      } else {
+        body = '<div class="m-seg">' + ax.options.map(function (o) {
+          var on = ax.kind === "multi"
+            ? (scenario[ax.id] || []).indexOf(o.v) !== -1
+            : scenario[ax.id] === o.v;
+          return '<button type="button" data-ax="' + ax.id + '" data-v="' + esc(String(o.v)) +
+            '" class="' + (on ? "on" : "") + '">' + esc(o.label) + "</button>";
+        }).join("") + "</div>";
+      }
+      return '<div class="m-ctl"><label>' + esc(ax.label) + "</label>" + body + "</div>";
+    }).join("");
+
+    host.querySelectorAll(".m-seg button").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var ax = window.AXIS_BY_ID[b.getAttribute("data-ax")];
+        var raw = b.getAttribute("data-v");
+        var v = ax.kind === "scale" ? Number(raw) : raw;
+        if (ax.kind === "multi") {
+          var list = scenario[ax.id] || [];
+          var at = list.indexOf(v);
+          if (at !== -1) { if (list.length > 1) list.splice(at, 1); }
+          else { if (ax.max && list.length >= ax.max) list.shift(); list.push(v); }
+          scenario[ax.id] = list;
+        } else {
+          scenario[ax.id] = v;
+        }
+        renderControls();
+        recompute();
+      });
+    });
+
+    host.querySelectorAll('input[type="range"]').forEach(function (r) {
+      r.addEventListener("input", function () {
+        var id = r.getAttribute("data-ax");
+        scenario[id] = Number(r.value);
+        el("rv-" + id).textContent = window.axisLabel(id, scenario[id]);
+        recompute();
+      });
+    });
+  }
+
+  function paintBook(agg, eqc) {
+    var sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS);
+    if (!sim) return;
+
+    var keys = [
+      { k: "equities", label: "Equities" }, { k: "fixedIncome", label: "Fixed income" },
+      { k: "notes", label: "Structured notes" }, { k: "fx", label: "FX" }
+    ];
+    el("sbBar").innerHTML = keys.map(function (x) {
+      return '<i style="flex:' + sim.alloc[x.k] + ' 0 0;background:' + BUCKET_COLOUR[x.k] + '"></i>';
+    }).join("");
+    el("sbLegend").innerHTML = keys.map(function (x) {
+      return '<div><s style="background:' + BUCKET_COLOUR[x.k] + '"></s>' + x.label +
+        "<b>" + sim.alloc[x.k] + "%</b></div>";
+    }).join("");
+
+    el("sbBook").innerHTML = sim.buckets.map(function (b) {
+      return '<div><div class="m-bk-top"><s style="background:' + BUCKET_COLOUR[b.key] + '"></s>' +
+        "<h4>" + esc(b.label) + "</h4><b>" + b.weight + "%</b></div>" +
+        (b.lines.length ? b.lines.map(function (l) {
+          return '<div class="m-bk-line"><span>' + esc(l.item.name) + "</span><b>" + l.weight + "%</b></div>";
+        }).join("") : '<div class="m-bk-line"><span class="m-sub">nothing</span></div>') +
+        "</div>";
+    }).join("");
+
+    renderLive(agg, eqc, sim);
+  }
+
+  function recompute() {
+    var eqc = window.PRODUCTS.equities;
+    if (mode === "custom") {
+      el("modeNote").textContent = "A hypothetical room where everyone answers this way.";
+      paintBook(window.ENGINE.aggregate([{ id: "s", answers: scenario }]), eqc);
+    } else {
+      window.STORE.results().then(function (res) {
+        el("modeNote").textContent = res.agg.count
+          ? res.agg.count + " response" + (res.agg.count === 1 ? "" : "s") + " in the room right now."
+          : "No responses yet. Switch to a custom scenario to exercise the engine.";
+        paintBook(res.agg, eqc);
+      }).catch(function () {
+        el("modeNote").textContent = "Could not reach the vote backend.";
+      });
+    }
+  }
+
+  function setMode(m) {
+    mode = m;
+    el("modeLive").classList.toggle("on", m === "live");
+    el("modeCustom").classList.toggle("on", m === "custom");
+    el("controls").hidden = m !== "custom";
+    if (m === "custom" && !Object.keys(scenario).length) {
+      scenario = defaultScenario();
+      renderControls();
+    }
+    recompute();
+  }
+
   /* ---------- boot ---------- */
   window.BASE.ready.then(function () {
     var eqc = window.PRODUCTS && window.PRODUCTS.equities;
@@ -196,15 +344,14 @@
     renderWeights(eqc);
     renderMatrix(eqc);
 
-    function pull() {
-      window.STORE.results()
-        .then(function (res) { renderLive(res.agg, eqc); })
-        .catch(function (e) {
-          console.error(e);
-          el("liveLead").textContent = "Could not reach the vote backend.";
-        });
-    }
-    pull();
-    setInterval(pull, 8000);
+    renderOtherShelves(window.PRODUCTS);
+
+    el("modeLive").addEventListener("click", function () { setMode("live"); });
+    el("modeCustom").addEventListener("click", function () { setMode("custom"); });
+    setMode("live");
+
+    /* Only poll while showing the live room; a custom scenario must not be
+       overwritten by an incoming response. */
+    setInterval(function () { if (mode === "live") recompute(); }, 8000);
   });
 })();
