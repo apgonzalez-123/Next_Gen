@@ -1,937 +1,790 @@
 {
-  "$schema": "Product shelf for the room simulation. Replace with the real instruments; the engine only needs the keys to stay the same.",
-  "version": 3,
+  "$note": "Built by tools/build_products.py from the desk's own source files. Instrument facts only: no client-identifying material is carried over.",
+  "asOf": "2026-09-24",
+  "source": "Safra desk product files",
+  "version": 4,
   "equities": {
-    "$note": "Live TradingView data, captured once and stamped below. It is a snapshot, not a feed: this is a static site and cannot refresh it.",
-    "asOf": "2026-09-24",
-    "source": "TradingView",
     "shelf": [
       {
-        "id": "ivv",
-        "ticker": "IVV",
-        "exchange": "AMEX",
-        "name": "iShares Core S&P 500",
-        "sector": "core",
-        "region": "g7",
-        "style": "core",
-        "note": "The developed-market default. Lowest fee on the shelf.",
+        "id": "tsm",
+        "ticker": "TSM",
+        "name": "Taiwan Semiconductor",
         "data": {
-          "price": 771.36,
-          "beta1y": 1.02,
-          "perf1y": 15.52,
-          "volatility": 0.66,
-          "expenseRatio": 0.03
+          "price": 448.68
         },
-        "fit": {
-          "sector": {
-            "tech": 0.5,
-            "financials": 0.5,
-            "healthcare": 0.5,
-            "energy": 0.5,
-            "consumer": 0.5,
-            "industrials": 0.5
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": [
-            0.42,
-            0.94,
-            0.68
-          ],
-          "marketView": [
-            0.6,
-            0.95,
-            0.9
-          ],
-          "capitalIncome": {
-            "capital": 0.9,
-            "income": 0.6
-          },
-          "usd": {
-            "target": 100
-          }
-        },
-        "usdExposure": 100
-      },
-      {
-        "id": "efa",
-        "ticker": "EFA",
-        "exchange": "AMEX",
-        "name": "iShares MSCI EAFE",
-        "sector": "core",
-        "region": "g7",
-        "style": "core",
-        "note": "Developed markets outside the US, for a room that is not all-in on America.",
-        "data": {
-          "price": 104.72,
-          "beta1y": 0.87,
-          "perf1y": 12.98,
-          "volatility": 0.76,
-          "expenseRatio": 0.32
-        },
-        "fit": {
-          "sector": {
-            "tech": 0.5,
-            "financials": 0.5,
-            "healthcare": 0.5,
-            "energy": 0.5,
-            "consumer": 0.5,
-            "industrials": 0.5
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": [
-            0.46,
-            0.98,
-            0.65
-          ],
-          "marketView": [
-            0.6,
-            0.95,
-            0.9
-          ],
-          "capitalIncome": {
-            "capital": 0.9,
-            "income": 0.6
-          },
-          "usd": {
-            "target": 15
-          }
-        },
-        "usdExposure": 15
-      },
-      {
-        "id": "eem",
-        "ticker": "EEM",
-        "exchange": "AMEX",
-        "name": "iShares MSCI Emerging Markets",
-        "sector": "core",
+        "sleeve": "Compute",
+        "role": "Foundry",
+        "sector": "tech",
         "region": "em",
-        "style": "core",
-        "note": "Broad EM in one line. Highest beta of the core holdings.",
-        "data": {
-          "price": 67.53,
-          "beta1y": 1.29,
-          "perf1y": 26.79,
-          "volatility": 1.01,
-          "expenseRatio": 0.72
-        },
-        "fit": {
-          "sector": {
-            "tech": 0.5,
-            "financials": 0.5,
-            "healthcare": 0.5,
-            "energy": 0.5,
-            "consumer": 0.5,
-            "industrials": 0.5
-          },
-          "country": {
-            "g7": 0.2,
-            "em": 1.0
-          },
-          "riskProfile": [
-            0.23,
-            0.76,
-            0.82
-          ],
-          "marketView": [
-            0.6,
-            0.95,
-            0.9
-          ],
-          "capitalIncome": {
-            "capital": 0.9,
-            "income": 0.6
-          },
-          "usd": {
-            "target": 20
-          }
-        },
-        "usdExposure": 20
-      },
-      {
-        "id": "qqq",
-        "ticker": "QQQ",
-        "exchange": "NASDAQ",
-        "name": "Invesco QQQ Trust",
-        "sector": "tech",
-        "region": "g7",
-        "style": "growth",
-        "note": "Growth proxy. Concentrated in large-cap tech without being a sector fund.",
-        "data": {
-          "price": 741.27,
-          "beta1y": 1.41,
-          "perf1y": 23.63,
-          "volatility": 1.01,
-          "expenseRatio": 0.18
-        },
-        "fit": {
-          "sector": {
-            "tech": 0.8,
-            "financials": 0.4,
-            "healthcare": 0.4,
-            "energy": 0.4,
-            "consumer": 0.4,
-            "industrials": 0.4
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": [
-            0.18,
-            0.71,
-            0.86
-          ],
-          "marketView": [
-            0.25,
-            0.7,
-            1.0
-          ],
-          "capitalIncome": {
-            "capital": 1.0,
-            "income": 0.15
-          },
-          "usd": {
-            "target": 100
-          }
-        },
-        "usdExposure": 100
-      },
-      {
-        "id": "xlk",
-        "ticker": "XLK",
-        "exchange": "AMEX",
-        "name": "Technology Select Sector SPDR",
-        "sector": "tech",
-        "region": "g7",
-        "style": "growth",
-        "note": "Highest beta and the strongest year on the shelf. The aggressive tech expression.",
-        "data": {
-          "price": 194.87,
-          "beta1y": 1.69,
-          "perf1y": 38.71,
-          "volatility": 1.31,
-          "expenseRatio": 0.08
-        },
+        "usdExposure": 20,
+        "riskBand": 2,
+        "note": "Compute \u00b7 Foundry",
         "fit": {
           "sector": {
             "tech": 1.0,
-            "financials": 0.15,
-            "healthcare": 0.15,
-            "energy": 0.15,
-            "consumer": 0.15,
-            "industrials": 0.15
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
           },
           "country": {
-            "g7": 1.0,
-            "em": 0.25
+            "g7": 0.25,
+            "em": 1.0
           },
-          "riskProfile": [
-            0.15,
-            0.53,
-            0.99
-          ],
-          "marketView": [
-            0.25,
-            0.7,
-            1.0
-          ],
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 20
+          },
           "capitalIncome": {
             "capital": 1.0,
-            "income": 0.15
-          },
-          "usd": {
-            "target": 100
+            "income": 0.35
           }
-        },
-        "usdExposure": 100
+        }
       },
       {
-        "id": "xlf",
-        "ticker": "XLF",
-        "exchange": "AMEX",
-        "name": "Financial Select Sector SPDR",
-        "sector": "financials",
-        "region": "g7",
-        "style": "cyclical",
-        "note": "Rate-sensitive. Flat over the year despite moderate beta.",
+        "id": "nvda",
+        "ticker": "NVDA",
+        "name": "NVIDIA",
         "data": {
-          "price": 54.54,
-          "beta1y": 0.67,
-          "perf1y": 1.31,
-          "volatility": 1.17,
-          "expenseRatio": 0.08
+          "price": 223.8
         },
+        "sleeve": "Compute",
+        "role": "GPU compute",
+        "sector": "tech",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 2,
+        "note": "Compute \u00b7 GPU compute",
         "fit": {
           "sector": {
-            "tech": 0.15,
-            "financials": 1.0,
-            "healthcare": 0.15,
-            "energy": 0.15,
-            "consumer": 0.15,
-            "industrials": 0.15
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
-          "riskProfile": [
-            0.47,
-            0.99,
-            0.64
-          ],
-          "marketView": [
-            0.35,
-            0.75,
-            1.0
-          ],
-          "capitalIncome": {
-            "capital": 0.9,
-            "income": 0.6
+          "riskProfile": {
+            "target": 2
           },
           "usd": {
             "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.35
           }
-        },
-        "usdExposure": 100
+        }
       },
       {
-        "id": "xlv",
-        "ticker": "XLV",
-        "exchange": "AMEX",
-        "name": "Health Care Select Sector SPDR",
-        "sector": "healthcare",
-        "region": "g7",
-        "style": "defensive",
-        "note": "Near-zero beta with a strong year. Defensive exposure that still performed.",
+        "id": "avgo",
+        "ticker": "AVGO",
+        "name": "Broadcom",
         "data": {
-          "price": 169.65,
-          "beta1y": 0.19,
-          "perf1y": 24.0,
-          "volatility": 1.13,
-          "expenseRatio": 0.08
+          "price": 349.64
         },
+        "sleeve": "Compute",
+        "role": "Custom silicon",
+        "sector": "tech",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 2,
+        "note": "Compute \u00b7 Custom silicon",
         "fit": {
           "sector": {
-            "tech": 0.15,
-            "financials": 0.15,
-            "healthcare": 1.0,
-            "energy": 0.15,
-            "consumer": 0.15,
-            "industrials": 0.15
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
-          "riskProfile": [
-            0.69,
-            0.8,
-            0.48
-          ],
-          "marketView": [
-            1.0,
-            0.75,
-            0.45
-          ],
-          "capitalIncome": {
-            "capital": 0.6,
-            "income": 0.85
+          "riskProfile": {
+            "target": 2
           },
           "usd": {
             "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.35
           }
-        },
-        "usdExposure": 100
+        }
       },
       {
-        "id": "xle",
-        "ticker": "XLE",
-        "exchange": "AMEX",
-        "name": "Energy Select Sector SPDR",
-        "sector": "energy",
-        "region": "g7",
-        "style": "cyclical",
-        "note": "Negative one-year beta and the highest volatility here. A genuine diversifier.",
+        "id": "glw",
+        "ticker": "GLW",
+        "name": "Corning",
         "data": {
-          "price": 62.72,
-          "beta1y": -0.79,
-          "perf1y": 39.67,
-          "volatility": 1.81,
-          "expenseRatio": 0.08
+          "price": 154.19
         },
-        "fit": {
-          "sector": {
-            "tech": 0.15,
-            "financials": 0.15,
-            "healthcare": 0.15,
-            "energy": 1.0,
-            "consumer": 0.15,
-            "industrials": 0.15
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": [
-            0.29,
-            0.81,
-            0.78
-          ],
-          "marketView": [
-            0.35,
-            0.75,
-            1.0
-          ],
-          "capitalIncome": {
-            "capital": 0.9,
-            "income": 0.6
-          },
-          "usd": {
-            "target": 100
-          }
-        },
-        "usdExposure": 100
-      },
-      {
-        "id": "xlp",
-        "ticker": "XLP",
-        "exchange": "AMEX",
-        "name": "Consumer Staples Select Sector SPDR",
-        "sector": "consumer",
-        "region": "g7",
-        "style": "defensive",
-        "note": "The most defensive equity line. Low beta, low volatility, modest return.",
-        "data": {
-          "price": 82.26,
-          "beta1y": 0.08,
-          "perf1y": 5.01,
-          "volatility": 0.81,
-          "expenseRatio": 0.08
-        },
-        "fit": {
-          "sector": {
-            "tech": 0.15,
-            "financials": 0.15,
-            "healthcare": 0.15,
-            "energy": 0.15,
-            "consumer": 1.0,
-            "industrials": 0.15
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": [
-            0.8,
-            0.69,
-            0.4
-          ],
-          "marketView": [
-            1.0,
-            0.75,
-            0.45
-          ],
-          "capitalIncome": {
-            "capital": 0.6,
-            "income": 0.85
-          },
-          "usd": {
-            "target": 100
-          }
-        },
-        "usdExposure": 100
-      },
-      {
-        "id": "xly",
-        "ticker": "XLY",
-        "exchange": "AMEX",
-        "name": "Consumer Discretionary Select Sector SPDR",
-        "sector": "consumer",
-        "region": "g7",
-        "style": "cyclical",
-        "note": "The only negative one-year performer among developed sectors.",
-        "data": {
-          "price": 110.68,
-          "beta1y": 1.27,
-          "perf1y": -7.38,
-          "volatility": 1.09,
-          "expenseRatio": 0.08
-        },
-        "fit": {
-          "sector": {
-            "tech": 0.15,
-            "financials": 0.15,
-            "healthcare": 0.15,
-            "energy": 0.15,
-            "consumer": 1.0,
-            "industrials": 0.15
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": [
-            0.22,
-            0.75,
-            0.82
-          ],
-          "marketView": [
-            0.35,
-            0.75,
-            1.0
-          ],
-          "capitalIncome": {
-            "capital": 0.9,
-            "income": 0.6
-          },
-          "usd": {
-            "target": 100
-          }
-        },
-        "usdExposure": 100
-      },
-      {
-        "id": "xli",
-        "ticker": "XLI",
-        "exchange": "AMEX",
-        "name": "Industrial Select Sector SPDR",
+        "sleeve": "Compute",
+        "role": "Optical",
         "sector": "industrials",
         "region": "g7",
-        "style": "cyclical",
-        "note": "Capital goods and transport. Mid-beta, mid-return.",
-        "data": {
-          "price": 169.61,
-          "beta1y": 0.7,
-          "perf1y": 10.59,
-          "volatility": 1.19,
-          "expenseRatio": 0.08
-        },
+        "usdExposure": 100,
+        "riskBand": 1,
+        "note": "Compute \u00b7 Optical",
         "fit": {
           "sector": {
-            "tech": 0.15,
-            "financials": 0.15,
-            "healthcare": 0.15,
-            "energy": 0.15,
-            "consumer": 0.15,
+            "tech": 0.2,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
             "industrials": 1.0
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
-          "riskProfile": [
-            0.45,
-            0.97,
-            0.65
-          ],
-          "marketView": [
-            0.35,
-            0.75,
-            1.0
-          ],
-          "capitalIncome": {
-            "capital": 0.9,
-            "income": 0.6
+          "riskProfile": {
+            "target": 1
           },
           "usd": {
             "target": 100
-          }
-        },
-        "usdExposure": 100
-      },
-      {
-        "id": "schd",
-        "ticker": "SCHD",
-        "exchange": "AMEX",
-        "name": "Schwab US Dividend Equity",
-        "sector": "core",
-        "region": "g7",
-        "style": "income",
-        "note": "Quality dividend screen. Low beta with an equity-like year.",
-        "data": {
-          "price": 33.17,
-          "beta1y": 0.26,
-          "perf1y": 22.06,
-          "volatility": 0.77,
-          "expenseRatio": 0.06
-        },
-        "fit": {
-          "sector": {
-            "tech": 0.5,
-            "financials": 0.5,
-            "healthcare": 0.5,
-            "energy": 0.5,
-            "consumer": 0.5,
-            "industrials": 0.5
           },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": [
-            0.73,
-            0.76,
-            0.45
-          ],
-          "marketView": [
-            0.9,
-            0.8,
-            0.55
-          ],
           "capitalIncome": {
-            "capital": 0.4,
-            "income": 1.0
-          },
-          "usd": {
-            "target": 100
-          }
-        },
-        "usdExposure": 100
-      },
-      {
-        "id": "vym",
-        "ticker": "VYM",
-        "exchange": "AMEX",
-        "name": "Vanguard High Dividend Yield",
-        "sector": "core",
-        "region": "g7",
-        "style": "income",
-        "note": "The lowest volatility on the shelf. Income without a sector bet.",
-        "data": {
-          "price": 157.25,
-          "beta1y": 0.55,
-          "perf1y": 11.74,
-          "volatility": 0.66,
-          "expenseRatio": 0.04
-        },
-        "fit": {
-          "sector": {
-            "tech": 0.5,
-            "financials": 0.5,
-            "healthcare": 0.5,
-            "energy": 0.5,
-            "consumer": 0.5,
-            "industrials": 0.5
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": [
-            0.63,
-            0.86,
-            0.53
-          ],
-          "marketView": [
-            0.9,
-            0.8,
-            0.55
-          ],
-          "capitalIncome": {
-            "capital": 0.4,
-            "income": 1.0
-          },
-          "usd": {
-            "target": 100
-          }
-        },
-        "usdExposure": 100
-      },
-      {
-        "id": "ewz",
-        "ticker": "EWZ",
-        "exchange": "AMEX",
-        "name": "iShares MSCI Brazil",
-        "sector": "core",
-        "region": "em",
-        "style": "cyclical",
-        "note": "Single-country Brazil. The most volatile line here.",
-        "data": {
-          "price": 37.12,
-          "beta1y": 0.54,
-          "perf1y": 19.2,
-          "volatility": 1.95,
-          "expenseRatio": 0.59
-        },
-        "fit": {
-          "sector": {
-            "tech": 0.5,
-            "financials": 0.5,
-            "healthcare": 0.5,
-            "energy": 0.5,
-            "consumer": 0.5,
-            "industrials": 0.5
-          },
-          "country": {
-            "g7": 0.2,
-            "em": 1.0
-          },
-          "riskProfile": [
-            0.37,
-            0.89,
-            0.72
-          ],
-          "marketView": [
-            0.35,
-            0.75,
-            1.0
-          ],
-          "capitalIncome": {
-            "capital": 0.9,
-            "income": 0.6
-          },
-          "usd": {
-            "target": 5
-          }
-        },
-        "usdExposure": 5
-      },
-      {
-        "id": "fxi",
-        "ticker": "FXI",
-        "exchange": "BATS",
-        "name": "iShares China Large-Cap",
-        "sector": "core",
-        "region": "em",
-        "style": "cyclical",
-        "note": "Single-country China. The worst one-year performer on the shelf.",
-        "data": {
-          "price": 34.31,
-          "beta1y": 0.74,
-          "perf1y": -15.41,
-          "volatility": 0.78,
-          "expenseRatio": 0.74
-        },
-        "fit": {
-          "sector": {
-            "tech": 0.5,
-            "financials": 0.5,
-            "healthcare": 0.5,
-            "energy": 0.5,
-            "consumer": 0.5,
-            "industrials": 0.5
-          },
-          "country": {
-            "g7": 0.2,
-            "em": 1.0
-          },
-          "riskProfile": [
-            0.52,
-            0.97,
-            0.61
-          ],
-          "marketView": [
-            0.35,
-            0.75,
-            1.0
-          ],
-          "capitalIncome": {
-            "capital": 0.9,
-            "income": 0.6
-          },
-          "usd": {
-            "target": 10
-          }
-        },
-        "usdExposure": 10
-      },
-      {
-        "id": "vgk",
-        "ticker": "VGK",
-        "exchange": "AMEX",
-        "name": "Vanguard FTSE Europe",
-        "sector": "core",
-        "region": "g7",
-        "style": "core",
-        "note": "European equity in euros. The unhedged way to cut dollar exposure without leaving developed markets.",
-        "usdExposure": 5,
-        "data": {
-          "price": 88.05,
-          "beta1y": 0.864,
-          "perf1y": 11.54,
-          "volatility": 0.77,
-          "expenseRatio": 0.06
-        },
-        "fit": {
-          "sector": {
-            "tech": 0.5,
-            "financials": 0.5,
-            "healthcare": 0.5,
-            "energy": 0.5,
-            "consumer": 0.5,
-            "industrials": 0.5
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.25
-          },
-          "riskProfile": [
-            0.47,
-            0.98,
-            0.65
-          ],
-          "marketView": [
-            0.6,
-            0.95,
-            0.9
-          ],
-          "capitalIncome": {
-            "capital": 0.9,
-            "income": 0.6
-          },
-          "usd": {
-            "target": 5
+            "capital": 1.0,
+            "income": 0.35
           }
         }
       },
       {
-        "id": "ewj",
-        "ticker": "EWJ",
-        "exchange": "AMEX",
-        "name": "iShares MSCI Japan",
-        "sector": "core",
-        "region": "g7",
-        "style": "core",
-        "note": "Japan in yen. Beta above one with a currency that rarely moves with the dollar.",
-        "usdExposure": 5,
+        "id": "ceg",
+        "ticker": "CEG",
+        "name": "Constellation Energy",
         "data": {
-          "price": 95.73,
-          "beta1y": 1.055,
-          "perf1y": 17.99,
-          "volatility": 0.99,
-          "expenseRatio": 0.49
+          "price": 262.19
         },
+        "sleeve": "Power",
+        "role": "Nuclear PPAs",
+        "sector": "energy",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 2,
+        "note": "Power \u00b7 Nuclear PPAs",
         "fit": {
           "sector": {
-            "tech": 0.5,
-            "financials": 0.5,
-            "healthcare": 0.5,
-            "energy": 0.5,
-            "consumer": 0.5,
-            "industrials": 0.5
+            "tech": 0.2,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 1.0,
+            "consumer": 0.2,
+            "industrials": 0.2
           },
           "country": {
             "g7": 1.0,
             "em": 0.25
           },
-          "riskProfile": [
-            0.34,
-            0.86,
-            0.74
-          ],
-          "marketView": [
-            0.6,
-            0.95,
-            0.9
-          ],
-          "capitalIncome": {
-            "capital": 0.9,
-            "income": 0.6
+          "riskProfile": {
+            "target": 2
           },
           "usd": {
-            "target": 5
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.7
           }
         }
       },
       {
-        "id": "ilf",
-        "ticker": "ILF",
-        "exchange": "AMEX",
-        "name": "iShares Latin America 40",
-        "sector": "core",
-        "region": "em",
-        "style": "cyclical",
-        "note": "LatAm large-cap in local currencies. Regional EM exposure with no dollar leg.",
-        "usdExposure": 5,
+        "id": "eqix",
+        "ticker": "EQIX",
+        "name": "Equinix",
         "data": {
-          "price": 34.7,
-          "beta1y": 0.652,
-          "perf1y": 20.21,
-          "volatility": 1.59,
-          "expenseRatio": 0.47
+          "price": 1039.4
         },
+        "sleeve": "Power",
+        "role": "Data-centre REIT",
+        "sector": "industrials",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 1,
+        "note": "Power \u00b7 Data-centre REIT",
         "fit": {
           "sector": {
-            "tech": 0.5,
-            "financials": 0.5,
-            "healthcare": 0.5,
-            "energy": 0.5,
-            "consumer": 0.5,
-            "industrials": 0.5
+            "tech": 0.2,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 1.0
           },
           "country": {
-            "g7": 0.2,
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 1
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.7
+          }
+        }
+      },
+      {
+        "id": "gev",
+        "ticker": "GEV",
+        "name": "GE Vernova",
+        "data": {
+          "price": 951.78
+        },
+        "sleeve": "Power",
+        "role": "Power generation, grid",
+        "sector": "industrials",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 2,
+        "note": "Power \u00b7 Power generation, grid",
+        "fit": {
+          "sector": {
+            "tech": 0.2,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 1.0
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.7
+          }
+        }
+      },
+      {
+        "id": "etn",
+        "ticker": "ETN",
+        "name": "Eaton",
+        "data": {
+          "price": 436.64
+        },
+        "sleeve": "Power",
+        "role": "Electrical equipment",
+        "sector": "industrials",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 1,
+        "note": "Power \u00b7 Electrical equipment",
+        "fit": {
+          "sector": {
+            "tech": 0.2,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 1.0
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 1
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.7
+          }
+        }
+      },
+      {
+        "id": "ewy",
+        "ticker": "EWY",
+        "name": "iShares MSCI South Korea",
+        "data": {
+          "price": 182.47
+        },
+        "sleeve": "Korea",
+        "role": "Korea broad ETF",
+        "sector": "tech",
+        "region": "em",
+        "usdExposure": 5,
+        "riskBand": 2,
+        "note": "Korea \u00b7 Korea broad ETF",
+        "fit": {
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 0.25,
             "em": 1.0
           },
-          "riskProfile": [
-            0.39,
-            0.91,
-            0.7
-          ],
-          "marketView": [
-            0.35,
-            0.75,
-            1.0
-          ],
-          "capitalIncome": {
-            "capital": 0.9,
-            "income": 0.6
+          "riskProfile": {
+            "target": 2
           },
           "usd": {
             "target": 5
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.35
+          }
+        }
+      },
+      {
+        "id": "smsn",
+        "ticker": "SMSN",
+        "name": "Samsung Electronics",
+        "data": {},
+        "sleeve": "Korea",
+        "role": "HBM memory, local line",
+        "sector": "tech",
+        "region": "em",
+        "usdExposure": 5,
+        "riskBand": 2,
+        "note": "Korea \u00b7 HBM memory, local line",
+        "fit": {
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 0.25,
+            "em": 1.0
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.35
+          }
+        }
+      },
+      {
+        "id": "dram",
+        "ticker": "DRAM",
+        "name": "Memory and storage ETF",
+        "data": {},
+        "sleeve": "Korea",
+        "role": "Memory cycle",
+        "sector": "tech",
+        "region": "em",
+        "usdExposure": 20,
+        "riskBand": 2,
+        "note": "Korea \u00b7 Memory cycle",
+        "fit": {
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 0.25,
+            "em": 1.0
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 20
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.35
+          }
+        }
+      },
+      {
+        "id": "iau",
+        "ticker": "IAU",
+        "name": "iShares Gold Trust",
+        "data": {
+          "price": 80.26
+        },
+        "sleeve": "Metals",
+        "role": "Gold",
+        "sector": "energy",
+        "region": "g7",
+        "usdExposure": 50,
+        "riskBand": 0,
+        "note": "Metals \u00b7 Gold",
+        "fit": {
+          "sector": {
+            "tech": 0.2,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 1.0,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 0
+          },
+          "usd": {
+            "target": 50
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.7
+          }
+        }
+      },
+      {
+        "id": "cper",
+        "ticker": "CPER",
+        "name": "US Copper Index Fund",
+        "data": {
+          "price": 40.62
+        },
+        "sleeve": "Commodities",
+        "role": "Copper, electrification",
+        "sector": "energy",
+        "region": "g7",
+        "usdExposure": 60,
+        "riskBand": 2,
+        "note": "Commodities \u00b7 Copper, electrification",
+        "fit": {
+          "sector": {
+            "tech": 0.2,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 1.0,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 2
+          },
+          "usd": {
+            "target": 60
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.7
+          }
+        }
+      },
+      {
+        "id": "pdbc",
+        "ticker": "PDBC",
+        "name": "Optimum Yield Diversified Commodity",
+        "data": {
+          "price": 19.71
+        },
+        "sleeve": "Commodities",
+        "role": "Broad commodity basket",
+        "sector": "energy",
+        "region": "g7",
+        "usdExposure": 60,
+        "riskBand": 1,
+        "note": "Commodities \u00b7 Broad commodity basket",
+        "fit": {
+          "sector": {
+            "tech": 0.2,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 1.0,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 1
+          },
+          "usd": {
+            "target": 60
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.7
+          }
+        }
+      },
+      {
+        "id": "dbmf",
+        "ticker": "DBMF",
+        "name": "Managed Futures Strategy",
+        "data": {
+          "price": 32.64
+        },
+        "sleeve": "Alternatives",
+        "role": "Managed futures",
+        "sector": "financials",
+        "region": "g7",
+        "usdExposure": 70,
+        "riskBand": 1,
+        "note": "Alternatives \u00b7 Managed futures",
+        "fit": {
+          "sector": {
+            "tech": 0.2,
+            "financials": 1.0,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 1
+          },
+          "usd": {
+            "target": 70
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.7
+          }
+        }
+      },
+      {
+        "id": "ief",
+        "ticker": "IEF",
+        "name": "iShares 7-10 Year Treasury",
+        "data": {
+          "price": 89.94
+        },
+        "sleeve": "Alternatives",
+        "role": "Intermediate treasuries",
+        "sector": "financials",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 0,
+        "note": "Alternatives \u00b7 Intermediate treasuries",
+        "fit": {
+          "sector": {
+            "tech": 0.2,
+            "financials": 1.0,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 0
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.7
+          }
+        }
+      },
+      {
+        "id": "msft",
+        "ticker": "MSFT",
+        "name": "Microsoft",
+        "data": {
+          "price": 496.39
+        },
+        "sleeve": "Anchor",
+        "role": "Hyperscaler anchor",
+        "sector": "tech",
+        "region": "g7",
+        "usdExposure": 100,
+        "riskBand": 1,
+        "note": "Anchor \u00b7 Hyperscaler anchor",
+        "fit": {
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 1
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.35
           }
         }
       }
     ],
     "selection": {
-      "$note": "How much each question counts when scoring an equity product, and how many make the book.",
       "weights": {
         "riskProfile": 1.2,
         "sector": 1.0,
         "country": 1.0,
-        "capitalIncome": 0.9,
-        "marketView": 0.7,
-        "usd": 1.0
+        "usd": 1.0,
+        "capitalIncome": 0.9
       },
-      "topN": 6,
-      "minWeightPct": 1.0
+      "topN": 6
     }
   },
   "fixedIncome": {
-    "$note": "Scored the same way as equities so the dollar answer reaches this sleeve too.",
-    "asOf": "2026-09-24",
-    "source": "TradingView",
     "shelf": [
       {
-        "id": "agg",
-        "ticker": "AGG",
-        "exchange": "AMEX",
-        "name": "iShares Core US Aggregate Bond",
-        "region": "g7",
-        "usdExposure": 100,
+        "id": "at-t-inc-usd-bbb",
+        "ticker": "ATTI.USD",
+        "name": "At&T Inc",
+        "isin": "US00206RHJ41",
+        "currency": "USD",
         "credit": "ig",
-        "note": "The dollar bond default. Lowest fee here.",
+        "rating": "BBB",
+        "rank": "Sr Unsecured",
+        "sector": "Communications",
+        "country": "US",
+        "usdExposure": 100,
+        "source": "Securities export",
         "data": {
-          "price": 95.16,
-          "beta1y": 0.107,
-          "perf1y": -5.08,
-          "volatility": 0.29,
-          "expenseRatio": 0.03
+          "ytw": 4.8132,
+          "duration": 2.2738,
+          "coupon": 4.35
         },
+        "note": "BBB \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
           "credit": {
             "ig": 1.0,
             "hy": 0.3
           },
           "country": {
-            "g7": 1.0,
-            "em": 0.4
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "republic-of-argentina-usd-b",
+        "ticker": "REPU.USD",
+        "name": "Republic Of Argentina",
+        "isin": "US040114HT09",
+        "currency": "USD",
+        "credit": "hy",
+        "rating": "B-",
+        "rank": "Sr Unsecured",
+        "sector": "Government",
+        "country": "AR",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 9.3345,
+          "duration": 5.0946,
+          "coupon": 4.125
+        },
+        "note": "B- \u00b7 Sr Unsecured \u00b7 AR",
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "em": 1.0,
+            "g7": 0.35
+          },
+          "duration": {
+            "target": 5
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "bp-capital-markets-plc-usd-bbb",
+        "ticker": "BPCA.USD",
+        "name": "Bp Capital Markets Plc",
+        "isin": "US05565QDW50",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "BBB+",
+        "rank": "Jr Subordinated",
+        "sector": "Energy",
+        "country": "US",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 6.0374,
+          "duration": 5.6826,
+          "coupon": 6.45
+        },
+        "note": "BBB+ \u00b7 Jr Subordinated \u00b7 US",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
           },
           "duration": {
             "target": 6
@@ -940,109 +793,38 @@
             "target": 100
           },
           "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.9
+            "income": 1.0,
+            "capital": 0.55
           }
         }
       },
       {
-        "id": "ief",
-        "ticker": "IEF",
-        "exchange": "NASDAQ",
-        "name": "iShares 7-10 Year Treasury",
-        "region": "g7",
-        "usdExposure": 100,
-        "credit": "ig",
-        "note": "Pure duration, no credit. The line that moves when rates move.",
-        "data": {
-          "price": 89.97,
-          "beta1y": 0.104,
-          "perf1y": -6.89,
-          "volatility": 0.35,
-          "expenseRatio": 0.15
-        },
-        "fit": {
-          "credit": {
-            "ig": 1.0,
-            "hy": 0.3
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.4
-          },
-          "duration": {
-            "target": 8
-          },
-          "usd": {
-            "target": 100
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.9
-          }
-        }
-      },
-      {
-        "id": "lqd",
-        "ticker": "LQD",
-        "exchange": "AMEX",
-        "name": "iShares iBoxx Investment Grade Corporate",
-        "region": "g7",
-        "usdExposure": 100,
-        "credit": "ig",
-        "note": "Dollar IG credit. Longer duration than the aggregate.",
-        "data": {
-          "price": 103.5,
-          "beta1y": 0.183,
-          "perf1y": -7.17,
-          "volatility": 0.4,
-          "expenseRatio": 0.14
-        },
-        "fit": {
-          "credit": {
-            "ig": 1.0,
-            "hy": 0.3
-          },
-          "country": {
-            "g7": 1.0,
-            "em": 0.4
-          },
-          "duration": {
-            "target": 8
-          },
-          "usd": {
-            "target": 100
-          },
-          "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.9
-          }
-        }
-      },
-      {
-        "id": "hyg",
-        "ticker": "HYG",
-        "exchange": "AMEX",
-        "name": "iShares iBoxx High Yield Corporate",
-        "region": "g7",
-        "usdExposure": 100,
+        "id": "banco-bradesco-cayman-usd-bb",
+        "ticker": "BANC.USD",
+        "name": "Banco Bradesco (Cayman)",
+        "isin": "US05947LBD91",
+        "currency": "USD",
         "credit": "hy",
-        "note": "Dollar high yield. Short duration, credit risk carries the return.",
+        "rating": "BB",
+        "rank": "Sr Unsecured",
+        "sector": "Financial",
+        "country": "BR",
+        "usdExposure": 100,
+        "source": "Securities export",
         "data": {
-          "price": 77.92,
-          "beta1y": 0.212,
-          "perf1y": -4.1,
-          "volatility": 0.25,
-          "expenseRatio": 0.49
+          "ytw": 5.8985,
+          "duration": 3.7596,
+          "coupon": 5.375
         },
+        "note": "BB \u00b7 Sr Unsecured \u00b7 BR",
         "fit": {
           "credit": {
             "ig": 0.25,
             "hy": 1.0
           },
           "country": {
-            "g7": 1.0,
-            "em": 0.4
+            "em": 1.0,
+            "g7": 0.35
           },
           "duration": {
             "target": 4
@@ -1051,35 +833,38 @@
             "target": 100
           },
           "capitalIncome": {
-            "capital": 0.7,
-            "income": 1.0
+            "income": 1.0,
+            "capital": 0.55
           }
         }
       },
       {
-        "id": "emb",
-        "ticker": "EMB",
-        "exchange": "NASDAQ",
-        "name": "iShares JP Morgan USD Emerging Markets Bond",
-        "region": "em",
-        "usdExposure": 100,
+        "id": "banco-santander-sa-usd-bb",
+        "ticker": "BANC.USD",
+        "name": "Banco Santander Sa",
+        "isin": "US05971KAY55",
+        "currency": "USD",
         "credit": "hy",
-        "note": "EM sovereign issued in dollars. EM credit risk with no currency leg.",
+        "rating": "BB+",
+        "rank": "Jr Subordinated",
+        "sector": "Financial",
+        "country": "ES",
+        "usdExposure": 100,
+        "source": "Securities export",
         "data": {
-          "price": 92.46,
-          "beta1y": 0.297,
-          "perf1y": -3.42,
-          "volatility": 0.35,
-          "expenseRatio": 0.39
+          "ytw": 7.339,
+          "duration": 6.6268,
+          "coupon": 7.25
         },
+        "note": "BB+ \u00b7 Jr Subordinated \u00b7 ES",
         "fit": {
           "credit": {
             "ig": 0.25,
             "hy": 1.0
           },
           "country": {
-            "g7": 0.3,
-            "em": 1.0
+            "em": 0.35,
+            "g7": 1.0
           },
           "duration": {
             "target": 7
@@ -1088,119 +873,1368 @@
             "target": 100
           },
           "capitalIncome": {
-            "capital": 0.7,
-            "income": 1.0
+            "income": 1.0,
+            "capital": 0.55
           }
         }
       },
       {
-        "id": "emlc",
-        "ticker": "EMLC",
-        "exchange": "AMEX",
-        "name": "VanEck JP Morgan EM Local Currency Bond",
-        "region": "em",
-        "usdExposure": 5,
+        "id": "fed-republic-of-brazil-usd-bb",
+        "ticker": "FEDR.USD",
+        "name": "Fed Republic Of Brazil",
+        "isin": "US105756CN87",
+        "currency": "USD",
         "credit": "hy",
-        "note": "EM sovereign in local currency. The currency is most of the risk and most of the return.",
+        "rating": "BB",
+        "rank": "Sr Unsecured",
+        "sector": "Government",
+        "country": "BR",
+        "usdExposure": 100,
+        "source": "Securities export",
         "data": {
-          "price": 24.94,
-          "beta1y": 0.351,
-          "perf1y": -2.33,
-          "volatility": 0.35,
-          "expenseRatio": 0.3
+          "ytw": 7.4939,
+          "duration": 11.6891,
+          "coupon": 7.25
         },
+        "note": "BB \u00b7 Sr Unsecured \u00b7 BR",
         "fit": {
           "credit": {
             "ig": 0.25,
             "hy": 1.0
           },
           "country": {
-            "g7": 0.3,
-            "em": 1.0
+            "em": 1.0,
+            "g7": 0.35
           },
           "duration": {
-            "target": 5
+            "target": 12
           },
           "usd": {
-            "target": 5
+            "target": 100
           },
           "capitalIncome": {
-            "capital": 0.7,
-            "income": 1.0
+            "income": 1.0,
+            "capital": 0.55
           }
         }
       },
       {
-        "id": "bndx",
-        "ticker": "BNDX",
-        "exchange": "NASDAQ",
-        "name": "Vanguard Total International Bond",
-        "region": "g7",
-        "usdExposure": 95,
-        "credit": "ig",
-        "note": "International bonds hedged back to dollars. Foreign issuers, domestic currency.",
+        "id": "fed-republic-of-brazil-usd-bb-2",
+        "ticker": "FEDR.USD",
+        "name": "Fed Republic Of Brazil",
+        "isin": "US105756CQ19",
+        "currency": "USD",
+        "credit": "hy",
+        "rating": "BB",
+        "rank": "Sr Unsecured",
+        "sector": "Government",
+        "country": "BR",
+        "usdExposure": 100,
+        "source": "Securities export",
         "data": {
-          "price": 46.94,
-          "beta1y": 0.132,
-          "perf1y": -4.92,
-          "volatility": 0.23,
-          "expenseRatio": 0.07
+          "ytw": 6.6892,
+          "duration": 6.9633,
+          "coupon": 6.25
         },
+        "note": "BB \u00b7 Sr Unsecured \u00b7 BR",
         "fit": {
           "credit": {
-            "ig": 1.0,
-            "hy": 0.3
+            "ig": 0.25,
+            "hy": 1.0
           },
           "country": {
-            "g7": 1.0,
-            "em": 0.4
+            "em": 1.0,
+            "g7": 0.35
           },
           "duration": {
             "target": 7
           },
           "usd": {
-            "target": 95
+            "target": 100
           },
           "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.9
+            "income": 1.0,
+            "capital": 0.55
           }
         }
       },
       {
-        "id": "igov",
-        "ticker": "IGOV",
-        "exchange": "NASDAQ",
-        "name": "iShares International Treasury Bond",
-        "region": "g7",
-        "usdExposure": 5,
+        "id": "coca-cola-consolidated-usd-bbb",
+        "ticker": "COCA.USD",
+        "name": "Coca-Cola Consolidated",
+        "isin": "US191098AP76",
+        "currency": "USD",
         "credit": "ig",
-        "note": "Developed sovereigns unhedged. The same issuers as BNDX with the currency left in.",
+        "rating": "BBB+",
+        "rank": "Sr Unsecured",
+        "sector": "Consumer, Non-cyclical",
+        "country": "US",
+        "usdExposure": 100,
+        "source": "Securities export",
         "data": {
-          "price": 40.05,
-          "beta1y": 0.338,
-          "perf1y": -6.09,
-          "volatility": 0.75,
-          "expenseRatio": 0.35
+          "ytw": 5.5216,
+          "duration": 6.1005,
+          "coupon": 5.45
         },
+        "note": "BBB+ \u00b7 Sr Unsecured \u00b7 US",
         "fit": {
           "credit": {
             "ig": 1.0,
             "hy": 0.3
           },
           "country": {
-            "g7": 1.0,
-            "em": 0.4
+            "em": 0.35,
+            "g7": 1.0
           },
           "duration": {
-            "target": 8
+            "target": 6
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "coca-cola-femsa-sab-cv-usd-a",
+        "ticker": "COCA.USD",
+        "name": "Coca-Cola Femsa Sab Cv",
+        "isin": "US191241AH15",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "A-",
+        "rank": "Sr Unsecured",
+        "sector": "Consumer, Non-cyclical",
+        "country": "MX",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 5.1539,
+          "duration": 3.099,
+          "coupon": 2.75
+        },
+        "note": "A- \u00b7 Sr Unsecured \u00b7 MX",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 1.0,
+            "g7": 0.35
+          },
+          "duration": {
+            "target": 3
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "meta-platforms-inc-usd-aa",
+        "ticker": "META.USD",
+        "name": "Meta Platforms Inc",
+        "isin": "US30303MAE21",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "AA-",
+        "rank": "Sr Unsecured",
+        "sector": "Communications",
+        "country": "US",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 6.9835,
+          "duration": 12.577,
+          "coupon": 5.625
+        },
+        "note": "AA- \u00b7 Sr Unsecured \u00b7 US",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 13
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "general-motors-finl-co-usd-bbb",
+        "ticker": "GENE.USD",
+        "name": "General Motors Finl Co",
+        "isin": "US37045XFL55",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "BBB",
+        "rank": "Sr Unsecured",
+        "sector": "Consumer, Cyclical",
+        "country": "US",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 4.7051,
+          "duration": 1.9418,
+          "coupon": 4.2
+        },
+        "note": "BBB \u00b7 Sr Unsecured \u00b7 US",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "goldman-sachs-group-inc-usd-a",
+        "ticker": "GOLD.USD",
+        "name": "Goldman Sachs Group Inc",
+        "isin": "US38145GAS93",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "A-",
+        "rank": "Sr Unsecured",
+        "sector": "Financial",
+        "country": "US",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 5.9469,
+          "duration": 7.1918,
+          "coupon": 5.065
+        },
+        "note": "A- \u00b7 Sr Unsecured \u00b7 US",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 7
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "hsbc-holdings-plc-usd-bbb",
+        "ticker": "HSBC.USD",
+        "name": "Hsbc Holdings Plc",
+        "isin": "US404280FH76",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "BBB-",
+        "rank": "Jr Subordinated",
+        "sector": "Financial",
+        "country": "GB",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 6.7775,
+          "duration": 3.8223,
+          "coupon": 6.75
+        },
+        "note": "BBB- \u00b7 Jr Subordinated \u00b7 GB",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 4
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "morgan-stanley-usd-a",
+        "ticker": "MORG.USD",
+        "name": "Morgan Stanley",
+        "isin": "US61747YFF79",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "A",
+        "rank": "Sr Unsecured",
+        "sector": "Financial",
+        "country": "US",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 4.6796,
+          "duration": 1.7021,
+          "coupon": 5.449
+        },
+        "note": "A \u00b7 Sr Unsecured \u00b7 US",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "morgan-stanley-usd-a-2",
+        "ticker": "MORG.USD",
+        "name": "Morgan Stanley",
+        "isin": "US61748UAP75",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "A-",
+        "rank": "Subordinated",
+        "sector": "Financial",
+        "country": "US",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 6.1781,
+          "duration": 7.1016,
+          "coupon": 5.314
+        },
+        "note": "A- \u00b7 Subordinated \u00b7 US",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 7
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "pepsico-inc-usd-a",
+        "ticker": "PEPS.USD",
+        "name": "Pepsico Inc",
+        "isin": "US713448FM56",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "A+",
+        "rank": "Sr Unsecured",
+        "sector": "Consumer, Non-cyclical",
+        "country": "US",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 5.0372,
+          "duration": 5.0713,
+          "coupon": 3.9
+        },
+        "note": "A+ \u00b7 Sr Unsecured \u00b7 US",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 5
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "pfizer-inc-usd-a",
+        "ticker": "PFIZ.USD",
+        "name": "Pfizer Inc",
+        "isin": "US717081EJ89",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "A",
+        "rank": "Sr Unsecured",
+        "sector": "Consumer, Non-cyclical",
+        "country": "US",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 5.6457,
+          "duration": 9.0969,
+          "coupon": 4.1
+        },
+        "note": "A \u00b7 Sr Unsecured \u00b7 US",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 9
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "credit-agricole-sa-usd-bbb",
+        "ticker": "CRED.USD",
+        "name": "Credit Agricole Sa",
+        "isin": "USF2R125Q730",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "BBB+",
+        "rank": "Subordinated",
+        "sector": "Financial",
+        "country": "FR",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 6.2332,
+          "duration": 5.7145,
+          "coupon": 6.251
+        },
+        "note": "BBB+ \u00b7 Subordinated \u00b7 FR",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 6
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "vale-overseas-limited-usd-bb",
+        "ticker": "VALE.USD",
+        "name": "Vale Overseas Limited",
+        "isin": "USG9317UAD75",
+        "currency": "USD",
+        "credit": "hy",
+        "rating": "BB+",
+        "rank": "Sr Subordinated",
+        "sector": "Basic Materials",
+        "country": "BR",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 6.1318,
+          "duration": 3.6168,
+          "coupon": 6.0
+        },
+        "note": "BB+ \u00b7 Sr Subordinated \u00b7 BR",
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "em": 1.0,
+            "g7": 0.35
+          },
+          "duration": {
+            "target": 4
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "banco-mercantil-de-norte-usd-bb",
+        "ticker": "BANC.USD",
+        "name": "Banco Mercantil De Norte",
+        "isin": "USP1400MAG35",
+        "currency": "USD",
+        "credit": "hy",
+        "rating": "BB-",
+        "rank": "Jr Subordinated",
+        "sector": "Financial",
+        "country": "MX",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 8.3325,
+          "duration": 6.6096,
+          "coupon": 8.45
+        },
+        "note": "BB- \u00b7 Jr Subordinated \u00b7 MX",
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "em": 1.0,
+            "g7": 0.35
+          },
+          "duration": {
+            "target": 7
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "bbva-mex-banca-grupo-tx-usd-bb",
+        "ticker": "BBVA.USD",
+        "name": "Bbva Mex Banca Grupo Tx",
+        "isin": "USP1S81BAA64",
+        "currency": "USD",
+        "credit": "hy",
+        "rating": "BB+",
+        "rank": "Subordinated",
+        "sector": "Financial",
+        "country": "MX",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 7.1529,
+          "duration": 5.0644,
+          "coupon": 8.45
+        },
+        "note": "BB+ \u00b7 Subordinated \u00b7 MX",
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "em": 1.0,
+            "g7": 0.35
+          },
+          "duration": {
+            "target": 5
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "nestle-capital-corp-usd-aa",
+        "ticker": "NEST.USD",
+        "name": "Nestle Capital Corp",
+        "isin": "USU6408XAM12",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "AA-",
+        "rank": "Sr Unsecured",
+        "sector": "Consumer, Non-cyclical",
+        "country": "US",
+        "usdExposure": 100,
+        "source": "Securities export",
+        "data": {
+          "ytw": 5.2922,
+          "duration": 6.1541,
+          "coupon": 4.875
+        },
+        "note": "AA- \u00b7 Sr Unsecured \u00b7 US",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 6
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "banco-santander-eur-bbb",
+        "ticker": "BANC.EUR",
+        "name": "Banco Santander",
+        "isin": "",
+        "currency": "EUR",
+        "credit": "hy",
+        "rating": "BBB-",
+        "rank": "Jr Subordinated",
+        "sector": "Financial",
+        "country": "ES",
+        "usdExposure": 5,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 5.18,
+          "duration": 3.99,
+          "coupon": 6.0
+        },
+        "note": "BBB- \u00b7 Jr Subordinated \u00b7 ES",
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 4
           },
           "usd": {
             "target": 5
           },
           "capitalIncome": {
-            "capital": 0.8,
-            "income": 0.9
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "electricite-de-france-eur-bb",
+        "ticker": "ELEC.EUR",
+        "name": "Electricite de France",
+        "isin": "",
+        "currency": "EUR",
+        "credit": "hy",
+        "rating": "BB",
+        "rank": "Jr Subordinated",
+        "sector": "Utilities",
+        "country": "FR",
+        "usdExposure": 5,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 4.7,
+          "duration": 4.21,
+          "coupon": 4.375
+        },
+        "note": "BB \u00b7 Jr Subordinated \u00b7 FR",
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 4
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "bnp-paribas-eur-bbb",
+        "ticker": "BNPP.EUR",
+        "name": "BNP Paribas",
+        "isin": "",
+        "currency": "EUR",
+        "credit": "hy",
+        "rating": "BBB-",
+        "rank": "Jr Subordinated",
+        "sector": "Financial",
+        "country": "FR",
+        "usdExposure": 5,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 5.81,
+          "duration": 5.56,
+          "coupon": 5.625
+        },
+        "note": "BBB- \u00b7 Jr Subordinated \u00b7 FR",
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 6
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "volkswagen-intl-eur-bbb",
+        "ticker": "VOLK.EUR",
+        "name": "Volkswagen Intl",
+        "isin": "",
+        "currency": "EUR",
+        "credit": "hy",
+        "rating": "BBB-",
+        "rank": "Jr Subordinated",
+        "sector": "Consumer, Cyclical",
+        "country": "NL",
+        "usdExposure": 5,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 5.46,
+          "duration": 6.05,
+          "coupon": 5.994
+        },
+        "note": "BBB- \u00b7 Jr Subordinated \u00b7 NL",
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 6
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "totalenergies-se-eur-a",
+        "ticker": "TOTA.EUR",
+        "name": "TotalEnergies SE",
+        "isin": "",
+        "currency": "EUR",
+        "credit": "ig",
+        "rating": "A-",
+        "rank": "Jr Subordinated",
+        "sector": "Energy",
+        "country": "FR",
+        "usdExposure": 5,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 4.5,
+          "duration": 6.87,
+          "coupon": 4.5
+        },
+        "note": "A- \u00b7 Jr Subordinated \u00b7 FR",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 7
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "barclays-plc-eur-bb",
+        "ticker": "BARC.EUR",
+        "name": "Barclays PLC",
+        "isin": "",
+        "currency": "EUR",
+        "credit": "hy",
+        "rating": "BB+",
+        "rank": "Jr Subordinated",
+        "sector": "Financial",
+        "country": "GB",
+        "usdExposure": 5,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 6.15,
+          "duration": 7.18,
+          "coupon": 6.125
+        },
+        "note": "BB+ \u00b7 Jr Subordinated \u00b7 GB",
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 7
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "ing-groep-nv-gbp-bbb",
+        "ticker": "INGG.GBP",
+        "name": "ING Groep NV",
+        "isin": "",
+        "currency": "GBP",
+        "credit": "ig",
+        "rating": "BBB+",
+        "rank": "Subordinated",
+        "sector": "Financial",
+        "country": "NL",
+        "usdExposure": 5,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 5.31,
+          "duration": 1.66,
+          "coupon": 6.25
+        },
+        "note": "BBB+ \u00b7 Subordinated \u00b7 NL",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 2
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "credit-agricole-sa-gbp-bbb",
+        "ticker": "CRED.GBP",
+        "name": "Credit Agricole SA",
+        "isin": "",
+        "currency": "GBP",
+        "credit": "ig",
+        "rating": "BBB+",
+        "rank": "Subordinated",
+        "sector": "Financial",
+        "country": "FR",
+        "usdExposure": 5,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 5.95,
+          "duration": 5.55,
+          "coupon": 5.375
+        },
+        "note": "BBB+ \u00b7 Subordinated \u00b7 FR",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 6
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "glaxosmithkline-gbp-a",
+        "ticker": "GLAX.GBP",
+        "name": "GlaxoSmithKline",
+        "isin": "",
+        "currency": "GBP",
+        "credit": "ig",
+        "rating": "A",
+        "rank": "Sr Unsecured",
+        "sector": "Consumer, Non-cyc",
+        "country": "GB",
+        "usdExposure": 5,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 5.72,
+          "duration": 9.08,
+          "coupon": 6.375
+        },
+        "note": "A \u00b7 Sr Unsecured \u00b7 GB",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 9
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "vodafone-group-gbp-bb",
+        "ticker": "VODA.GBP",
+        "name": "Vodafone Group",
+        "isin": "",
+        "currency": "GBP",
+        "credit": "hy",
+        "rating": "BB+",
+        "rank": "Jr Subordinated",
+        "sector": "Communications",
+        "country": "GB",
+        "usdExposure": 5,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 6.35,
+          "duration": 4.08,
+          "coupon": 8.0
+        },
+        "note": "BB+ \u00b7 Jr Subordinated \u00b7 GB",
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 4
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "electricite-de-france-gbp-bb",
+        "ticker": "ELEC.GBP",
+        "name": "Electricite de France",
+        "isin": "",
+        "currency": "GBP",
+        "credit": "hy",
+        "rating": "BB-",
+        "rank": "Jr Subordinated",
+        "sector": "Utilities",
+        "country": "FR",
+        "usdExposure": 5,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 6.21,
+          "duration": 2.41,
+          "coupon": 5.875
+        },
+        "note": "BB- \u00b7 Jr Subordinated \u00b7 FR",
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 2
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "barclays-plc-gbp-bb",
+        "ticker": "BARC.GBP",
+        "name": "Barclays PLC",
+        "isin": "",
+        "currency": "GBP",
+        "credit": "hy",
+        "rating": "BB+",
+        "rank": "Jr Subordinated",
+        "sector": "Financial",
+        "country": "GB",
+        "usdExposure": 5,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 6.38,
+          "duration": 2.04,
+          "coupon": 9.25
+        },
+        "note": "BB+ \u00b7 Jr Subordinated \u00b7 GB",
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 2
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "japan-tobacco-usd-a",
+        "ticker": "JAPA.USD",
+        "name": "Japan Tobacco",
+        "isin": "",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "A",
+        "rank": "Sr Unsecured",
+        "sector": "Consumer, Non-cyc",
+        "country": "JP",
+        "usdExposure": 100,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 5.22,
+          "duration": 6.84,
+          "coupon": 5.85
+        },
+        "note": "A \u00b7 Sr Unsecured \u00b7 JP",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 7
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "lg-energy-solution-usd-bbb",
+        "ticker": "LGEN.USD",
+        "name": "LG Energy Solution",
+        "isin": "",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "BBB",
+        "rank": "Sr Unsecured",
+        "sector": "Consumer, Cyclical",
+        "country": "KR",
+        "usdExposure": 100,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 5.8,
+          "duration": 7.53,
+          "coupon": 5.875
+        },
+        "note": "BBB \u00b7 Sr Unsecured \u00b7 KR",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 1.0,
+            "g7": 0.35
+          },
+          "duration": {
+            "target": 8
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "aust-nz-bank-usd-a",
+        "ticker": "AUST.USD",
+        "name": "Aust & NZ Bank",
+        "isin": "",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "A-",
+        "rank": "Subordinated",
+        "sector": "Financial",
+        "country": "AU",
+        "usdExposure": 100,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 5.63,
+          "duration": 6.97,
+          "coupon": 5.816
+        },
+        "note": "A- \u00b7 Subordinated \u00b7 AU",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 7
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "sumitomo-life-usd-a",
+        "ticker": "SUMI.USD",
+        "name": "Sumitomo Life",
+        "isin": "",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "A-",
+        "rank": "Subordinated",
+        "sector": "Financial",
+        "country": "JP",
+        "usdExposure": 100,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 5.81,
+          "duration": 6.11,
+          "coupon": 5.875
+        },
+        "note": "A- \u00b7 Subordinated \u00b7 JP",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 6
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
+          }
+        }
+      },
+      {
+        "id": "dai-ichi-life-usd-a",
+        "ticker": "DAII.USD",
+        "name": "Dai-ichi Life",
+        "isin": "",
+        "currency": "USD",
+        "credit": "ig",
+        "rating": "A-",
+        "rank": "Subordinated",
+        "sector": "Financial",
+        "country": "JP",
+        "usdExposure": 100,
+        "source": "Desk non-USD ideas",
+        "data": {
+          "ytw": 5.83,
+          "duration": 6.66,
+          "coupon": 6.2
+        },
+        "note": "A- \u00b7 Subordinated \u00b7 JP",
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "em": 0.35,
+            "g7": 1.0
+          },
+          "duration": {
+            "target": 7
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.55
           }
         }
       }
@@ -1213,56 +2247,1306 @@
         "country": 0.8,
         "capitalIncome": 0.7
       },
-      "topN": 4
+      "topN": 5
     }
   },
   "notes": {
-    "protected": {
-      "name": "Capital protected note",
-      "ticker": "CPN",
-      "detail": "100% principal at maturity, index linked"
-    },
-    "buffered": {
-      "name": "Buffered note",
-      "ticker": "BUF",
-      "detail": "90% protection, capped upside"
-    },
-    "autocall": {
-      "name": "Autocallable",
-      "ticker": "AC",
-      "detail": "Coupon with a 70% barrier"
-    },
-    "participation": {
-      "name": "Participation note",
-      "ticker": "PPN",
-      "detail": "Geared upside, no cap"
-    },
-    "reverse": {
-      "name": "Reverse convertible",
-      "ticker": "RC",
-      "detail": "High coupon, equity downside at the barrier"
+    "shelf": [
+      {
+        "id": "ewy-rty-sx5e-ic-2y",
+        "ticker": "IC",
+        "name": "Income certificate on EWY RTY SX5E",
+        "underlying": "EWY RTY SX5E",
+        "type": "Income certificate",
+        "tenor": "2Y",
+        "barrier": "50/50",
+        "coupon": "11.5%mem",
+        "riskBand": 2,
+        "region": "EM",
+        "note": "2Y \u00b7 50/50",
+        "fit": {
+          "riskProfile": {
+            "target": 1.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "em": 1.0,
+            "g7": 0.3
+          },
+          "usd": {
+            "target": 100
+          }
+        }
+      },
+      {
+        "id": "orcl-spcx-ac-1y",
+        "ticker": "AC",
+        "name": "Autocallable on ORCL SPCX",
+        "underlying": "ORCL SPCX",
+        "type": "Autocallable",
+        "tenor": "1Y",
+        "barrier": "50/50",
+        "coupon": "24%mem",
+        "riskBand": 3,
+        "region": "US",
+        "note": "1Y \u00b7 50/50",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "credit": {
+            "hy": 1.0,
+            "ig": 0.3
+          }
+        }
+      },
+      {
+        "id": "msft-nvda-ac-2y",
+        "ticker": "AC",
+        "name": "Autocallable on MSFT NVDA",
+        "underlying": "MSFT NVDA",
+        "type": "Autocallable",
+        "tenor": "2Y",
+        "barrier": "50/50",
+        "coupon": "9.50%mem",
+        "riskBand": 3,
+        "region": "US",
+        "note": "2Y \u00b7 50/50",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          }
+        }
+      },
+      {
+        "id": "bac-jpm-c-ac-2y",
+        "ticker": "AC",
+        "name": "Autocallable on BAC JPM C",
+        "underlying": "BAC JPM C",
+        "type": "Autocallable",
+        "tenor": "2Y",
+        "barrier": "60/60",
+        "coupon": "11%mem",
+        "riskBand": 2,
+        "region": "US",
+        "note": "2Y \u00b7 60/60",
+        "fit": {
+          "riskProfile": {
+            "target": 1.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "sector": {
+            "tech": 0.2,
+            "financials": 1.0,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          }
+        }
+      },
+      {
+        "id": "bac-ac-2y",
+        "ticker": "AC",
+        "name": "Autocallable on BAC",
+        "underlying": "BAC",
+        "type": "Autocallable",
+        "tenor": "2Y",
+        "barrier": "70/70",
+        "coupon": "7.50%mem",
+        "riskBand": 1,
+        "region": "US",
+        "note": "2Y \u00b7 70/70",
+        "fit": {
+          "riskProfile": {
+            "target": 0.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "sector": {
+            "tech": 0.2,
+            "financials": 1.0,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          }
+        }
+      },
+      {
+        "id": "googl-aapl-meta-ac-2y",
+        "ticker": "AC",
+        "name": "Autocallable on GOOGL AAPL META",
+        "underlying": "GOOGL AAPL META",
+        "type": "Autocallable",
+        "tenor": "2Y",
+        "barrier": "60/60",
+        "coupon": "15.50%mem",
+        "riskBand": 3,
+        "region": "US",
+        "note": "2Y \u00b7 60/60",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          }
+        }
+      },
+      {
+        "id": "ma-v-axp-ac-2y",
+        "ticker": "AC",
+        "name": "Autocallable on MA V AXP",
+        "underlying": "MA V AXP",
+        "type": "Autocallable",
+        "tenor": "2Y",
+        "barrier": "60/60",
+        "coupon": "9%mem",
+        "riskBand": 2,
+        "region": "US",
+        "note": "2Y \u00b7 60/60",
+        "fit": {
+          "riskProfile": {
+            "target": 1.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "sector": {
+            "tech": 0.2,
+            "financials": 1.0,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          }
+        }
+      },
+      {
+        "id": "amzn-googl-tsla-ac-2y",
+        "ticker": "AC",
+        "name": "Autocallable on AMZN GOOGL TSLA",
+        "underlying": "AMZN GOOGL TSLA",
+        "type": "Autocallable",
+        "tenor": "2Y",
+        "barrier": "60/60",
+        "coupon": "19%mem",
+        "riskBand": 3,
+        "region": "US",
+        "note": "2Y \u00b7 60/60",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          }
+        }
+      },
+      {
+        "id": "aapl-nvda-meta-ac-2y",
+        "ticker": "AC",
+        "name": "Autocallable on AAPL NVDA META",
+        "underlying": "AAPL NVDA META",
+        "type": "Autocallable",
+        "tenor": "2Y",
+        "barrier": "60/60",
+        "coupon": "17.50%mem",
+        "riskBand": 3,
+        "region": "US",
+        "note": "2Y \u00b7 60/60",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          }
+        }
+      },
+      {
+        "id": "spx-ctpl-3y",
+        "ticker": "CTPL",
+        "name": "Capital protected on SPX",
+        "underlying": "SPX",
+        "type": "Capital protected",
+        "tenor": "3y",
+        "barrier": "150%/ 70%",
+        "coupon": "9% Max",
+        "riskBand": 1,
+        "region": "US",
+        "note": "3y \u00b7 150%/ 70%",
+        "fit": {
+          "riskProfile": {
+            "target": 0.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          }
+        }
+      },
+      {
+        "id": "spy-ic-3y",
+        "ticker": "IC",
+        "name": "Income certificate on SPY",
+        "underlying": "SPY",
+        "type": "Income certificate",
+        "tenor": "3y",
+        "barrier": "65%/ 65%",
+        "coupon": "7.00%",
+        "riskBand": 1,
+        "region": "US",
+        "note": "3y \u00b7 65%/ 65%",
+        "fit": {
+          "riskProfile": {
+            "target": 0.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          }
+        }
+      },
+      {
+        "id": "tsla-amd-ac-3y",
+        "ticker": "AC",
+        "name": "Autocallable on TSLA AMD",
+        "underlying": "TSLA AMD",
+        "type": "Autocallable",
+        "tenor": "3y",
+        "barrier": "50/50",
+        "coupon": "19%mem",
+        "riskBand": 3,
+        "region": "US",
+        "note": "3y \u00b7 50/50",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "credit": {
+            "hy": 1.0,
+            "ig": 0.3
+          }
+        }
+      },
+      {
+        "id": "goog-aapl-amzn-msft-ac-3y",
+        "ticker": "AC",
+        "name": "Autocallable on GOOG AAPL AMZN MSFT",
+        "underlying": "GOOG AAPL AMZN MSFT",
+        "type": "Autocallable",
+        "tenor": "3Y",
+        "barrier": "50/50",
+        "coupon": "11.5%mem",
+        "riskBand": 2,
+        "region": "US",
+        "note": "3Y \u00b7 50/50",
+        "fit": {
+          "riskProfile": {
+            "target": 1.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          }
+        }
+      },
+      {
+        "id": "aapl-amzn-goog-msft-ac-3y",
+        "ticker": "AC",
+        "name": "Autocallable on AAPL AMZN GOOG MSFT",
+        "underlying": "AAPL AMZN GOOG MSFT",
+        "type": "Autocallable",
+        "tenor": "3Y",
+        "barrier": "60/60",
+        "coupon": "14.50%mem",
+        "riskBand": 3,
+        "region": "US",
+        "note": "3Y \u00b7 60/60",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "sector": {
+            "tech": 1.0,
+            "financials": 0.2,
+            "healthcare": 0.2,
+            "energy": 0.2,
+            "consumer": 0.2,
+            "industrials": 0.2
+          }
+        }
+      },
+      {
+        "id": "nvda-ac-3y",
+        "ticker": "AC",
+        "name": "Autocallable on NVDA",
+        "underlying": "NVDA",
+        "type": "Autocallable",
+        "tenor": "3Y",
+        "barrier": "70/70",
+        "coupon": "12%mem",
+        "riskBand": 3,
+        "region": "US",
+        "note": "3Y \u00b7 70/70",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "credit": {
+            "hy": 1.0,
+            "ig": 0.3
+          }
+        }
+      },
+      {
+        "id": "spx-ppn-3-5y",
+        "ticker": "PPN",
+        "name": "Principal protected note on SPX",
+        "underlying": "SPX",
+        "type": "Principal protected note",
+        "tenor": "3.5Y",
+        "barrier": "",
+        "coupon": "30%cap",
+        "riskBand": 1,
+        "region": "US",
+        "note": "3.5Y \u00b7 no barrier",
+        "fit": {
+          "riskProfile": {
+            "target": 0.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.3
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          }
+        }
+      },
+      {
+        "id": "spy-iwm-qqq-ac-3y",
+        "ticker": "AC",
+        "name": "Autocallable on SPY IWM QQQ",
+        "underlying": "SPY IWM QQQ",
+        "type": "Autocallable",
+        "tenor": "3Y",
+        "barrier": "60/60",
+        "coupon": "9.00%",
+        "riskBand": 1,
+        "region": "US",
+        "note": "3Y \u00b7 60/60",
+        "fit": {
+          "riskProfile": {
+            "target": 0.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          }
+        }
+      },
+      {
+        "id": "spy-iwm-qqq-ac-2y",
+        "ticker": "AC",
+        "name": "Autocallable on SPY IWM QQQ",
+        "underlying": "SPY IWM QQQ",
+        "type": "Autocallable",
+        "tenor": "2Y",
+        "barrier": "70/70",
+        "coupon": "10%mem",
+        "riskBand": 2,
+        "region": "US",
+        "note": "2Y \u00b7 70/70",
+        "fit": {
+          "riskProfile": {
+            "target": 1.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          }
+        }
+      },
+      {
+        "id": "spy-iwm-qqq-ac-3y-2",
+        "ticker": "AC",
+        "name": "Autocallable on SPY IWM QQQ",
+        "underlying": "SPY IWM QQQ",
+        "type": "Autocallable",
+        "tenor": "3Y",
+        "barrier": "50/50",
+        "coupon": "7.50%",
+        "riskBand": 1,
+        "region": "US",
+        "note": "3Y \u00b7 50/50",
+        "fit": {
+          "riskProfile": {
+            "target": 0.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          }
+        }
+      },
+      {
+        "id": "mexico-cln-7y",
+        "ticker": "CLN",
+        "name": "Credit-linked note on Mexico",
+        "underlying": "Mexico",
+        "type": "Credit-linked note",
+        "tenor": "7Y",
+        "barrier": "",
+        "coupon": "6.15%",
+        "riskBand": 2,
+        "region": "EM",
+        "note": "7Y \u00b7 no barrier",
+        "fit": {
+          "riskProfile": {
+            "target": 1.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "em": 1.0,
+            "g7": 0.3
+          },
+          "usd": {
+            "target": 100
+          }
+        }
+      },
+      {
+        "id": "xle-xlf-xlk-ac-2y",
+        "ticker": "AC",
+        "name": "Autocallable on XLE XLF XLK",
+        "underlying": "XLE XLF XLK",
+        "type": "Autocallable",
+        "tenor": "2Y",
+        "barrier": "65/65",
+        "coupon": "11.50%mem",
+        "riskBand": 2,
+        "region": "US",
+        "note": "2Y \u00b7 65/65",
+        "fit": {
+          "riskProfile": {
+            "target": 1.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          }
+        }
+      },
+      {
+        "id": "brazil-lifter-cln-cln-10y",
+        "ticker": "CLN",
+        "name": "Credit-linked note on Brazil Lifter CLN",
+        "underlying": "Brazil Lifter CLN",
+        "type": "Credit-linked note",
+        "tenor": "10Y",
+        "barrier": "",
+        "coupon": "11.85%",
+        "riskBand": 2,
+        "region": "EM",
+        "note": "10Y \u00b7 no barrier",
+        "fit": {
+          "riskProfile": {
+            "target": 1.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "em": 1.0,
+            "g7": 0.3
+          },
+          "usd": {
+            "target": 100
+          }
+        }
+      },
+      {
+        "id": "orcl-ac-2y",
+        "ticker": "AC",
+        "name": "Autocallable on ORCL",
+        "underlying": "ORCL",
+        "type": "Autocallable",
+        "tenor": "2Y",
+        "barrier": "50/50",
+        "coupon": "19%mem",
+        "riskBand": 3,
+        "region": "US",
+        "note": "2Y \u00b7 50/50",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "credit": {
+            "hy": 1.0,
+            "ig": 0.3
+          }
+        }
+      },
+      {
+        "id": "spy-iwm-ewz-ac-3y",
+        "ticker": "AC",
+        "name": "Autocallable on SPY IWM EWZ",
+        "underlying": "SPY IWM EWZ",
+        "type": "Autocallable",
+        "tenor": "3Y",
+        "barrier": "60/60",
+        "coupon": "11.50%mem",
+        "riskBand": 3,
+        "region": "EM",
+        "note": "3Y \u00b7 60/60",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "em": 1.0,
+            "g7": 0.3
+          },
+          "usd": {
+            "target": 100
+          }
+        }
+      },
+      {
+        "id": "spy-ac-3y",
+        "ticker": "AC",
+        "name": "Autocallable on SPY",
+        "underlying": "SPY",
+        "type": "Autocallable",
+        "tenor": "3Y",
+        "barrier": "70/70",
+        "coupon": "7.50%",
+        "riskBand": 1,
+        "region": "US",
+        "note": "3Y \u00b7 70/70",
+        "fit": {
+          "riskProfile": {
+            "target": 0.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.4
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          }
+        }
+      },
+      {
+        "id": "spcx-cat-3y",
+        "ticker": "CAT",
+        "name": "Capped participation on SPCX",
+        "underlying": "SPCX",
+        "type": "Capped participation",
+        "tenor": "3Y",
+        "barrier": "100/60",
+        "coupon": "30.00%",
+        "riskBand": 3,
+        "region": "US",
+        "note": "3Y \u00b7 100/60",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "horizon": {
+            "target": 3
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.3
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.3
+          },
+          "usd": {
+            "target": 100
+          },
+          "credit": {
+            "hy": 1.0,
+            "ig": 0.3
+          }
+        }
+      }
+    ],
+    "selection": {
+      "weights": {
+        "riskProfile": 1.3,
+        "horizon": 1.0,
+        "country": 0.9,
+        "capitalIncome": 0.8,
+        "sector": 0.8
+      },
+      "topN": 4
     }
   },
   "fx": {
-    "usd": {
-      "name": "USD cash and T-bills",
-      "ticker": "USD",
-      "detail": "Dollar liquidity sleeve"
-    },
-    "eur": {
-      "name": "EUR sleeve",
-      "ticker": "EUR",
-      "detail": "Euro-denominated liquidity"
-    },
-    "brl": {
-      "name": "BRL local sleeve",
-      "ticker": "BRL",
-      "detail": "Local currency, local rates"
-    },
-    "local": {
-      "name": "Local currency basket",
-      "ticker": "LCL",
-      "detail": "Home-currency exposure"
+    "shelf": [
+      {
+        "id": "long-xau-usd",
+        "ticker": "XAUUSD",
+        "name": "Long Xau/Usd",
+        "kind": "spot",
+        "note": "Gold against the dollar.",
+        "fit": {
+          "riskProfile": {
+            "target": 1.0
+          },
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.2
+          },
+          "horizon": {
+            "target": 30
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.2
+          },
+          "usd": {
+            "target": 0
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.2
+          }
+        }
+      },
+      {
+        "id": "long-xau-usd-call",
+        "ticker": "XAUUSD OPT",
+        "name": "Long Xau/Usd Call",
+        "kind": "option",
+        "note": "Gold against the dollar.",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "leverage": {
+            "yes": 1.0,
+            "no": 0.2
+          },
+          "horizon": {
+            "target": 8
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.2
+          },
+          "usd": {
+            "target": 0
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.2
+          }
+        }
+      },
+      {
+        "id": "long-usd-jpy",
+        "ticker": "USDJPY",
+        "name": "Long Usd/Jpy",
+        "kind": "spot",
+        "note": "Dollar against the yen.",
+        "fit": {
+          "riskProfile": {
+            "target": 1.0
+          },
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.2
+          },
+          "horizon": {
+            "target": 8
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.2
+          }
+        }
+      },
+      {
+        "id": "long-eur-usd",
+        "ticker": "EURUSD",
+        "name": "Long Eur/Usd",
+        "kind": "spot",
+        "note": "Euro against the dollar.",
+        "fit": {
+          "riskProfile": {
+            "target": 1.0
+          },
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.2
+          },
+          "horizon": {
+            "target": 8
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.2
+          },
+          "usd": {
+            "target": 0
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.2
+          }
+        }
+      },
+      {
+        "id": "long-eur-usd-call-spread",
+        "ticker": "EURUSD CS",
+        "name": "Long Eur/Usd Call Spread",
+        "kind": "option structure",
+        "note": "Euro against the dollar.",
+        "fit": {
+          "riskProfile": {
+            "target": 1.0
+          },
+          "leverage": {
+            "yes": 1.0,
+            "no": 0.2
+          },
+          "horizon": {
+            "target": 8
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.2
+          },
+          "usd": {
+            "target": 0
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.2
+          }
+        }
+      },
+      {
+        "id": "short-usd-brl-ndf",
+        "ticker": "USDBRL NDF",
+        "name": "Short Usd/Brl Ndf",
+        "kind": "forward",
+        "note": "Short the dollar against the real, non-deliverable.",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.2
+          },
+          "horizon": {
+            "target": 8
+          },
+          "country": {
+            "em": 1.0,
+            "g7": 0.2
+          },
+          "usd": {
+            "target": 0
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.2
+          }
+        }
+      },
+      {
+        "id": "long-usd-mxn-put",
+        "ticker": "USDMXN OPT",
+        "name": "Long Usd/Mxn Put",
+        "kind": "option",
+        "note": "Dollar against the Mexican peso.",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "leverage": {
+            "yes": 1.0,
+            "no": 0.2
+          },
+          "horizon": {
+            "target": 8
+          },
+          "country": {
+            "em": 1.0,
+            "g7": 0.2
+          },
+          "usd": {
+            "target": 0
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.2
+          }
+        }
+      },
+      {
+        "id": "long-usd-mxn",
+        "ticker": "USDMXN",
+        "name": "Long Usd/Mxn",
+        "kind": "spot",
+        "note": "Dollar against the Mexican peso.",
+        "fit": {
+          "riskProfile": {
+            "target": 2.0
+          },
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.2
+          },
+          "horizon": {
+            "target": 8
+          },
+          "country": {
+            "em": 1.0,
+            "g7": 0.2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.2
+          }
+        }
+      }
+    ],
+    "selection": {
+      "weights": {
+        "usd": 1.4,
+        "riskProfile": 1.1,
+        "country": 1.0,
+        "leverage": 0.8,
+        "horizon": 0.6
+      },
+      "topN": 3
+    }
+  },
+  "liquidity": {
+    "shelf": [
+      {
+        "id": "tbill3m",
+        "ticker": "TBILL3M",
+        "name": "3-month T-Bill",
+        "tenorMonths": 3,
+        "ratePa": 3.71,
+        "note": "3 month \u00b7 3.71% p.a.",
+        "fit": {
+          "horizon": {
+            "target": 1
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.5
+          },
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.2
+          }
+        }
+      },
+      {
+        "id": "cd6m",
+        "ticker": "CD6M",
+        "name": "6-month CD",
+        "tenorMonths": 6,
+        "ratePa": 4.24,
+        "note": "6 month \u00b7 4.24% p.a.",
+        "fit": {
+          "horizon": {
+            "target": 1
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.5
+          },
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.2
+          }
+        }
+      },
+      {
+        "id": "cd12m",
+        "ticker": "CD12M",
+        "name": "12-month CD",
+        "tenorMonths": 12,
+        "ratePa": 4.68,
+        "note": "12 month \u00b7 4.68% p.a.",
+        "fit": {
+          "horizon": {
+            "target": 1
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.5
+          },
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.2
+          }
+        }
+      },
+      {
+        "id": "cd24m",
+        "ticker": "CD24M",
+        "name": "24-month CD",
+        "tenorMonths": 24,
+        "ratePa": 4.84,
+        "note": "24 month \u00b7 4.84% p.a.",
+        "fit": {
+          "horizon": {
+            "target": 2
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.5
+          },
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.2
+          }
+        }
+      }
+    ],
+    "selection": {
+      "weights": {
+        "horizon": 1.2,
+        "capitalIncome": 0.8
+      },
+      "topN": 3
     }
   }
 }

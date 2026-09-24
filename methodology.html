@@ -49,70 +49,55 @@
     </div>
   </section>
 
-  <!-- 2 · SHELF -->
+  <!-- 2 · THE UNIVERSE -->
   <section class="m-sec">
-    <h2><span class="m-n">02</span>The equity shelf</h2>
-    <p class="m-lead" id="shelfLead"></p>
+    <h2><span class="m-n">02</span>The product universe</h2>
+    <p class="m-lead" id="uniLead"></p>
+    <div class="m-shelfnav" id="shelfNav"></div>
     <div class="m-scroll">
       <table class="m-table" id="shelfTable"></table>
     </div>
+    <div class="m-note" id="shelfNote"></div>
   </section>
 
   <!-- 3 · SCORING -->
   <section class="m-sec">
-    <h2><span class="m-n">03</span>How a product is scored</h2>
+    <h2><span class="m-n">03</span>How an instrument is scored</h2>
     <p class="m-lead">
       For each question, the room&rsquo;s share of every answer is multiplied by how well
-      the product fits that answer. Those are averaged, then weighted by how much the
-      question counts. One number per product, fully decomposable.
+      the instrument fits that answer. Those are averaged, then weighted by how much the
+      question counts for that sleeve. One number per instrument, fully decomposable.
     </p>
     <div class="m-eq">
-      score(product) = [ &Sigma;<sub>question</sub> w<sub>q</sub> &middot;
-      ( &Sigma;<sub>answer</sub> share<sub>a</sub> &middot; fit<sub>product,a</sub> ) ]
+      score = [ &Sigma;<sub>question</sub> w<sub>q</sub> &middot;
+      ( &Sigma;<sub>answer</sub> share<sub>a</sub> &middot; fit<sub>a</sub> ) ]
       &nbsp;/&nbsp; &Sigma;<sub>question</sub> w<sub>q</sub>
     </div>
-    <div class="m-weights" id="weightBars"></div>
-    <div class="m-note" id="selNote"></div>
+    <p class="m-lead">
+      A fit is one of three shapes. A map, for a question answered by picking
+      (<code>{ig: 1.0, hy: 0.3}</code>). An array, for an ordered question indexed by
+      position. Or a <b>target</b>, for a question answered on a slider: the instrument
+      sits at a point on the same range the guests answer on, and is scored by distance.
+      The dollar share and duration both work that way.
+    </p>
+    <div class="m-wgrid" id="allWeights"></div>
   </section>
 
   <!-- 4 · MATRIX -->
   <section class="m-sec">
     <h2><span class="m-n">04</span>The fit matrix</h2>
     <p class="m-lead">
-      Every product against every answer. Risk and market-view fits are derived from the
-      measured beta and volatility in the table above rather than asserted, so the scores
-      track the data beside them. The dollar column is a target rather than a fit: the
-      product sits at a point on the same 0 to 100 range the guests answer on, and is
-      scored by how far the room landed from it.
+      Every instrument against every answer, for the sleeve selected above. Targets are
+      shown as their value on the question&rsquo;s own scale; fits are shown 0 to 1.
     </p>
     <div class="m-scroll">
       <table class="m-table m-matrix" id="matrixTable"></table>
     </div>
   </section>
 
-  <!-- 5 · FIXED INCOME -->
-  <section class="m-sec">
-    <h2><span class="m-n">05</span>The fixed income shelf</h2>
-    <p class="m-lead" id="fiLead"></p>
-    <div class="m-scroll">
-      <table class="m-table" id="fiTable"></table>
-    </div>
-    <div class="m-weights" id="fiWeights" style="margin-top:22px"></div>
-  </section>
-
-  <!-- 6 · NOTES AND FX -->
-  <section class="m-sec">
-    <h2><span class="m-n">06</span>Notes and FX</h2>
-    <p class="m-lead">
-      These two sleeves are picked by rule rather than by score: each has few enough
-      lines that a rule is clearer than a matrix.
-    </p>
-    <div class="m-shelves" id="otherShelves"></div>
-  </section>
-
   <!-- 7 · SANDBOX -->
   <section class="m-sec">
-    <h2><span class="m-n">07</span>Check the engine</h2>
+    <h2><span class="m-n">05</span>Check the engine</h2>
     <p class="m-lead">
       Set any combination of answers and watch the whole book rebuild. This calls the
       same <code>ENGINE.roomPortfolio()</code> the guest and presenter screens use, so
@@ -135,15 +120,8 @@
       <div class="m-book" id="sbBook"></div>
     </div>
 
-    <h3 class="m-sub3">Equity scores behind that book</h3>
-    <div class="m-scroll">
-      <table class="m-table" id="liveTable"></table>
-    </div>
+    <div class="m-scoretables" id="scoreTables"></div>
 
-    <h3 class="m-sub3" style="margin-top:26px">Fixed income scores</h3>
-    <div class="m-scroll">
-      <table class="m-table" id="fiLiveTable"></table>
-    </div>
     <p class="m-lead" id="liveLead" style="margin-top:14px"></p>
   </section>
 

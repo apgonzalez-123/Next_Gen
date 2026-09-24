@@ -64,17 +64,20 @@ window.BASE = (function () {
   /* The product shelf for the room simulation. Optional: without it the
      admin board shows the allocation but not the instruments inside it. */
   window.PRODUCTS = null;
-  var productsReady = fetch("data/products.json?v=202609241752", { cache: "no-store" })
+  var productsReady = fetch("data/products.json?v=202609241834", { cache: "no-store" })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (d) {
-      if (d && d.equities && d.fixedIncome && d.notes && d.fx) window.PRODUCTS = d;
-      else console.warn("[NextGen] data/products.json missing or malformed, room simulation disabled.");
+      var ok = d && ["equities", "fixedIncome", "notes", "fx"].every(function (b) {
+        return d[b] && Array.isArray(d[b].shelf) && d[b].shelf.length && d[b].selection;
+      });
+      if (ok) window.PRODUCTS = d;
+      else console.warn("[NextGen] data/products.json missing a scored shelf, room simulation disabled.");
     })
     .catch(function () {
       console.warn("[NextGen] could not load data/products.json, room simulation disabled.");
     });
 
-  var ready = fetch("data/portfolios.json?v=202609241752", { cache: "no-store" })
+  var ready = fetch("data/portfolios.json?v=202609241834", { cache: "no-store" })
     .then(function (r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.json();

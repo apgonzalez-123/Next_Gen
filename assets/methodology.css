@@ -193,3 +193,34 @@ body.meth { min-height: 100vh; }
 .m-bk-line b { color: var(--text); font-variant-numeric: tabular-nums; flex: 0 0 auto; font-weight: 500; }
 
 .m-sub3 { font-size: 13px; font-weight: 600; color: var(--text-2); margin: 0 0 12px; }
+
+/* --- shelf tabs --- */
+.m-shelfnav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.m-tab {
+  display: flex; align-items: center; gap: 8px;
+  background: transparent; border: 1px solid var(--line); color: var(--text-2);
+  border-radius: var(--r-sm); padding: 8px 14px; font-size: 12.5px; cursor: pointer;
+  transition: border-color .18s, color .18s, background .18s;
+}
+.m-tab s { width: 8px; height: 8px; border-radius: var(--r-xs); text-decoration: none; }
+.m-tab em { font-style: normal; color: var(--muted); font-variant-numeric: tabular-nums; }
+.m-tab:hover { border-color: var(--accent); color: var(--text); }
+.m-tab.on { background: var(--surface-2); border-color: var(--accent); color: var(--text); }
+.m-tab.on em { color: var(--text-2); }
+
+/* --- weights, one column per sleeve --- */
+.m-wgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px 34px; }
+@media (max-width: 860px) { .m-wgrid { grid-template-columns: 1fr; } }
+.m-wcol h4 {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--text-2); margin: 0 0 12px;
+}
+.m-wcol h4 s { width: 8px; height: 8px; border-radius: var(--r-xs); text-decoration: none; }
+.m-wrow2 { display: grid; grid-template-columns: 130px 1fr 34px; gap: 12px; align-items: center; margin-bottom: 8px; }
+.m-wrow2 span:first-child { font-size: 12.5px; color: var(--text-2); }
+.m-wrow2 b { font-size: 12.5px; color: var(--accent-bright); font-variant-numeric: tabular-nums; text-align: right; }
+
+.m-scoretables { margin-top: 8px; }
+.m-scoretables .m-sub3 { margin-top: 24px; }
+.m-scoretables .m-sub3:first-child { margin-top: 0; }

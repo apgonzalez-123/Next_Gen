@@ -7,3 +7,8 @@ _probe*.html
 _seed*.html
 _admin_probe.html
 _qr_probe.html
+
+# Desk source files stay out of the repo; tools/build_products.py reads them
+# from ~/Downloads and writes only instrument-level facts into data/.
+*.xlsx
+*.pdf

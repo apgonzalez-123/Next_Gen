@@ -1312,6 +1312,8 @@ window.ENGINE = (function () {
   function roomPortfolio(agg, products) {
     if (!products) return null;
     var alloc = roomAllocation(agg);
+    /* Every sleeve is now scored off its own shelf with the same machinery,
+       so there is one selection path to validate rather than four. */
 
     function share(id, value) {
       var a = agg.axes[id];
@@ -1376,35 +1378,32 @@ window.ENGINE = (function () {
       lines: fiLines, scored: fi.all
     });
 
-    /* --- notes: protection at the cautious end, gearing at the other --- */
-    var risk = avg("riskProfile", 1) / 2;          /* 0..1 */
-    var levered = share("leverage", "yes");
-    var noteParts = [
-      { item: products.notes.protected,     w: Math.max(0, 1 - risk * 1.6) },
-      { item: products.notes.buffered,      w: 0.6 },
-      { item: products.notes.autocall,      w: 0.4 + risk * 0.6 },
-      { item: products.notes.participation, w: levered * 0.9 },
-      { item: products.notes.reverse,       w: Math.max(0, risk - 0.4) * 1.2 }
-    ];
+    /* --- structured notes: scored off the desk's own shelf ----------- */
+    var nt = scoreShelf(agg, products.notes);
+    var ntLines = spread(alloc.notes, nt.picked.map(function (p) {
+      return { item: p.item, w: p.score };
+    }));
+    ntLines.forEach(function (l) {
+      var m = nt.picked.filter(function (p) { return p.item === l.item; })[0];
+      if (m) { l.score = m.score; l.per = m.per; }
+    });
     buckets.push({
       key: "notes", label: "Structured notes", weight: alloc.notes,
-      lines: spread(alloc.notes, noteParts.filter(function (p) { return p.item && p.w > 0.05; }))
+      lines: ntLines, scored: nt.all
     });
 
-    /* --- fx: the dollar share against everything else ------------------ */
-    var usd = avg("usd", 50) / 100;
-    var fxParts = [
-      { item: products.fx.usd,   w: Math.max(0.05, usd) },
-      { item: products.fx.local, w: Math.max(0.05, 1 - usd) }
-    ];
-    /* An EM-leaning room carries real local-currency risk, so the sleeve
-       is split rather than sitting entirely in dollars. */
-    if (topKeys("country")[0] === "em") {
-      fxParts.push({ item: products.fx.brl, w: 0.35 });
-    }
+    /* --- fx: the desk scores these itself, translated in the shelf --- */
+    var fxr = scoreShelf(agg, products.fx);
+    var fxLines = spread(alloc.fx, fxr.picked.map(function (p) {
+      return { item: p.item, w: p.score };
+    }));
+    fxLines.forEach(function (l) {
+      var m = fxr.picked.filter(function (p) { return p.item === l.item; })[0];
+      if (m) { l.score = m.score; l.per = m.per; }
+    });
     buckets.push({
       key: "fx", label: "FX", weight: alloc.fx,
-      lines: spread(alloc.fx, fxParts.filter(function (p) { return p.item; }))
+      lines: fxLines, scored: fxr.all
     });
 
     return { alloc: alloc, buckets: buckets };
