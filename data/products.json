@@ -1,6 +1,6 @@
 {
   "$schema": "Product shelf for the room simulation. Replace with the real instruments; the engine only needs the keys to stay the same.",
-  "version": 2,
+  "version": 3,
   "equities": {
     "$note": "Live TradingView data, captured once and stamped below. It is a snapshot, not a feed: this is a static site and cannot refresh it.",
     "asOf": "2026-09-24",
@@ -48,8 +48,12 @@
           "capitalIncome": {
             "capital": 0.9,
             "income": 0.6
+          },
+          "usd": {
+            "target": 100
           }
-        }
+        },
+        "usdExposure": 100
       },
       {
         "id": "efa",
@@ -93,8 +97,12 @@
           "capitalIncome": {
             "capital": 0.9,
             "income": 0.6
+          },
+          "usd": {
+            "target": 15
           }
-        }
+        },
+        "usdExposure": 15
       },
       {
         "id": "eem",
@@ -138,8 +146,12 @@
           "capitalIncome": {
             "capital": 0.9,
             "income": 0.6
+          },
+          "usd": {
+            "target": 20
           }
-        }
+        },
+        "usdExposure": 20
       },
       {
         "id": "qqq",
@@ -183,8 +195,12 @@
           "capitalIncome": {
             "capital": 1.0,
             "income": 0.15
+          },
+          "usd": {
+            "target": 100
           }
-        }
+        },
+        "usdExposure": 100
       },
       {
         "id": "xlk",
@@ -228,8 +244,12 @@
           "capitalIncome": {
             "capital": 1.0,
             "income": 0.15
+          },
+          "usd": {
+            "target": 100
           }
-        }
+        },
+        "usdExposure": 100
       },
       {
         "id": "xlf",
@@ -273,8 +293,12 @@
           "capitalIncome": {
             "capital": 0.9,
             "income": 0.6
+          },
+          "usd": {
+            "target": 100
           }
-        }
+        },
+        "usdExposure": 100
       },
       {
         "id": "xlv",
@@ -318,8 +342,12 @@
           "capitalIncome": {
             "capital": 0.6,
             "income": 0.85
+          },
+          "usd": {
+            "target": 100
           }
-        }
+        },
+        "usdExposure": 100
       },
       {
         "id": "xle",
@@ -363,8 +391,12 @@
           "capitalIncome": {
             "capital": 0.9,
             "income": 0.6
+          },
+          "usd": {
+            "target": 100
           }
-        }
+        },
+        "usdExposure": 100
       },
       {
         "id": "xlp",
@@ -408,8 +440,12 @@
           "capitalIncome": {
             "capital": 0.6,
             "income": 0.85
+          },
+          "usd": {
+            "target": 100
           }
-        }
+        },
+        "usdExposure": 100
       },
       {
         "id": "xly",
@@ -453,8 +489,12 @@
           "capitalIncome": {
             "capital": 0.9,
             "income": 0.6
+          },
+          "usd": {
+            "target": 100
           }
-        }
+        },
+        "usdExposure": 100
       },
       {
         "id": "xli",
@@ -498,8 +538,12 @@
           "capitalIncome": {
             "capital": 0.9,
             "income": 0.6
+          },
+          "usd": {
+            "target": 100
           }
-        }
+        },
+        "usdExposure": 100
       },
       {
         "id": "schd",
@@ -543,8 +587,12 @@
           "capitalIncome": {
             "capital": 0.4,
             "income": 1.0
+          },
+          "usd": {
+            "target": 100
           }
-        }
+        },
+        "usdExposure": 100
       },
       {
         "id": "vym",
@@ -588,8 +636,12 @@
           "capitalIncome": {
             "capital": 0.4,
             "income": 1.0
+          },
+          "usd": {
+            "target": 100
           }
-        }
+        },
+        "usdExposure": 100
       },
       {
         "id": "ewz",
@@ -633,8 +685,12 @@
           "capitalIncome": {
             "capital": 0.9,
             "income": 0.6
+          },
+          "usd": {
+            "target": 5
           }
-        }
+        },
+        "usdExposure": 5
       },
       {
         "id": "fxi",
@@ -678,6 +734,157 @@
           "capitalIncome": {
             "capital": 0.9,
             "income": 0.6
+          },
+          "usd": {
+            "target": 10
+          }
+        },
+        "usdExposure": 10
+      },
+      {
+        "id": "vgk",
+        "ticker": "VGK",
+        "exchange": "AMEX",
+        "name": "Vanguard FTSE Europe",
+        "sector": "core",
+        "region": "g7",
+        "style": "core",
+        "note": "European equity in euros. The unhedged way to cut dollar exposure without leaving developed markets.",
+        "usdExposure": 5,
+        "data": {
+          "price": 88.05,
+          "beta1y": 0.864,
+          "perf1y": 11.54,
+          "volatility": 0.77,
+          "expenseRatio": 0.06
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.47,
+            0.98,
+            0.65
+          ],
+          "marketView": [
+            0.6,
+            0.95,
+            0.9
+          ],
+          "capitalIncome": {
+            "capital": 0.9,
+            "income": 0.6
+          },
+          "usd": {
+            "target": 5
+          }
+        }
+      },
+      {
+        "id": "ewj",
+        "ticker": "EWJ",
+        "exchange": "AMEX",
+        "name": "iShares MSCI Japan",
+        "sector": "core",
+        "region": "g7",
+        "style": "core",
+        "note": "Japan in yen. Beta above one with a currency that rarely moves with the dollar.",
+        "usdExposure": 5,
+        "data": {
+          "price": 95.73,
+          "beta1y": 1.055,
+          "perf1y": 17.99,
+          "volatility": 0.99,
+          "expenseRatio": 0.49
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": [
+            0.34,
+            0.86,
+            0.74
+          ],
+          "marketView": [
+            0.6,
+            0.95,
+            0.9
+          ],
+          "capitalIncome": {
+            "capital": 0.9,
+            "income": 0.6
+          },
+          "usd": {
+            "target": 5
+          }
+        }
+      },
+      {
+        "id": "ilf",
+        "ticker": "ILF",
+        "exchange": "AMEX",
+        "name": "iShares Latin America 40",
+        "sector": "core",
+        "region": "em",
+        "style": "cyclical",
+        "note": "LatAm large-cap in local currencies. Regional EM exposure with no dollar leg.",
+        "usdExposure": 5,
+        "data": {
+          "price": 34.7,
+          "beta1y": 0.652,
+          "perf1y": 20.21,
+          "volatility": 1.59,
+          "expenseRatio": 0.47
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 0.2,
+            "em": 1.0
+          },
+          "riskProfile": [
+            0.39,
+            0.91,
+            0.7
+          ],
+          "marketView": [
+            0.35,
+            0.75,
+            1.0
+          ],
+          "capitalIncome": {
+            "capital": 0.9,
+            "income": 0.6
+          },
+          "usd": {
+            "target": 5
           }
         }
       }
@@ -689,37 +896,324 @@
         "sector": 1.0,
         "country": 1.0,
         "capitalIncome": 0.9,
-        "marketView": 0.7
+        "marketView": 0.7,
+        "usd": 1.0
       },
       "topN": 6,
       "minWeightPct": 1.0
     }
   },
   "fixedIncome": {
-    "govt": {
-      "name": "Sovereign ladder",
-      "ticker": "GOVT",
-      "detail": "Government paper, matched to duration"
-    },
-    "ig": {
-      "name": "Investment grade corporates",
-      "ticker": "IGCO",
-      "detail": "BBB+ average, senior unsecured"
-    },
-    "hy": {
-      "name": "High yield corporates",
-      "ticker": "HYCO",
-      "detail": "BB-B, senior unsecured"
-    },
-    "em": {
-      "name": "Emerging market debt",
-      "ticker": "EMD",
-      "detail": "Hard currency sovereign and quasi"
-    },
-    "sub": {
-      "name": "Subordinated financials",
-      "ticker": "TIER2",
-      "detail": "Tier 2 and senior non-preferred"
+    "$note": "Scored the same way as equities so the dollar answer reaches this sleeve too.",
+    "asOf": "2026-09-24",
+    "source": "TradingView",
+    "shelf": [
+      {
+        "id": "agg",
+        "ticker": "AGG",
+        "exchange": "AMEX",
+        "name": "iShares Core US Aggregate Bond",
+        "region": "g7",
+        "usdExposure": 100,
+        "credit": "ig",
+        "note": "The dollar bond default. Lowest fee here.",
+        "data": {
+          "price": 95.16,
+          "beta1y": 0.107,
+          "perf1y": -5.08,
+          "volatility": 0.29,
+          "expenseRatio": 0.03
+        },
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.4
+          },
+          "duration": {
+            "target": 6
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.9
+          }
+        }
+      },
+      {
+        "id": "ief",
+        "ticker": "IEF",
+        "exchange": "NASDAQ",
+        "name": "iShares 7-10 Year Treasury",
+        "region": "g7",
+        "usdExposure": 100,
+        "credit": "ig",
+        "note": "Pure duration, no credit. The line that moves when rates move.",
+        "data": {
+          "price": 89.97,
+          "beta1y": 0.104,
+          "perf1y": -6.89,
+          "volatility": 0.35,
+          "expenseRatio": 0.15
+        },
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.4
+          },
+          "duration": {
+            "target": 8
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.9
+          }
+        }
+      },
+      {
+        "id": "lqd",
+        "ticker": "LQD",
+        "exchange": "AMEX",
+        "name": "iShares iBoxx Investment Grade Corporate",
+        "region": "g7",
+        "usdExposure": 100,
+        "credit": "ig",
+        "note": "Dollar IG credit. Longer duration than the aggregate.",
+        "data": {
+          "price": 103.5,
+          "beta1y": 0.183,
+          "perf1y": -7.17,
+          "volatility": 0.4,
+          "expenseRatio": 0.14
+        },
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.4
+          },
+          "duration": {
+            "target": 8
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.9
+          }
+        }
+      },
+      {
+        "id": "hyg",
+        "ticker": "HYG",
+        "exchange": "AMEX",
+        "name": "iShares iBoxx High Yield Corporate",
+        "region": "g7",
+        "usdExposure": 100,
+        "credit": "hy",
+        "note": "Dollar high yield. Short duration, credit risk carries the return.",
+        "data": {
+          "price": 77.92,
+          "beta1y": 0.212,
+          "perf1y": -4.1,
+          "volatility": 0.25,
+          "expenseRatio": 0.49
+        },
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.4
+          },
+          "duration": {
+            "target": 4
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 0.7,
+            "income": 1.0
+          }
+        }
+      },
+      {
+        "id": "emb",
+        "ticker": "EMB",
+        "exchange": "NASDAQ",
+        "name": "iShares JP Morgan USD Emerging Markets Bond",
+        "region": "em",
+        "usdExposure": 100,
+        "credit": "hy",
+        "note": "EM sovereign issued in dollars. EM credit risk with no currency leg.",
+        "data": {
+          "price": 92.46,
+          "beta1y": 0.297,
+          "perf1y": -3.42,
+          "volatility": 0.35,
+          "expenseRatio": 0.39
+        },
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "g7": 0.3,
+            "em": 1.0
+          },
+          "duration": {
+            "target": 7
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 0.7,
+            "income": 1.0
+          }
+        }
+      },
+      {
+        "id": "emlc",
+        "ticker": "EMLC",
+        "exchange": "AMEX",
+        "name": "VanEck JP Morgan EM Local Currency Bond",
+        "region": "em",
+        "usdExposure": 5,
+        "credit": "hy",
+        "note": "EM sovereign in local currency. The currency is most of the risk and most of the return.",
+        "data": {
+          "price": 24.94,
+          "beta1y": 0.351,
+          "perf1y": -2.33,
+          "volatility": 0.35,
+          "expenseRatio": 0.3
+        },
+        "fit": {
+          "credit": {
+            "ig": 0.25,
+            "hy": 1.0
+          },
+          "country": {
+            "g7": 0.3,
+            "em": 1.0
+          },
+          "duration": {
+            "target": 5
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "capital": 0.7,
+            "income": 1.0
+          }
+        }
+      },
+      {
+        "id": "bndx",
+        "ticker": "BNDX",
+        "exchange": "NASDAQ",
+        "name": "Vanguard Total International Bond",
+        "region": "g7",
+        "usdExposure": 95,
+        "credit": "ig",
+        "note": "International bonds hedged back to dollars. Foreign issuers, domestic currency.",
+        "data": {
+          "price": 46.94,
+          "beta1y": 0.132,
+          "perf1y": -4.92,
+          "volatility": 0.23,
+          "expenseRatio": 0.07
+        },
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.4
+          },
+          "duration": {
+            "target": 7
+          },
+          "usd": {
+            "target": 95
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.9
+          }
+        }
+      },
+      {
+        "id": "igov",
+        "ticker": "IGOV",
+        "exchange": "NASDAQ",
+        "name": "iShares International Treasury Bond",
+        "region": "g7",
+        "usdExposure": 5,
+        "credit": "ig",
+        "note": "Developed sovereigns unhedged. The same issuers as BNDX with the currency left in.",
+        "data": {
+          "price": 40.05,
+          "beta1y": 0.338,
+          "perf1y": -6.09,
+          "volatility": 0.75,
+          "expenseRatio": 0.35
+        },
+        "fit": {
+          "credit": {
+            "ig": 1.0,
+            "hy": 0.3
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.4
+          },
+          "duration": {
+            "target": 8
+          },
+          "usd": {
+            "target": 5
+          },
+          "capitalIncome": {
+            "capital": 0.8,
+            "income": 0.9
+          }
+        }
+      }
+    ],
+    "selection": {
+      "weights": {
+        "credit": 1.2,
+        "duration": 1.1,
+        "usd": 1.0,
+        "country": 0.8,
+        "capitalIncome": 0.7
+      },
+      "topN": 4
     }
   },
   "notes": {

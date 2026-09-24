@@ -1234,8 +1234,8 @@ window.ENGINE = (function () {
    * much that question counts. One number per product, fully decomposable:
    * the validation page renders exactly this breakdown.
    */
-  function scoreEquityShelf(agg, products) {
-    var eqc = products && products.equities;
+  function scoreShelf(agg, config) {
+    var eqc = config;
     if (!eqc || !eqc.shelf) return { all: [], picked: [] };
 
     var sel = eqc.selection || {};
@@ -1252,11 +1252,27 @@ window.ENGINE = (function () {
       return out;
     }
 
-    /* A scale axis is reported as an index, so its fit array is indexed the
-       same way; a choice or multi axis is reported by key. */
+    /* Three shapes of fit:
+       - an array, for a scale axis reported as an index
+       - a map, for a choice or multi axis reported by key
+       - { target }, for a continuous axis such as the dollar share or
+         duration, where the product sits at a point on the same range and
+         is scored by distance from where the room landed. */
     function axisScore(axisId, fit) {
+      if (!fit) return null;
+
+      if (fit.target !== undefined) {
+        var a = agg.axes[axisId];
+        if (!a || !a.n) return null;
+        var axis = window.AXIS_BY_ID[axisId];
+        if (!axis) return null;
+        var roomAvg = a.sum / a.n;
+        var reach = (axis.max - axis.min) || 1;
+        return Math.max(0, 1 - Math.abs(roomAvg - fit.target) / reach);
+      }
+
       var sh = shares(axisId);
-      if (!sh || !fit) return null;
+      if (!sh) return null;
       var total = 0, mass = 0;
       Object.keys(sh).forEach(function (k) {
         var f = Array.isArray(fit) ? fit[Number(k)] : fit[k];
@@ -1286,6 +1302,11 @@ window.ENGINE = (function () {
     });
 
     return { all: all, picked: all.slice(0, topN) };
+  }
+
+  /* Kept for callers that only want equities. */
+  function scoreEquityShelf(agg, products) {
+    return scoreShelf(agg, products && products.equities);
   }
 
   function roomPortfolio(agg, products) {
@@ -1341,27 +1362,19 @@ window.ENGINE = (function () {
       lines: eqLines, scored: eq.all
     });
 
-    /* --- fixed income: credit quality split, duration on the sovereign - */
-    var hy = share("credit", "hy");
-    var ig = share("credit", "ig");
-    var dur = avg("duration", 5);
-    var fiParts = [
-      { item: products.fixedIncome.govt, w: 0.30 },
-      { item: products.fixedIncome.ig,   w: 0.55 * (ig || 0.5) + 0.15 },
-      { item: products.fixedIncome.hy,   w: 0.55 * hy },
-      { item: products.fixedIncome.sub,  w: 0.20 * hy }
-    ];
-    if (topKeys("country")[0] === "em") {
-      fiParts.push({ item: products.fixedIncome.em, w: 0.25 });
-    }
-    var fiLines = spread(alloc.fixedIncome, fiParts.filter(function (p) { return p.item && p.w > 0; }));
-    /* The sovereign line carries the room's duration, so say what it is. */
+    /* --- fixed income: scored off its own shelf, same machinery -------- */
+    var fi = scoreShelf(agg, products.fixedIncome);
+    var fiLines = spread(alloc.fixedIncome, fi.picked.map(function (p) {
+      return { item: p.item, w: p.score };
+    }));
     fiLines.forEach(function (l) {
-      if (l.item === products.fixedIncome.govt) {
-        l.note = Math.round(dur) + "y duration";
-      }
+      var m = fi.picked.filter(function (p) { return p.item === l.item; })[0];
+      if (m) { l.score = m.score; l.per = m.per; }
     });
-    buckets.push({ key: "fixedIncome", label: "Fixed income", weight: alloc.fixedIncome, lines: fiLines });
+    buckets.push({
+      key: "fixedIncome", label: "Fixed income", weight: alloc.fixedIncome,
+      lines: fiLines, scored: fi.all
+    });
 
     /* --- notes: protection at the cautious end, gearing at the other --- */
     var risk = avg("riskProfile", 1) / 2;          /* 0..1 */
@@ -1403,6 +1416,7 @@ window.ENGINE = (function () {
     roomAllocation: roomAllocation,
     roomPortfolio: roomPortfolio,
     scoreEquityShelf: scoreEquityShelf,
+    scoreShelf: scoreShelf,
     aggregate: aggregate,
     aggProfile: aggProfile,
     aggDistribution: aggDistribution,

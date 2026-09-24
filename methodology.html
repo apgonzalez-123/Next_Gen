@@ -81,27 +81,38 @@
     <p class="m-lead">
       Every product against every answer. Risk and market-view fits are derived from the
       measured beta and volatility in the table above rather than asserted, so the scores
-      track the data beside them.
+      track the data beside them. The dollar column is a target rather than a fit: the
+      product sits at a point on the same 0 to 100 range the guests answer on, and is
+      scored by how far the room landed from it.
     </p>
     <div class="m-scroll">
       <table class="m-table m-matrix" id="matrixTable"></table>
     </div>
   </section>
 
-  <!-- 5 · THE REST OF THE SHELF -->
+  <!-- 5 · FIXED INCOME -->
   <section class="m-sec">
-    <h2><span class="m-n">05</span>The other three sleeves</h2>
+    <h2><span class="m-n">05</span>The fixed income shelf</h2>
+    <p class="m-lead" id="fiLead"></p>
+    <div class="m-scroll">
+      <table class="m-table" id="fiTable"></table>
+    </div>
+    <div class="m-weights" id="fiWeights" style="margin-top:22px"></div>
+  </section>
+
+  <!-- 6 · NOTES AND FX -->
+  <section class="m-sec">
+    <h2><span class="m-n">06</span>Notes and FX</h2>
     <p class="m-lead">
-      Fixed income, structured notes and FX are picked by rule rather than by score,
-      because each sleeve has few enough lines that a rule is clearer than a matrix.
-      Every instrument that can appear in a book is listed here.
+      These two sleeves are picked by rule rather than by score: each has few enough
+      lines that a rule is clearer than a matrix.
     </p>
     <div class="m-shelves" id="otherShelves"></div>
   </section>
 
-  <!-- 6 · SANDBOX -->
+  <!-- 7 · SANDBOX -->
   <section class="m-sec">
-    <h2><span class="m-n">06</span>Check the engine</h2>
+    <h2><span class="m-n">07</span>Check the engine</h2>
     <p class="m-lead">
       Set any combination of answers and watch the whole book rebuild. This calls the
       same <code>ENGINE.roomPortfolio()</code> the guest and presenter screens use, so
@@ -127,6 +138,11 @@
     <h3 class="m-sub3">Equity scores behind that book</h3>
     <div class="m-scroll">
       <table class="m-table" id="liveTable"></table>
+    </div>
+
+    <h3 class="m-sub3" style="margin-top:26px">Fixed income scores</h3>
+    <div class="m-scroll">
+      <table class="m-table" id="fiLiveTable"></table>
     </div>
     <p class="m-lead" id="liveLead" style="margin-top:14px"></p>
   </section>

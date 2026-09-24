@@ -47,10 +47,13 @@
   function renderShelf(eqc) {
     el("shelfLead").innerHTML =
       esc(eqc.shelf.length) + " products, chosen to span the six sectors, both regions, " +
-      "and the range from defensive income to high-beta growth. Figures are a " +
+      "the range from defensive income to high-beta growth, and the currency spectrum " +
+      "from wholly dollar to wholly local. <b>USD %</b> is how much of a holding's " +
+      "currency exposure is in dollars, which is what lets the dollar answer reach the " +
+      "equity sleeve rather than only the FX one. Figures are a " +
       esc(eqc.source || "TradingView") + " snapshot taken on " + esc(eqc.asOf) + ".";
 
-    var head = ["", "Product", "Sector", "Region", "Style", "Price", "Beta 1y", "1y %", "Vol", "Fee %"];
+    var head = ["", "Product", "Sector", "Region", "USD %", "Style", "Price", "Beta 1y", "1y %", "Vol", "Fee %"];
     var rows = eqc.shelf.map(function (p) {
       var d = p.data;
       return "<tr>" +
@@ -59,6 +62,7 @@
           '<span class="m-sub">' + esc(p.note) + "</span></td>" +
         "<td>" + esc(p.sector === "core" ? "Broad" : (SECTOR_LABEL[p.sector] || p.sector)) + "</td>" +
         "<td>" + esc(p.region.toUpperCase()) + "</td>" +
+        '<td class="num">' + esc(p.usdExposure) + "</td>" +
         '<td><span class="m-pill">' + esc(p.style) + "</span></td>" +
         '<td class="num">' + n(d.price) + "</td>" +
         '<td class="num">' + n(d.beta1y) + "</td>" +
@@ -71,25 +75,31 @@
 
     el("shelfTable").innerHTML =
       "<thead><tr>" + head.map(function (h, i) {
-        return "<th" + (i >= 5 ? ' class="num"' : "") + ">" + esc(h) + "</th>";
+        return "<th" + (i === 4 || i >= 6 ? ' class="num"' : "") + ">" + esc(h) + "</th>";
       }).join("") + "</tr></thead><tbody>" + rows + "</tbody>";
   }
 
   /* ---------- 03 weights ---------- */
-  function renderWeights(eqc) {
-    var sel = eqc.selection || {};
-    var W = sel.weights || {};
+  var WEIGHT_LABEL = {
+    riskProfile: "Risk profile", sector: "Sector exposure", country: "Country of risk",
+    capitalIncome: "Capital or income", marketView: "Market view", usd: "USD share",
+    credit: "IG or HY", duration: "Duration"
+  };
+
+  function weightBars(W, hostId) {
     var max = Math.max.apply(null, Object.keys(W).map(function (k) { return W[k]; })) || 1;
-    var labels = {
-      riskProfile: "Risk profile", sector: "Sector exposure", country: "Country of risk",
-      capitalIncome: "Capital or income", marketView: "Market view"
-    };
-    el("weightBars").innerHTML = Object.keys(W).sort(function (a, b) { return W[b] - W[a]; })
+    el(hostId).innerHTML = Object.keys(W).sort(function (a, b) { return W[b] - W[a]; })
       .map(function (k) {
-        return '<div class="m-wrow"><span>' + esc(labels[k] || k) + "</span>" +
+        return '<div class="m-wrow"><span>' + esc(WEIGHT_LABEL[k] || k) + "</span>" +
           '<span class="m-wbar"><i style="width:' + ((W[k] / max) * 100) + '%"></i></span>' +
           "<b>" + n(W[k], 1) + "</b></div>";
       }).join("");
+  }
+
+  function renderWeights(eqc) {
+    var sel = eqc.selection || {};
+    var W = sel.weights || {};
+    weightBars(W, "weightBars");
 
     el("selNote").innerHTML =
       "Risk profile counts most because it is the answer that should move a book. " +
@@ -110,8 +120,10 @@
     VIEW_LABEL.forEach(function (l, i) { cols.push({ k: "marketView", a: i, label: l.slice(0, 4) }); });
     cols.push({ k: "capitalIncome", a: "capital", label: "Capital" });
     cols.push({ k: "capitalIncome", a: "income", label: "Income" });
+    cols.push({ k: "usd", a: "target", label: "USD", target: true });
 
-    var groups = [["Sector", 6], ["Country", 2], ["Risk profile", 3], ["Market view", 3], ["Capital / income", 2]];
+    var groups = [["Sector", 6], ["Country", 2], ["Risk profile", 3], ["Market view", 3],
+                  ["Capital / income", 2], ["Dollar", 1]];
 
     var head =
       "<tr><th></th>" + groups.map(function (g) {
@@ -126,6 +138,13 @@
         '<td><span class="m-tk">' + esc(p.ticker) + "</span></td>" +
         cols.map(function (c) {
           var f = p.fit[c.k];
+          if (c.target) {
+            /* A target is a position on the 0-100 range, not a 0-1 fit, so
+               it is shaded by that position and printed as a percentage. */
+            var t = f ? f.target : null;
+            if (t === null || t === undefined) return '<td class="c"></td>';
+            return '<td class="c" style="' + shade(t / 100) + '">' + t + "</td>";
+          }
           var v = Array.isArray(f) ? f[c.a] : f[c.a];
           return '<td class="c" style="' + shade(v) + '">' + n(v, 2) + "</td>";
         }).join("") +
@@ -136,37 +155,16 @@
   }
 
   /* ---------- 05 worked example ---------- */
-  function renderLive(agg, eqc, sim) {
-    var lead = el("liveLead");
-    if (!agg.count) {
-      lead.textContent = "No responses yet. Once the room answers, every product's score appears here with its breakdown.";
-      el("liveTable").innerHTML = "";
-      return;
-    }
-
-    var scored = window.ENGINE.scoreEquityShelf(agg, window.PRODUCTS);
-    sim = sim || window.ENGINE.roomPortfolio(agg, window.PRODUCTS);
-    var eqBucket = sim.buckets[0];
+  /* One renderer for either scored sleeve. */
+  function scoreTable(tableId, scored, bucket, axes, labels) {
     var picked = {};
-    eqBucket.lines.forEach(function (l) { picked[l.item.id] = l.weight; });
-
-    lead.innerHTML = "The equity sleeve is <b>" + eqBucket.weight +
-      "%</b> of the book, and the top " + esc((eqc.selection || {}).topN || 6) +
-      " products by score share it in proportion. Highlighted rows made the book. " +
-      "This is the same <code>ENGINE.scoreEquityShelf()</code> the guest and presenter " +
-      "screens call, so if these numbers are wrong they are wrong everywhere.";
-
-    var axes = ["riskProfile", "sector", "country", "capitalIncome", "marketView"];
-    var axisLabel = {
-      riskProfile: "Risk", sector: "Sector", country: "Country",
-      capitalIncome: "Cap/Inc", marketView: "View"
-    };
+    bucket.lines.forEach(function (l) { picked[l.item.id] = l.weight; });
 
     var head = "<tr><th></th><th>Product</th>" +
-      axes.map(function (a) { return '<th class="num">' + esc(axisLabel[a]) + "</th>"; }).join("") +
+      axes.map(function (a) { return '<th class="num">' + esc(labels[a] || a) + "</th>"; }).join("") +
       '<th class="num">Score</th><th class="num">Weight</th></tr>';
 
-    var body = scored.all.map(function (r) {
+    var body = scored.map(function (r) {
       var w = picked[r.item.id];
       return '<tr class="' + (w ? "m-picked" : "") + '">' +
         '<td><span class="m-tk">' + esc(r.item.ticker) + "</span></td>" +
@@ -179,7 +177,37 @@
         "</tr>";
     }).join("");
 
-    el("liveTable").innerHTML = "<thead>" + head + "</thead><tbody>" + body + "</tbody>";
+    el(tableId).innerHTML = "<thead>" + head + "</thead><tbody>" + body + "</tbody>";
+  }
+
+  function renderLive(agg, eqc, sim) {
+    var lead = el("liveLead");
+    if (!agg.count) {
+      lead.textContent = "No responses yet. Once the room answers, every product's score appears here with its breakdown.";
+      el("liveTable").innerHTML = "";
+      return;
+    }
+
+    var scored = window.ENGINE.scoreEquityShelf(agg, window.PRODUCTS);
+    sim = sim || window.ENGINE.roomPortfolio(agg, window.PRODUCTS);
+    var eqBucket = sim.buckets[0];
+
+    lead.innerHTML = "The equity sleeve is <b>" + eqBucket.weight +
+      "%</b> of the book, and the top " + esc((eqc.selection || {}).topN || 6) +
+      " products by score share it in proportion. Highlighted rows made the book. " +
+      "This is the same <code>ENGINE.scoreEquityShelf()</code> the guest and presenter " +
+      "screens call, so if these numbers are wrong they are wrong everywhere.";
+
+    scoreTable("liveTable", scored.all, eqBucket,
+      ["riskProfile", "sector", "country", "usd", "capitalIncome", "marketView"],
+      { riskProfile: "Risk", sector: "Sector", country: "Country", usd: "USD",
+        capitalIncome: "Cap/Inc", marketView: "View" });
+
+    var fiScored = window.ENGINE.scoreShelf(agg, window.PRODUCTS.fixedIncome);
+    scoreTable("fiLiveTable", fiScored.all, sim.buckets[1],
+      ["credit", "duration", "usd", "country", "capitalIncome"],
+      { credit: "IG/HY", duration: "Duration", usd: "USD", country: "Country",
+        capitalIncome: "Cap/Inc" });
   }
 
   /* ---------- 05 the other shelves ---------- */
@@ -188,11 +216,45 @@
     notes: "var(--series-notes)", fx: "var(--series-cash)"
   };
 
+  function renderFixedIncome(fic) {
+    el("fiLead").innerHTML =
+      esc(fic.shelf.length) + " instruments spanning sovereign to high yield, developed to " +
+      "emerging, and the same currency spectrum as the equity shelf. This sleeve is scored " +
+      "rather than rule-picked, which is what lets the dollar answer reach it: an unhedged " +
+      "international treasury line and a dollar aggregate sit at opposite ends of the same " +
+      "range. Top <b>" + esc((fic.selection || {}).topN || 4) + "</b> make the book.";
+
+    var head = ["", "Instrument", "Credit", "Region", "USD %", "Duration", "Price", "Beta 1y", "1y %", "Vol", "Fee %"];
+    var rows = fic.shelf.map(function (p) {
+      var d = p.data;
+      return "<tr>" +
+        '<td><span class="m-tk">' + esc(p.ticker) + "</span></td>" +
+        '<td><span class="m-name">' + esc(p.name) + "</span><br>" +
+          '<span class="m-sub">' + esc(p.note) + "</span></td>" +
+        '<td><span class="m-pill">' + esc(p.credit.toUpperCase()) + "</span></td>" +
+        "<td>" + esc(p.region.toUpperCase()) + "</td>" +
+        '<td class="num">' + esc(p.usdExposure) + "</td>" +
+        '<td class="num">' + esc(p.fit.duration.target) + "y</td>" +
+        '<td class="num">' + n(d.price) + "</td>" +
+        '<td class="num">' + n(d.beta1y) + "</td>" +
+        '<td class="num ' + (d.perf1y >= 0 ? "m-pos" : "m-neg") + '">' +
+          (d.perf1y >= 0 ? "+" : "") + n(d.perf1y, 1) + "</td>" +
+        '<td class="num">' + n(d.volatility) + "</td>" +
+        '<td class="num">' + n(d.expenseRatio) + "</td>" +
+        "</tr>";
+    }).join("");
+
+    el("fiTable").innerHTML = "<thead><tr>" + head.map(function (h, i) {
+      return "<th" + (i >= 4 ? ' class="num"' : "") + ">" + esc(h) + "</th>";
+    }).join("") + "</tr></thead><tbody>" + rows + "</tbody>";
+
+    weightBars((fic.selection || {}).weights || {}, "fiWeights");
+  }
+
   function renderOtherShelves(products) {
     var groups = [
-      ["fixedIncome", "Fixed income", "Weighted by the IG and HY split. The sovereign line carries the room's duration answer; EM debt appears only for an EM room."],
       ["notes", "Structured notes", "Risk appetite slides the sleeve from capital-protected toward autocallables and reverse convertibles. Leverage adds the participation note."],
-      ["fx", "FX", "The dollar share splits USD against a local-currency basket. An EM room adds a BRL sleeve."]
+      ["fx", "FX", "The dollar share splits USD against a local-currency basket. An EM room adds a BRL sleeve. This sleeve is deliberately small: most of a book's currency exposure now comes from where the equities and bonds are denominated."]
     ];
     el("otherShelves").innerHTML = groups.map(function (g) {
       var shelf = products[g[0]] || {};
@@ -344,6 +406,9 @@
     renderWeights(eqc);
     renderMatrix(eqc);
 
+    if (window.PRODUCTS.fixedIncome && window.PRODUCTS.fixedIncome.shelf) {
+      renderFixedIncome(window.PRODUCTS.fixedIncome);
+    }
     renderOtherShelves(window.PRODUCTS);
 
     el("modeLive").addEventListener("click", function () { setMode("live"); });
