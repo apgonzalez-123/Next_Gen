@@ -760,7 +760,7 @@ window.PORTFOLIO_VALIDATOR = (function () {
    * being caught out by it.
    * ------------------------------------------------------------------ */
 
-  function contradictions(intent) {
+  function contradictions(intent, products) {
     var out = [];
 
     if (intent.riskProfile.normalized >= LIMITS.aggressiveRisk01 &&
@@ -793,6 +793,32 @@ window.PORTFOLIO_VALIDATOR = (function () {
       out.push({ id: "leverageVersusConservative",
         message: "Competing signals: " + Math.round(intent.leverage.yesShare * 100) +
                  "% would use leverage despite a conservative average risk profile." });
+    }
+
+    /* Wanting emerging market risk and wanting no dollars is a contradiction
+       on this shelf specifically: every emerging market bond on it settles in
+       USD, and the non-dollar paper is almost all European. The engine
+       honours the currency answer, so the room gets European credit rather
+       than the EM exposure it asked for, and the credit mix slips with it.
+       Checked against the shelf rather than asserted, so it stops firing the
+       day the desk adds non-dollar EM paper. */
+    if (intent.country.em >= 0.6 && intent.usd.target !== null &&
+        intent.usd.target <= 30 && products && products.fixedIncome) {
+      var emBonds = products.fixedIncome.shelf.filter(function (b) {
+        return (b.analytics || {}).region === "em";
+      });
+      var emNonUsd = emBonds.filter(function (b) {
+        return ((b.analytics || {}).usdExposure || 0) < 95;
+      });
+      if (emBonds.length && !emNonUsd.length) {
+        out.push({ id: "emWithoutDollars",
+          message: "Competing signals: " + Math.round(intent.country.em * 100) +
+                   "% of the room asked for emerging market risk while targeting " +
+                   Math.round(intent.usd.target) + "% in dollars, but all " +
+                   emBonds.length + " emerging market bonds on the shelf settle in " +
+                   "dollars. The currency answer wins, so the fixed income sleeve " +
+                   "goes to non-dollar developed market credit instead." });
+      }
     }
 
     if (intent.credit.hy >= 0.5 && intent.riskProfile.normalized !== null &&
@@ -857,7 +883,7 @@ window.PORTFOLIO_VALIDATOR = (function () {
     var checks = hardChecks.concat(intentChecks);
 
     var warnings = sanity(a.intent, a.characteristics);
-    var contra = contradictions(a.intent);
+    var contra = contradictions(a.intent, products);
 
     var failures = checks.filter(function (c) { return c.status === "fail"; });
     var warns = checks.filter(function (c) { return c.status === "warn"; });

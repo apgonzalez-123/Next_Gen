@@ -1276,7 +1276,19 @@ window.ENGINE = (function () {
         if (!a || !a.n) return null;
         var axis = window.AXIS_BY_ID[axisId];
         if (!axis) return null;
-        var reach = (axis.max - axis.min) || 1;
+        /* How far from the room's answer counts as a total miss.
+         *
+         * This used to be the axis's whole range, and that was wrong in a way
+         * that decided what got bought. Duration runs 1 to 30 years, so a
+         * bond nine years away from what the room asked for still scored 0.67
+         * on duration — a third of one axis — which credit and currency could
+         * trivially outvote. A room asking for three years was sold a
+         * 12.6-year bond while a 2.3-year one sat unpicked.
+         *
+         * matchScale is the distance at which an instrument has simply
+         * stopped answering the question, so the axis can actually decide
+         * something. It falls back to the full range where none is set. */
+        var reach = axis.matchScale || (axis.max - axis.min) || 1;
 
         /* Score against every answer in the room and average the result,
            rather than scoring the room's average once.
@@ -1297,7 +1309,16 @@ window.ENGINE = (function () {
           var v = Number(k);
           if (!isFinite(v)) return;
           var c = a.counts[k];
-          tot += c * Math.max(0, 1 - Math.abs(v - fit.target) / reach);
+          /* Decays toward zero without ever reaching it, so distance still
+             ranks instruments even when nothing on the shelf is close.
+             A straight 1 - d/scale clipped at zero looked equivalent and was
+             not: a room asking for twenty years of duration found no bond
+             within scale of it, every one scored exactly zero, and the axis
+             stopped discriminating altogether — so the sleeve fell back on
+             other axes and came out SHORTER than the ten-year room's. Half
+             marks at one scale, and always ordered by distance. */
+          var d = Math.abs(v - fit.target) / reach;
+          tot += c * (1 / (1 + d * d));
           wsum += c;
         });
         return wsum ? tot / wsum : null;
@@ -1454,6 +1475,33 @@ window.ENGINE = (function () {
       : maxN;
     var spreadBonus = Math.round(dispersion() * (sizing.disperseTo || 2));
     maxN = Math.max(minN, Math.min(maxN, budget + spreadBonus));
+
+    /* ---- position-size constraint ----
+     *
+     * How many lines a sleeve needs is not only a question of how many
+     * products are good enough. A sleeve carrying 72% of the book cannot be
+     * expressed in three positions without putting 30% of a client's money
+     * in one bond, however well that bond scores.
+     *
+     * This is what the relative cut got wrong. It decided the line count on
+     * quality alone, so an unusual room — one where only a few products
+     * cleared the bar — produced a handful of enormous positions, while a
+     * mainstream room produced eight comfortable ones. Same code, wildly
+     * different construction.
+     *
+     * So the ceiling on a single position sets a FLOOR on the line count,
+     * and it outranks the quality bar: a construction constraint is not
+     * something individual fit gets to overrule.
+     */
+    var maxLine = sel.maxLineWeight;
+    if (maxLine && opts && opts.allocation) {
+      var needed = Math.ceil(opts.allocation / maxLine);
+      /* One spare line so weights can still differentiate under the cap
+         rather than being forced flat against it. */
+      if (needed > 1) needed += 1;
+      minN = Math.max(minN, Math.min(needed, all.length));
+      maxN = Math.max(maxN, minN);
+    }
     /* How hard duplication is punished. At 0.55 a perfect substitute keeps
        under half its score, which is usually enough to lose its place. */
     var lambda = sel.diversify === undefined ? 0.55 : sel.diversify;
@@ -1550,19 +1598,53 @@ window.ENGINE = (function () {
        data/products.json so a sleeve can be retuned without editing this
        file. Fixed income holds a flatter book than equities on purpose. */
     function spreadFor(total, cfg, rawParts) {
-      return spread(total, rawParts, ((cfg || {}).selection || {}).conviction);
+      var sel = (cfg || {}).selection || {};
+      return spread(total, rawParts, sel.conviction, sel.maxLineWeight);
     }
 
-    function spread(total, rawParts, conviction) {
+    /* No line may exceed maxLineWeight of the whole book. Excess is pushed
+       into the lines that still have room, repeatedly, because moving weight
+       onto a line can itself breach the cap. If every line ends up at the
+       ceiling the sleeve simply cannot be built this small, and the line
+       count floor above is what prevents that. */
+    function capLines(out, cap) {
+      if (!cap) return out;
+      for (var pass = 0; pass < 16; pass++) {
+        var over = 0;
+        out.forEach(function (o) {
+          if (o.weight > cap + 1e-9) { over += o.weight - cap; o.weight = cap; o.capped = true; }
+        });
+        if (over <= 1e-9) break;
+        var room = out.filter(function (o) { return o.weight < cap - 1e-9; });
+        var headroom = room.reduce(function (t, o) { return t + (cap - o.weight); }, 0);
+        if (headroom <= 1e-9) break;
+        var share = Math.min(1, over / headroom);
+        room.forEach(function (o) { o.weight += (cap - o.weight) * share; });
+      }
+      return out;
+    }
+
+    function spread(total, rawParts, conviction, maxLineWeight) {
       var parts = amplify(rawParts, conviction);
       var sum = parts.reduce(function (t, p) { return t + p.w; }, 0);
       if (sum <= 0) return [];
       var out = parts.map(function (p) {
         return { item: p.item, weight: (p.w / sum) * total };
       });
+      capLines(out, maxLineWeight);
       out.forEach(function (o) { o.weight = Math.round(o.weight * 10) / 10; });
       var drift = Math.round((total - out.reduce(function (t, o) { return t + o.weight; }, 0)) * 10) / 10;
-      if (drift && out.length) out[0].weight = Math.round((out[0].weight + drift) * 10) / 10;
+      if (drift && out.length) {
+        /* Put the drift on the largest line that can absorb it without
+           breaching the ceiling the cap just enforced. */
+        var host = out[0];
+        if (maxLineWeight) {
+          for (var i = 0; i < out.length; i++) {
+            if (out[i].weight + drift <= maxLineWeight + 0.05) { host = out[i]; break; }
+          }
+        }
+        host.weight = Math.round((host.weight + drift) * 10) / 10;
+      }
       return out.filter(function (o) { return o.weight > 0; });
     }
 

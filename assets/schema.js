@@ -58,6 +58,9 @@ window.SCHEMA = {
           label: "What is your investment horizon?",
           hint: "Drag to the number of years before you would need this capital.",
           min: 1, max: 30, step: 1, unit: "y", def: 10,
+          /* How far off is a total miss on this axis: see matchScale
+             in portfolios.js. a horizon this far out is a different mandate, not a near miss. */
+          matchScale: 14,
           minLabel: "1 year", maxLabel: "30 years",
           format: function (v) { return v + (v === 1 ? " year" : " years"); }
         }
@@ -124,6 +127,9 @@ window.SCHEMA = {
           label: "What share of the portfolio would you hold in USD?",
           hint: "Moves in quarters.",
           min: 0, max: 100, step: 25, unit: "%", def: 50,
+          /* How far off is a total miss on this axis: see matchScale
+             in portfolios.js. half the dollar range is already a different currency stance. */
+          matchScale: 55,
           minLabel: "0%", maxLabel: "100%",
           format: function (v) { return v + "%"; }
         }
@@ -150,6 +156,9 @@ window.SCHEMA = {
           label: "What duration would you run?",
           hint: "Sensitivity to interest-rate moves, in years.",
           min: 1, max: 30, step: 1, unit: "y", def: 5,
+          /* How far off is a total miss on this axis: see matchScale
+             in portfolios.js. six years of duration error is a different bond entirely. */
+          matchScale: 6,
           minLabel: "1 year", maxLabel: "30 years",
           format: function (v) { return v + (v === 1 ? " year" : " years"); }
         },
@@ -189,6 +198,7 @@ window.AXES = window.SCHEMA.activeSteps.flatMap(function (s) {
     return {
       id: q.id, kind: q.kind, label: q.label, step: s.id, options: q.options,
       max: q.max, min: q.min, step_: q.step, unit: q.unit, def: q.def,
+      matchScale: q.matchScale,
       minLabel: q.minLabel, maxLabel: q.maxLabel, format: q.format, hard: q.hard
     };
   });

@@ -626,18 +626,27 @@ def main():
         "version": 4,
 
         "equities": {"shelf": eq, "selection": {
-            "weights": {"riskProfile": 1.2, "sector": 1.0, "country": 1.0,
+            # riskProfile is deliberately the lighter vote here. It has
+            # already had its say once, in the allocation: it is the main
+            # driver of how big the equity sleeve is. Letting it also dominate
+            # WHICH equities get bought counts the same answer twice, and it
+            # showed — a room that asked for energy and nothing else was
+            # handed a tech-led sleeve with energy last and smallest, because
+            # high-beta semiconductors matched "aggressive" better than an
+            # energy fund did. A named sector is a direct instruction; a risk
+            # level is a disposition, and it is already reflected elsewhere.
+            "weights": {"riskProfile": 0.8, "sector": 1.8, "country": 1.0,
                         "usd": 1.0, "capitalIncome": 0.9},
             "relative": 0.86,
             "diversify": 0.55, "conviction": 7,
-            "sizing": {"pctPerLine": 8, "minN": 3, "maxN": 7, "disperseTo": 2}}},
+            "maxLineWeight": 12, "sizing": {"pctPerLine": 8, "minN": 3, "maxN": 7, "disperseTo": 2}}},
 
         "fixedIncome": {"shelf": bonds, "selection": {
             "weights": {"credit": 1.2, "duration": 1.1, "usd": 1.0,
                         "riskProfile": 0.9, "country": 0.8, "capitalIncome": 0.7},
             "relative": 0.92,
             "diversify": 0.35, "conviction": 5,
-            "sizing": {"pctPerLine": 6, "minN": 3, "maxN": 8, "disperseTo": 2}}},
+            "maxLineWeight": 10, "sizing": {"pctPerLine": 6, "minN": 3, "maxN": 8, "disperseTo": 2}}},
 
         "notes": {"shelf": notes,
             "$rule": "At least 50% of the notes allocation sits in the desk's highlighted core picks.",
@@ -646,21 +655,21 @@ def main():
                             "capitalIncome": 0.8, "sector": 0.8},
                 "relative": 0.88, "coreFloor": 0.5,
                 "diversify": 0.55, "conviction": 7,
-                "sizing": {"pctPerLine": 7, "minN": 2, "maxN": 6, "disperseTo": 2}}},
+                "maxLineWeight": 10, "sizing": {"pctPerLine": 7, "minN": 2, "maxN": 6, "disperseTo": 2}}},
 
         "options": {"shelf": options, "selection": {
             "weights": {"leverage": 1.4, "marketView": 1.2, "capitalIncome": 1.1,
                         "riskProfile": 0.9, "sector": 0.8, "country": 0.6},
             "relative": 0.80,
             "diversify": 0.50, "conviction": 5, "sectorCap": 0.7,
-            "sizing": {"pctPerLine": 4, "minN": 1, "maxN": 4, "disperseTo": 1}}},
+            "maxLineWeight": 8, "sizing": {"pctPerLine": 4, "minN": 1, "maxN": 4, "disperseTo": 1}}},
 
         "fx": {"shelf": fx, "selection": {
             "weights": {"usd": 1.4, "riskProfile": 1.1, "country": 1.0,
                         "leverage": 0.8, "horizon": 0.6},
             "relative": 0.82,
             "diversify": 0.40, "conviction": 5,
-            "sizing": {"pctPerLine": 5, "minN": 2, "maxN": 4, "disperseTo": 1}}},
+            "maxLineWeight": 12, "sizing": {"pctPerLine": 5, "minN": 2, "maxN": 4, "disperseTo": 1}}},
     }
 
     # drop null fits so the scorer never sees an empty axis
@@ -700,7 +709,17 @@ def main():
             return None
         return round(max(0.0, min(1.0, r["target"] / 2.0)), 4)
 
+    # Whether a product expresses leverage is a fact about the structure, not
+    # about which room scores it well. A short put fits a leverage-tolerant
+    # room slightly better than a cautious one, so a fit-ratio rule marked it
+    # as leverage and made a no-leverage room look mis-built when it had in
+    # fact bought income. Options are classified by strategy; everything else
+    # still falls back to the fit, which is right for FX.
+    LEVERAGED_STRATEGY = ("long call",)
     def _expresses_leverage(item):
+        st = (item.get("strategy") or "").lower()
+        if st:
+            return st in LEVERAGED_STRATEGY
         lv = (item.get("fit") or {}).get("leverage")
         if isinstance(lv, dict):
             return lv.get("yes", 0) > lv.get("no", 0)
