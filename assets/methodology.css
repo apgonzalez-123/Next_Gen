@@ -254,3 +254,8 @@ body.meth { min-height: 100vh; }
   margin-right: 6px; color: var(--muted);
   font-variant-numeric: tabular-nums; font-size: 0.85em;
 }
+
+/* The methodology page had no navigation at all, so the validation
+   dashboard was only reachable from the admin board — which sits behind a
+   password. Anyone reviewing the method needs to reach the checks on it. */
+.m-nav { display: flex; align-items: center; gap: 14px; }
