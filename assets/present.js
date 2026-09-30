@@ -2,7 +2,7 @@
  *
  * Ten slides: join (QR) -> where the room landed -> the room's portfolio ->
  * the positions -> one slide per sleeve, equities through options -> the
- * engine drawn while it runs. Arrow keys move; the data refreshes on a timer
+ * room voting live. Arrow keys move; the data refreshes on a timer
  * regardless of which slide is up, so the counter keeps climbing on the join
  * screen.
  *
@@ -113,6 +113,12 @@
         : "No backend · this device only";
     }
 
+    /* The live board is the one screen that must be up BEFORE anyone has
+       answered: the room needs to see the empty grid so it can watch itself
+       fill it in. Every other slide waits for data; this one is the data
+       arriving. */
+    paintLive(agg);
+
     if (!agg.count) {
       /* Before the room has answered, these slides are on the projector
          with nothing in them. Say what they are waiting for rather than
@@ -134,7 +140,6 @@
     renderWhy(agg, alloc, split);
     paintBook(agg);
     paintSleeves(agg, alloc);
-    paintBrain(agg);
   }
 
   var WAITING = [
@@ -828,40 +833,21 @@
               credit: "credit" })[id] || id;
   }
 
-  /* ---------- the engine, drawn ----------
-   *
-   * Influence is the validator's measured sensitivity, not a guess about
-   * which questions matter. It is expensive to compute — one portfolio
-   * rebuild per axis — so it is refreshed only when the room has changed
-   * enough to plausibly move it, not on every three-second poll.
-   */
-  var brainReady = false, influence = null, influenceAt = -1;
+  /* ---------- the room voting, live ---------- */
+  var liveReady = false;
 
-  function paintBrain(agg) {
-    if (!window.BRAINMAP) return;
-    if (!brainReady) {
-      brainReady = window.BRAINMAP.mount(document.getElementById("brainmap"));
-      if (!brainReady) return;
+  function paintLive(agg) {
+    if (!window.LIVEVOTES) return;
+    if (!liveReady) {
+      liveReady = window.LIVEVOTES.mount(document.getElementById("liveVotes"));
+      if (!liveReady) return;
     }
-    var badge = document.getElementById("bmCount");
-    if (badge) badge.textContent = agg.count ? agg.count + " answering" : "";
-
-    if (window.PORTFOLIO_VALIDATOR && window.PRODUCTS &&
-        agg.count && agg.count !== influenceAt) {
-      try {
-        var s = window.PORTFOLIO_VALIDATOR.sensitivity(agg, window.PRODUCTS);
-        influence = s ? s.axes : null;
-        influenceAt = agg.count;
-      } catch (e) {
-        /* A map without measured influence still draws; it just shows every
-           edge at the same weight, which is honest about knowing less. */
-        console.warn("brainmap: sensitivity unavailable", e);
-      }
-    }
-
     var sim = null;
-    try { sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS); } catch (e) { sim = null; }
-    window.BRAINMAP.update(agg, sim, influence);
+    if (window.PRODUCTS && agg && agg.count) {
+      try { sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS); }
+      catch (e) { sim = null; }
+    }
+    window.LIVEVOTES.update(agg, sim);
   }
 
   /* ---------- slides ---------- */

@@ -6,15 +6,15 @@
 <title>NextGen Presenter</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0A1220">
-<link rel="preload" href="assets/fonts/geist-400-latin.woff2?v=202609301853" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/geist-600-latin.woff2?v=202609301853" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/app.css?v=202609301853">
-<link rel="stylesheet" href="assets/present.css?v=202609301853">
+<link rel="preload" href="assets/fonts/geist-400-latin.woff2?v=202609301901" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist-600-latin.woff2?v=202609301901" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/app.css?v=202609301901">
+<link rel="stylesheet" href="assets/present.css?v=202609301901">
 </head>
 <body class="present">
 
 <header class="p-top">
-  <div class="wordmark"><img class="brand-mark" src="assets/brand/safra-logo.png?v=202609301853" alt="Safra" onerror="this.remove()"><span class="brand-sep" aria-hidden="true"></span><b>NextGen</b></div>
+  <div class="wordmark"><img class="brand-mark" src="assets/brand/safra-logo.png?v=202609301901" alt="Safra" onerror="this.remove()"><span class="brand-sep" aria-hidden="true"></span><b>NextGen</b></div>
   <div class="p-live">
     <span id="modeBadge" class="p-badge" hidden>Demo mode</span>
     <div class="p-count"><b id="liveCount">0</b><span><span class="dot"></span>responses</span></div>
@@ -91,19 +91,13 @@
     <div class="p-sleeve" id="sleeveOptions"></div>
   </section>
 
-  <!-- 10 · THE ENGINE
-       The room watches its own answers move through the machine. Node size is
-       the live response count, edge weight is that question's measured
-       influence on the book, sleeve size is the real allocation. -->
+  <!-- 10 · THE ROOM VOTING, LIVE
+       Not a diagram of the engine: the room watching itself decide. Every
+       figure is the live aggregate. -->
   <section class="p-slide" data-slide="9">
-    <h2 class="p-h">The engine <i class="p-h-w" id="bmCount"></i></h2>
-    <p class="p-sub">Your answers, on their way to a portfolio.</p>
-    <div class="p-brain"><canvas id="brainmap"></canvas></div>
-    <p class="p-brain-key">
-      <span><s class="k-q"></s>Question &mdash; size is how many of you answered</span>
-      <span><s class="k-e"></s>Edge &mdash; how much that answer actually moved the book</span>
-      <span><s class="k-b"></s>Sleeve &mdash; the allocation it produced</span>
-    </p>
+    <h2 class="p-h">The room, live</h2>
+    <p class="p-sub">Every answer as it lands, and the book it builds.</p>
+    <div class="p-live" id="liveVotes"></div>
   </section>
 
 </main>
@@ -118,14 +112,14 @@
   <button class="p-btn" id="btnReset" type="button">Reset votes</button>
 </footer>
 
-<script src="assets/vendor/qrcode.min.js?v=202609301853"></script>
-<script src="assets/config.js?v=202609301853"></script>
-<script src="assets/schema.js?v=202609301853"></script>
-<script src="assets/portfolios.js?v=202609301853"></script>
-<script src="assets/base-loader.js?v=202609301853"></script>
-<script src="assets/store.js?v=202609301853"></script>
-<script src="assets/portfolio-validator.js?v=202609301853"></script>
-<script src="assets/brainmap.js?v=202609301853"></script>
-<script src="assets/present.js?v=202609301853"></script>
+<script src="assets/vendor/qrcode.min.js?v=202609301901"></script>
+<script src="assets/config.js?v=202609301901"></script>
+<script src="assets/schema.js?v=202609301901"></script>
+<script src="assets/portfolios.js?v=202609301901"></script>
+<script src="assets/base-loader.js?v=202609301901"></script>
+<script src="assets/store.js?v=202609301901"></script>
+<script src="assets/portfolio-validator.js?v=202609301901"></script>
+<script src="assets/livevotes.js?v=202609301901"></script>
+<script src="assets/present.js?v=202609301901"></script>
 </body>
 </html>
