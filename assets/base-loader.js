@@ -64,10 +64,10 @@ window.BASE = (function () {
   /* The product shelf for the room simulation. Optional: without it the
      admin board shows the allocation but not the instruments inside it. */
   window.PRODUCTS = null;
-  var productsReady = fetch("data/products.json?v=202609242048", { cache: "no-store" })
+  var productsReady = fetch("data/products.json?v=202609301749", { cache: "no-store" })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (d) {
-      var ok = d && ["equities", "fixedIncome", "notes", "fx"].every(function (b) {
+      var ok = d && ["equities", "fixedIncome", "notes", "fx"]  /* options is optional */.every(function (b) {
         return d[b] && Array.isArray(d[b].shelf) && d[b].shelf.length && d[b].selection;
       });
       if (ok) window.PRODUCTS = d;
@@ -77,7 +77,7 @@ window.BASE = (function () {
       console.warn("[NextGen] could not load data/products.json, room simulation disabled.");
     });
 
-  var ready = fetch("data/portfolios.json?v=202609242048", { cache: "no-store" })
+  var ready = fetch("data/portfolios.json?v=202609301749", { cache: "no-store" })
     .then(function (r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.json();

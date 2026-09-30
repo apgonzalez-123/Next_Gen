@@ -252,7 +252,8 @@
     equities:    "var(--series-equities)",
     fixedIncome: "var(--series-fixedincome)",
     notes:       "var(--series-notes)",
-    fx:          "var(--series-cash)"
+    fx:          "var(--series-cash)",
+    options:     "var(--series-options)"
   };
 
   /* The room's book, one column per bucket. Repainted wholesale rather

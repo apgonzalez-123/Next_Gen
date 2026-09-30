@@ -1,6 +1,6 @@
 {
   "$note": "Built by tools/build_products.py from the desk's own source files. Instrument facts only: no client-identifying material is carried over.",
-  "asOf": "2026-09-24",
+  "asOf": "2026-09-30",
   "source": "Safra desk product files",
   "version": 4,
   "equities": {
@@ -1375,6 +1375,374 @@
           },
           "riskProfile": {
             "target": 0.1
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "spy",
+        "ticker": "SPY",
+        "exchange": "AMEX",
+        "name": "SPDR S&P 500 ETF Trust",
+        "sleeve": "Core",
+        "sector": "core",
+        "region": "g7",
+        "group": "us-core",
+        "usdExposure": 100,
+        "riskBand": 1,
+        "note": "Core",
+        "data": {
+          "price": 767.02,
+          "currency": "USD",
+          "ytd": 11.86,
+          "perf1y": 15.7,
+          "beta1y": 1.011,
+          "volatility": 0.68,
+          "expenseRatio": 0.09
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 0.76
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "vt",
+        "ticker": "VT",
+        "exchange": "AMEX",
+        "name": "Vanguard Total World Stock",
+        "sleeve": "Core",
+        "sector": "core",
+        "region": "g7",
+        "group": "world-core",
+        "usdExposure": 60,
+        "riskBand": 1,
+        "note": "Core",
+        "data": {
+          "price": 158.49,
+          "currency": "USD",
+          "ytd": 11.41,
+          "perf1y": 15.48,
+          "beta1y": 1.004,
+          "volatility": 0.49,
+          "expenseRatio": 0.06
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 0.71
+          },
+          "usd": {
+            "target": 60
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "qual",
+        "ticker": "QUAL",
+        "exchange": "CBOE",
+        "name": "iShares MSCI USA Quality Factor",
+        "sleeve": "Core",
+        "sector": "core",
+        "region": "g7",
+        "group": "us-quality",
+        "usdExposure": 100,
+        "riskBand": 1,
+        "note": "Core",
+        "data": {
+          "price": 223.63,
+          "currency": "USD",
+          "ytd": 11.88,
+          "perf1y": 15.84,
+          "beta1y": 0.87,
+          "volatility": 0.51,
+          "expenseRatio": 0.15
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 0.67
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "iemg",
+        "ticker": "IEMG",
+        "exchange": "AMEX",
+        "name": "iShares Core MSCI Emerging Markets",
+        "sleeve": "Regional",
+        "sector": "core",
+        "region": "em",
+        "group": "em-broad",
+        "usdExposure": 20,
+        "riskBand": 2,
+        "note": "Regional",
+        "data": {
+          "price": 81.1,
+          "currency": "USD",
+          "ytd": 18.18,
+          "perf1y": 23.08,
+          "beta1y": 1.282,
+          "volatility": 1.08,
+          "expenseRatio": 0.09
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 0.25,
+            "em": 1.0
+          },
+          "riskProfile": {
+            "target": 1.41
+          },
+          "usd": {
+            "target": 20
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "ita",
+        "ticker": "ITA",
+        "exchange": "CBOE",
+        "name": "iShares U.S. Aerospace & Defense",
+        "sleeve": "Sector",
+        "sector": "industrials",
+        "region": "g7",
+        "group": "aerospace-defence",
+        "usdExposure": 100,
+        "riskBand": 2,
+        "note": "Sector",
+        "data": {
+          "price": 208.36,
+          "currency": "USD",
+          "ytd": -3.32,
+          "perf1y": 1.38,
+          "beta1y": 1.062,
+          "volatility": 1.44,
+          "expenseRatio": 0.37
+        },
+        "fit": {
+          "sector": {
+            "industrials": 1.0,
+            "energy": 0.4,
+            "tech": 0.34,
+            "financials": 0.3,
+            "consumer": 0.3,
+            "healthcare": 0.16
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 1.43
+          },
+          "usd": {
+            "target": 100
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "pick",
+        "ticker": "PICK",
+        "exchange": "CBOE",
+        "name": "iShares Global Metals & Mining",
+        "sleeve": "Sector",
+        "sector": "energy",
+        "region": "g7",
+        "group": "metals-mining",
+        "usdExposure": 35,
+        "riskBand": 2,
+        "note": "Sector",
+        "data": {
+          "price": 60.25,
+          "currency": "USD",
+          "ytd": 15.31,
+          "perf1y": 35.0,
+          "beta1y": 1.431,
+          "volatility": 2.28,
+          "expenseRatio": 0.39
+        },
+        "fit": {
+          "sector": {
+            "energy": 1.0,
+            "industrials": 0.4,
+            "financials": 0.26,
+            "consumer": 0.16,
+            "tech": 0.1,
+            "healthcare": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 1.77
+          },
+          "usd": {
+            "target": 35
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "dbc",
+        "ticker": "DBC",
+        "exchange": "AMEX",
+        "name": "Invesco DB Commodity Index",
+        "sleeve": "Real asset",
+        "sector": "energy",
+        "region": "g7",
+        "group": "commodities",
+        "usdExposure": 50,
+        "riskBand": 2,
+        "note": "Real asset",
+        "data": {
+          "price": 32.43,
+          "currency": "USD",
+          "ytd": 44.84,
+          "perf1y": 44.13,
+          "beta1y": -0.322,
+          "volatility": 1.9,
+          "expenseRatio": 0.84
+        },
+        "fit": {
+          "sector": {
+            "energy": 1.0,
+            "industrials": 0.4,
+            "financials": 0.26,
+            "consumer": 0.16,
+            "tech": 0.1,
+            "healthcare": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 1.08
+          },
+          "usd": {
+            "target": 50
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.5
+          }
+        }
+      },
+      {
+        "id": "ialt",
+        "ticker": "IALT",
+        "exchange": "NASDAQ",
+        "name": "iShares Systematic Alternatives",
+        "sleeve": "Real asset",
+        "sector": "core",
+        "region": "g7",
+        "group": "liquid-alts",
+        "usdExposure": 100,
+        "riskBand": 1,
+        "note": "Real asset",
+        "data": {
+          "price": 29.87,
+          "currency": "USD",
+          "ytd": 17.6,
+          "perf1y": 18.86,
+          "beta1y": 0.036,
+          "volatility": 0.61,
+          "expenseRatio": 0.99
+        },
+        "fit": {
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          },
+          "riskProfile": {
+            "target": 0.41
           },
           "usd": {
             "target": 100
@@ -4101,6 +4469,1206 @@
         "minN": 2,
         "maxN": 6,
         "disperseTo": 2
+      }
+    }
+  },
+  "options": {
+    "shelf": [
+      {
+        "id": "spy-lc-120d",
+        "ticker": "SPY LC",
+        "name": "Long call on SPY",
+        "underlying": "SPY",
+        "strategy": "Long call",
+        "tenor": "120d",
+        "moneyness": 0.95,
+        "strike": 728.67,
+        "sector": "core",
+        "region": "g7",
+        "group": "opt-spy",
+        "note": "120d \u00b7 95% of spot \u00b7 gearing without margin",
+        "data": {
+          "underlyingPrice": 767.02,
+          "strike": 728.67,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "yes": 1.0,
+            "no": 0.12
+          },
+          "marketView": [
+            0.1,
+            0.5,
+            1.0
+          ],
+          "riskProfile": {
+            "target": 1.8
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.2
+          },
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "spy-cc-30d",
+        "ticker": "SPY CC",
+        "name": "Covered call on SPY",
+        "underlying": "SPY",
+        "strategy": "Covered call",
+        "tenor": "30d",
+        "moneyness": 1.04,
+        "strike": 797.7,
+        "sector": "core",
+        "region": "g7",
+        "group": "opt-spy",
+        "note": "30d \u00b7 104% of spot \u00b7 sells upside for premium",
+        "data": {
+          "underlyingPrice": 767.02,
+          "strike": 797.7,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.45
+          },
+          "marketView": [
+            0.5,
+            1.0,
+            0.6
+          ],
+          "riskProfile": {
+            "target": 0.7
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.25
+          },
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "spy-sp-30d",
+        "ticker": "SPY SP",
+        "name": "Short put on SPY",
+        "underlying": "SPY",
+        "strategy": "Short put",
+        "tenor": "30d",
+        "moneyness": 0.91,
+        "strike": 697.99,
+        "sector": "core",
+        "region": "g7",
+        "group": "opt-spy",
+        "note": "30d \u00b7 91% of spot \u00b7 paid to bid below the market",
+        "data": {
+          "underlyingPrice": 767.02,
+          "strike": 697.99,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "yes": 0.8,
+            "no": 0.75
+          },
+          "marketView": [
+            0.15,
+            0.8,
+            1.0
+          ],
+          "riskProfile": {
+            "target": 1.35
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.35
+          },
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "spy-lp-120d",
+        "ticker": "SPY LP",
+        "name": "Long put on SPY",
+        "underlying": "SPY",
+        "strategy": "Long put",
+        "tenor": "120d",
+        "moneyness": 0.95,
+        "strike": 728.67,
+        "sector": "core",
+        "region": "g7",
+        "group": "opt-spy",
+        "note": "120d \u00b7 95% of spot \u00b7 downside cover",
+        "data": {
+          "underlyingPrice": 767.02,
+          "strike": 728.67,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.4
+          },
+          "marketView": [
+            1.0,
+            0.5,
+            0.15
+          ],
+          "riskProfile": {
+            "target": 0.5
+          },
+          "capitalIncome": {
+            "capital": 0.7,
+            "income": 0.35
+          },
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "qqq-lc-120d",
+        "ticker": "QQQ LC",
+        "name": "Long call on QQQ",
+        "underlying": "QQQ",
+        "strategy": "Long call",
+        "tenor": "120d",
+        "moneyness": 0.95,
+        "strike": 704.58,
+        "sector": "tech",
+        "region": "g7",
+        "group": "opt-qqq",
+        "note": "120d \u00b7 95% of spot \u00b7 gearing without margin",
+        "data": {
+          "underlyingPrice": 741.66,
+          "strike": 704.58,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "yes": 1.0,
+            "no": 0.12
+          },
+          "marketView": [
+            0.1,
+            0.5,
+            1.0
+          ],
+          "riskProfile": {
+            "target": 1.8
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.2
+          },
+          "sector": {
+            "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
+            "financials": 0.2,
+            "energy": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "qqq-cc-30d",
+        "ticker": "QQQ CC",
+        "name": "Covered call on QQQ",
+        "underlying": "QQQ",
+        "strategy": "Covered call",
+        "tenor": "30d",
+        "moneyness": 1.04,
+        "strike": 771.33,
+        "sector": "tech",
+        "region": "g7",
+        "group": "opt-qqq",
+        "note": "30d \u00b7 104% of spot \u00b7 sells upside for premium",
+        "data": {
+          "underlyingPrice": 741.66,
+          "strike": 771.33,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.45
+          },
+          "marketView": [
+            0.5,
+            1.0,
+            0.6
+          ],
+          "riskProfile": {
+            "target": 0.7
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.25
+          },
+          "sector": {
+            "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
+            "financials": 0.2,
+            "energy": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "qqq-sp-30d",
+        "ticker": "QQQ SP",
+        "name": "Short put on QQQ",
+        "underlying": "QQQ",
+        "strategy": "Short put",
+        "tenor": "30d",
+        "moneyness": 0.91,
+        "strike": 674.91,
+        "sector": "tech",
+        "region": "g7",
+        "group": "opt-qqq",
+        "note": "30d \u00b7 91% of spot \u00b7 paid to bid below the market",
+        "data": {
+          "underlyingPrice": 741.66,
+          "strike": 674.91,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "yes": 0.8,
+            "no": 0.75
+          },
+          "marketView": [
+            0.15,
+            0.8,
+            1.0
+          ],
+          "riskProfile": {
+            "target": 1.35
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.35
+          },
+          "sector": {
+            "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
+            "financials": 0.2,
+            "energy": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "qqq-lp-120d",
+        "ticker": "QQQ LP",
+        "name": "Long put on QQQ",
+        "underlying": "QQQ",
+        "strategy": "Long put",
+        "tenor": "120d",
+        "moneyness": 0.95,
+        "strike": 704.58,
+        "sector": "tech",
+        "region": "g7",
+        "group": "opt-qqq",
+        "note": "120d \u00b7 95% of spot \u00b7 downside cover",
+        "data": {
+          "underlyingPrice": 741.66,
+          "strike": 704.58,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.4
+          },
+          "marketView": [
+            1.0,
+            0.5,
+            0.15
+          ],
+          "riskProfile": {
+            "target": 0.5
+          },
+          "capitalIncome": {
+            "capital": 0.7,
+            "income": 0.35
+          },
+          "sector": {
+            "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
+            "financials": 0.2,
+            "energy": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "ewz-lc-120d",
+        "ticker": "EWZ LC",
+        "name": "Long call on EWZ",
+        "underlying": "EWZ",
+        "strategy": "Long call",
+        "tenor": "120d",
+        "moneyness": 0.94,
+        "strike": 34.76,
+        "sector": "core",
+        "region": "em",
+        "group": "opt-ewz",
+        "note": "120d \u00b7 94% of spot \u00b7 gearing without margin",
+        "data": {
+          "underlyingPrice": 36.98,
+          "strike": 34.76,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "yes": 1.0,
+            "no": 0.12
+          },
+          "marketView": [
+            0.1,
+            0.5,
+            1.0
+          ],
+          "riskProfile": {
+            "target": 1.8
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.2
+          },
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 0.25,
+            "em": 1.0
+          }
+        }
+      },
+      {
+        "id": "ewz-cc-30d",
+        "ticker": "EWZ CC",
+        "name": "Covered call on EWZ",
+        "underlying": "EWZ",
+        "strategy": "Covered call",
+        "tenor": "30d",
+        "moneyness": 1.07,
+        "strike": 39.57,
+        "sector": "core",
+        "region": "em",
+        "group": "opt-ewz",
+        "note": "30d \u00b7 107% of spot \u00b7 sells upside for premium",
+        "data": {
+          "underlyingPrice": 36.98,
+          "strike": 39.57,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.45
+          },
+          "marketView": [
+            0.5,
+            1.0,
+            0.6
+          ],
+          "riskProfile": {
+            "target": 0.7
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.25
+          },
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 0.25,
+            "em": 1.0
+          }
+        }
+      },
+      {
+        "id": "ewz-sp-30d",
+        "ticker": "EWZ SP",
+        "name": "Short put on EWZ",
+        "underlying": "EWZ",
+        "strategy": "Short put",
+        "tenor": "30d",
+        "moneyness": 0.85,
+        "strike": 31.43,
+        "sector": "core",
+        "region": "em",
+        "group": "opt-ewz",
+        "note": "30d \u00b7 85% of spot \u00b7 paid to bid below the market",
+        "data": {
+          "underlyingPrice": 36.98,
+          "strike": 31.43,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "yes": 0.8,
+            "no": 0.75
+          },
+          "marketView": [
+            0.15,
+            0.8,
+            1.0
+          ],
+          "riskProfile": {
+            "target": 1.35
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.35
+          },
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 0.25,
+            "em": 1.0
+          }
+        }
+      },
+      {
+        "id": "ewz-lp-120d",
+        "ticker": "EWZ LP",
+        "name": "Long put on EWZ",
+        "underlying": "EWZ",
+        "strategy": "Long put",
+        "tenor": "120d",
+        "moneyness": 0.92,
+        "strike": 34.02,
+        "sector": "core",
+        "region": "em",
+        "group": "opt-ewz",
+        "note": "120d \u00b7 92% of spot \u00b7 downside cover",
+        "data": {
+          "underlyingPrice": 36.98,
+          "strike": 34.02,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.4
+          },
+          "marketView": [
+            1.0,
+            0.5,
+            0.15
+          ],
+          "riskProfile": {
+            "target": 0.5
+          },
+          "capitalIncome": {
+            "capital": 0.7,
+            "income": 0.35
+          },
+          "sector": {
+            "tech": 0.5,
+            "financials": 0.5,
+            "healthcare": 0.5,
+            "energy": 0.5,
+            "consumer": 0.5,
+            "industrials": 0.5
+          },
+          "country": {
+            "g7": 0.25,
+            "em": 1.0
+          }
+        }
+      },
+      {
+        "id": "xlf-lc-120d",
+        "ticker": "XLF LC",
+        "name": "Long call on XLF",
+        "underlying": "XLF",
+        "strategy": "Long call",
+        "tenor": "120d",
+        "moneyness": 0.94,
+        "strike": 51.2,
+        "sector": "financials",
+        "region": "g7",
+        "group": "opt-xlf",
+        "note": "120d \u00b7 94% of spot \u00b7 gearing without margin",
+        "data": {
+          "underlyingPrice": 54.47,
+          "strike": 51.2,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "yes": 1.0,
+            "no": 0.12
+          },
+          "marketView": [
+            0.1,
+            0.5,
+            1.0
+          ],
+          "riskProfile": {
+            "target": 1.8
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.2
+          },
+          "sector": {
+            "financials": 1.0,
+            "industrials": 0.32,
+            "energy": 0.26,
+            "consumer": 0.22,
+            "tech": 0.2,
+            "healthcare": 0.15
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "xlf-cc-30d",
+        "ticker": "XLF CC",
+        "name": "Covered call on XLF",
+        "underlying": "XLF",
+        "strategy": "Covered call",
+        "tenor": "30d",
+        "moneyness": 1.07,
+        "strike": 58.28,
+        "sector": "financials",
+        "region": "g7",
+        "group": "opt-xlf",
+        "note": "30d \u00b7 107% of spot \u00b7 sells upside for premium",
+        "data": {
+          "underlyingPrice": 54.47,
+          "strike": 58.28,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.45
+          },
+          "marketView": [
+            0.5,
+            1.0,
+            0.6
+          ],
+          "riskProfile": {
+            "target": 0.7
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.25
+          },
+          "sector": {
+            "financials": 1.0,
+            "industrials": 0.32,
+            "energy": 0.26,
+            "consumer": 0.22,
+            "tech": 0.2,
+            "healthcare": 0.15
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "xlf-sp-30d",
+        "ticker": "XLF SP",
+        "name": "Short put on XLF",
+        "underlying": "XLF",
+        "strategy": "Short put",
+        "tenor": "30d",
+        "moneyness": 0.85,
+        "strike": 46.3,
+        "sector": "financials",
+        "region": "g7",
+        "group": "opt-xlf",
+        "note": "30d \u00b7 85% of spot \u00b7 paid to bid below the market",
+        "data": {
+          "underlyingPrice": 54.47,
+          "strike": 46.3,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "yes": 0.8,
+            "no": 0.75
+          },
+          "marketView": [
+            0.15,
+            0.8,
+            1.0
+          ],
+          "riskProfile": {
+            "target": 1.35
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.35
+          },
+          "sector": {
+            "financials": 1.0,
+            "industrials": 0.32,
+            "energy": 0.26,
+            "consumer": 0.22,
+            "tech": 0.2,
+            "healthcare": 0.15
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "xlf-lp-120d",
+        "ticker": "XLF LP",
+        "name": "Long put on XLF",
+        "underlying": "XLF",
+        "strategy": "Long put",
+        "tenor": "120d",
+        "moneyness": 0.92,
+        "strike": 50.11,
+        "sector": "financials",
+        "region": "g7",
+        "group": "opt-xlf",
+        "note": "120d \u00b7 92% of spot \u00b7 downside cover",
+        "data": {
+          "underlyingPrice": 54.47,
+          "strike": 50.11,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.4
+          },
+          "marketView": [
+            1.0,
+            0.5,
+            0.15
+          ],
+          "riskProfile": {
+            "target": 0.5
+          },
+          "capitalIncome": {
+            "capital": 0.7,
+            "income": 0.35
+          },
+          "sector": {
+            "financials": 1.0,
+            "industrials": 0.32,
+            "energy": 0.26,
+            "consumer": 0.22,
+            "tech": 0.2,
+            "healthcare": 0.15
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "smh-lc-120d",
+        "ticker": "SMH LC",
+        "name": "Long call on SMH",
+        "underlying": "SMH",
+        "strategy": "Long call",
+        "tenor": "120d",
+        "moneyness": 0.94,
+        "strike": 563.91,
+        "sector": "tech",
+        "region": "g7",
+        "group": "opt-smh",
+        "note": "120d \u00b7 94% of spot \u00b7 gearing without margin",
+        "data": {
+          "underlyingPrice": 599.9,
+          "strike": 563.91,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "yes": 1.0,
+            "no": 0.12
+          },
+          "marketView": [
+            0.1,
+            0.5,
+            1.0
+          ],
+          "riskProfile": {
+            "target": 1.8
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.2
+          },
+          "sector": {
+            "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
+            "financials": 0.2,
+            "energy": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "smh-cc-30d",
+        "ticker": "SMH CC",
+        "name": "Covered call on SMH",
+        "underlying": "SMH",
+        "strategy": "Covered call",
+        "tenor": "30d",
+        "moneyness": 1.07,
+        "strike": 641.89,
+        "sector": "tech",
+        "region": "g7",
+        "group": "opt-smh",
+        "note": "30d \u00b7 107% of spot \u00b7 sells upside for premium",
+        "data": {
+          "underlyingPrice": 599.9,
+          "strike": 641.89,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.45
+          },
+          "marketView": [
+            0.5,
+            1.0,
+            0.6
+          ],
+          "riskProfile": {
+            "target": 0.7
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.25
+          },
+          "sector": {
+            "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
+            "financials": 0.2,
+            "energy": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "smh-sp-30d",
+        "ticker": "SMH SP",
+        "name": "Short put on SMH",
+        "underlying": "SMH",
+        "strategy": "Short put",
+        "tenor": "30d",
+        "moneyness": 0.85,
+        "strike": 509.91,
+        "sector": "tech",
+        "region": "g7",
+        "group": "opt-smh",
+        "note": "30d \u00b7 85% of spot \u00b7 paid to bid below the market",
+        "data": {
+          "underlyingPrice": 599.9,
+          "strike": 509.91,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "yes": 0.8,
+            "no": 0.75
+          },
+          "marketView": [
+            0.15,
+            0.8,
+            1.0
+          ],
+          "riskProfile": {
+            "target": 1.35
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.35
+          },
+          "sector": {
+            "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
+            "financials": 0.2,
+            "energy": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "smh-lp-120d",
+        "ticker": "SMH LP",
+        "name": "Long put on SMH",
+        "underlying": "SMH",
+        "strategy": "Long put",
+        "tenor": "120d",
+        "moneyness": 0.92,
+        "strike": 551.91,
+        "sector": "tech",
+        "region": "g7",
+        "group": "opt-smh",
+        "note": "120d \u00b7 92% of spot \u00b7 downside cover",
+        "data": {
+          "underlyingPrice": 599.9,
+          "strike": 551.91,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.4
+          },
+          "marketView": [
+            1.0,
+            0.5,
+            0.15
+          ],
+          "riskProfile": {
+            "target": 0.5
+          },
+          "capitalIncome": {
+            "capital": 0.7,
+            "income": 0.35
+          },
+          "sector": {
+            "tech": 1.0,
+            "industrials": 0.35,
+            "consumer": 0.3,
+            "healthcare": 0.22,
+            "financials": 0.2,
+            "energy": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "xle-lc-120d",
+        "ticker": "XLE LC",
+        "name": "Long call on XLE",
+        "underlying": "XLE",
+        "strategy": "Long call",
+        "tenor": "120d",
+        "moneyness": 0.94,
+        "strike": 58.93,
+        "sector": "energy",
+        "region": "g7",
+        "group": "opt-xle",
+        "note": "120d \u00b7 94% of spot \u00b7 gearing without margin",
+        "data": {
+          "underlyingPrice": 62.69,
+          "strike": 58.93,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "yes": 1.0,
+            "no": 0.12
+          },
+          "marketView": [
+            0.1,
+            0.5,
+            1.0
+          ],
+          "riskProfile": {
+            "target": 1.8
+          },
+          "capitalIncome": {
+            "capital": 1.0,
+            "income": 0.2
+          },
+          "sector": {
+            "energy": 1.0,
+            "industrials": 0.4,
+            "financials": 0.26,
+            "consumer": 0.16,
+            "tech": 0.1,
+            "healthcare": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "xle-cc-30d",
+        "ticker": "XLE CC",
+        "name": "Covered call on XLE",
+        "underlying": "XLE",
+        "strategy": "Covered call",
+        "tenor": "30d",
+        "moneyness": 1.07,
+        "strike": 67.08,
+        "sector": "energy",
+        "region": "g7",
+        "group": "opt-xle",
+        "note": "30d \u00b7 107% of spot \u00b7 sells upside for premium",
+        "data": {
+          "underlyingPrice": 62.69,
+          "strike": 67.08,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.45
+          },
+          "marketView": [
+            0.5,
+            1.0,
+            0.6
+          ],
+          "riskProfile": {
+            "target": 0.7
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.25
+          },
+          "sector": {
+            "energy": 1.0,
+            "industrials": 0.4,
+            "financials": 0.26,
+            "consumer": 0.16,
+            "tech": 0.1,
+            "healthcare": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "xle-sp-30d",
+        "ticker": "XLE SP",
+        "name": "Short put on XLE",
+        "underlying": "XLE",
+        "strategy": "Short put",
+        "tenor": "30d",
+        "moneyness": 0.85,
+        "strike": 53.29,
+        "sector": "energy",
+        "region": "g7",
+        "group": "opt-xle",
+        "note": "30d \u00b7 85% of spot \u00b7 paid to bid below the market",
+        "data": {
+          "underlyingPrice": 62.69,
+          "strike": 53.29,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "yes": 0.8,
+            "no": 0.75
+          },
+          "marketView": [
+            0.15,
+            0.8,
+            1.0
+          ],
+          "riskProfile": {
+            "target": 1.35
+          },
+          "capitalIncome": {
+            "income": 1.0,
+            "capital": 0.35
+          },
+          "sector": {
+            "energy": 1.0,
+            "industrials": 0.4,
+            "financials": 0.26,
+            "consumer": 0.16,
+            "tech": 0.1,
+            "healthcare": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      },
+      {
+        "id": "xle-lp-120d",
+        "ticker": "XLE LP",
+        "name": "Long put on XLE",
+        "underlying": "XLE",
+        "strategy": "Long put",
+        "tenor": "120d",
+        "moneyness": 0.92,
+        "strike": 57.67,
+        "sector": "energy",
+        "region": "g7",
+        "group": "opt-xle",
+        "note": "120d \u00b7 92% of spot \u00b7 downside cover",
+        "data": {
+          "underlyingPrice": 62.69,
+          "strike": 57.67,
+          "ytdExcluded": "an option struck today has no year-to-date"
+        },
+        "fit": {
+          "leverage": {
+            "no": 1.0,
+            "yes": 0.4
+          },
+          "marketView": [
+            1.0,
+            0.5,
+            0.15
+          ],
+          "riskProfile": {
+            "target": 0.5
+          },
+          "capitalIncome": {
+            "capital": 0.7,
+            "income": 0.35
+          },
+          "sector": {
+            "energy": 1.0,
+            "industrials": 0.4,
+            "financials": 0.26,
+            "consumer": 0.16,
+            "tech": 0.1,
+            "healthcare": 0.1
+          },
+          "country": {
+            "g7": 1.0,
+            "em": 0.25
+          }
+        }
+      }
+    ],
+    "selection": {
+      "weights": {
+        "leverage": 1.4,
+        "marketView": 1.2,
+        "capitalIncome": 1.1,
+        "riskProfile": 0.9,
+        "sector": 0.8,
+        "country": 0.6
+      },
+      "relative": 0.8,
+      "diversify": 0.5,
+      "conviction": 5,
+      "sectorCap": 0.7,
+      "sizing": {
+        "pctPerLine": 4,
+        "minN": 1,
+        "maxN": 4,
+        "disperseTo": 1
       }
     }
   },

@@ -211,8 +211,9 @@
       { k: "equities",    label: "Equities",         c: "var(--series-equities)" },
       { k: "fixedIncome", label: "Fixed income",     c: "var(--series-fixedincome)" },
       { k: "notes",       label: "Structured notes", c: "var(--series-notes)" },
-      { k: "fx",          label: "FX",               c: "var(--series-cash)" }
-    ];
+      { k: "fx",          label: "FX",               c: "var(--series-cash)" },
+      { k: "options",     label: "Options",          c: "var(--series-options)" }
+    ].filter(function (x) { return a[x.k] > 0; });
 
     bar.innerHTML = keys.map(function (x) {
       return '<i style="flex:' + a[x.k] + ' 0 0;background:' + x.c + '" title="' +
@@ -239,7 +240,8 @@
     equities:    "var(--series-equities)",
     fixedIncome: "var(--series-fixedincome)",
     notes:       "var(--series-notes)",
-    fx:          "var(--series-cash)"
+    fx:          "var(--series-cash)",
+    options:     "var(--series-options)"
   };
 
   function paintSimulation(list) {

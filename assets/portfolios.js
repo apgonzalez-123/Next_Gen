@@ -1196,8 +1196,19 @@ window.ENGINE = (function () {
     var equity = remaining * equityShare;
     var fixedIncome = remaining - equity;
 
-    var raw = { equities: equity, fixedIncome: fixedIncome, notes: notes, fx: fx };
-    var total = raw.equities + raw.fixedIncome + raw.notes + raw.fx;
+    /* Options are an overlay on the equity sleeve, not a separate bet, so
+       they are carved OUT of equities rather than added on top — you cannot
+       write a covered call on stock you do not own. The desk's rule is that
+       leverage and income are expressed through options, so those two
+       answers size the overlay, with a bullish view adding to it. */
+    var bullish = Math.max(0, view - 1);
+    var overlay = Math.min(0.30, levered * 0.18 + bullish * 0.10 + income * 0.12);
+    var options = equity * overlay;
+    equity = equity - options;
+
+    var raw = { equities: equity, fixedIncome: fixedIncome, notes: notes,
+                fx: fx, options: options };
+    var total = raw.equities + raw.fixedIncome + raw.notes + raw.fx + raw.options;
 
     /* Round to whole percent and put any rounding drift on the largest
        sleeve, so the four always read as exactly 100. */
@@ -1211,7 +1222,7 @@ window.ENGINE = (function () {
 
     out.drivers = {
       risk: risk, view: view, horizon: horizon, usd: usd,
-      levered: levered, income: income
+      levered: levered, income: income, overlay: overlay
     };
     return out;
   }
@@ -1660,6 +1671,23 @@ window.ENGINE = (function () {
       key: "fx", label: "FX", weight: alloc.fx,
       lines: fxLines, scored: fxr.all
     });
+
+    /* --- options: the overlay carved out of equities above ----------- */
+    if (products.options && alloc.options > 0) {
+      var op = scoreShelf(agg, products.options, { allocation: alloc.options });
+      var opLines = spreadFor(alloc.options, products.options, op.picked.map(function (p) {
+        return { item: p.item, w: p.score };
+      }));
+      opLines.forEach(function (l) {
+        var m = op.picked.filter(function (p) { return p.item === l.item; })[0];
+        if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank;
+                 l.adjusted = m.adjusted; l.shelfOf = m.shelfOf; }
+      });
+      buckets.push({
+        key: "options", label: "Options", weight: alloc.options,
+        lines: opLines, scored: op.all
+      });
+    }
 
     /* Present each sleeve in score order and number the lines 1..n.
        The shelf-wide rank is not the right label here: a note promoted to

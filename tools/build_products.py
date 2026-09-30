@@ -397,6 +397,17 @@ EQ = [
   ("ARKK", "CBOE", "ARK Innovation",                    "High beta",  "tech",        "g7", 100, 2,  91.49, 17.08,  8.46, 2.020, 2.19, 0.75),
   ("XBI",  "AMEX", "SPDR S&P Biotech",                  "High beta",  "healthcare",  "g7", 100, 2, 156.75, 28.20, 61.16, 0.970, 2.35, 0.35),
   ("XLU",  "AMEX", "Utilities Select Sector SPDR",      "Defensive",  "energy",      "g7", 100, 0,  39.48, -7.95, -7.97, -0.100, 1.31, 0.08),
+
+  # Added from the desk's blended list (NexGen vectors EQ alloc securities).
+  # Prices and performance read live from TradingView on 2026-09-30.
+  ("SPY",  "AMEX", "SPDR S&P 500 ETF Trust",            "Core",       "core",        "g7", 100, 1, 767.02, 11.86, 15.70, 1.011, 0.68, 0.09),
+  ("VT",   "AMEX", "Vanguard Total World Stock",        "Core",       "core",        "g7",  60, 1, 158.49, 11.41, 15.48, 1.004, 0.49, 0.06),
+  ("QUAL", "CBOE", "iShares MSCI USA Quality Factor",   "Core",       "core",        "g7", 100, 1, 223.63, 11.88, 15.84, 0.870, 0.51, 0.15),
+  ("IEMG", "AMEX", "iShares Core MSCI Emerging Markets","Regional",   "core",        "em",  20, 2,  81.10, 18.18, 23.08, 1.282, 1.08, 0.09),
+  ("ITA",  "CBOE", "iShares U.S. Aerospace & Defense",  "Sector",     "industrials", "g7", 100, 2, 208.36, -3.32,  1.38, 1.062, 1.44, 0.37),
+  ("PICK", "CBOE", "iShares Global Metals & Mining",    "Sector",     "energy",      "g7",  35, 2,  60.25, 15.31, 35.00, 1.431, 2.28, 0.39),
+  ("DBC",  "AMEX", "Invesco DB Commodity Index",        "Real asset", "energy",      "g7",  50, 2,  32.43, 44.84, 44.13, -0.322, 1.90, 0.84),
+  ("IALT", "NASDAQ","iShares Systematic Alternatives",  "Real asset", "core",        "g7", 100, 1,  29.87, 17.60, 18.86, 0.036, 0.61, 0.99),
 ]
 SECTORS = ["tech", "financials", "healthcare", "energy", "consumer", "industrials"]
 
@@ -427,6 +438,11 @@ EQ_GROUP = {
   "XLI": "industrials", "VGK": "europe", "EWJ": "japan", "EWU": "uk",
   "EFA": "dev-intl", "EEM": "em-broad", "EWZ": "brazil", "EWY": "korea",
   "FXI": "china", "IAU": "gold",
+  # SPY and IVV are the same index, IEMG and EEM the same market: grouping
+  # them keeps the sleeve from buying one exposure twice.
+  "SPY": "us-core", "VT": "world-core", "QUAL": "us-quality",
+  "IEMG": "em-broad", "ITA": "aerospace-defence", "PICK": "metals-mining",
+  "DBC": "commodities", "IALT": "liquid-alts",
 }
 
 # Live prices pulled from TradingView on the asOf date. Samsung's local
@@ -463,17 +479,96 @@ def build_equities():
         })
     return out
 
+# ---------------------------------------------------------------- options
+#
+# The desk marked six names on the blended list as option-eligible and gave
+# a moneyness for each of four structures. Moneyness is quoted against spot:
+# a 0.95 long call is struck 5% below the market, a 1.04 covered call 4%
+# above it. Those numbers are the desk's, not this file's.
+#
+# Options are how the book expresses leverage and how it manufactures income,
+# which is why the fits below key off the leverage answer, the market view
+# and the capital-or-income answer rather than off sector alone.
+OPT_UNDERLYING = {
+  # ticker: (long call 120d, covered call 30d, short put 30d, long put 120d)
+  "SPY":  (0.95, 1.04, 0.91, 0.95),
+  "QQQ":  (0.95, 1.04, 0.91, 0.95),
+  "EWZ":  (0.94, 1.07, 0.85, 0.92),
+  "XLF":  (0.94, 1.07, 0.85, 0.92),
+  "SMH":  (0.94, 1.07, 0.85, 0.92),
+  "XLE":  (0.94, 1.07, 0.85, 0.92),
+}
+
+OPT_STRATEGY = [
+  # key, label, tenor, index into the moneyness tuple, what it is for
+  ("lc", "Long call",   "120d", 0, "gearing without margin"),
+  ("cc", "Covered call", "30d", 1, "sells upside for premium"),
+  ("sp", "Short put",    "30d", 2, "paid to bid below the market"),
+  ("lp", "Long put",    "120d", 3, "downside cover"),
+]
+
+# marketView is a 0-2 scale: 0 bearish, 1 neutral, 2 bullish. A long call
+# wants a bullish room; a long put wants the opposite.
+OPT_FIT = {
+  "lc": {"leverage": {"yes": 1.0, "no": 0.12}, "marketView": [0.10, 0.50, 1.0],
+         "riskProfile": 1.80, "capitalIncome": {"capital": 1.0, "income": 0.20}},
+  "cc": {"leverage": {"no": 1.0, "yes": 0.45}, "marketView": [0.50, 1.0, 0.60],
+         "riskProfile": 0.70, "capitalIncome": {"income": 1.0, "capital": 0.25}},
+  "sp": {"leverage": {"yes": 0.80, "no": 0.75}, "marketView": [0.15, 0.80, 1.0],
+         "riskProfile": 1.35, "capitalIncome": {"income": 1.0, "capital": 0.35}},
+  "lp": {"leverage": {"no": 1.0, "yes": 0.40}, "marketView": [1.0, 0.50, 0.15],
+         "riskProfile": 0.50, "capitalIncome": {"capital": 0.70, "income": 0.35}},
+}
+
+def build_options(equities):
+    by_tk = {e["ticker"]: e for e in equities}
+    out = []
+    for tk, money in OPT_UNDERLYING.items():
+        u = by_tk.get(tk)
+        if not u:
+            print(f"  ! options: {tk} is not on the equity shelf; skipped")
+            continue
+        for key, label, tenor, idx, purpose in OPT_STRATEGY:
+            m = money[idx]
+            f = OPT_FIT[key]
+            strike = round(u["data"]["price"] * m, 2)
+            out.append({
+                "id": slug(f"{tk}-{key}-{tenor}", 24),
+                "ticker": tk + " " + label.split()[0][0].upper() + label.split()[-1][0].upper(),
+                "name": f"{label} on {tk}",
+                "underlying": tk, "strategy": label, "tenor": tenor,
+                "moneyness": m,
+                "strike": strike,
+                # Inherited so a room that asked for technology gets its
+                # gearing on QQQ or SMH rather than on energy.
+                "sector": u.get("sector"), "region": u.get("region"),
+                "group": "opt-" + tk.lower(),
+                "note": f"{tenor} · {int(round(m * 100))}% of spot · {purpose}",
+                "data": {"underlyingPrice": u["data"]["price"], "strike": strike,
+                         "ytdExcluded": "an option struck today has no year-to-date"},
+                "fit": {
+                    "leverage": f["leverage"],
+                    "marketView": f["marketView"],
+                    "riskProfile": {"target": f["riskProfile"]},
+                    "capitalIncome": f["capitalIncome"],
+                    "sector": u["fit"].get("sector"),
+                    "country": u["fit"].get("country"),
+                },
+            })
+    return out
+
 # ---------------------------------------------------------------- main
 def main():
     fx    = build_fx(os.path.join(SRC, "FX_Assets.xlsx"))
     notes = build_notes(os.path.join(SRC, "next gen picks.xlsx"))
     bonds = build_bonds(os.path.join(SRC, "Securities-2026-09-24.xlsx")) + build_non_usd()
     eq    = build_equities()
+    options = build_options(eq)
 
     doc = {
         "$note": ("Built by tools/build_products.py from the desk's own source files. "
                   "Instrument facts only: no client-identifying material is carried over."),
-        "asOf": "2026-09-24",
+        "asOf": "2026-09-30",
         "source": "Safra desk product files",
         "version": 4,
 
@@ -500,6 +595,13 @@ def main():
                 "diversify": 0.55, "conviction": 7,
                 "sizing": {"pctPerLine": 7, "minN": 2, "maxN": 6, "disperseTo": 2}}},
 
+        "options": {"shelf": options, "selection": {
+            "weights": {"leverage": 1.4, "marketView": 1.2, "capitalIncome": 1.1,
+                        "riskProfile": 0.9, "sector": 0.8, "country": 0.6},
+            "relative": 0.80,
+            "diversify": 0.50, "conviction": 5, "sectorCap": 0.7,
+            "sizing": {"pctPerLine": 4, "minN": 1, "maxN": 4, "disperseTo": 1}}},
+
         "fx": {"shelf": fx, "selection": {
             "weights": {"usd": 1.4, "riskProfile": 1.1, "country": 1.0,
                         "leverage": 0.8, "horizon": 0.6},
@@ -509,7 +611,7 @@ def main():
     }
 
     # drop null fits so the scorer never sees an empty axis
-    for bucket in ("equities", "fixedIncome", "notes", "fx"):
+    for bucket in ("equities", "fixedIncome", "notes", "fx", "options"):
         for item in doc[bucket]["shelf"]:
             item["fit"] = {k: v for k, v in item["fit"].items() if v}
 
@@ -518,7 +620,7 @@ def main():
     # do discriminate. All 26 notes were USD-settled, so "usd" was pure noise
     # in that sleeve. Drop those, and report what is left, so the shelf's real
     # resolving power is visible rather than assumed.
-    for bucket in ("equities", "fixedIncome", "notes", "fx"):
+    for bucket in ("equities", "fixedIncome", "notes", "fx", "options"):
         shelf = doc[bucket]["shelf"]
         axes = {k for i in shelf for k in i["fit"]}
         dropped, kept = [], {}
@@ -541,7 +643,7 @@ def main():
     # silently merge two instruments. Two bonds from one issuer can slug the
     # same way once punctuation is stripped (A and A- both become "a").
     seen = {}
-    for bucket in ("equities", "fixedIncome", "notes", "fx"):
+    for bucket in ("equities", "fixedIncome", "notes", "fx", "options"):
         for item in doc[bucket]["shelf"]:
             base = item["id"]
             if base in seen:
@@ -558,7 +660,7 @@ def main():
         json.dump(doc, f, indent=2)
         f.write("\n")
 
-    for b in ("equities", "fixedIncome", "notes", "fx"):
+    for b in ("equities", "fixedIncome", "notes", "fx", "options"):
         print(f"  {b:14} {len(doc[b]['shelf']):>3} instruments")
 
 if __name__ == "__main__":
