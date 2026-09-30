@@ -213,3 +213,63 @@ a.p-btn { text-decoration: none; display: inline-block; }
   margin-right: 6px; color: var(--muted);
   font-variant-numeric: tabular-nums; font-size: 0.85em;
 }
+
+/* --- how a line gets here ---
+   The simulation is the part of this page a reviewer argues with, so the
+   method sits above it rather than behind a link, and every line carries
+   its own score breakdown. */
+.a-method {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  padding: 16px 18px;
+  margin-top: 18px;
+}
+.a-method > summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 550;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.a-method-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px 28px;
+  margin-top: 16px;
+}
+.a-method-grid h4 {
+  font-size: 12px;
+  font-weight: 550;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.a-method-grid p { font-size: 13px; line-height: 1.55; color: var(--muted); }
+.a-method-grid em { font-style: normal; color: var(--text-2); }
+.a-method-foot {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+/* Why one line is here: the score, where it came from, and the axes. */
+.a-line-why { margin-top: 6px; font-size: 11.5px; color: var(--muted); }
+.a-line-why b { color: var(--text-2); font-weight: 550; }
+.a-line-fits { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 6px; }
+.a-fit { display: flex; align-items: center; gap: 5px; font-size: 10.5px; }
+.a-fit em {
+  font-style: normal; text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--muted); min-width: 46px;
+}
+.a-fit i {
+  display: block; width: 42px; height: 3px; border-radius: var(--r-xs);
+  background: var(--line-soft); overflow: hidden;
+}
+.a-fit i u { display: block; height: 100%; text-decoration: none; border-radius: var(--r-xs); }
+.a-fit b { color: var(--text-2); font-variant-numeric: tabular-nums; font-weight: 400; }

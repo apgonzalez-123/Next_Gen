@@ -236,6 +236,13 @@
     document.getElementById("allocTopSub").textContent = top ? "closest match · " + top.fit + "% fit" : "";
   }
 
+  var AXIS_WORD = {
+    riskProfile: "risk", marketView: "view", horizon: "horizon",
+    leverage: "gearing", country: "region", sector: "sector",
+    usd: "dollar", capitalIncome: "cap/inc", duration: "duration",
+    credit: "credit"
+  };
+
   var BUCKET_COLOUR = {
     equities:    "var(--series-equities)",
     fixedIncome: "var(--series-fixedincome)",
@@ -267,8 +274,35 @@
          bucket still reads as a large part of that bucket. */
       var widest = b.lines.reduce(function (m, l) { return Math.max(m, l.weight); }, 0) || 1;
 
+      var W = ((window.PRODUCTS[b.key] || {}).selection || {}).weights || {};
+      var scored = b.scored || [];
+
       var lines = b.lines.length
         ? b.lines.map(function (l) {
+            /* Every axis the room answered, with this instrument's score on
+               it and the weight that axis carries in this sleeve. This is
+               the whole of why the line is here: the shelf position it came
+               from, what it scored, and on what. */
+            var per = l.per || {};
+            var axes = Object.keys(per).sort(function (x, y) {
+              return (W[y] || 1) * per[y] - (W[x] || 1) * per[x];
+            }).map(function (ax) {
+              return '<span class="a-fit" title="axis weight ' + (W[ax] || 1) + '">' +
+                '<em>' + esc(AXIS_WORD[ax] || ax) + "</em>" +
+                '<i><u style="width:' + Math.round(per[ax] * 100) +
+                  "%;background:" + colour + '"></u></i>' +
+                "<b>" + per[ax].toFixed(2) + "</b></span>";
+            }).join("");
+
+            var from = l.shelfRank && l.shelfOf
+              ? "#" + l.shelfRank + " of " + l.shelfOf + " on the shelf"
+              : "";
+            var adj = (l.adjusted !== undefined && l.score !== undefined &&
+                       l.adjusted < l.score - 0.004)
+              ? " · held at " + l.adjusted.toFixed(2) +
+                " after the overlap discount"
+              : "";
+
             return '<div class="a-line">' +
               '<div class="a-line-top"><span class="a-line-name">' +
                 '<i class="a-rank">' + (l.rank || "") + "</i>" + esc(l.item.name) + "</span>" +
@@ -277,6 +311,11 @@
               esc(l.note || l.item.detail || "") + "</div>" +
               '<div class="a-line-bar"><i style="width:' +
                 Math.round((l.weight / widest) * 100) + "%;background:" + colour + '"></i></div>' +
+              '<div class="a-line-why">' +
+                "<b>fit " + (l.score !== undefined ? l.score.toFixed(3) : "&mdash;") + "</b>" +
+                (from ? " · " + from : "") + adj +
+              "</div>" +
+              '<div class="a-line-fits">' + axes + "</div>" +
               "</div>";
           }).join("")
         : '<p class="a-bucket-empty">No allocation.</p>';

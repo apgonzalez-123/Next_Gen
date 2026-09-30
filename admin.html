@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NextGen Responses</title>
 <meta name="robots" content="noindex">
-<link rel="preload" href="assets/fonts/geist-400-latin.woff2?v=202609301749" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/geist-600-latin.woff2?v=202609301749" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/app.css?v=202609301749">
-<link rel="stylesheet" href="assets/admin.css?v=202609301749">
+<link rel="preload" href="assets/fonts/geist-400-latin.woff2?v=202609301751" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist-600-latin.woff2?v=202609301751" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/app.css?v=202609301751">
+<link rel="stylesheet" href="assets/admin.css?v=202609301751">
 </head>
 <body class="admin">
 
 <header class="a-top">
-  <div class="wordmark"><img class="brand-mark" src="assets/brand/safra-logo.png?v=202609301749" alt="Safra" onerror="this.remove()"><span class="brand-sep" aria-hidden="true"></span><b>NextGen</b> <span>Responses</span></div>
+  <div class="wordmark"><img class="brand-mark" src="assets/brand/safra-logo.png?v=202609301751" alt="Safra" onerror="this.remove()"><span class="brand-sep" aria-hidden="true"></span><b>NextGen</b> <span>Responses</span></div>
   <div class="a-tools">
     <span id="srcBadge" class="p-badge"></span>
     <span class="a-stat"><b id="nCount">0</b> responses</span>
@@ -71,13 +71,55 @@
       <p>What the room&rsquo;s answers build, instrument by instrument.</p>
     </div>
     <div class="a-sim-grid" id="simGrid"></div>
-    <p class="a-sim-note">
-      Indicative. Risk appetite and horizon set the equity share, an income mandate pulls out of it,
-      leverage is expressed through notes, and a dollar view away from neutral funds an FX sleeve.
-      Within each bucket the room&rsquo;s own answers pick the instruments: sector votes weight the
-      equity sleeves, the IG and HY split weights credit, and the duration answer sets the sovereign
-      ladder. The shelf lives in <b>data/products.json</b>; replace it with the real instruments.
-    </p>
+    <details class="a-method" open>
+      <summary>How a line gets here</summary>
+
+      <div class="a-method-grid">
+        <div>
+          <h4>1 &middot; The database</h4>
+          <p>Everything the engine may buy is built by <b>tools/build_products.py</b> straight from
+             the desk&rsquo;s own files &mdash; the securities export, the non-USD ideas, the FX sheet,
+             the structured-note picks and the blended equity list &mdash; into
+             <b>data/products.json</b>. Nothing is hand-entered here. Each instrument carries a
+             <em>fit vector</em>: for every question the room is asked, how well that instrument
+             answers it. Those come from real attributes, not labels: a bond&rsquo;s composite rating
+             and payment rank, a note&rsquo;s barrier, coupon and tenor, a fund&rsquo;s beta and
+             realised volatility.</p>
+        </div>
+
+        <div>
+          <h4>2 &middot; The sleeve sizes</h4>
+          <p>Risk appetite and horizon set what share of the risk budget is equity; an income
+             mandate pulls out of it. Structured notes start at 8% and grow with the room&rsquo;s
+             appetite for leverage. A dollar view away from neutral funds an FX sleeve. Options are
+             then carved <em>out of</em> equities &mdash; never added on top, because a covered call
+             needs the stock behind it &mdash; sized by the leverage and income answers.</p>
+        </div>
+
+        <div>
+          <h4>3 &middot; The score</h4>
+          <p>Every instrument on a sleeve&rsquo;s shelf is scored against every question the room
+             answered, weighted per sleeve. A continuous answer is scored against each guest
+             individually and then averaged, not against the room&rsquo;s average &mdash; a room split
+             between 0% and 100% dollars is a divided room, not a 50% room. The axis scores combine
+             as a blend of an arithmetic and a geometric mean, so a line has to be at least passable
+             everywhere rather than excellent on most and wrong on one.</p>
+        </div>
+
+        <div>
+          <h4>4 &middot; The picks</h4>
+          <p>Lines are taken one at a time on <em>marginal</em> fit, each discounted by how much it
+             duplicates what the sleeve already holds, so it cannot buy the same exposure twice
+             through two tickers. No more than 60% of a sleeve&rsquo;s lines may share a sector.
+             How many lines depends on how much the sleeve is asked to carry and how divided the
+             room was, so the asset classes do not all hold the same number.</p>
+        </div>
+      </div>
+
+      <p class="a-method-foot">Each line below shows its fit score, where it ranked on the full
+         shelf, and its score on every axis. A line held at a lower number than it scored was kept
+         despite overlapping something above it. Indicative only.</p>
+    </details>
   </section>
 
   <p class="a-note" id="note"></p>
@@ -89,11 +131,11 @@
   </div>
 </main>
 
-<script src="assets/config.js?v=202609301749"></script>
-<script src="assets/schema.js?v=202609301749"></script>
-<script src="assets/portfolios.js?v=202609301749"></script>
-<script src="assets/base-loader.js?v=202609301749"></script>
-<script src="assets/store.js?v=202609301749"></script>
-<script src="assets/admin.js?v=202609301749"></script>
+<script src="assets/config.js?v=202609301751"></script>
+<script src="assets/schema.js?v=202609301751"></script>
+<script src="assets/portfolios.js?v=202609301751"></script>
+<script src="assets/base-loader.js?v=202609301751"></script>
+<script src="assets/store.js?v=202609301751"></script>
+<script src="assets/admin.js?v=202609301751"></script>
 </body>
 </html>

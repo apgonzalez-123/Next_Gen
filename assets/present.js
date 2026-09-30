@@ -764,7 +764,7 @@
   function shortAxis(id) {
     return ({ riskProfile: "risk", marketView: "view", horizon: "horizon",
               leverage: "gearing", country: "region", sector: "sector",
-              usd: "dollar", capitalIncome: "income", duration: "duration",
+              usd: "dollar", capitalIncome: "cap/inc", duration: "duration",
               credit: "credit" })[id] || id;
   }
 
