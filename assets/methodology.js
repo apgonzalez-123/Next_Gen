@@ -61,9 +61,14 @@
       ["Underlying", function (p) { return pill(p.underlying); }],
       ["Strategy", function (p) { return p.strategy; }],
       ["Tenor",   function (p) { return p.tenor; }],
-      ["Moneyness", function (p) { return Math.round(p.moneyness * 100) + "%"; }, "num"],
+      ["Expiry",  function (p) { return p.expiry || "&mdash;"; }],
+      ["Days",    function (p) { return p.days || "&mdash;"; }, "num"],
+      ["Moneyness", function (p) { return (p.moneyness * 100).toFixed(1) + "%"; }, "num"],
       ["Strike",  function (p) { return n(p.strike); }, "num"],
-      ["Spot",    function (p) { return p.data && p.data.underlyingPrice ? n(p.data.underlyingPrice) : "&mdash;"; }, "num"]
+      ["Premium", function (p) { return p.premium != null ? n(p.premium) : "&mdash;"; }, "num"],
+      ["% notional", function (p) { return p.premiumPct != null ? p.premiumPct.toFixed(2) + "%" : "&mdash;"; }, "num"],
+      ["Delta",   function (p) { return p.delta != null ? p.delta.toFixed(2) : "&mdash;"; }, "num"],
+      ["IV",      function (p) { return p.iv != null ? p.iv.toFixed(1) : "&mdash;"; }, "num"]
     ],
     notes: [
       ["Instrument", function (p) { return name2(p, p.note); }],

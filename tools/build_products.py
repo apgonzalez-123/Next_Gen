@@ -520,6 +520,46 @@ OPT_FIT = {
          "riskProfile": 0.50, "capitalIncome": {"capital": 0.70, "income": 0.35}},
 }
 
+# Live mid prices off the OPRA chains, read through TradingView on
+# 2026-09-30 while the market was open. A premium is a snapshot, not a
+# property of the instrument: these move every day and are here so the desk
+# can see what the structures actually cost, not as a quote.
+#
+# Two things the chains settled that the spreadsheet could not:
+#   - "120d" is not a listed expiry. Only SPY has one near it (2027-01-29,
+#     121 days); the rest price off 2027-01-15, which is 107 days.
+#   - the desk's moneyness does not always land on a listed strike, so the
+#     nearest one is used and its true moneyness recorded alongside.
+#
+# ticker: {strategy: (expiry, days, strike, true moneyness, mid, % of spot, delta, iv)}
+OPT_QUOTE = {
+  "SPY": {"lc": ("2027-01-29", 121, 729.0, 0.950, 59.250, 7.721, 0.736, 16.3),
+          "lp": ("2027-01-29", 121, 729.0, 0.950, 12.090, 1.576, -0.264, 16.3),
+          "cc": ("2026-10-30",  30, 798.0, 1.040,  1.810, 0.236, 0.137, 11.9),
+          "sp": ("2026-10-30",  30, 698.0, 0.910,  1.195, 0.156, -0.058, 21.6)},
+  "QQQ": {"lc": ("2027-01-15", 107, 705.0, 0.949, 64.360, 8.660, 0.707, 21.4),
+          "lp": ("2027-01-15", 107, 705.0, 0.949, 16.910, 2.275, -0.293, 21.4),
+          "cc": ("2026-10-30",  30, 773.0, 1.040,  5.330, 0.717, 0.241, 18.0),
+          "sp": ("2026-10-30",  30, 676.0, 0.910,  2.450, 0.330, -0.092, 26.0)},
+  "EWZ": {"lc": ("2027-01-15", 107,  35.0, 0.936,  4.550, 12.172, 0.663, 42.5),
+          "lp": ("2027-01-15", 107,  34.0, 0.910,  1.805, 4.829, -0.293, 42.7),
+          "cc": ("2026-10-30",  30,  40.0, 1.070,  1.555, 4.160, 0.382, 59.2),
+          "sp": ("2026-10-30",  30,  32.0, 0.856,  0.555, 1.485, -0.154, 58.9)},
+  "XLF": {"lc": ("2027-01-15", 107,  50.0, 0.933,  4.750, 8.860, 0.786, 18.2),
+          "lp": ("2027-01-15", 107,  49.0, 0.914,  0.535, 0.998, -0.171, 19.2),
+          "cc": ("2026-10-30",  30,  57.5, 1.073,  0.120, 0.224, 0.090, 17.6),
+          "sp": ("2026-10-30",  30,  45.0, 0.839,  0.050, 0.093, -0.026, 32.3)},
+  "SMH": {"lc": ("2027-01-15", 107, 570.0, 0.937, 73.625, 12.097, 0.674, 36.5),
+          "lp": ("2027-01-15", 107, 560.0, 0.920, 25.575, 4.202, -0.296, 36.9),
+          "cc": ("2026-10-30",  30, 650.0, 1.068,  9.975, 1.639, 0.279, 34.8),
+          "sp": ("2026-10-30",  30, 520.0, 0.854,  2.585, 0.425, -0.078, 41.0)},
+  "XLE": {"lc": ("2027-01-15", 107,  57.5, 0.927,  6.375, 10.274, 0.740, 25.4),
+          "lp": ("2027-01-15", 107,  57.5, 0.927,  1.440, 2.321, -0.260, 25.4),
+          "cc": ("2026-10-30",  30,  66.0, 1.064,  0.555, 0.894, 0.218, 25.9),
+          "sp": ("2026-10-30",  30,  53.0, 0.854,  0.080, 0.129, -0.035, 31.2)},
+}
+OPT_QUOTE_ASOF = "2026-09-30"
+
 def build_options(equities):
     by_tk = {e["ticker"]: e for e in equities}
     out = []
@@ -529,9 +569,14 @@ def build_options(equities):
             print(f"  ! options: {tk} is not on the equity shelf; skipped")
             continue
         for key, label, tenor, idx, purpose in OPT_STRATEGY:
-            m = money[idx]
             f = OPT_FIT[key]
-            strike = round(u["data"]["price"] * m, 2)
+            q = OPT_QUOTE.get(tk, {}).get(key)
+            if q:
+                expiry, days, strike, m, mid, pct, delta, iv = q
+            else:
+                m = money[idx]
+                strike = round(u["data"]["price"] * m, 2)
+                expiry = days = mid = pct = delta = iv = None
             out.append({
                 "id": slug(f"{tk}-{key}-{tenor}", 24),
                 "ticker": tk + " " + label.split()[0][0].upper() + label.split()[-1][0].upper(),
@@ -539,12 +584,20 @@ def build_options(equities):
                 "underlying": tk, "strategy": label, "tenor": tenor,
                 "moneyness": m,
                 "strike": strike,
+                "expiry": expiry, "days": days,
+                # what it costs, as a share of the underlying's own price:
+                # the only figure that compares across a $37 ETF and a $767 one
+                "premiumPct": pct, "premium": mid, "delta": delta, "iv": iv,
+                "quoteAsOf": OPT_QUOTE_ASOF if q else None,
                 # Inherited so a room that asked for technology gets its
                 # gearing on QQQ or SMH rather than on energy.
                 "sector": u.get("sector"), "region": u.get("region"),
                 "group": "opt-" + tk.lower(),
-                "note": f"{tenor} · {int(round(m * 100))}% of spot · {purpose}",
+                "note": (f"{days}d · {int(round(m * 100))}% of spot · "
+                         f"{pct:.2f}% of notional · {purpose}") if q
+                        else f"{tenor} · {int(round(m * 100))}% of spot · {purpose}",
                 "data": {"underlyingPrice": u["data"]["price"], "strike": strike,
+                         "premiumPct": pct, "iv": iv,
                          "ytdExcluded": "an option struck today has no year-to-date"},
                 "fit": {
                     "leverage": f["leverage"],
