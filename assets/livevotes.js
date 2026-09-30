@@ -18,7 +18,8 @@ window.LIVEVOTES = (function () {
   "use strict";
 
   var host = null, built = false;
-  var els = { count: null, complete: null, pending: null, rows: {}, alloc: null, bars: {} };
+  var els = { count: null, complete: null, pending: null, rows: {},
+              alloc: null, bars: {}, keys: {}, qs: {} };
   var prev = { count: -1, bars: {} };
 
   var SECTION_OF = {
@@ -78,11 +79,6 @@ window.LIVEVOTES = (function () {
 
   function build() {
     var axes = window.AXES || [];
-    var groups = {};
-    axes.forEach(function (a) {
-      var g = SECTION_OF[a.id] || "Other";
-      (groups[g] = groups[g] || []).push(a);
-    });
 
     var html =
       '<div class="lv-top">' +
@@ -93,23 +89,26 @@ window.LIVEVOTES = (function () {
       "</div>" +
       '<div class="lv-grid">';
 
-    Object.keys(groups).forEach(function (g) {
-      html += '<div class="lv-col"><div class="lv-col-head">' + esc(g) + "</div>";
-      groups[g].forEach(function (a) {
-        var bs = buckets(a);
-        html += '<div class="lv-q" data-axis="' + esc(a.id) + '">' +
-          '<div class="lv-q-top"><span>' + esc(SHORT[a.id] || a.id) + "</span>" +
-          '<i data-n="' + esc(a.id) + '">0</i></div>' +
-          '<div class="lv-bars">' +
-            bs.map(function (b) {
-              return '<div class="lv-bar" data-k="' + esc(a.id + ":" + b.key) + '">' +
-                '<span class="lv-bar-l">' + esc(b.label) + "</span>" +
-                '<span class="lv-bar-t"><i style="width:0"></i></span>' +
-                '<b class="lv-bar-v">0</b></div>';
-            }).join("") +
-          "</div></div>";
-      });
-      html += "</div>";
+    axes.forEach(function (a) {
+      var bs = buckets(a);
+      html += '<div class="lv-q" data-axis="' + esc(a.id) + '">' +
+        '<div class="lv-q-top">' +
+          '<span class="lv-q-name">' + esc(SHORT[a.id] || a.id) + "</span>" +
+          '<span class="lv-q-step">' + esc(SECTION_OF[a.id] || "") + "</span>" +
+          '<i data-n="' + esc(a.id) + '">0</i>' +
+        "</div>" +
+        /* One stacked bar per question rather than a row per answer. Forty
+           rows of zeros is what the first version put on the projector while
+           the room was still scanning, and every answered row filled its own
+           track, so one vote for Moderate looked the same as one vote for
+           Bullish. A single bar reads correctly at one vote and at thirty. */
+        '<div class="lv-stack" data-s="' + esc(a.id) + '">' +
+          bs.map(function (b) {
+            return '<i data-k="' + esc(a.id + ":" + b.key) + '" style="flex:0 0 0"></i>';
+          }).join("") +
+        "</div>" +
+        '<div class="lv-key" data-key="' + esc(a.id) + '"></div>' +
+        "</div>";
     });
 
     html += "</div>" +
@@ -123,15 +122,17 @@ window.LIVEVOTES = (function () {
     els.pending = document.getElementById("lvPending");
     els.alloc = document.getElementById("lvAlloc");
 
-    host.querySelectorAll(".lv-bar").forEach(function (el) {
-      els.bars[el.getAttribute("data-k")] = {
-        root: el,
-        fill: el.querySelector("i"),
-        val: el.querySelector(".lv-bar-v")
-      };
+    host.querySelectorAll("[data-k]").forEach(function (el) {
+      els.bars[el.getAttribute("data-k")] = { fill: el };
     });
     host.querySelectorAll("[data-n]").forEach(function (el) {
       els.rows[el.getAttribute("data-n")] = el;
+    });
+    host.querySelectorAll("[data-key]").forEach(function (el) {
+      els.keys[el.getAttribute("data-key")] = el;
+    });
+    host.querySelectorAll(".lv-q").forEach(function (el) {
+      els.qs[el.getAttribute("data-axis")] = el;
     });
 
     built = true;
@@ -184,23 +185,46 @@ window.LIVEVOTES = (function () {
       var n = els.rows[axis.id];
       if (n) n.textContent = t.respondents;
 
-      var max = 0;
-      Object.keys(t.counts).forEach(function (k) { max = Math.max(max, t.counts[k]); });
+      var bs = buckets(axis);
+      var top = null, topV = 0;
+      bs.forEach(function (b) {
+        var v = t.counts[b.key] || 0;
+        if (v > topV) { topV = v; top = b.key; }
+      });
 
-      buckets(axis).forEach(function (b) {
+      bs.forEach(function (b) {
         var key = axis.id + ":" + b.key;
         var el = els.bars[key];
         if (!el) return;
         var v = t.counts[b.key] || 0;
-        /* Scaled within the question, so the shape of the room's answer is
-           legible even when only a few people have voted. */
-        var pct = max > 0 ? (v / max) * 100 : 0;
-        el.fill.style.width = pct + "%";
-        el.val.textContent = v;
-        el.root.classList.toggle("lead", v > 0 && v === max);
-        if (prev.bars[key] !== undefined && v > prev.bars[key]) flash(el.root);
+        /* Segment share of everyone who answered THIS question, so a stacked
+           bar always fills and the split is the whole message. */
+        el.fill.style.flexGrow = v;
+        el.fill.classList.toggle("lead", v > 0 && b.key === top);
+        el.fill.classList.toggle("empty", v === 0);
+        if (prev.bars[key] !== undefined && v > prev.bars[key]) flash(els.qs[axis.id]);
         prev.bars[key] = v;
       });
+
+      /* Only the answers that actually have votes are named. Listing every
+         option at zero was most of the noise on the old board. */
+      var k = els.keys[axis.id];
+      if (k) {
+        /* Left to right in the same order as the bar, NOT sorted by size.
+           Sorting the key put "Moderate" first while the bar showed it in
+           the middle, so nothing on the row could be matched to anything
+           else on it — and on an ordered scale like risk or duration the
+           sequence is itself the information. */
+        var live = bs.map(function (b) { return { b: b, v: t.counts[b.key] || 0 }; })
+                     .filter(function (x) { return x.v > 0; });
+        var html = live.length
+          ? live.map(function (x) {
+              return '<span' + (x.b.key === top ? ' class="lead"' : "") + ">" +
+                esc(x.b.label) + "<b>" + x.v + "</b></span>";
+            }).join("")
+          : '<span class="lv-none">no answers yet</span>';
+        if (k.innerHTML !== html) k.innerHTML = html;
+      }
     });
 
     paintAlloc(sim);
