@@ -1,0 +1,156 @@
+{
+  "$note": "Deterministic synthetic rooms for validating the construction engine. Every guest in a scenario answers identically, so the same file always produces the same portfolio. Expectations are written about portfolio CHARACTERISTICS, never about which tickers appear: naming instruments would test the shelf rather than the engine, and would break the moment the desk changes a product.",
+  "roomSize": 20,
+  "scenarios": [
+    {
+      "id": "conservative-income",
+      "name": "Conservative, short horizon, IG, income",
+      "answers": {
+        "riskProfile": 0, "marketView": 0, "horizon": 4, "leverage": "no",
+        "country": "g7", "sector": ["healthcare", "consumer"], "usd": 100,
+        "capitalIncome": "income", "duration": 3, "credit": "ig"
+      },
+      "expectations": {
+        "equityMax": 35, "fixedIncomeMin": 40, "usdMin": 80,
+        "durationMax": 6, "igShouldExceedHy": true, "riskMax": 40,
+        "emMax": 35, "noFailures": true
+      }
+    },
+    {
+      "id": "moderate-balanced",
+      "name": "Moderate, balanced",
+      "answers": {
+        "riskProfile": 1, "marketView": 1, "horizon": 10, "leverage": "no",
+        "country": "g7", "sector": ["tech", "healthcare", "industrials"], "usd": 75,
+        "capitalIncome": "capital", "duration": 6, "credit": "ig"
+      },
+      "expectations": {
+        "equityMin": 25, "equityMax": 70, "usdMin": 55,
+        "igShouldExceedHy": true, "riskMin": 25, "riskMax": 70, "noFailures": true
+      }
+    },
+    {
+      "id": "aggressive-growth",
+      "name": "Aggressive growth",
+      "answers": {
+        "riskProfile": 2, "marketView": 2, "horizon": 20, "leverage": "yes",
+        "country": "g7", "sector": ["tech", "industrials"], "usd": 100,
+        "capitalIncome": "capital", "duration": 5, "credit": "hy"
+      },
+      "expectations": {
+        "equityMin": 30, "usdMin": 70, "hyShouldExceedIg": true,
+        "riskMin": 45, "noFailures": true
+      }
+    },
+    {
+      "id": "aggressive-tech",
+      "name": "Aggressive, technology-heavy",
+      "answers": {
+        "riskProfile": 2, "marketView": 2, "horizon": 18, "leverage": "no",
+        "country": "g7", "sector": ["tech"], "usd": 100,
+        "capitalIncome": "capital", "duration": 5, "credit": "ig"
+      },
+      "expectations": {
+        "topSector": "tech", "equityMin": 30, "usdMin": 75,
+        "riskMin": 40, "noFailures": true
+      }
+    },
+    {
+      "id": "em-low-usd",
+      "name": "Emerging markets, low dollar",
+      "answers": {
+        "riskProfile": 1, "marketView": 1, "horizon": 12, "leverage": "no",
+        "country": "em", "sector": ["financials", "energy"], "usd": 0,
+        "capitalIncome": "capital", "duration": 6, "credit": "ig"
+      },
+      "expectations": {
+        "usdMax": 60, "emMin": 25, "noFailures": true
+      }
+    },
+    {
+      "id": "income-focused",
+      "name": "Income focused",
+      "answers": {
+        "riskProfile": 1, "marketView": 1, "horizon": 8, "leverage": "no",
+        "country": "g7", "sector": ["consumer", "healthcare"], "usd": 100,
+        "capitalIncome": "income", "duration": 5, "credit": "ig"
+      },
+      "expectations": {
+        "fixedIncomeMin": 30, "usdMin": 75, "igShouldExceedHy": true,
+        "noFailures": true
+      }
+    },
+    {
+      "id": "high-leverage",
+      "name": "High leverage appetite",
+      "answers": {
+        "riskProfile": 2, "marketView": 2, "horizon": 15, "leverage": "yes",
+        "country": "g7", "sector": ["tech"], "usd": 100,
+        "capitalIncome": "capital", "duration": 5, "credit": "hy"
+      },
+      "expectations": {
+        "notesMin": 12, "riskMin": 45, "usdMin": 70, "noFailures": true
+      }
+    },
+    {
+      "id": "zero-leverage",
+      "name": "No leverage appetite",
+      "answers": {
+        "riskProfile": 1, "marketView": 1, "horizon": 10, "leverage": "no",
+        "country": "g7", "sector": ["healthcare"], "usd": 100,
+        "capitalIncome": "capital", "duration": 6, "credit": "ig"
+      },
+      "expectations": {
+        "notesMax": 14, "optionsMax": 4, "noFailures": true
+      }
+    },
+    {
+      "id": "short-horizon-aggressive",
+      "name": "Short horizon but aggressive",
+      "answers": {
+        "riskProfile": 2, "marketView": 2, "horizon": 2, "leverage": "yes",
+        "country": "g7", "sector": ["tech"], "usd": 100,
+        "capitalIncome": "capital", "duration": 3, "credit": "hy"
+      },
+      "expectations": {
+        "durationMax": 7, "riskMin": 40, "noFailures": true
+      }
+    },
+    {
+      "id": "long-horizon-conservative",
+      "name": "Long horizon but conservative",
+      "answers": {
+        "riskProfile": 0, "marketView": 1, "horizon": 28, "leverage": "no",
+        "country": "g7", "sector": ["consumer"], "usd": 100,
+        "capitalIncome": "income", "duration": 10, "credit": "ig"
+      },
+      "expectations": {
+        "riskMax": 45, "igShouldExceedHy": true, "noFailures": true
+      }
+    },
+    {
+      "id": "strong-hy",
+      "name": "Strong high yield preference",
+      "answers": {
+        "riskProfile": 2, "marketView": 1, "horizon": 12, "leverage": "no",
+        "country": "g7", "sector": ["energy"], "usd": 100,
+        "capitalIncome": "income", "duration": 5, "credit": "hy"
+      },
+      "expectations": {
+        "hyShouldExceedIg": true, "noFailures": true
+      }
+    },
+    {
+      "id": "strong-ig",
+      "name": "Strong investment grade preference",
+      "answers": {
+        "riskProfile": 0, "marketView": 1, "horizon": 7, "leverage": "no",
+        "country": "g7", "sector": ["consumer"], "usd": 100,
+        "capitalIncome": "income", "duration": 4, "credit": "ig"
+      },
+      "expectations": {
+        "igShouldExceedHy": true, "igMin": 60, "noFailures": true
+      }
+    }
+  ]
+}

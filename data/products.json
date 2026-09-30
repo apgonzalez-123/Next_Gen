@@ -49,6 +49,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.38,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 1.018,
+          "volatility": 0.66
         }
       },
       {
@@ -95,6 +106,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.04,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 0.398,
+          "volatility": 0.6
         }
       },
       {
@@ -141,6 +163,17 @@
             "income": 1.0,
             "capital": 0.45
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.04,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "beta": 0.26,
+          "volatility": 0.77
         }
       },
       {
@@ -187,6 +220,17 @@
             "income": 1.0,
             "capital": 0.45
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.075,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "beta": 0.552,
+          "volatility": 0.66
         }
       },
       {
@@ -233,6 +277,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.805,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 1.69,
+          "volatility": 1.31
         }
       },
       {
@@ -279,6 +334,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "financials",
+          "riskScore": 0.385,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 0.665,
+          "volatility": 1.17
         }
       },
       {
@@ -325,6 +391,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "healthcare",
+          "riskScore": 0.075,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 0.187,
+          "volatility": 1.13
         }
       },
       {
@@ -371,6 +448,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "energy",
+          "riskScore": 0.45,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": -0.786,
+          "volatility": 1.81
         }
       },
       {
@@ -417,6 +505,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "consumer",
+          "riskScore": 0.015,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 0.082,
+          "volatility": 0.81
         }
       },
       {
@@ -463,6 +562,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "consumer",
+          "riskScore": 0.705,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 1.27,
+          "volatility": 1.09
         }
       },
       {
@@ -509,6 +619,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "industrials",
+          "riskScore": 0.395,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 0.703,
+          "volatility": 1.19
         }
       },
       {
@@ -555,6 +676,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "healthcare",
+          "riskScore": 0.065,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 60,
+          "beta": 0.275,
+          "volatility": 0.95
         }
       },
       {
@@ -601,6 +733,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.81,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 70,
+          "beta": 1.74,
+          "volatility": 1.3
         }
       },
       {
@@ -647,6 +790,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.37,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 5,
+          "beta": 0.864,
+          "volatility": 0.77
         }
       },
       {
@@ -693,6 +847,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.43,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 5,
+          "beta": 1.055,
+          "volatility": 0.99
         }
       },
       {
@@ -739,6 +904,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.085,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 5,
+          "beta": 0.538,
+          "volatility": 0.73
         }
       },
       {
@@ -785,6 +961,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.37,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 15,
+          "beta": 0.868,
+          "volatility": 0.76
         }
       },
       {
@@ -831,6 +1018,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "em",
+          "sector": "core",
+          "riskScore": 0.7,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 20,
+          "beta": 1.292,
+          "volatility": 1.01
         }
       },
       {
@@ -877,6 +1075,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "em",
+          "sector": "core",
+          "riskScore": 0.69,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 5,
+          "beta": 0.54,
+          "volatility": 1.95
         }
       },
       {
@@ -923,6 +1132,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "em",
+          "sector": "tech",
+          "riskScore": 1.0,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 5,
+          "beta": 2.437,
+          "volatility": 2.21
         }
       },
       {
@@ -969,6 +1189,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "em",
+          "sector": "core",
+          "riskScore": 0.575,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 10,
+          "beta": 0.737,
+          "volatility": 0.78
         }
       },
       {
@@ -1015,6 +1246,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "energy",
+          "riskScore": 0.43,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 50,
+          "beta": 0.774,
+          "volatility": 1.35
         }
       },
       {
@@ -1061,6 +1303,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 1.0,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 2.197,
+          "volatility": 2.2
         }
       },
       {
@@ -1107,6 +1360,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.945,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 2.013,
+          "volatility": 1.98
         }
       },
       {
@@ -1153,6 +1417,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.72,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 1.409,
+          "volatility": 1.01
         }
       },
       {
@@ -1199,6 +1474,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.785,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 1.614,
+          "volatility": 1.26
         }
       },
       {
@@ -1245,6 +1531,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.895,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 1.47,
+          "volatility": 2.29
         }
       },
       {
@@ -1291,6 +1588,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.975,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 2.02,
+          "volatility": 2.19
         }
       },
       {
@@ -1337,6 +1645,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "healthcare",
+          "riskScore": 0.82,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 0.97,
+          "volatility": 2.35
         }
       },
       {
@@ -1383,6 +1702,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "energy",
+          "riskScore": 0.05,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": -0.1,
+          "volatility": 1.31
         }
       },
       {
@@ -1429,6 +1759,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.38,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 1.011,
+          "volatility": 0.68
         }
       },
       {
@@ -1475,6 +1816,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.355,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 60,
+          "beta": 1.004,
+          "volatility": 0.49
         }
       },
       {
@@ -1521,6 +1873,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.335,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 0.87,
+          "volatility": 0.51
         }
       },
       {
@@ -1567,6 +1930,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "em",
+          "sector": "core",
+          "riskScore": 0.705,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 20,
+          "beta": 1.282,
+          "volatility": 1.08
         }
       },
       {
@@ -1613,6 +1987,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "industrials",
+          "riskScore": 0.715,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 1.062,
+          "volatility": 1.44
         }
       },
       {
@@ -1659,6 +2044,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "energy",
+          "riskScore": 0.885,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 35,
+          "beta": 1.431,
+          "volatility": 2.28
         }
       },
       {
@@ -1705,6 +2101,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "energy",
+          "riskScore": 0.54,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 50,
+          "beta": -0.322,
+          "volatility": 1.9
         }
       },
       {
@@ -1751,6 +2158,17 @@
             "capital": 1.0,
             "income": 0.5
           }
+        },
+        "analytics": {
+          "sleeve": "equities",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.205,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "beta": 0.036,
+          "volatility": 0.61
         }
       }
     ],
@@ -1816,6 +2234,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.49,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 2.2738,
+          "creditClass": "ig",
+          "rating": "BBB",
+          "yieldToWorst": 4.8132
         }
       },
       {
@@ -1859,6 +2290,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "em",
+          "sector": null,
+          "riskScore": 1.0,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 5.0946,
+          "creditClass": "hy",
+          "rating": "B-",
+          "yieldToWorst": 9.3345
         }
       },
       {
@@ -1902,6 +2346,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.63,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 5.6826,
+          "creditClass": "ig",
+          "rating": "BBB+",
+          "yieldToWorst": 6.0374
         }
       },
       {
@@ -1945,6 +2402,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "em",
+          "sector": null,
+          "riskScore": 0.725,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 3.7596,
+          "creditClass": "hy",
+          "rating": "BB",
+          "yieldToWorst": 5.8985
         }
       },
       {
@@ -1988,6 +2458,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.87,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 6.6268,
+          "creditClass": "hy",
+          "rating": "BB+",
+          "yieldToWorst": 7.339
         }
       },
       {
@@ -2031,6 +2514,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "em",
+          "sector": null,
+          "riskScore": 0.79,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 11.6891,
+          "creditClass": "hy",
+          "rating": "BB",
+          "yieldToWorst": 7.4939
         }
       },
       {
@@ -2074,6 +2570,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "em",
+          "sector": null,
+          "riskScore": 0.76,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 6.9633,
+          "creditClass": "hy",
+          "rating": "BB",
+          "yieldToWorst": 6.6892
         }
       },
       {
@@ -2117,6 +2626,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.46,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 6.1005,
+          "creditClass": "ig",
+          "rating": "BBB+",
+          "yieldToWorst": 5.5216
         }
       },
       {
@@ -2160,6 +2682,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "em",
+          "sector": null,
+          "riskScore": 0.38,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 3.099,
+          "creditClass": "ig",
+          "rating": "A-",
+          "yieldToWorst": 5.1539
         }
       },
       {
@@ -2203,6 +2738,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.27,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 12.577,
+          "creditClass": "ig",
+          "rating": "AA-",
+          "yieldToWorst": 6.9835
         }
       },
       {
@@ -2246,6 +2794,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.49,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 1.9418,
+          "creditClass": "ig",
+          "rating": "BBB",
+          "yieldToWorst": 4.7051
         }
       },
       {
@@ -2289,6 +2850,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.415,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 7.1918,
+          "creditClass": "ig",
+          "rating": "A-",
+          "yieldToWorst": 5.9469
         }
       },
       {
@@ -2332,6 +2906,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.785,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 3.8223,
+          "creditClass": "ig",
+          "rating": "BBB-",
+          "yieldToWorst": 6.7775
         }
       },
       {
@@ -2375,6 +2962,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.3,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 1.7021,
+          "creditClass": "ig",
+          "rating": "A",
+          "yieldToWorst": 4.6796
         }
       },
       {
@@ -2418,6 +3018,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.575,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 7.1016,
+          "creditClass": "ig",
+          "rating": "A-",
+          "yieldToWorst": 6.1781
         }
       },
       {
@@ -2461,6 +3074,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.25,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 5.0713,
+          "creditClass": "ig",
+          "rating": "A+",
+          "yieldToWorst": 5.0372
         }
       },
       {
@@ -2504,6 +3130,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.34,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 9.0969,
+          "creditClass": "ig",
+          "rating": "A",
+          "yieldToWorst": 5.6457
         }
       },
       {
@@ -2547,6 +3186,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.64,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 5.7145,
+          "creditClass": "ig",
+          "rating": "BBB+",
+          "yieldToWorst": 6.2332
         }
       },
       {
@@ -2590,6 +3242,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "em",
+          "sector": null,
+          "riskScore": 0.82,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 3.6168,
+          "creditClass": "hy",
+          "rating": "BB+",
+          "yieldToWorst": 6.1318
         }
       },
       {
@@ -2633,6 +3298,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "em",
+          "sector": null,
+          "riskScore": 1.0,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 6.6096,
+          "creditClass": "hy",
+          "rating": "BB-",
+          "yieldToWorst": 8.3325
         }
       },
       {
@@ -2676,6 +3354,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "em",
+          "sector": null,
+          "riskScore": 0.865,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 5.0644,
+          "creditClass": "hy",
+          "rating": "BB+",
+          "yieldToWorst": 7.1529
         }
       },
       {
@@ -2719,6 +3410,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.2,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 6.1541,
+          "creditClass": "ig",
+          "rating": "AA-",
+          "yieldToWorst": 5.2922
         }
       },
       {
@@ -2762,6 +3466,19 @@
           "usd": {
             "target": 5
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.72,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 5,
+          "duration": 3.99,
+          "creditClass": "hy",
+          "rating": "BBB-",
+          "yieldToWorst": 5.18
         }
       },
       {
@@ -2805,6 +3522,19 @@
           "usd": {
             "target": 5
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.825,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 5,
+          "duration": 4.21,
+          "creditClass": "hy",
+          "rating": "BB",
+          "yieldToWorst": 4.7
         }
       },
       {
@@ -2848,6 +3578,19 @@
           "usd": {
             "target": 5
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.745,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 5,
+          "duration": 5.56,
+          "creditClass": "hy",
+          "rating": "BBB-",
+          "yieldToWorst": 5.81
         }
       },
       {
@@ -2891,6 +3634,19 @@
           "usd": {
             "target": 5
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.73,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 5,
+          "duration": 6.05,
+          "creditClass": "hy",
+          "rating": "BBB-",
+          "yieldToWorst": 5.46
         }
       },
       {
@@ -2934,6 +3690,19 @@
           "usd": {
             "target": 5
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.505,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 5,
+          "duration": 6.87,
+          "creditClass": "ig",
+          "rating": "A-",
+          "yieldToWorst": 4.5
         }
       },
       {
@@ -2977,6 +3746,19 @@
           "usd": {
             "target": 5
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.825,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 5,
+          "duration": 7.18,
+          "creditClass": "hy",
+          "rating": "BB+",
+          "yieldToWorst": 6.15
         }
       },
       {
@@ -3020,6 +3802,19 @@
           "usd": {
             "target": 5
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.6,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 5,
+          "duration": 1.66,
+          "creditClass": "ig",
+          "rating": "BBB+",
+          "yieldToWorst": 5.31
         }
       },
       {
@@ -3063,6 +3858,19 @@
           "usd": {
             "target": 5
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.625,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 5,
+          "duration": 5.55,
+          "creditClass": "ig",
+          "rating": "BBB+",
+          "yieldToWorst": 5.95
         }
       },
       {
@@ -3106,6 +3914,19 @@
           "usd": {
             "target": 5
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.34,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 5,
+          "duration": 9.08,
+          "creditClass": "ig",
+          "rating": "A",
+          "yieldToWorst": 5.72
         }
       },
       {
@@ -3149,6 +3970,19 @@
           "usd": {
             "target": 5
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.83,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 5,
+          "duration": 4.08,
+          "creditClass": "hy",
+          "rating": "BB+",
+          "yieldToWorst": 6.35
         }
       },
       {
@@ -3192,6 +4026,19 @@
           "usd": {
             "target": 5
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.95,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 5,
+          "duration": 2.41,
+          "creditClass": "hy",
+          "rating": "BB-",
+          "yieldToWorst": 6.21
         }
       },
       {
@@ -3235,6 +4082,19 @@
           "usd": {
             "target": 5
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.835,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 5,
+          "duration": 2.04,
+          "creditClass": "hy",
+          "rating": "BB+",
+          "yieldToWorst": 6.38
         }
       },
       {
@@ -3278,6 +4138,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.32,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 6.84,
+          "creditClass": "ig",
+          "rating": "A",
+          "yieldToWorst": 5.22
         }
       },
       {
@@ -3321,6 +4194,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "em",
+          "sector": null,
+          "riskScore": 0.535,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 7.53,
+          "creditClass": "ig",
+          "rating": "BBB",
+          "yieldToWorst": 5.8
         }
       },
       {
@@ -3364,6 +4250,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.55,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 6.97,
+          "creditClass": "ig",
+          "rating": "A-",
+          "yieldToWorst": 5.63
         }
       },
       {
@@ -3407,6 +4306,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.56,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 6.11,
+          "creditClass": "ig",
+          "rating": "A-",
+          "yieldToWorst": 5.81
         }
       },
       {
@@ -3450,6 +4362,19 @@
           "usd": {
             "target": 100
           }
+        },
+        "analytics": {
+          "sleeve": "fixedIncome",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.56,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "duration": 6.66,
+          "creditClass": "ig",
+          "rating": "A-",
+          "yieldToWorst": 5.83
         }
       }
     ],
@@ -3506,6 +4431,18 @@
             "em": 1.0,
             "g7": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "em",
+          "sector": null,
+          "riskScore": 0.38,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 2.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -3544,6 +4481,18 @@
             "hy": 1.0,
             "ig": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 1.0,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 1.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -3586,6 +4535,18 @@
             "consumer": 0.2,
             "industrials": 0.2
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.965,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 2.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -3628,6 +4589,18 @@
             "consumer": 0.2,
             "industrials": 0.2
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": "financials",
+          "riskScore": 0.43,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 2.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -3670,6 +4643,18 @@
             "consumer": 0.2,
             "industrials": 0.2
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": "financials",
+          "riskScore": 0.145,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 2.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -3712,6 +4697,18 @@
             "consumer": 0.2,
             "industrials": 0.2
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.98,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 2.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -3754,6 +4751,18 @@
             "consumer": 0.2,
             "industrials": 0.2
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": "financials",
+          "riskScore": 0.405,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 2.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -3796,6 +4805,18 @@
             "consumer": 0.2,
             "industrials": 0.2
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 1.0,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 2.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -3838,6 +4859,18 @@
             "consumer": 0.2,
             "industrials": 0.2
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 1.0,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 2.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -3872,6 +4905,18 @@
             "g7": 1.0,
             "em": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.0,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 3.0,
+          "principalProtected": true,
+          "geared": false
         }
       },
       {
@@ -3906,6 +4951,18 @@
             "g7": 1.0,
             "em": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.035,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 3.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -3944,6 +5001,18 @@
             "hy": 1.0,
             "ig": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 1.0,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 3.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -3986,6 +5055,18 @@
             "consumer": 0.2,
             "industrials": 0.2
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.38,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 3.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -4028,6 +5109,18 @@
             "consumer": 0.2,
             "industrials": 0.2
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.97,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 3.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -4066,6 +5159,18 @@
             "hy": 1.0,
             "ig": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 1.0,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 3.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -4100,6 +5205,18 @@
             "g7": 1.0,
             "em": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.0,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "tenorYears": 3.5,
+          "principalProtected": true,
+          "geared": false
         }
       },
       {
@@ -4134,6 +5251,18 @@
             "g7": 1.0,
             "em": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.0,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 3.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -4168,6 +5297,18 @@
             "g7": 1.0,
             "em": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.475,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 2.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -4202,6 +5343,18 @@
             "g7": 1.0,
             "em": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.0,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 3.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -4236,6 +5389,18 @@
             "em": 1.0,
             "g7": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "em",
+          "sector": null,
+          "riskScore": 0.48,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 7.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -4270,6 +5435,18 @@
             "g7": 1.0,
             "em": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.46,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 2.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -4304,6 +5481,18 @@
             "em": 1.0,
             "g7": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "em",
+          "sector": null,
+          "riskScore": 0.28,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 10.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -4342,6 +5531,18 @@
             "hy": 1.0,
             "ig": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 1.0,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 2.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -4376,6 +5577,18 @@
             "em": 1.0,
             "g7": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "em",
+          "sector": null,
+          "riskScore": 0.935,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 3.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -4410,6 +5623,18 @@
             "g7": 1.0,
             "em": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.065,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "tenorYears": 3.0,
+          "principalProtected": false,
+          "geared": true
         }
       },
       {
@@ -4448,6 +5673,18 @@
             "hy": 1.0,
             "ig": 0.3
           }
+        },
+        "analytics": {
+          "sleeve": "notes",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 1.0,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "tenorYears": 3.0,
+          "principalProtected": false,
+          "geared": true
         }
       }
     ],
@@ -4530,6 +5767,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.9,
+          "expressesLeverage": true,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "strategy": "Long call",
+          "delta": 0.736,
+          "premiumPct": 7.721,
+          "long": true
         }
       },
       {
@@ -4588,6 +5838,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.35,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "strategy": "Covered call",
+          "delta": 0.137,
+          "premiumPct": 0.236,
+          "long": false
         }
       },
       {
@@ -4646,6 +5909,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.675,
+          "expressesLeverage": true,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "strategy": "Short put",
+          "delta": -0.058,
+          "premiumPct": 0.156,
+          "long": false
         }
       },
       {
@@ -4704,6 +5980,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "core",
+          "riskScore": 0.25,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "strategy": "Long put",
+          "delta": -0.264,
+          "premiumPct": 1.576,
+          "long": true
         }
       },
       {
@@ -4762,6 +6051,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.9,
+          "expressesLeverage": true,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "strategy": "Long call",
+          "delta": 0.707,
+          "premiumPct": 8.66,
+          "long": true
         }
       },
       {
@@ -4820,6 +6122,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.35,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "strategy": "Covered call",
+          "delta": 0.241,
+          "premiumPct": 0.717,
+          "long": false
         }
       },
       {
@@ -4878,6 +6193,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.675,
+          "expressesLeverage": true,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "strategy": "Short put",
+          "delta": -0.092,
+          "premiumPct": 0.33,
+          "long": false
         }
       },
       {
@@ -4936,6 +6264,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.25,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "strategy": "Long put",
+          "delta": -0.293,
+          "premiumPct": 2.275,
+          "long": true
         }
       },
       {
@@ -4994,6 +6335,19 @@
             "g7": 0.25,
             "em": 1.0
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "em",
+          "sector": "core",
+          "riskScore": 0.9,
+          "expressesLeverage": true,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "strategy": "Long call",
+          "delta": 0.663,
+          "premiumPct": 12.172,
+          "long": true
         }
       },
       {
@@ -5052,6 +6406,19 @@
             "g7": 0.25,
             "em": 1.0
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "em",
+          "sector": "core",
+          "riskScore": 0.35,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "strategy": "Covered call",
+          "delta": 0.382,
+          "premiumPct": 4.16,
+          "long": false
         }
       },
       {
@@ -5110,6 +6477,19 @@
             "g7": 0.25,
             "em": 1.0
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "em",
+          "sector": "core",
+          "riskScore": 0.675,
+          "expressesLeverage": true,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "strategy": "Short put",
+          "delta": -0.154,
+          "premiumPct": 1.485,
+          "long": false
         }
       },
       {
@@ -5168,6 +6548,19 @@
             "g7": 0.25,
             "em": 1.0
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "em",
+          "sector": "core",
+          "riskScore": 0.25,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "strategy": "Long put",
+          "delta": -0.293,
+          "premiumPct": 4.829,
+          "long": true
         }
       },
       {
@@ -5226,6 +6619,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "financials",
+          "riskScore": 0.9,
+          "expressesLeverage": true,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "strategy": "Long call",
+          "delta": 0.786,
+          "premiumPct": 8.86,
+          "long": true
         }
       },
       {
@@ -5284,6 +6690,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "financials",
+          "riskScore": 0.35,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "strategy": "Covered call",
+          "delta": 0.09,
+          "premiumPct": 0.224,
+          "long": false
         }
       },
       {
@@ -5342,6 +6761,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "financials",
+          "riskScore": 0.675,
+          "expressesLeverage": true,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "strategy": "Short put",
+          "delta": -0.026,
+          "premiumPct": 0.093,
+          "long": false
         }
       },
       {
@@ -5400,6 +6832,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "financials",
+          "riskScore": 0.25,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "strategy": "Long put",
+          "delta": -0.171,
+          "premiumPct": 0.998,
+          "long": true
         }
       },
       {
@@ -5458,6 +6903,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.9,
+          "expressesLeverage": true,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "strategy": "Long call",
+          "delta": 0.674,
+          "premiumPct": 12.097,
+          "long": true
         }
       },
       {
@@ -5516,6 +6974,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.35,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "strategy": "Covered call",
+          "delta": 0.279,
+          "premiumPct": 1.639,
+          "long": false
         }
       },
       {
@@ -5574,6 +7045,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.675,
+          "expressesLeverage": true,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "strategy": "Short put",
+          "delta": -0.078,
+          "premiumPct": 0.425,
+          "long": false
         }
       },
       {
@@ -5632,6 +7116,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "tech",
+          "riskScore": 0.25,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "strategy": "Long put",
+          "delta": -0.296,
+          "premiumPct": 4.202,
+          "long": true
         }
       },
       {
@@ -5690,6 +7187,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "energy",
+          "riskScore": 0.9,
+          "expressesLeverage": true,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "strategy": "Long call",
+          "delta": 0.74,
+          "premiumPct": 10.274,
+          "long": true
         }
       },
       {
@@ -5748,6 +7258,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "energy",
+          "riskScore": 0.35,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "strategy": "Covered call",
+          "delta": 0.218,
+          "premiumPct": 0.894,
+          "long": false
         }
       },
       {
@@ -5806,6 +7329,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "energy",
+          "riskScore": 0.675,
+          "expressesLeverage": true,
+          "incomeProducing": true,
+          "usdExposure": 100,
+          "strategy": "Short put",
+          "delta": -0.035,
+          "premiumPct": 0.129,
+          "long": false
         }
       },
       {
@@ -5864,6 +7400,19 @@
             "g7": 1.0,
             "em": 0.25
           }
+        },
+        "analytics": {
+          "sleeve": "options",
+          "region": "g7",
+          "sector": "energy",
+          "riskScore": 0.25,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "strategy": "Long put",
+          "delta": -0.26,
+          "premiumPct": 2.321,
+          "long": true
         }
       }
     ],
@@ -5923,6 +7472,16 @@
         "data": {
           "ytd": -1.26,
           "pair": "XAUUSD"
+        },
+        "analytics": {
+          "sleeve": "fx",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.5,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 0,
+          "kind": "spot"
         }
       },
       {
@@ -5957,6 +7516,16 @@
         "group": "long-xau-usd",
         "data": {
           "ytdExcluded": "option payoff is not linear in the pair"
+        },
+        "analytics": {
+          "sleeve": "fx",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 1.0,
+          "expressesLeverage": true,
+          "incomeProducing": false,
+          "usdExposure": 0,
+          "kind": "option"
         }
       },
       {
@@ -5992,6 +7561,16 @@
         "data": {
           "ytd": 1.35,
           "pair": "USDJPY"
+        },
+        "analytics": {
+          "sleeve": "fx",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.5,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "kind": "spot"
         }
       },
       {
@@ -6027,6 +7606,16 @@
         "data": {
           "ytd": -3.23,
           "pair": "EURUSD"
+        },
+        "analytics": {
+          "sleeve": "fx",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.5,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 0,
+          "kind": "spot"
         }
       },
       {
@@ -6061,6 +7650,16 @@
         "group": "long-eur-usd",
         "data": {
           "ytdExcluded": "option payoff is not linear in the pair"
+        },
+        "analytics": {
+          "sleeve": "fx",
+          "region": "g7",
+          "sector": null,
+          "riskScore": 0.5,
+          "expressesLeverage": true,
+          "incomeProducing": false,
+          "usdExposure": 0,
+          "kind": "option structure"
         }
       },
       {
@@ -6096,6 +7695,16 @@
         "data": {
           "ytd": 5.28,
           "pair": "USDBRL"
+        },
+        "analytics": {
+          "sleeve": "fx",
+          "region": "em",
+          "sector": null,
+          "riskScore": 1.0,
+          "expressesLeverage": false,
+          "incomeProducing": true,
+          "usdExposure": 0,
+          "kind": "forward"
         }
       },
       {
@@ -6130,6 +7739,16 @@
         "group": "long-usd-mxn",
         "data": {
           "ytdExcluded": "option payoff is not linear in the pair"
+        },
+        "analytics": {
+          "sleeve": "fx",
+          "region": "em",
+          "sector": null,
+          "riskScore": 1.0,
+          "expressesLeverage": true,
+          "incomeProducing": false,
+          "usdExposure": 0,
+          "kind": "option"
         }
       },
       {
@@ -6165,6 +7784,16 @@
         "data": {
           "ytd": -1.71,
           "pair": "USDMXN"
+        },
+        "analytics": {
+          "sleeve": "fx",
+          "region": "em",
+          "sector": null,
+          "riskScore": 1.0,
+          "expressesLeverage": false,
+          "incomeProducing": false,
+          "usdExposure": 100,
+          "kind": "spot"
         }
       }
     ],

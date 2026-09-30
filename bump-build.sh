@@ -15,7 +15,7 @@ BUILD="$(date -u +%Y%m%d%H%M)"
 # missing, so its six script tags — portfolios.js among them — went out
 # unversioned and a returning browser ran the old engine against the new
 # product data.
-for f in index.html present.html admin.html qr-gen.html methodology.html; do
+for f in index.html present.html admin.html qr-gen.html methodology.html validation.html; do
   # strip any existing stamp, then add the new one to local assets only
   perl -0pi -e 's/(\b(?:src|href)="(?:assets|data)\/[^"?]+)\?v=[0-9]+/$1/g' "$f"
   perl -0pi -e 's/(\b(?:src|href)="(?:assets|data)\/[^"?]+)"/$1?v='"$BUILD"'"/g' "$f"

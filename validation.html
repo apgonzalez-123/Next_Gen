@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NextGen Validation</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0A1220">
+<link rel="preload" href="assets/fonts/geist-400-latin.woff2?v=202609301817" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist-600-latin.woff2?v=202609301817" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/app.css?v=202609301817">
+<link rel="stylesheet" href="assets/validation.css?v=202609301817">
+</head>
+<body class="val">
+
+<header class="v-top">
+  <div class="wordmark">
+    <img class="brand-mark" src="assets/brand/safra-logo.png?v=202609301817" alt="Safra" onerror="this.remove()">
+    <span class="brand-sep" aria-hidden="true"></span><b>NextGen</b>
+  </div>
+  <div class="v-top-right">
+    <label class="v-src">
+      <span>Room</span>
+      <select id="source"></select>
+    </label>
+    <a class="p-btn" href="methodology.html">Methodology</a>
+  </div>
+</header>
+
+<main class="v-main">
+
+  <p class="v-lede">
+    This page checks whether the portfolio the engine built actually looks like what the room
+    asked for. It only measures &mdash; it never changes a weight. A failure here means the book
+    needs calibrating, not that the page is broken.
+  </p>
+
+  <!-- headline -->
+  <section class="v-head" id="headline">
+    <div class="v-fit">
+      <b id="fitScore">&mdash;</b><span>Room Intent Fit</span>
+    </div>
+    <div class="v-counts" id="counts"></div>
+    <div class="v-status" id="overall"></div>
+  </section>
+
+  <!-- intent vs output -->
+  <section class="v-grid">
+    <div class="v-card">
+      <h2>Room intent</h2>
+      <div class="v-kv" id="intentPanel"></div>
+    </div>
+    <div class="v-card">
+      <h2>Portfolio output</h2>
+      <div class="v-kv" id="outputPanel"></div>
+    </div>
+  </section>
+
+  <section class="v-card">
+    <h2>Intent versus output</h2>
+    <div class="v-scroll">
+      <table class="v-table" id="compareTable"></table>
+    </div>
+  </section>
+
+  <section class="v-card" id="diagCard">
+    <h2>Diagnostics</h2>
+    <div id="diagnostics"></div>
+  </section>
+
+  <!-- tests -->
+  <section class="v-card">
+    <h2>Tests</h2>
+    <p class="v-note">
+      Deterministic: the same answers and the same product shelf always give the same result.
+      No randomness, no clock, no network.
+    </p>
+    <div class="v-btns">
+      <button class="v-btn" id="btnGolden" type="button">Run golden scenarios</button>
+      <button class="v-btn" id="btnMono" type="button">Run monotonicity tests</button>
+      <button class="v-btn" id="btnSens" type="button">Run sensitivity analysis</button>
+    </div>
+    <div id="testOut"></div>
+  </section>
+
+</main>
+
+<script src="assets/config.js?v=202609301817"></script>
+<script src="assets/schema.js?v=202609301817"></script>
+<script src="assets/portfolios.js?v=202609301817"></script>
+<script src="assets/base-loader.js?v=202609301817"></script>
+<script src="assets/store.js?v=202609301817"></script>
+<script src="assets/portfolio-validator.js?v=202609301817"></script>
+<script src="assets/validation.js?v=202609301817"></script>
+</body>
+</html>

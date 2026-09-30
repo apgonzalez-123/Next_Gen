@@ -668,6 +668,112 @@ def main():
         for item in doc[bucket]["shelf"]:
             item["fit"] = {k: v for k, v in item["fit"].items() if v}
 
+    # ---- analytics ----------------------------------------------------
+    #
+    # Portfolio-level validation needs to read an instrument's characteristics
+    # without parsing display strings or re-deriving them differently from the
+    # scorer. Everything here comes from fields already built above, and where
+    # a characteristic also drives scoring it is taken from the SAME source the
+    # scorer uses, so the validator can never disagree with the engine about
+    # what an instrument is.
+    #
+    #   region       from fit.country, which is what the scorer reads
+    #   riskScore    from fit.riskProfile, rebased 0..1
+    #                (equities: beta + realised vol; bonds: rating notch,
+    #                 payment rank and yield; notes: barrier, coupon, tenor
+    #                 and basket breadth; options: the structure itself)
+    #   usdExposure  the instrument's own field where it has one, else the
+    #                settlement currency of the sleeve
+    #
+    # riskScore is a PROXY on a 0-1 scale, not a volatility or a VaR. It is
+    # the same number the room is scored against, which is the point: it makes
+    # "did the room get the risk it asked for" answerable in one unit.
+    def _region(item):
+        c = (item.get("fit") or {}).get("country")
+        if not isinstance(c, dict):
+            return None
+        return "em" if c.get("em", 0) > c.get("g7", 0) else "g7"
+
+    def _risk01(item):
+        r = (item.get("fit") or {}).get("riskProfile")
+        if not isinstance(r, dict) or r.get("target") is None:
+            return None
+        return round(max(0.0, min(1.0, r["target"] / 2.0)), 4)
+
+    def _expresses_leverage(item):
+        lv = (item.get("fit") or {}).get("leverage")
+        if isinstance(lv, dict):
+            return lv.get("yes", 0) > lv.get("no", 0)
+        return False
+
+    # The questionnaire's six sectors. A bond's "sector" is a Bloomberg
+    # industry string from the export ("Consumer, Non-cyclical") and is NOT
+    # one of these, so it must never be aggregated into equity sector
+    # exposure. Only a value on this list is carried into analytics.
+    Q_SECTORS = set(SECTORS)
+
+    def _sector(item):
+        s0 = item.get("sector")
+        if s0 in Q_SECTORS or s0 == "core":
+            return s0
+        f = (item.get("fit") or {}).get("sector")
+        if isinstance(f, dict):
+            best = max(f.items(), key=lambda kv: kv[1])
+            if best[1] >= 1.0 and best[0] in Q_SECTORS:
+                return best[0]
+        return None
+
+    def _income(item):
+        ci = (item.get("fit") or {}).get("capitalIncome")
+        if isinstance(ci, dict):
+            return ci.get("income", 0) >= ci.get("capital", 0)
+        return False
+
+    for bucket in ("equities", "fixedIncome", "notes", "fx", "options"):
+        for item in doc[bucket]["shelf"]:
+            d = item.get("data") or {}
+            a = {
+                "sleeve": bucket,
+                "region": _region(item),
+                "sector": _sector(item),
+                "riskScore": _risk01(item),
+                "expressesLeverage": _expresses_leverage(item),
+                "incomeProducing": _income(item) or bucket == "fixedIncome",
+            }
+
+            if bucket == "equities":
+                a["usdExposure"] = item.get("usdExposure")
+                a["beta"] = d.get("beta1y")
+                a["volatility"] = d.get("volatility")
+            elif bucket == "fixedIncome":
+                a["usdExposure"] = item.get("usdExposure")
+                a["duration"] = d.get("duration")
+                a["creditClass"] = item.get("credit")
+                a["rating"] = item.get("rating") or None
+                a["yieldToWorst"] = d.get("ytw")
+            elif bucket == "notes":
+                # The source sheet is USD-settled throughout, which is why the
+                # usd axis was dropped from this shelf as constant.
+                a["usdExposure"] = 100
+                a["tenorYears"] = num(item.get("tenor"), None)
+                a["principalProtected"] = bool(PROTECTED.search(item.get("type") or ""))
+                # A barrier note is geared on the downside even when the room
+                # did not ask for leverage; that is what the barrier is.
+                a["geared"] = not a["principalProtected"]
+            elif bucket == "fx":
+                u = (item.get("fit") or {}).get("usd") or {}
+                a["usdExposure"] = u.get("target")
+                a["kind"] = item.get("kind")
+            elif bucket == "options":
+                # Every listed underlying here is a USD-denominated US ETF.
+                a["usdExposure"] = 100
+                a["strategy"] = item.get("strategy")
+                a["delta"] = item.get("delta")
+                a["premiumPct"] = item.get("premiumPct")
+                a["long"] = (item.get("strategy") or "").lower().startswith("long")
+
+            item["analytics"] = a
+
     # An axis every instrument on a shelf answers identically cannot separate
     # them: it adds the same number to every score and dilutes the axes that
     # do discriminate. All 26 notes were USD-settled, so "usd" was pure noise
