@@ -132,6 +132,7 @@
     renderWhy(agg, alloc, split);
     paintBook(agg);
     paintSleeves(agg, alloc);
+    paintBrain(agg);
   }
 
   var WAITING = [
@@ -766,6 +767,42 @@
               leverage: "gearing", country: "region", sector: "sector",
               usd: "dollar", capitalIncome: "cap/inc", duration: "duration",
               credit: "credit" })[id] || id;
+  }
+
+  /* ---------- the engine, drawn ----------
+   *
+   * Influence is the validator's measured sensitivity, not a guess about
+   * which questions matter. It is expensive to compute — one portfolio
+   * rebuild per axis — so it is refreshed only when the room has changed
+   * enough to plausibly move it, not on every three-second poll.
+   */
+  var brainReady = false, influence = null, influenceAt = -1;
+
+  function paintBrain(agg) {
+    if (!window.BRAINMAP) return;
+    if (!brainReady) {
+      brainReady = window.BRAINMAP.mount(document.getElementById("brainmap"));
+      if (!brainReady) return;
+    }
+    var badge = document.getElementById("bmCount");
+    if (badge) badge.textContent = agg.count ? agg.count + " answering" : "";
+
+    if (window.PORTFOLIO_VALIDATOR && window.PRODUCTS &&
+        agg.count && agg.count !== influenceAt) {
+      try {
+        var s = window.PORTFOLIO_VALIDATOR.sensitivity(agg, window.PRODUCTS);
+        influence = s ? s.axes : null;
+        influenceAt = agg.count;
+      } catch (e) {
+        /* A map without measured influence still draws; it just shows every
+           edge at the same weight, which is honest about knowing less. */
+        console.warn("brainmap: sensitivity unavailable", e);
+      }
+    }
+
+    var sim = null;
+    try { sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS); } catch (e) { sim = null; }
+    window.BRAINMAP.update(agg, sim, influence);
   }
 
   /* ---------- slides ---------- */
