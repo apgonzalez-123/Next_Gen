@@ -1,8 +1,10 @@
 /* NextGen Portfolio Builder — presenter view.
  *
- * Five slides: join (QR) -> the split -> the verdict -> two breakdown
- * boards. Arrow keys move; the data refreshes on a timer regardless of
- * which slide is up, so the counter keeps climbing on the join screen.
+ * Ten slides: join (QR) -> where the room landed -> the room's portfolio ->
+ * the positions -> one slide per sleeve, equities through options -> the
+ * engine drawn while it runs. Arrow keys move; the data refreshes on a timer
+ * regardless of which slide is up, so the counter keeps climbing on the join
+ * screen.
  *
  * Painting is DIFF-BASED on purpose. Rewriting innerHTML on every poll
  * would reset every bar to zero and re-run the grow animation every few
@@ -473,7 +475,8 @@
     { key: "equities",    host: "sleeveEquities",    badge: "swEquities" },
     { key: "fixedIncome", host: "sleeveFixedIncome", badge: "swFixedIncome" },
     { key: "notes",       host: "sleeveNotes",       badge: "swNotes" },
-    { key: "fx",          host: "sleeveFx",          badge: "swFx" }
+    { key: "fx",          host: "sleeveFx",          badge: "swFx" },
+    { key: "options",     host: "sleeveOptions",     badge: "swOptions" }
   ];
 
   function pct(x) { return (Math.round(x * 10) / 10) + "%"; }
@@ -532,6 +535,30 @@
         ],
         total: ["Structured notes", alloc.notes + "%"]
       },
+      options: {
+        rows: [
+          ["Carved out of equities", "an overlay on stock the book already owns, " +
+           "not a separate bet", "&mdash;"],
+          ["Leverage appetite",
+           Math.round(d.levered * 100) + "% of the room would use it &mdash; expressed " +
+           "as calls rather than margin", signed(d.levered * 18) + " of equity"],
+          ["Bullish tilt",
+           "the room averaged " + (Math.round(d.view * 100) / 100) + " of 2 on markets",
+           signed(Math.max(0, d.view - 1) * 10) + " of equity"],
+          ["Income mandate",
+           Math.round(d.income * 100) + "% want income &mdash; earned by selling upside " +
+           "or being paid to bid below the market",
+           signed(d.income * 12) + " of equity"],
+          ["Defensive tilt",
+           "a cautious room buys cover rather than gearing",
+           signed(Math.max(0, 1 - d.view) * 10) + " of equity"]
+        ],
+        sum:   ["Share of the equity sleeve overlaid",
+                pct(Math.min(30, (d.levered * 18) + Math.max(0, d.view - 1) * 10 +
+                                 d.income * 12 + Math.max(0, 1 - d.view) * 10))],
+        total: ["Options", alloc.options + "%"]
+      },
+
       fx: {
         rows: [
           ["Base allocation", "a standing place in the book", signed(5)],
@@ -555,7 +582,35 @@
      against any line in the sleeve is not a reason, so each one names the
      actual fact that earned the place: the sector, the rating, the tenor,
      the dollar weight. */
+  /* An option is defined by what it does, not by which axis it scores well
+     on. "Carries the gearing the room wanted" is true of a long call and
+     tells a client nothing; "geared to the upside, struck 5% below spot,
+     costing 8.7% of notional" is the trade. */
+  function optionPhrase(item) {
+    var strat = (item.strategy || "").toLowerCase();
+    var m = item.moneyness ? Math.round(item.moneyness * 100) : null;
+    var cost = item.premiumPct !== null && item.premiumPct !== undefined
+      ? item.premiumPct.toFixed(1) + "% of notional" : null;
+    var away = m === null ? "" : (m >= 100 ? (m - 100) + "% above spot"
+                                           : (100 - m) + "% below spot");
+    switch (strat) {
+      case "long call":
+        return "geared to the upside" + (away ? ", struck " + away : "") +
+               (cost ? ", costing " + cost : "");
+      case "covered call":
+        return "sells the upside " + away + " for premium" +
+               (cost ? " of " + cost : "");
+      case "short put":
+        return "paid " + (cost || "premium") + " to bid " + away;
+      case "long put":
+        return "downside cover from " + away + (cost ? ", costing " + cost : "");
+      default:
+        return item.strategy || "option overlay";
+    }
+  }
+
   function axisPhrase(axisId, agg, item) {
+    if (item && item.strategy) return optionPhrase(item);
     var f = item.fit || {}, d = item.data || {};
     function roomLeads(k) {
       var c = (agg.axes[axisId] || {}).counts || {}, best = null;
@@ -621,6 +676,10 @@
   function identityPhrase(item, used) {
     var f = item.fit || {}, d = item.data || {};
     var cands = [];
+    if (item.strategy) {
+      cands.push(optionPhrase(item));
+      if (item.underlying) cands.push("on " + item.underlying + ", " + (item.days || item.tenor) + " days");
+    }
     if (item.sector && SECTOR_WORD[item.sector]) {
       cands.push(SECTOR_WORD[item.sector] + " &mdash; breadth beyond the lead exposures");
     }
@@ -828,8 +887,9 @@
       if (document.fullscreenElement) document.exitFullscreen();
       else document.documentElement.requestFullscreen();
     } else if (e.key === "r" || e.key === "R") { resetVotes(); }
-    else if (/^[1-9]$/.test(e.key)) {
-      var n = parseInt(e.key, 10);
+    else if (/^[0-9]$/.test(e.key)) {
+      /* 0 is the tenth slide: the deck outgrew the digits on the keyboard. */
+      var n = e.key === "0" ? 10 : parseInt(e.key, 10);
       if (n <= slides.length) go(n - 1);
     }
   });

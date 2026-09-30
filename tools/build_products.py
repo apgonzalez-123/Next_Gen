@@ -509,12 +509,22 @@ OPT_STRATEGY = [
 
 # marketView is a 0-2 scale: 0 bearish, 1 neutral, 2 bullish. A long call
 # wants a bullish room; a long put wants the opposite.
+# A long call is the leveraged structure; a short put is an income trade that
+# merely tolerates a leveraged room. The first cut had the long call punished
+# so hard for a "no" (0.12) that any mixed room pushed it below the short put:
+# at 67% of the room wanting leverage the call scored 0.71 and the put 0.78,
+# so a bullish, leverage-seeking room was sold four short puts. The crossover
+# now sits where it belongs, with the call ahead whenever most of the room
+# wants gearing and the put ahead when it does not. The call can carry a hard
+# penalty for "no" precisely because the put no longer competes for the
+# leverage vote: a room that unanimously declines gearing must not be sold
+# calls just because it is bullish.
 OPT_FIT = {
-  "lc": {"leverage": {"yes": 1.0, "no": 0.12}, "marketView": [0.10, 0.50, 1.0],
+  "lc": {"leverage": {"yes": 1.0, "no": 0.10}, "marketView": [0.10, 0.50, 1.0],
          "riskProfile": 1.80, "capitalIncome": {"capital": 1.0, "income": 0.20}},
   "cc": {"leverage": {"no": 1.0, "yes": 0.45}, "marketView": [0.50, 1.0, 0.60],
          "riskProfile": 0.70, "capitalIncome": {"income": 1.0, "capital": 0.25}},
-  "sp": {"leverage": {"yes": 0.80, "no": 0.75}, "marketView": [0.15, 0.80, 1.0],
+  "sp": {"leverage": {"yes": 0.60, "no": 0.75}, "marketView": [0.15, 0.80, 1.0],
          "riskProfile": 1.35, "capitalIncome": {"income": 1.0, "capital": 0.35}},
   "lp": {"leverage": {"no": 1.0, "yes": 0.40}, "marketView": [1.0, 0.50, 0.15],
          "riskProfile": 0.50, "capitalIncome": {"capital": 0.70, "income": 0.35}},

@@ -1202,7 +1202,15 @@ window.ENGINE = (function () {
        leverage and income are expressed through options, so those two
        answers size the overlay, with a bullish view adding to it. */
     var bullish = Math.max(0, view - 1);
-    var overlay = Math.min(0.30, levered * 0.18 + bullish * 0.10 + income * 0.12);
+    /* A bearish room wants the overlay too, for the opposite reason: the long
+       put is downside cover on stock the book still holds. Without this term
+       the sleeve collapsed to zero exactly when the room was most worried,
+       and the protective structure on the shelf could never be reached at
+       all — three of the four strategies were selectable and the fourth was
+       dead code. */
+    var bearish = Math.max(0, 1 - view);
+    var overlay = Math.min(0.30, levered * 0.18 + bullish * 0.10 +
+                                 income * 0.12 + bearish * 0.10);
     var options = equity * overlay;
     equity = equity - options;
 

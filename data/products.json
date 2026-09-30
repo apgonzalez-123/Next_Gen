@@ -5744,7 +5744,7 @@
         "fit": {
           "leverage": {
             "yes": 1.0,
-            "no": 0.12
+            "no": 0.1
           },
           "marketView": [
             0.1,
@@ -5885,7 +5885,7 @@
         },
         "fit": {
           "leverage": {
-            "yes": 0.8,
+            "yes": 0.6,
             "no": 0.75
           },
           "marketView": [
@@ -6028,7 +6028,7 @@
         "fit": {
           "leverage": {
             "yes": 1.0,
-            "no": 0.12
+            "no": 0.1
           },
           "marketView": [
             0.1,
@@ -6169,7 +6169,7 @@
         },
         "fit": {
           "leverage": {
-            "yes": 0.8,
+            "yes": 0.6,
             "no": 0.75
           },
           "marketView": [
@@ -6312,7 +6312,7 @@
         "fit": {
           "leverage": {
             "yes": 1.0,
-            "no": 0.12
+            "no": 0.1
           },
           "marketView": [
             0.1,
@@ -6453,7 +6453,7 @@
         },
         "fit": {
           "leverage": {
-            "yes": 0.8,
+            "yes": 0.6,
             "no": 0.75
           },
           "marketView": [
@@ -6596,7 +6596,7 @@
         "fit": {
           "leverage": {
             "yes": 1.0,
-            "no": 0.12
+            "no": 0.1
           },
           "marketView": [
             0.1,
@@ -6737,7 +6737,7 @@
         },
         "fit": {
           "leverage": {
-            "yes": 0.8,
+            "yes": 0.6,
             "no": 0.75
           },
           "marketView": [
@@ -6880,7 +6880,7 @@
         "fit": {
           "leverage": {
             "yes": 1.0,
-            "no": 0.12
+            "no": 0.1
           },
           "marketView": [
             0.1,
@@ -7021,7 +7021,7 @@
         },
         "fit": {
           "leverage": {
-            "yes": 0.8,
+            "yes": 0.6,
             "no": 0.75
           },
           "marketView": [
@@ -7164,7 +7164,7 @@
         "fit": {
           "leverage": {
             "yes": 1.0,
-            "no": 0.12
+            "no": 0.1
           },
           "marketView": [
             0.1,
@@ -7305,7 +7305,7 @@
         },
         "fit": {
           "leverage": {
-            "yes": 0.8,
+            "yes": 0.6,
             "no": 0.75
           },
           "marketView": [

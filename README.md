@@ -14,7 +14,7 @@ Entirely static — **no bank network, no server required** to run the session.
 | Page | Who opens it | What it does |
 |---|---|---|
 | `index.html` | Guests, by QR | Registration, the questions, and each guest's own portfolio |
-| `present.html` | Presenter, on the projector | QR to join, live counter, and the reveal (5 slides) |
+| `present.html` | Presenter, on the projector | QR to join, live counter, the reveal, a slide per sleeve and the engine drawn live (10 slides) |
 | `admin.html` | You | Every response, one row per guest, CSV / JSON export |
 | `qr-gen.html` | You, before the event | *Optional* &mdash; printable personal QR codes, one per guest |
 | `methodology.html` | You | The audit trail: the equity shelf, its market data, the fit matrix, the weights, and a live worked example |
@@ -224,7 +224,8 @@ that comes with them:
 
 `cls` must be one of `equities`, `fixedIncome`, `notes`, `cash`. Holdings appear
 on the guest's result screen grouped by asset class, and the presenter's verdict
-slide shows the headline risk figures plus the four largest positions.
+slide shows the headline risk figures, and the positions slide shows every
+holding in every sleeve.
 
 **The instruments shipped in this repo are representative placeholders** — broad
 sleeves and generic instrument descriptions, not a real proposal, and the return
@@ -358,12 +359,18 @@ that session only.
 2. Slide 1 shows the QR and a live response counter. Wait for the room.
 3. **→** to slide 2: where the room landed, per guest.
 4. **→** to slide 3: the room's composite portfolio — the reveal.
-5. **→** slides 4 and 5: answer-by-answer breakdown, for discussion.
+5. **→** to slide 4: the positions those answers actually buy.
+6. **→** slides 5 to 9: one sleeve at a time — equities, fixed income,
+   structured notes, FX, options — each answering why that much of it and why
+   those instruments.
+7. **→** to slide 10: the engine itself, with the room's answers travelling
+   through it. Node size is how many answered, edge weight is that question's
+   measured influence on the book, sleeve bars are the real allocation.
 
 | Key | |
 |---|---|
 | `←` `→` / space | move between slides |
-| `1`–`5` | jump to a slide (also `present.html#3`) |
+| `1`–`9`, `0` | jump to a slide (`0` is the tenth; also `present.html#3`) |
 | `F` | fullscreen |
 | `R` | reset votes |
 
