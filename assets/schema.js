@@ -3,6 +3,9 @@
  * The ten questions, grouped into sections that the admin opens one at a
  * time as the presentation reaches them.
  *
+ * Step titles and blurbs are for the host: the admin board and presenter
+ * use them, but the guest screen shows only the questions themselves.
+ *
  * Edit labels and options here. The matching engine, both result screens,
  * the presenter breakdown and the admin export all derive from this file,
  * so adding a question needs no other code change — only a `target` for
@@ -45,11 +48,11 @@ window.SCHEMA = {
         {
           id: "marketView",
           kind: "scale",
-          label: "What is your view on markets from here?",
+          label: "What are your current market views?",
           options: [
-            { v: 0, label: "Bearish", sub: "Positioned defensively" },
-            { v: 1, label: "Neutral", sub: "No strong call" },
-            { v: 2, label: "Bullish", sub: "Leaning into risk" }
+            { v: 0, label: "Bearish" },
+            { v: 1, label: "Neutral" },
+            { v: 2, label: "Bullish" }
           ]
         },
         {
@@ -102,7 +105,7 @@ window.SCHEMA = {
           id: "sector",
           kind: "multi",
           max: 3,
-          label: "Which sectors would you be exposed to?",
+          label: "Which sectors do you prefer to be exposed to?",
           hint: "Pick up to three.",
           options: [
             { v: "tech",        label: "Technology" },

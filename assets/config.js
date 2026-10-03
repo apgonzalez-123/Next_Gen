@@ -63,8 +63,10 @@ window.CONFIG = {
     //   required: false, type: "email", autocomplete: "email" }
   ],
 
-  /* Shown on the registration step so guests know what is recorded. Keep it
-   * accurate if you change IDENTIFY or REGISTER_FIELDS. */
+  /* Shown under the registration fields when non-empty. Empty hides it.
+   * Keep it accurate if you change IDENTIFY or REGISTER_FIELDS. */
+  PRIVACY_NOTE: "",
+  /* Previous wording, kept for reference:
   PRIVACY_NOTE: "Your name and your answers are recorded for this session so " +
-                "your host can follow up. No contact details are collected here."
+                "your host can follow up. No contact details are collected here." */
 };

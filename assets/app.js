@@ -1,6 +1,6 @@
 /* NextGen Portfolio Builder — the guest flow.
- * welcome -> 5 steps -> results. State lives in memory; the finished
- * answer set goes to STORE on submit.
+ * welcome -> registration -> the questions -> the room average. State lives
+ * in memory; the finished answer set goes to STORE on submit.
  */
 (function () {
   var app      = document.getElementById("app");
@@ -88,7 +88,6 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
     });
   }
-  function labelFor(axisId, value) { return window.axisLabel(axisId, value) || "None"; }
 
   /* ---------- render ---------- */
 
@@ -133,7 +132,7 @@
       btnBack.textContent = at === 0 ? "Start over" : "Back";
 
       var last = at === seq.length - 1;
-      btnNext.textContent = last ? "See my portfolio" : "Continue";
+      btnNext.textContent = last ? "Finished" : "Continue";
       btnNext.disabled = view === "register" ? !identityOk() : !stepComplete(view);
     } else if (view === "welcome") {
       stepCount.textContent = "";
@@ -164,15 +163,9 @@
        and the headline carries the rest. */
     hero.innerHTML =
       '<h1>Build the room&rsquo;s portfolio.</h1>' +
-      '<p>Five short steps. Pick what you would actually do with your own capital. ' +
-      'We average every answer in the room and find the portfolio that fits it best.</p>';
+      '<p>' + countWord(steps.length) + ' short steps. Answer the questions and we will ' +
+      'calculate the room average and find the portfolio that fits it best.</p>';
     s.appendChild(hero);
-
-    var preview = el("div", "steps-preview");
-    steps.forEach(function (st) {
-      preview.appendChild(el("div", "", '<i>0' + st.n + '</i><span>' + esc(st.title) + "</span>"));
-    });
-    s.appendChild(preview);
 
     if (guest.fromLink && guest.fields.name) {
       s.appendChild(el("div", "notice",
@@ -180,8 +173,12 @@
         (guest.fields.group ? ", " + esc(guest.fields.group) : "") + "</div>"));
     }
 
-    s.appendChild(el("p", "footnote", "Takes about two minutes."));
     app.appendChild(s);
+  }
+
+  function countWord(n) {
+    var w = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"][n];
+    return w || String(n);
   }
 
   /* Registration — the first step, not a form bolted under the intro. */
@@ -189,15 +186,14 @@
     var s = el("section", "screen");
     var optional = window.CONFIG.IDENTIFY === "optional";
 
-    s.appendChild(el("div", "step-head",
-      "<h2>Registration</h2><p>So your host can match this portfolio back to you.</p>"));
+    s.appendChild(el("div", "step-head", "<h2>Registration</h2>"));
 
     var wrap = el("div", "idblock");
     regFields().forEach(function (f) {
       var lab = el("label", "field");
       var soft = optional || !f.required;
       lab.innerHTML = '<span class="field-label">' + esc(f.label) +
-        (soft ? ' <em>optional</em>' : "") + "</span>";
+        (soft ? ' <em>optional</em>' : ' <em>required</em>') + "</span>";
 
       var input = document.createElement("input");
       input.type = f.type || "text";
@@ -219,17 +215,15 @@
     });
     s.appendChild(wrap);
 
-    s.appendChild(el("p", "footnote", esc(window.CONFIG.PRIVACY_NOTE)));
+    if (window.CONFIG.PRIVACY_NOTE) s.appendChild(el("p", "footnote", esc(window.CONFIG.PRIVACY_NOTE)));
     app.appendChild(s);
   }
 
   function renderStep(i) {
+    /* Guests see only the questions. Section titles and blurbs belong to
+       the host's screens (admin board and presenter). */
     var step = steps[i];
-    var s = el("section", "screen");
-
-    var head = el("div", "step-head");
-    head.innerHTML = "<h2>" + esc(step.title) + "</h2><p>" + esc(step.blurb) + "</p>";
-    s.appendChild(head);
+    var s = el("section", "screen screen-q");
 
     step.questions.forEach(function (q) {
       var block = el("div", "q");
@@ -378,7 +372,7 @@
     renderLoading();
     window.STORE.submit(answers, guest)
       .then(function () { return window.STORE.results(); })
-      .then(function (res) { roomData = res; view = "results"; render(); })
+      .then(function (res) { roomData = res; view = "results"; render(); watchRoom(); })
       .catch(function (err) {
         /* A dropped connection must never strand a guest mid-session —
            fall back to their own result and say so. */
@@ -387,86 +381,42 @@
                      real: 1, synthetic: 0, mode: "offline" };
         view = "results";
         render();
+        watchRoom();
       });
   }
 
+  /* The guest's final screen is the room average only: everyone's answers
+     averaged into one profile, matched to the shelf. It refreshes while the
+     guest waits, so it fills in as the rest of the room finishes. */
   function renderResults() {
     var s = el("section", "screen");
-    var ranked = window.ENGINE.rank(answers);
-    var ruledOut = ranked.filter(function (r) { return r.blocked; });
-    var mine = ranked[0];
     var agg = roomData.agg;
     var roomCount = agg.count;
-    var roomProfile = window.ENGINE.aggProfile(agg);
-    var roomTop = window.ENGINE.rank(roomProfile)[0];
-    var split = window.ENGINE.aggSplit(agg);
+    var roomTop = roomCount ? window.ENGINE.rank(window.ENGINE.aggProfile(agg))[0] : null;
 
-    /* --- hero: the guest's own match --- */
-    if (mine.blocked) {
-      /* Every portfolio on the shelf clashes with this guest's exclusions.
-         That is a real answer, not an error, so say so plainly rather than
-         recommending something they have ruled out. */
+    if (!roomTop || roomTop.blocked) {
       s.appendChild(el("div", "result-head",
-        '<div class="eyebrow">Your match</div>' +
-        '<h2 class="display" style="font-size:clamp(28px,7vw,40px)">Nothing on the shelf fits</h2>' +
-        '<p class="tagline">Your exclusions rule out every portfolio we hold.</p>'));
-      s.appendChild(el("div", "notice",
-        "<div>This is worth a conversation with your advisor. " +
-        "a mandate this constrained needs a portfolio built for it.</div>"));
-    } else {
-      s.appendChild(el("div", "result-head",
-        '<div class="eyebrow">' +
-          (guest.fields.name ? esc(guest.fields.name) + "&rsquo;s portfolio" : "Your portfolio") +
-        "</div>" +
-        '<h2 class="display">' + esc(mine.portfolio.name) + "</h2>" +
-        '<p class="tagline">' + esc(mine.portfolio.tagline) + "</p>"));
+        '<div class="eyebrow">Room average</div>' +
+        '<h2 class="display">Reading the room&hellip;</h2>' +
+        '<p class="tagline">The result appears as soon as answers come in.</p>'));
+      app.appendChild(s);
+      return;
     }
 
-    var fitCard = el("div", "card");
-    fitCard.innerHTML =
-      "<h3>Fit</h3>" +
-      '<div class="fit"><b>' + mine.fit + '</b><span>out of 100</span></div>' +
-      '<div class="meter"><i style="width:0"></i></div>' +
-      '<p class="body" style="margin-top:16px">' + esc(mine.portfolio.blurb) + "</p>";
-    s.appendChild(fitCard);
+    var p = roomTop.portfolio;
+    s.appendChild(el("div", "result-head",
+      '<div class="eyebrow">Room average</div>' +
+      '<h2 class="display">' + esc(p.name) + "</h2>" +
+      '<p class="tagline">' + esc(p.tagline) + "</p>"));
 
-    /* --- allocation --- */
-    s.appendChild(allocCard(mine.portfolio));
+    var about = el("div", "card");
+    about.innerHTML =
+      '<p class="body">' + esc(p.blurb) + "</p>" +
+      '<p class="footnote" style="margin-top:14px">' + roomCount + " guest" +
+        (roomCount === 1 ? "" : "s") + " averaged so far</p>";
+    s.appendChild(about);
 
-    /* --- characteristics --- */
-    var traits = el("div", "card");
-    var dl = '<dl style="margin:0">' +
-      '<div class="kv"><dt>Expected return</dt><dd>' + esc(mine.portfolio.expReturn) + "</dd></div>" +
-      '<div class="kv"><dt>Volatility</dt><dd>' + esc(mine.portfolio.vol) + "</dd></div>" +
-      "</dl>";
-    traits.innerHTML = "<h3>Profile</h3>" + dl +
-      '<div class="traits" style="margin-top:18px">' +
-      mine.portfolio.traits.map(function (t) { return "<span>" + esc(t) + "</span>"; }).join("") +
-      "</div>";
-    s.appendChild(traits);
-
-    /* --- the proposed book and its risk --- */
-    if (!mine.blocked) {
-      var hc = holdingsCard(mine.portfolio);
-      if (hc) s.appendChild(hc);
-      var rc = riskCard(mine.portfolio);
-      if (rc) s.appendChild(rc);
-    }
-
-    if (ruledOut.length && !mine.blocked) {
-      s.appendChild(el("div", "notice",
-        "<div><b>Ruled out by your exclusions:</b> " +
-        ruledOut.map(function (r) {
-          return esc(r.portfolio.name) + " <span style=\"opacity:.7\">(" +
-                 esc(r.blockedBy.join(", ")) + ")</span>";
-        }).join(" &middot; ") +
-        "</div>"));
-    }
-
-    /* --- the room --- */
-    s.appendChild(el("div", "result-head", '<div class="eyebrow">The room</div>' +
-      '<h2 class="display" style="font-size:clamp(28px,8vw,40px)">' + esc(roomTop.portfolio.name) + "</h2>" +
-      '<p class="tagline">' + roomCount + " guest" + (roomCount === 1 ? "" : "s") + ", averaged</p>"));
+    s.appendChild(allocCard(p));
 
     if (roomData.mode === "demo" && roomData.synthetic) {
       s.appendChild(el("div", "notice",
@@ -479,84 +429,33 @@
         "so this shows your own answers only.</div>"));
     }
 
-    /* --- room split: the reveal --- */
-    var splitCard = el("div", "card");
-    splitCard.innerHTML = "<h3>Where the room landed</h3>";
-    var bars = el("div", "bars");
-    split.forEach(function (row) {
-      var isLead = row === split[0];
-      var isMine = row.portfolio.id === mine.portfolio.id;
-      var r = el("div", "bar-row" + (isLead ? " lead" : "") + (isMine ? " mine" : ""));
-      r.innerHTML =
-        '<div class="bar-top"><span class="bar-name">' + esc(row.portfolio.name) + "</span>" +
-        '<span class="bar-val">' + row.count + " &middot; " + row.pct + "%</span></div>" +
-        '<div class="bar-track"><i class="bar-fill" style="width:0" data-w="' + row.pct + '"></i></div>';
-      bars.appendChild(r);
-    });
-    splitCard.appendChild(bars);
-    splitCard.appendChild(el("p", "footnote",
-      "Each guest matched on their own answers. The headline above averages everyone into a single profile, " +
-      "which is why it can differ from the most common individual result."));
-    s.appendChild(splitCard);
-
-    /* --- where this guest stands against the room --- */
-    s.appendChild(standingCard(agg, roomProfile, split, mine));
-
-    /* --- what the room picked on the categorical questions --- */
-    var picks = el("div", "card");
-    picks.innerHTML = "<h3>The room&rsquo;s consensus</h3>";
-    var pl = document.createElement("dl");
-    pl.style.margin = "0";
-    window.AXES.filter(function (a) {
-      return a.kind === "choice" || a.kind === "multi";
-    }).forEach(function (axis) {
-      var dist = window.ENGINE.aggDistribution(agg, axis.id);
-      var sorted = dist.bars.slice().sort(function (a, b) { return b.count - a.count; });
-      var dd;
-      if (axis.kind === "multi") {
-        /* A multi axis has no single winner — show what the room actually
-           converged on, or say plainly that it ruled nothing out. */
-        var kept = sorted.filter(function (b) { return b.pct >= 25; }).slice(0, 3);
-        dd = kept.length
-          ? kept.map(function (b) {
-              return esc(b.label) + ' <span style="color:var(--muted);font-weight:400">' + b.pct + "%</span>";
-            }).join("<br>")
-          : '<span style="color:var(--muted);font-weight:400">no clear consensus</span>';
-      } else {
-        dd = esc(sorted[0].label) +
-             ' <span style="color:var(--muted);font-weight:400">' + sorted[0].pct + "%</span>";
-      }
-      var row = el("div", "kv");
-      row.innerHTML = "<dt>" + esc(axis.label) + "</dt><dd>" + dd + "</dd>";
-      pl.appendChild(row);
-    });
-    picks.appendChild(pl);
-    s.appendChild(picks);
-
-    var again = el("button", "btn btn-ghost", "Start over");
-    again.type = "button";
-    again.style.width = "100%";
-    again.style.marginTop = "10px";
-    again.addEventListener("click", function () {
-      answers = {};
-      /* A shared device (an iPad on the table) hands over to the next
-         guest: keep the group, clear the person. */
-      if (!guest.fromLink) {
-        /* A shared device (an iPad on the table) hands over to the next
-           guest: keep the group, clear the person. */
-        guest = { token: "", fromLink: false, fields: { group: guest.fields.group || "" } };
-      }
-      view = "welcome";
-      render();
-    });
-    s.appendChild(again);
-
     s.appendChild(el("p", "footnote",
       "Illustrative only, built for the NextGen session. Not investment advice, " +
       "not an offer, and not a recommendation to buy or sell any instrument."));
 
     app.appendChild(s);
-    animateBars(s);
+  }
+
+  /* Keep the room average live while the guest sits on the final screen.
+     Only repaint when the result actually moves, and never scroll. */
+  var roomTimer = null;
+  function watchRoom() {
+    if (roomTimer) return;
+    roomTimer = setInterval(function () {
+      if (view !== "results") { clearInterval(roomTimer); roomTimer = null; return; }
+      window.STORE.results().then(function (res) {
+        var before = roomKey(roomData);
+        roomData = res;
+        if (roomKey(res) === before || view !== "results") return;
+        app.innerHTML = "";
+        renderResults();
+      }).catch(function () { /* keep the last good result on screen */ });
+    }, Math.max(3000, window.CONFIG.POLL_MS || 3000));
+  }
+  function roomKey(res) {
+    if (!res || !res.agg || !res.agg.count) return "0";
+    var top = window.ENGINE.rank(window.ENGINE.aggProfile(res.agg))[0];
+    return res.agg.count + ":" + (top ? top.portfolio.id : "");
   }
 
   var ASSET_CLASSES = [
@@ -565,80 +464,6 @@
     { k: "notes",       label: "Structured notes", c: "var(--series-notes)" },
     { k: "cash",        label: "Cash",             c: "var(--series-cash)" }
   ];
-
-  /* Where this guest sits relative to everyone else.
-     A headline percentile on risk appetite, then every numeric question
-     with the guest's own answer against the room's average, and finally
-     how many others landed on the same portfolio. */
-  function standingCard(agg, roomProfile, split, mine) {
-    var card = el("div", "card");
-    card.innerHTML = "<h3>Where you stand</h3>";
-
-    var numeric = window.AXES.filter(function (a) {
-      return a.kind === "scale" || a.kind === "range";
-    });
-
-    /* Headline: risk appetite if we have it, else the first numeric axis. */
-    var lead = window.AXIS_BY_ID.riskProfile ? "riskProfile" : (numeric[0] && numeric[0].id);
-    var pct = lead ? window.ENGINE.percentile(agg, lead, answers[lead]) : null;
-    if (pct !== null && agg.count > 1) {
-      var word = pct >= 50 ? "more" : "less";
-      var side = pct >= 50 ? pct : 100 - pct;
-      card.appendChild(el("div", "stand-head",
-        "<b>" + side + "%</b> <span>of the room is " + word +
-        " cautious than you</span>"));
-    }
-
-    numeric.forEach(function (axis) {
-      var mineV = answers[axis.id];
-      var roomV = roomProfile[axis.id];
-      if (mineV === null || mineV === undefined || roomV === null) return;
-
-      var base = axis.kind === "range" ? axis.min : 0;
-      var sp = window.ENGINE.span(axis);
-      var youPos  = ((mineV - base) / sp) * 100;
-      var roomPos = ((roomV - base) / sp) * 100;
-
-      var youTxt = axis.kind === "range"
-        ? window.axisLabel(axis.id, mineV)
-        : axis.options[mineV].label;
-      /* A bare "0.9" means nothing on its own — say what it is out of. */
-      var roomTxt = axis.kind === "range"
-        ? window.axisLabel(axis.id, Math.round(roomV))
-        : roomV.toFixed(1) + " of " + (axis.options.length - 1);
-
-      var row = el("div", "scale-row");
-      row.innerHTML =
-        '<div class="scale-q">' + esc(axis.label) +
-          '<span class="scale-vals">you <b>' + esc(youTxt) + "</b> &middot; room " +
-          esc(roomTxt) + "</span></div>" +
-        '<div class="scale-track">' +
-          '<span class="you" style="left:' + youPos + '%"></span>' +
-          '<span class="room" style="left:' + roomPos + '%"></span>' +
-        "</div>" +
-        '<div class="scale-ends"><span>' +
-          esc(axis.kind === "range" ? (axis.minLabel || axis.min) : axis.options[0].label) +
-        "</span><span>" +
-          esc(axis.kind === "range" ? (axis.maxLabel || axis.max) : axis.options[axis.options.length - 1].label) +
-        "</span></div>";
-      card.appendChild(row);
-    });
-
-    card.appendChild(el("div", "legend-inline",
-      '<div><s class="room"></s>Room average</div><div><s class="you"></s>You</div>'));
-
-    /* How much company they have on their own result. */
-    var mineRow = split.filter(function (r) { return r.portfolio.id === mine.portfolio.id; })[0];
-    if (mineRow && mineRow.count > 0 && agg.complete > 1) {
-      var others = mineRow.count - 1;
-      card.appendChild(el("p", "stand-foot",
-        others > 0
-          ? "<b>" + others + "</b> other guest" + (others === 1 ? "" : "s") +
-            " landed on " + esc(mine.portfolio.name) + ", " + mineRow.pct + "% of the room."
-          : "No one else landed on " + esc(mine.portfolio.name) + ". You are the only one."));
-    }
-    return card;
-  }
 
   function allocCard(p) {
     var card = el("div", "card");
@@ -656,112 +481,6 @@
         }).join("") +
       "</div>";
     return card;
-  }
-
-  /* The proposed book: every line the portfolio would actually hold,
-     grouped by asset class and weighted. */
-  function holdingsCard(p) {
-    if (!p.holdings || !p.holdings.length) return null;
-    var card = el("div", "card");
-    card.innerHTML = "<h3>Proposed portfolio</h3>";
-    var host = el("div", "hold");
-
-    ASSET_CLASSES.forEach(function (cls) {
-      var lines = p.holdings.filter(function (h) { return h.cls === cls.k; });
-      if (!lines.length) return;
-      var total = lines.reduce(function (a, h) { return a + h.weight; }, 0);
-
-      host.appendChild(el("div", "hold-group",
-        '<s style="background:' + cls.c + '"></s>' + esc(cls.label) + "<b>" + total + "%</b>"));
-
-      lines.forEach(function (h) {
-        var row = el("div", "hold-row");
-        row.innerHTML =
-          "<div><div class=\"hold-name\">" + esc(h.name) + "</div>" +
-          '<div class="hold-meta">' +
-            (h.ticker ? '<span class="tick-id">' + esc(h.ticker) + "</span>" : "") +
-            esc(h.detail || "") + "</div></div>" +
-          '<div class="hold-w">' + h.weight + "%</div>" +
-          '<div class="hold-bar"><i style="width:0;background:' + cls.c +
-            '" data-w="' + h.weight + '"></i></div>';
-        host.appendChild(row);
-      });
-    });
-
-    card.appendChild(host);
-    return card;
-  }
-
-  /* Risk metrics and the three-case scenario band. */
-  function riskCard(p) {
-    var r = p.risk;
-    if (!r) return null;
-    var card = el("div", "card");
-    card.innerHTML = "<h3>Risk &amp; scenarios</h3>";
-
-    var m = el("dl", "metrics");
-    [
-      { t: "Expected return", v: r.expReturn.toFixed(1), u: "% p.a." },
-      { t: "Volatility",      v: r.vol.toFixed(1),       u: "% p.a." },
-      { t: "Max drawdown",    v: r.maxDrawdown.toFixed(1), u: "%", neg: true },
-      { t: "Sharpe ratio",    v: r.sharpe.toFixed(2),    u: "" },
-      { t: "Running yield",   v: r.yield.toFixed(1),     u: "%" }
-    ].forEach(function (x) {
-      var d = el("div", "metric");
-      d.innerHTML = "<dt>" + esc(x.t) + "</dt><dd" + (x.neg ? ' class="neg"' : "") + ">" +
-        esc(x.v) + (x.u ? "<small>" + esc(x.u) + "</small>" : "") + "</dd>";
-      m.appendChild(d);
-    });
-    card.appendChild(m);
-
-    /* Bars grow from a shared zero line, scaled to the widest case either
-       way, so bull and bear are visually comparable. */
-    var span = Math.max.apply(null, r.scenarios.map(function (s) { return Math.abs(s.pct); })) || 1;
-    var zeroAt = 100 * (span / (2 * span));   /* zero sits mid-track */
-    var scen = el("div", "scen");
-    scen.style.marginTop = "18px";
-
-    r.scenarios.forEach(function (sc) {
-      var up = sc.pct >= 0;
-      var w = (Math.abs(sc.pct) / span) * 50;   /* half-track max */
-      var row = el("div", "scen-row");
-      row.innerHTML =
-        '<div class="scen-top"><span class="scen-name">' + esc(sc.label) + "</span>" +
-        '<span class="scen-val ' + (up ? "up" : "down") + '">' +
-          (up ? "+" : "") + sc.pct.toFixed(1) + "%</span></div>" +
-        '<div class="scen-track">' +
-          '<span class="scen-zero" style="left:' + zeroAt + '%"></span>' +
-          '<i style="' + (up ? "left:" + zeroAt + "%" : "right:" + (100 - zeroAt) + "%") +
-            ";width:0;background:" + (up ? "var(--pos)" : "var(--neg)") +
-            '" data-w="' + w + '"></i>' +
-        "</div>" +
-        '<div class="scen-driver">' + esc(sc.driver) + "</div>";
-      scen.appendChild(row);
-    });
-    card.appendChild(scen);
-
-    card.appendChild(el("div", "disclaim",
-      "<b>Hypothetical.</b> Return, volatility and drawdown figures are modelled " +
-      "illustrations for this session, not actual or predicted performance. " +
-      "Scenario outcomes are not probabilities and are not guaranteed."));
-    return card;
-  }
-
-  /* Bars and meters start at zero and grow once painted — the motion is
-     what makes the reveal land on a projector. */
-  function animateBars(root) {
-    requestAnimationFrame(function () {
-      requestAnimationFrame(function () {
-        root.querySelectorAll("[data-w]").forEach(function (f) {
-          f.style.width = f.getAttribute("data-w") + "%";
-        });
-        var meter = root.querySelector(".meter i");
-        if (meter) {
-          var fit = root.querySelector(".fit b");
-          meter.style.width = (fit ? fit.textContent : 0) + "%";
-        }
-      });
-    });
   }
 
   /* ---------- navigation ---------- */
@@ -797,14 +516,11 @@
   }
 
   function renderWaiting() {
-    var step = steps[waitingFor];
     var s = el("section", "screen");
     s.appendChild(el("div", "wait",
       '<div class="wait-pulse" aria-hidden="true"><span></span><span></span><span></span></div>' +
-      '<div class="eyebrow">Up next</div>' +
-      '<h2 class="display">' + esc(step.title) + "</h2>" +
-      "<p>Your answers so far are saved. This section opens when your host reaches " +
-      "that part of the presentation, and this page moves on by itself.</p>"));
+      '<div class="eyebrow">Locked</div>' +
+      '<h2 class="display">Hold on for the host to enable the next step.</h2>'));
     app.appendChild(s);
   }
 
