@@ -518,10 +518,79 @@
   function renderWaiting() {
     var s = el("section", "screen");
     s.appendChild(el("div", "wait",
-      '<div class="wait-crest" aria-hidden="true"><span class="crest"></span></div>' +
+      '<div class="wait-crest" aria-hidden="true">' + mascotSVG() + '</div>' +
       '<div class="eyebrow">Locked</div>' +
       '<h2 class="display">Hold on for the host to enable the next step.</h2>'));
     app.appendChild(s);
+    var m = s.querySelector(".mascot");
+    if (m && m.pauseAnimations && window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches) m.pauseAnimations();
+  }
+
+  /* The Safra shield as a little gym mascot: headband on, pressing a
+     barbell overhead with a squat on each rep. The face is the real crest,
+     cut from the logo artwork onto a white shield. SMIL drives the limbs
+     because it animates SVG geometry the same way on every phone. */
+  function mascotSVG() {
+    var T = 'dur="1.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;0.6;1" ' +
+            'keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1"';
+    function anim(attr, a, b) {
+      return '<animate attributeName="' + attr + '" values="' + a + ";" + b + ";" + b + ";" + a + '" ' + T + "/>";
+    }
+    function move(a, b) {
+      return '<animateTransform attributeName="transform" type="translate" values="' +
+        a + ";" + b + ";" + b + ";" + a + '" ' + T + "/>";
+    }
+    var LOGO = "assets/brand/safra-logo.png";
+    return '' +
+    '<svg class="mascot" viewBox="0 0 160 150" width="150" height="141" xmlns="http://www.w3.org/2000/svg">' +
+      '<ellipse cx="80" cy="140" rx="34" ry="4" class="m-floor">' + anim("rx", "38", "30") + "</ellipse>" +
+
+      /* legs: hip → knee → ankle, knees bend out at the bottom of the rep */
+      '<polyline class="m-limb" points="70,104 60,116 66,128">' +
+        anim("points", "70,104 60,116 66,128", "70,100 67,114 66,128") + "</polyline>" +
+      '<polyline class="m-limb" points="90,104 100,116 94,128">' +
+        anim("points", "90,104 100,116 94,128", "90,100 93,114 94,128") + "</polyline>" +
+      '<path class="m-shoe" d="M56,126 h14 a4,4 0 0 1 4,4 v3 h-22 v-3 a4,4 0 0 1 4,-4z"/>' +
+      '<path class="m-shoe" d="M90,126 h14 a4,4 0 0 1 4,4 v3 h-22 v-3 a4,4 0 0 1 4,-4z"/>' +
+
+      /* upper body bobs with the squat */
+      "<g>" + move("0 4", "0 0") +
+        /* arms: shoulder → elbow → hand, pressing from chest to overhead */
+        '<polyline class="m-limb" points="54,64 38,76 34,56">' +
+          anim("points", "54,64 38,76 34,56", "54,60 40,38 34,14") + "</polyline>" +
+        '<polyline class="m-limb" points="106,64 122,76 126,56">' +
+          anim("points", "106,64 122,76 126,56", "106,60 120,38 126,14") + "</polyline>" +
+
+        /* the shield: white backing + the real crest artwork, cropped */
+        '<svg x="50" y="30" width="60" height="72" viewBox="0 0 140 168" preserveAspectRatio="xMinYMin slice">' +
+          '<path class="m-face" d="M8,14 C40,4 100,4 132,14 L132,92 C130,128 104,150 70,166 C36,150 10,128 8,92 Z"/>' +
+          '<image href="' + LOGO + '" xlink:href="' + LOGO + '" width="552" height="168"/>' +
+        "</svg>" +
+
+        /* headband */
+        '<rect class="m-band" x="51" y="36" width="58" height="9" rx="2"/>' +
+        '<rect class="m-stripe" x="51" y="38.2" width="58" height="1.4"/>' +
+        '<rect class="m-stripe" x="51" y="41.4" width="58" height="1.4"/>' +
+
+        /* sweat drop at the top of each rep */
+        '<path class="m-drop" d="M114,34 q3,4 0,6 q-3,-2 0,-6z" opacity="0">' +
+          '<animate attributeName="opacity" values="0;0;1;0" keyTimes="0;0.45;0.6;1" dur="1.8s" repeatCount="indefinite"/>' +
+          '<animateTransform attributeName="transform" type="translate" values="0 0;0 0;2 -2;6 8" keyTimes="0;0.45;0.6;1" dur="1.8s" repeatCount="indefinite"/>' +
+        "</path>" +
+
+        /* barbell + gloves travel together */
+        "<g>" + move("0 0", "0 -42") +
+          '<rect class="m-bar" x="10" y="54.5" width="140" height="3" rx="1.5"/>' +
+          '<rect class="m-plate" x="12" y="44" width="7" height="24" rx="2"/>' +
+          '<rect class="m-plate" x="20" y="48" width="5" height="16" rx="1.5"/>' +
+          '<rect class="m-plate" x="141" y="44" width="7" height="24" rx="2"/>' +
+          '<rect class="m-plate" x="135" y="48" width="5" height="16" rx="1.5"/>' +
+          '<circle class="m-glove" cx="34" cy="56" r="5.5"/>' +
+          '<circle class="m-glove" cx="126" cy="56" r="5.5"/>' +
+        "</g>" +
+      "</g>" +
+    "</svg>";
   }
 
   btnNext.addEventListener("click", function () {
