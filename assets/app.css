@@ -801,7 +801,9 @@ button { font-family: inherit; color: inherit; }
 /* The locked screen: the Safra shield as a small gym mascot (drawn in
    app.js, mascotSVG). Colours echo the brand: navy limbs, white gloves,
    sneakers and headband. */
-.wait-crest { margin: 0 auto 26px; width: 150px; }
+/* Centres whichever mascot is in it: the rendered frame sizes itself,
+   the SVG fallback carries its own 150px width. */
+.wait-crest { margin: 0 auto 26px; display: flex; justify-content: center; }
 .mascot { display: block; width: 150px; height: auto; overflow: visible; }
 .mascot .m-limb { fill: none; stroke: #2B3B86; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
 .mascot .m-face { fill: #FFFFFF; }
@@ -946,3 +948,22 @@ button { font-family: inherit; color: inherit; }
 /* The img removes itself when the file is missing, which leaves the
    separator first in the row; hide it in that case. */
 .wordmark > .brand-sep:first-child { display: none; }
+
+/* The shield mascot on the hold screen. Cut from the desk's rendered
+   artwork, one pose per section. It breathes rather than loops a routine:
+   a guest sits here for as long as the host takes, and anything busier
+   becomes irritating at that length. */
+.wait-mascot {
+  display: block;
+  width: auto;
+  height: clamp(150px, 34vw, 230px);
+  margin: 0 auto;
+  animation: wait-breathe 4.5s ease-in-out infinite;
+}
+@keyframes wait-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-6px) scale(1.012); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wait-mascot { animation: none; }
+}

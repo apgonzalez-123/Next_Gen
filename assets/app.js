@@ -515,16 +515,42 @@
     });
   }
 
+  /* The five mascot frames are cut from the desk's rendered shield artwork,
+     one per section, and they are the first choice because they are the real
+     thing rather than an approximation of it. The procedural SVG below stays
+     as the fallback: it needs no network, so a guest on bad venue wifi still
+     gets a mascot rather than a hole in the screen. */
+  var MASCOT_IMG = {
+    profile: "flex", positioning: "pull-up", equities: "run",
+    fx: "jump rope", fixedincome: "zen"
+  };
+
   function renderWaiting() {
+    var stepId = steps[waitingFor].id;
     var s = el("section", "screen");
     s.appendChild(el("div", "wait",
-      '<div class="wait-crest" aria-hidden="true">' + mascotSVG(steps[waitingFor].id) + '</div>' +
+      '<div class="wait-crest" aria-hidden="true">' +
+        /* No build stamp: bump-build.sh only rewrites URLs written in the
+           HTML, and these frames are immutable anyway. Replacing one means
+           giving it a new name. */
+        '<img class="wait-mascot" src="assets/brand/mascot/' + stepId +
+             '.webp" alt="" width="378" height="420" decoding="async">' +
+      "</div>" +
       '<div class="eyebrow">Locked</div>' +
       '<h2 class="display">Hold on for the host to enable the next step.</h2>'));
     app.appendChild(s);
-    var m = s.querySelector(".mascot");
-    if (m && m.pauseAnimations && window.matchMedia &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches) m.pauseAnimations();
+
+    var img = s.querySelector(".wait-mascot");
+    if (img) {
+      img.addEventListener("error", function () {
+        /* No image: draw the vector mascot instead rather than leaving a gap. */
+        var host = img.parentNode;
+        host.innerHTML = mascotSVG(stepId);
+        var m = host.querySelector(".mascot");
+        if (m && m.pauseAnimations && window.matchMedia &&
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches) m.pauseAnimations();
+      });
+    }
   }
 
   /* The Safra shield as a little gym mascot, doing a different exercise
