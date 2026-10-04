@@ -949,21 +949,29 @@ button { font-family: inherit; color: inherit; }
    separator first in the row; hide it in that case. */
 .wordmark > .brand-sep:first-child { display: none; }
 
-/* The shield mascot on the hold screen. Cut from the desk's rendered
-   artwork, one pose per section. It breathes rather than loops a routine:
-   a guest sits here for as long as the host takes, and anything busier
-   becomes irritating at that length. */
+/* The shield mascot on the hold screen: eight poses in one strip, stepped
+   through so the character actually works out while a guest waits. The strip
+   is animated by moving the image inside a fixed window, rather than as a
+   background, so the img still fires onerror and the vector fallback can take
+   over on bad venue wifi. */
 .wait-mascot {
-  display: block;
-  width: auto;
-  height: clamp(150px, 34vw, 230px);
-  margin: 0 auto;
-  animation: wait-breathe 4.5s ease-in-out infinite;
+  position: relative;
+  overflow: hidden;
+  height: clamp(118px, 26vw, 176px);
+  aspect-ratio: 256 / 240;
 }
-@keyframes wait-breathe {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50%      { transform: translateY(-6px) scale(1.012); }
+.wait-mascot img {
+  position: absolute;
+  inset: 0 auto 0 0;
+  height: 100%;
+  width: 800%;       /* eight cells wide */
+  max-width: none;
+  animation: wait-strip 7.2s steps(8) infinite;
+}
+@keyframes wait-strip {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .wait-mascot { animation: none; }
+  .wait-mascot, .wait-mascot img { animation: none; }
 }

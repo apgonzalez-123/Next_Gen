@@ -520,33 +520,40 @@
      thing rather than an approximation of it. The procedural SVG below stays
      as the fallback: it needs no network, so a guest on bad venue wifi still
      gets a mascot rather than a hole in the screen. */
-  var MASCOT_IMG = {
-    profile: "flex", positioning: "pull-up", equities: "run",
-    fx: "jump rope", fixedincome: "zen"
+  /* Eight poses cut from the desk's rendered shield artwork, laid out as one
+     strip and stepped through in CSS. One request rather than eight, and the
+     animation is real frames rather than a transform pretending to be one.
+     Each section starts on a different pose, so a guest held twice does not
+     sit through the same loop from the same place. */
+  var MASCOT_FRAMES = 8;
+  var MASCOT_START = {
+    profile: 0, positioning: 6, equities: 1, fx: 3, fixedincome: 5
   };
 
   function renderWaiting() {
     var stepId = steps[waitingFor].id;
+    var start = MASCOT_START[stepId] || 0;
     var s = el("section", "screen");
     s.appendChild(el("div", "wait",
       '<div class="wait-crest" aria-hidden="true">' +
-        /* No build stamp: bump-build.sh only rewrites URLs written in the
-           HTML, and these frames are immutable anyway. Replacing one means
-           giving it a new name. */
-        '<img class="wait-mascot" src="assets/brand/mascot/' + stepId +
-             '.webp" alt="" width="378" height="420" decoding="async">' +
+        '<div class="wait-mascot">' +
+          /* No build stamp: bump-build.sh only rewrites URLs written in the
+             HTML, and the strip is immutable — replacing it means renaming it. */
+          '<img src="assets/brand/mascot/workout.webp" alt="" decoding="async" ' +
+               'style="animation-delay:' + (-start * 0.9) + 's">' +
+        "</div>" +
       "</div>" +
       '<div class="eyebrow">Locked</div>' +
       '<h2 class="display">Hold on for the host to enable the next step.</h2>'));
     app.appendChild(s);
 
-    var img = s.querySelector(".wait-mascot");
+    var img = s.querySelector(".wait-mascot img");
     if (img) {
       img.addEventListener("error", function () {
-        /* No image: draw the vector mascot instead rather than leaving a gap. */
-        var host = img.parentNode;
-        host.innerHTML = mascotSVG(stepId);
-        var m = host.querySelector(".mascot");
+        /* No strip: draw the vector mascot instead of leaving a gap. */
+        var crest = s.querySelector(".wait-crest");
+        crest.innerHTML = mascotSVG(stepId);
+        var m = crest.querySelector(".mascot");
         if (m && m.pauseAnimations && window.matchMedia &&
             window.matchMedia("(prefers-reduced-motion: reduce)").matches) m.pauseAnimations();
       });
