@@ -798,17 +798,58 @@ button { font-family: inherit; color: inherit; }
 }
 .wait p { color: var(--text-2); font-size: 15px; line-height: 1.6; max-width: 38ch; margin: 0 auto; }
 
-.wait-pulse { display: flex; justify-content: center; gap: 7px; margin-bottom: 30px; }
-.wait-pulse span {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--accent);
-  animation: waitp 1.4s ease-in-out infinite;
+/* The locked screen: the Safra shield, cut from the logo artwork with a
+   mask, lifts gently while a band of light sweeps across it and a thin
+   arc circles it. Small on purpose; it says "working" without shouting. */
+.wait-crest {
+  position: relative;
+  width: 112px; height: 112px;
+  margin: 0 auto 30px;
+  display: grid; place-items: center;
 }
-.wait-pulse span:nth-child(2) { animation-delay: 0.18s; }
-.wait-pulse span:nth-child(3) { animation-delay: 0.36s; }
-@keyframes waitp {
-  0%, 100% { opacity: 0.22; transform: translateY(0); }
-  50%      { opacity: 1;    transform: translateY(-4px); }
+/* orbiting arc */
+.wait-crest::before {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  border: 1px solid var(--line);
+  border-top-color: var(--accent);
+  animation: crest-orbit 2.8s linear infinite;
+}
+/* soft floor shadow that tightens as the shield lifts */
+.wait-crest::after {
+  content: ""; position: absolute; left: 50%; bottom: 14px;
+  width: 40px; height: 6px; margin-left: -20px; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(242,245,249,0.22), transparent);
+  animation: crest-floor 2.8s ease-in-out infinite;
+}
+.crest {
+  /* Shield only: the artwork is 552x168 and the crest is its first ~140px,
+     so at 62px tall the mark is 51px wide. */
+  width: 51px; height: 62px;
+  -webkit-mask: url("brand/safra-logo.png") no-repeat 0 0 / auto 100%;
+          mask: url("brand/safra-logo.png") no-repeat 0 0 / auto 100%;
+  background: linear-gradient(115deg,
+    rgba(242,245,249,0.55) 0%, rgba(242,245,249,0.55) 42%,
+    #FFFFFF 50%,
+    rgba(242,245,249,0.55) 58%, rgba(242,245,249,0.55) 100%);
+  background-size: 320% 100%;
+  animation: crest-sheen 2.8s ease-in-out infinite, crest-lift 2.8s ease-in-out infinite;
+}
+@keyframes crest-orbit { to { transform: rotate(360deg); } }
+@keyframes crest-sheen {
+  0%   { background-position: 100% 0; }
+  60%, 100% { background-position: 0% 0; }
+}
+@keyframes crest-lift {
+  0%, 100% { transform: translateY(2px) scale(1); }
+  50%      { transform: translateY(-5px) scale(1.04); }
+}
+@keyframes crest-floor {
+  0%, 100% { transform: scaleX(1);    opacity: 1; }
+  50%      { transform: scaleX(0.7);  opacity: 0.55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wait-crest::before, .wait-crest::after, .crest { animation: none; }
+  .crest { background: rgba(242,245,249,0.85); }
 }
 
 /* ============================================================

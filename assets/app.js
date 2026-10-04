@@ -518,7 +518,7 @@
   function renderWaiting() {
     var s = el("section", "screen");
     s.appendChild(el("div", "wait",
-      '<div class="wait-pulse" aria-hidden="true"><span></span><span></span><span></span></div>' +
+      '<div class="wait-crest" aria-hidden="true"><span class="crest"></span></div>' +
       '<div class="eyebrow">Locked</div>' +
       '<h2 class="display">Hold on for the host to enable the next step.</h2>'));
     app.appendChild(s);
