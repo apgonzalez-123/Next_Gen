@@ -518,7 +518,7 @@
   function renderWaiting() {
     var s = el("section", "screen");
     s.appendChild(el("div", "wait",
-      '<div class="wait-crest" aria-hidden="true">' + mascotSVG() + '</div>' +
+      '<div class="wait-crest" aria-hidden="true">' + mascotSVG(steps[waitingFor].id) + '</div>' +
       '<div class="eyebrow">Locked</div>' +
       '<h2 class="display">Hold on for the host to enable the next step.</h2>'));
     app.appendChild(s);
@@ -527,70 +527,151 @@
         window.matchMedia("(prefers-reduced-motion: reduce)").matches) m.pauseAnimations();
   }
 
-  /* The Safra shield as a little gym mascot: headband on, pressing a
-     barbell overhead with a squat on each rep. The face is the real crest,
-     cut from the logo artwork onto a white shield. SMIL drives the limbs
-     because it animates SVG geometry the same way on every phone. */
-  function mascotSVG() {
-    var T = 'dur="1.8s" repeatCount="indefinite" calcMode="spline" keyTimes="0;0.4;0.6;1" ' +
-            'keySplines="0.45 0 0.55 1;0 0 1 1;0.45 0 0.55 1"';
-    function anim(attr, a, b) {
-      return '<animate attributeName="' + attr + '" values="' + a + ";" + b + ";" + b + ";" + a + '" ' + T + "/>";
+  /* The Safra shield as a little gym mascot, doing a different exercise
+     at each locked section. The face is the real crest, cut from the logo
+     artwork onto a white shield. Each exercise is a list of poses; SMIL
+     tweens limbs, gloves, sneakers and props between them, because it
+     animates SVG geometry the same way on every phone. */
+  var EXERCISE_FOR_STEP = {
+    profile: "jacks", positioning: "press", equities: "curls", fx: "rope", fixedincome: "zen"
+  };
+  var SHOULDER = { l: [54, 64], r: [106, 64] }, HIP = { l: [70, 104], r: [90, 104] };
+  var EASE = "0.45 0 0.55 1";
+
+  function exercise(kind) {
+    function stand(dy) {
+      dy = dy || 0;
+      return { lk: [70, 116 + dy], la: [68, 128 + dy], rk: [90, 116 + dy], ra: [92, 128 + dy] };
     }
-    function move(a, b) {
-      return '<animateTransform attributeName="transform" type="translate" values="' +
-        a + ";" + b + ";" + b + ";" + a + '" ' + T + "/>";
+    function pose(o) {
+      var base = stand(0);
+      Object.keys(o).forEach(function (k) { base[k] = o[k]; });
+      return base;
     }
+    if (kind === "jacks") return { dur: 1.2, sweat: 1, poses: [
+      { t: 0,   p: pose({ b: [0, 2],  le: [46, 86], lh: [44, 103], re: [114, 86], rh: [116, 103],
+                          lk: [70, 117], la: [70, 129], rk: [90, 117], ra: [90, 129], floor: 36 }) },
+      { t: 0.5, p: pose({ b: [0, -7], le: [38, 42], lh: [56, 14],  re: [122, 42], rh: [104, 14],
+                          lk: [61, 108], la: [54, 119], rk: [99, 108], ra: [106, 119], floor: 27 }) },
+      { t: 1,   p: null } ] };
+    if (kind === "press") return { dur: 1.9, sweat: 1, bar: 1, poses: [
+      { t: 0,   p: pose({ b: [0, 4], le: [38, 78], lh: [34, 58], re: [122, 78], rh: [126, 58],
+                          lk: [59, 117], la: [66, 128], rk: [101, 117], ra: [94, 128], floor: 38 }) },
+      { t: 0.4, p: pose({ b: [0, 0], le: [40, 38], lh: [34, 14], re: [120, 38], rh: [126, 14],
+                          lk: [68, 115], la: [66, 128], rk: [92, 115], ra: [94, 128], floor: 31 }) },
+      { t: 0.6, p: "hold" },
+      { t: 1,   p: null } ] };
+    if (kind === "curls") {
+      var down = { l: [[42, 86], [40, 104]], r: [[118, 86], [120, 104]] };
+      var up   = { l: [[42, 86], [50, 64]],  r: [[118, 86], [110, 64]] };
+      return { dur: 2.4, dumbbells: 1, poses: [
+        { t: 0,    p: pose({ b: [0, 1],  le: down.l[0], lh: down.l[1], re: down.r[0], rh: down.r[1], floor: 34 }) },
+        { t: 0.25, p: pose({ b: [-1, 0], le: up.l[0],   lh: up.l[1],   re: down.r[0], rh: down.r[1], floor: 34 }) },
+        { t: 0.5,  p: pose({ b: [0, 1],  le: down.l[0], lh: down.l[1], re: down.r[0], rh: down.r[1], floor: 34 }) },
+        { t: 0.75, p: pose({ b: [1, 0],  le: down.l[0], lh: down.l[1], re: up.r[0],   rh: up.r[1],   floor: 34 }) },
+        { t: 1,    p: null } ] };
+    }
+    if (kind === "rope") return { dur: 0.9, sweat: 1, rope: 1, poses: [
+      { t: 0,   p: pose({ b: [0, 1],  le: [44, 88], lh: [33, 98], re: [116, 88], rh: [127, 98],
+                          lk: [72, 117], la: [72, 129], rk: [88, 117], ra: [88, 129], rope: -46, floor: 34 }) },
+      { t: 0.5, p: pose({ b: [0, -8], le: [44, 82], lh: [29, 92], re: [116, 82], rh: [131, 92],
+                          lk: [72, 109], la: [72, 120], rk: [88, 109], ra: [88, 120], rope: 178, floor: 26 }) },
+      { t: 1,   p: null } ] };
+    /* zen: cross-legged, floating, breathing */
+    function zen(dy, floor) {
+      return pose({ b: [0, dy], le: [40, 94 + dy], lh: [47, 115 + dy], re: [120, 94 + dy], rh: [113, 115 + dy],
+                    lk: [49, 118 + dy], la: [88, 123 + dy], rk: [111, 118 + dy], ra: [72, 123 + dy], floor: floor });
+    }
+    return { dur: 4, aura: 1, poses: [
+      { t: 0, p: zen(2, 34) }, { t: 0.5, p: zen(-7, 25) }, { t: 1, p: null } ] };
+  }
+
+  function mascotSVG(stepId) {
+    var ex = exercise(EXERCISE_FOR_STEP[stepId] || "press");
+    /* resolve "hold" (repeat previous) and null (loop back to first) */
+    var poses = ex.poses.map(function (k, i, all) {
+      var p = k.p === "hold" ? all[i - 1].p : (k.p === null ? all[0].p : k.p);
+      if (k.p === "hold") all[i].p = p;
+      return { t: k.t, p: p };
+    });
+    var keyTimes = poses.map(function (k) { return k.t; }).join(";");
+    var splines = poses.slice(1).map(function () { return EASE; }).join(";");
+    var timing = 'dur="' + ex.dur + 's" repeatCount="indefinite" calcMode="spline" keyTimes="' +
+                 keyTimes + '" keySplines="' + splines + '"';
+    function vals(fn) { return poses.map(function (k) { return fn(k.p); }).join(";"); }
+    function anim(attr, fn) { return '<animate attributeName="' + attr + '" values="' + vals(fn) + '" ' + timing + "/>"; }
+    function move(fn) {
+      return '<animateTransform attributeName="transform" type="translate" values="' + vals(fn) + '" ' + timing + "/>";
+    }
+    function xy(a) { return a[0] + "," + a[1]; }
+    function off(a, b) { return (a[0] + b[0]) + "," + (a[1] + b[1]); }
+    function first(fn) { return fn(poses[0].p); }
+    function limb(fn) { return '<polyline class="m-limb" points="' + first(fn) + '">' + anim("points", fn) + "</polyline>"; }
+    function at(key, inner) { return '<g transform="translate(' + first(function (p) { return p[key][0] + " " + p[key][1]; }) + ')">' +
+      move(function (p) { return p[key][0] + " " + p[key][1]; }) + inner + "</g>"; }
+
     var LOGO = "assets/brand/safra-logo.png";
-    return '' +
-    '<svg class="mascot" viewBox="0 0 160 150" width="150" height="141" xmlns="http://www.w3.org/2000/svg">' +
-      '<ellipse cx="80" cy="140" rx="34" ry="4" class="m-floor">' + anim("rx", "38", "30") + "</ellipse>" +
+    var shoe = '<path class="m-shoe" d="M-9,-3 h18 a5,5 0 0 1 5,5 v4 h-28 v-4 a5,5 0 0 1 5,-5z"/>';
+    var dumbbell = ex.dumbbells
+      ? '<rect class="m-bar" x="-9" y="-1.5" width="18" height="3" rx="1.5"/>' +
+        '<rect class="m-plate" x="-11" y="-5" width="4" height="10" rx="1.2"/>' +
+        '<rect class="m-plate" x="7" y="-5" width="4" height="10" rx="1.2"/>'
+      : "";
+    var glove = '<circle class="m-glove" r="5.5"/>';
 
-      /* legs: hip → knee → ankle, knees bend out at the bottom of the rep */
-      '<polyline class="m-limb" points="70,104 60,116 66,128">' +
-        anim("points", "70,104 60,116 66,128", "70,100 67,114 66,128") + "</polyline>" +
-      '<polyline class="m-limb" points="90,104 100,116 94,128">' +
-        anim("points", "90,104 100,116 94,128", "90,100 93,114 94,128") + "</polyline>" +
-      '<path class="m-shoe" d="M56,126 h14 a4,4 0 0 1 4,4 v3 h-22 v-3 a4,4 0 0 1 4,-4z"/>' +
-      '<path class="m-shoe" d="M90,126 h14 a4,4 0 0 1 4,4 v3 h-22 v-3 a4,4 0 0 1 4,-4z"/>' +
+    var out = '<svg class="mascot" viewBox="0 0 160 150" width="150" height="141" xmlns="http://www.w3.org/2000/svg">';
+    if (ex.aura) {
+      out += '<circle class="m-aura" cx="80" cy="76" r="44">' +
+        '<animate attributeName="r" values="40;50;40" dur="' + ex.dur + 's" repeatCount="indefinite"/>' +
+        '<animate attributeName="opacity" values="0.35;0.9;0.35" dur="' + ex.dur + 's" repeatCount="indefinite"/></circle>';
+    }
+    out += '<ellipse class="m-floor" cx="80" cy="140" rx="' + first(function (p) { return p.floor; }) + '" ry="4">' +
+      anim("rx", function (p) { return p.floor; }) + "</ellipse>";
+    if (ex.rope) {
+      out += '<path class="m-rope" d="' + first(ropeD) + '">' + anim("d", ropeD) + "</path>";
+    }
+    function ropeD(p) { return "M" + xy(p.lh) + " Q80," + p.rope + " " + xy(p.rh); }
 
-      /* upper body bobs with the squat */
-      "<g>" + move("0 4", "0 0") +
-        /* arms: shoulder → elbow → hand, pressing from chest to overhead */
-        '<polyline class="m-limb" points="54,64 38,76 34,56">' +
-          anim("points", "54,64 38,76 34,56", "54,60 40,38 34,14") + "</polyline>" +
-        '<polyline class="m-limb" points="106,64 122,76 126,56">' +
-          anim("points", "106,64 122,76 126,56", "106,60 120,38 126,14") + "</polyline>" +
+    /* legs and sneakers */
+    out += limb(function (p) { return off(HIP.l, p.b) + " " + xy(p.lk) + " " + xy(p.la); });
+    out += limb(function (p) { return off(HIP.r, p.b) + " " + xy(p.rk) + " " + xy(p.ra); });
+    out += at("la", shoe) + at("ra", shoe);
 
-        /* the shield: white backing + the real crest artwork, cropped */
-        '<svg x="50" y="30" width="60" height="72" viewBox="0 0 140 168" preserveAspectRatio="xMinYMin slice">' +
-          '<path class="m-face" d="M8,14 C40,4 100,4 132,14 L132,92 C130,128 104,150 70,166 C36,150 10,128 8,92 Z"/>' +
-          '<image href="' + LOGO + '" xlink:href="' + LOGO + '" width="552" height="168"/>' +
-        "</svg>" +
+    /* arms behind the shield */
+    out += limb(function (p) { return off(SHOULDER.l, p.b) + " " + xy(p.le) + " " + xy(p.lh); });
+    out += limb(function (p) { return off(SHOULDER.r, p.b) + " " + xy(p.re) + " " + xy(p.rh); });
 
-        /* headband */
-        '<rect class="m-band" x="51" y="36" width="58" height="9" rx="2"/>' +
-        '<rect class="m-stripe" x="51" y="38.2" width="58" height="1.4"/>' +
-        '<rect class="m-stripe" x="51" y="41.4" width="58" height="1.4"/>' +
+    /* the shield: white backing + the real crest artwork, cropped; headband; sweat */
+    out += '<g transform="translate(' + first(function (p) { return p.b[0] + " " + p.b[1]; }) + ')">' +
+      move(function (p) { return p.b[0] + " " + p.b[1]; }) +
+      '<svg x="50" y="30" width="60" height="72" viewBox="0 0 140 168" preserveAspectRatio="xMinYMin slice">' +
+        '<path class="m-face" d="M8,14 C40,4 100,4 132,14 L132,92 C130,128 104,150 70,166 C36,150 10,128 8,92 Z"/>' +
+        '<image href="' + LOGO + '" xlink:href="' + LOGO + '" width="552" height="168"/>' +
+      "</svg>" +
+      '<rect class="m-band" x="51" y="36" width="58" height="9" rx="2"/>' +
+      '<rect class="m-stripe" x="51" y="38.2" width="58" height="1.4"/>' +
+      '<rect class="m-stripe" x="51" y="41.4" width="58" height="1.4"/>' +
+      '<path class="m-tail" d="M108,38 q8,1 10,7 q-6,-2 -10,-2z"/>' +
+      (ex.sweat
+        ? '<path class="m-drop" d="M115,30 q3,4 0,6 q-3,-2 0,-6z" opacity="0">' +
+            '<animate attributeName="opacity" values="0;0;1;0" keyTimes="0;0.4;0.55;1" dur="' + ex.dur + 's" repeatCount="indefinite"/>' +
+            '<animateTransform attributeName="transform" type="translate" values="0 0;0 0;2 -2;7 9" keyTimes="0;0.4;0.55;1" dur="' + ex.dur + 's" repeatCount="indefinite"/>' +
+          "</path>"
+        : "") +
+      "</g>";
 
-        /* sweat drop at the top of each rep */
-        '<path class="m-drop" d="M114,34 q3,4 0,6 q-3,-2 0,-6z" opacity="0">' +
-          '<animate attributeName="opacity" values="0;0;1;0" keyTimes="0;0.45;0.6;1" dur="1.8s" repeatCount="indefinite"/>' +
-          '<animateTransform attributeName="transform" type="translate" values="0 0;0 0;2 -2;6 8" keyTimes="0;0.45;0.6;1" dur="1.8s" repeatCount="indefinite"/>' +
-        "</path>" +
-
-        /* barbell + gloves travel together */
-        "<g>" + move("0 0", "0 -42") +
-          '<rect class="m-bar" x="10" y="54.5" width="140" height="3" rx="1.5"/>' +
-          '<rect class="m-plate" x="12" y="44" width="7" height="24" rx="2"/>' +
-          '<rect class="m-plate" x="20" y="48" width="5" height="16" rx="1.5"/>' +
-          '<rect class="m-plate" x="141" y="44" width="7" height="24" rx="2"/>' +
-          '<rect class="m-plate" x="135" y="48" width="5" height="16" rx="1.5"/>' +
-          '<circle class="m-glove" cx="34" cy="56" r="5.5"/>' +
-          '<circle class="m-glove" cx="126" cy="56" r="5.5"/>' +
-        "</g>" +
-      "</g>" +
-    "</svg>";
+    /* barbell rides with the hands */
+    if (ex.bar) {
+      out += '<g>' + move(function (p) { return "0 " + (p.lh[1] - 56); }) +
+        '<rect class="m-bar" x="10" y="54.5" width="140" height="3" rx="1.5"/>' +
+        '<rect class="m-plate" x="12" y="44" width="7" height="24" rx="2"/>' +
+        '<rect class="m-plate" x="20" y="48" width="5" height="16" rx="1.5"/>' +
+        '<rect class="m-plate" x="141" y="44" width="7" height="24" rx="2"/>' +
+        '<rect class="m-plate" x="135" y="48" width="5" height="16" rx="1.5"/>' +
+        "</g>";
+    }
+    out += at("lh", dumbbell + glove) + at("rh", dumbbell + glove);
+    return out + "</svg>";
   }
 
   btnNext.addEventListener("click", function () {

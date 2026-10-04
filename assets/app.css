@@ -813,6 +813,9 @@ button { font-family: inherit; color: inherit; }
 .mascot .m-plate { fill: #3A4252; stroke: #586174; stroke-width: 0.8; }
 .mascot .m-drop { fill: #7FB2FF; }
 .mascot .m-floor { fill: rgba(242, 245, 249, 0.10); }
+.mascot .m-tail { fill: #FFFFFF; }
+.mascot .m-rope { fill: none; stroke: #C9D1DE; stroke-width: 1.6; stroke-linecap: round; }
+.mascot .m-aura { fill: none; stroke: rgba(127, 178, 255, 0.35); stroke-width: 1; }
 
 /* ============================================================
    Range questions (horizon, duration, USD share)
