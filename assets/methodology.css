@@ -259,3 +259,36 @@ body.meth { min-height: 100vh; }
    dashboard was only reachable from the admin board — which sits behind a
    password. Anyone reviewing the method needs to reach the checks on it. */
 .m-nav { display: flex; align-items: center; gap: 14px; }
+
+/* --- the five fixed income books ---
+   One card per book: what it is, then every holding. The sleeve is chosen
+   rather than assembled, so the thing to audit is the book, not a ranking. */
+.m-books { display: grid; gap: 18px; }
+.m-book-card {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  padding: 16px 18px;
+}
+.m-book-top { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+.m-book-top h3 { font-size: 16px; font-weight: 550; color: var(--text); }
+.m-book-band {
+  font-size: 11px; letter-spacing: 0.06em; color: var(--muted);
+  border: 1px solid var(--line); border-radius: var(--r-xs);
+  padding: 2px 7px; font-variant-numeric: tabular-nums; flex: 0 0 auto;
+}
+.m-book-stats {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 1px; background: var(--line); border: 1px solid var(--line);
+  border-radius: var(--r-sm); overflow: hidden; margin-bottom: 14px;
+}
+.m-book-stat { background: var(--surface); padding: 8px 11px; }
+.m-book-stat small {
+  display: block; font-size: 9.5px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 2px;
+}
+.m-book-stat span {
+  font-size: 15px; color: var(--text-2); font-variant-numeric: tabular-nums;
+}
+.m-book-tbl { width: 100%; }
+.m-book-tbl td, .m-book-tbl th { font-size: 12.5px; }

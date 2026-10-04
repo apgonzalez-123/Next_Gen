@@ -54,6 +54,25 @@
       row("Wants income", Math.round(intent.capitalIncome.income * 100) + "%");
   }
 
+  /* Which of the five books the sleeve landed on, and how close the next one
+     came. With a packaged sleeve that margin is the interesting number: a
+     book chosen by 0.01 is a coin toss the desk should know about. */
+  function bookRow(res) {
+    var bk = null, ranked = null;
+    ((res.sim || {}).buckets || []).forEach(function (b) {
+      if (b.key === "fixedIncome" && b.book) { bk = b.book; ranked = b.bookRanked; }
+    });
+    if (!bk) return "";
+    var margin = "";
+    if (ranked && ranked.length > 1) {
+      var d = ranked[0].score - ranked[1].score;
+      margin = ' <i class="v-cov">' + (d < 0.02 ? "only " : "") + pc(d, 3) +
+               " clear of " + esc(ranked[1].item.name) + "</i>";
+    }
+    return row("Fixed income book",
+      esc(bk.name) + " <i class=\"v-cov\">band " + (bk.riskBand + 1) + " of 5</i>" + margin);
+  }
+
   function paintOutput(c) {
     var sec = c.equity.sectorExposure || {};
     var top = Object.keys(sec).filter(function (k) { return sec[k] > 0; })
@@ -70,6 +89,7 @@
       row("Allocation", alloc) +
       row("USD exposure", pc(c.usdExposure) + "%" +
           (c.usdCoverage < 99 ? ' <i class="v-cov">' + pc(c.usdCoverage) + "% covered</i>" : "")) +
+      (current ? bookRow(current) : "") +
       row("FI duration", pc(c.fixedIncome.weightedDuration, 2) + "y") +
       row("FI credit", "IG " + pc(c.fixedIncome.igWeight) + "% / HY " +
                        pc(c.fixedIncome.hyWeight) + "%") +

@@ -177,6 +177,72 @@
     el("shelfNote").innerHTML = note;
   }
 
+  /* The fixed income sleeve is not assembled from the shelf above: the desk
+     supplies five finished books and the room picks one. This shows what they
+     are, computed from their own holdings, so the choice can be argued with. */
+  function renderBooks(P) {
+    var host = el("fiBooks"), lead = el("fiLead"), note = el("fiNote");
+    if (!host) return;
+    var books = ((P.fixedIncome || {}).portfolios) || [];
+    if (!books.length) {
+      lead.textContent = "No fixed income books on the shelf; the sleeve is " +
+        "assembled bond by bond from the universe above.";
+      host.innerHTML = ""; return;
+    }
+
+    lead.innerHTML =
+      "Fixed income is chosen, not assembled. The desk builds these " + books.length +
+      " books and the room's answers pick between them, so the sleeve is taken " +
+      "whole at the weights it was sized with. They order themselves by yield to " +
+      "worst &mdash; the market pricing their risk &mdash; and that ordering is " +
+      "what the risk bands map onto.";
+
+    host.innerHTML = books.map(function (b) {
+      var st = b.stats || {};
+      return '<div class="m-book-card">' +
+        '<div class="m-book-top">' +
+          '<span class="m-book-band">' + (b.riskBand + 1) + " / " + books.length + "</span>" +
+          "<h3>" + esc(b.name) + "</h3>" +
+        "</div>" +
+        '<div class="m-book-stats">' +
+          stat("Yield to worst", n(st.ytw) + "%") +
+          stat("Duration", n(st.duration) + "y") +
+          stat("Coupon", n(st.coupon) + "%") +
+          stat("Investment grade", n(st.igWeight) + "%") +
+          stat("Emerging markets", n(st.emWeight) + "%") +
+          stat("Holdings", st.count) +
+        "</div>" +
+        '<table class="m-table m-book-tbl"><thead><tr>' +
+          "<th>Holding</th><th>Rating</th><th>Country</th>" +
+          '<th class="num">YTW</th><th class="num">Dur</th><th class="num">Weight</th>' +
+        "</tr></thead><tbody>" +
+        (b.holdings || []).map(function (h) {
+          return "<tr><td>" + esc(h.name || h.ticker) + "</td>" +
+            "<td>" + esc(h.rating || "") + " " + pill((h.credit || "").toUpperCase()) + "</td>" +
+            "<td>" + esc(h.country || "") + "</td>" +
+            '<td class="num">' + n(h.ytw) + "</td>" +
+            '<td class="num">' + n(h.duration) + "</td>" +
+            '<td class="num">' + n(h.weight) + "%</td></tr>";
+        }).join("") +
+        "</tbody></table></div>";
+    }).join("");
+
+    var sel = (P.fixedIncome.selection || {});
+    var w = sel.portfolioWeights || {};
+    note.innerHTML =
+      "A book is scored by the same machinery as every shelf, with the selection " +
+      "narrowed to one &mdash; the same distance falloff and the same blend of an " +
+      "arithmetic and geometric mean &mdash; so one scoring path is validated " +
+      "rather than two. Weights: " +
+      Object.keys(w).map(function (k) { return "<b>" + esc(k) + "</b> " + w[k]; }).join(" &middot; ") +
+      ". Risk leads because it is what the five are ordered by; duration and " +
+      "region separate the pairs.";
+  }
+
+  function stat(label, value) {
+    return '<div class="m-book-stat"><small>' + label + "</small><span>" + value + "</span></div>";
+  }
+
   function renderUniLead(P) {
     var total = BUCKETS.reduce(function (t, b) { return t + P[b.key].shelf.length; }, 0);
     el("uniLead").innerHTML =
@@ -468,6 +534,7 @@
     el("asOf").textContent = "Data " + P.asOf + " · " + (P.source || "");
     renderBuckets();
     renderUniLead(P);
+    renderBooks(P);
     renderNav(P);
     renderShelf(P);
     renderAllWeights(P);

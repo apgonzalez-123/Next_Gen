@@ -959,6 +959,17 @@ button { font-family: inherit; color: inherit; }
   overflow: hidden;
   height: clamp(118px, 26vw, 176px);
   aspect-ratio: 256 / 240;
+  /* A raw steps() flip reads as a glitch rather than a movement. Settling
+     the frame as it arrives — in time with the strip, so the two never
+     drift — makes it land like a pose instead of a cut. */
+  animation: wait-land 0.9s ease-out infinite;
+  transform-origin: 50% 92%;
+}
+@keyframes wait-land {
+  0%   { transform: scale(1.045) translateY(-3px); }
+  22%  { transform: scale(0.992) translateY(1px); }
+  45%  { transform: scale(1) translateY(0); }
+  100% { transform: scale(1) translateY(0); }
 }
 .wait-mascot img {
   position: absolute;
