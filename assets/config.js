@@ -34,7 +34,7 @@ window.CONFIG = {
    * otherwise list the step ids you want, in order. Dropping a step also
    * drops its questions from matching, the breakdown and the export.
    *   Short version (the original five):
-   *   STEPS: ["profile", "equities", "fixedincome", "notes", "fx"],  */
+   *   STEPS: ["profile", "marketview", "fixedincome", "equities", "fx"],  */
   STEPS: "all",
 
   /* --- who answered what ---------------------------------------------

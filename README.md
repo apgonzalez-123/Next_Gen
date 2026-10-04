@@ -68,16 +68,20 @@ nothing to configure — deploy it anywhere and the code points to the right pla
 
 ## The ten questions
 
-The five sections follow the running order of the trading-desk deck, so each
-one opens at the slide that has just covered it.
+The room answers in five pairs, opened one at a time by the host.
 
-| Section | Opens at | Questions |
-|---|---|---|
-| 1 · Risk Profile | *Audience Question — Initial Profile* | Risk profile · market view · investment horizon *(1–30y)* · country of risk |
-| 2 · Equities | *Audience Question — After Equities* | Sector exposure *(pick 3)* |
-| 3 · Fixed Income | *Audience Question — After Fixed Income* | Capital or income · duration *(1–30y)* · IG or HY |
-| 4 · Structured Notes | *Audience Question — After SP* | Leverage |
-| 5 · FX | *Audience Question — After FX* | USD share *(0–100%, quarters)* |
+| Section | Questions |
+|---|---|
+| 1 · Risk Profile | Risk profile *(conservative / neutral / aggressive)* · leverage |
+| 2 · Market View | Market view *(bearish / neutral / bullish)* · investment horizon *(1–30y)* |
+| 3 · Fixed Income | Investment grade or high yield · duration *(1–30y)* |
+| 4 · Equities | Capital growth or income · sector exposure *(pick 3)* |
+| 5 · FX | USD share *(0–100%, quarters)* · country of risk *(developed / emerging)* |
+
+The deck stops for the audience five times — after the opening, equities,
+fixed income, structured products and FX — so the host opens one section at
+each of those stops. The pairing above is the host's running order, which is
+set here and not derived from the deck.
 
 Four question kinds:
 

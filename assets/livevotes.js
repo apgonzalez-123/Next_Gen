@@ -25,12 +25,11 @@ window.LIVEVOTES = (function () {
   /* Mirrors the deck: the room is asked these in the order the presentation
      reaches each desk, so a guest can find the question they just answered. */
   var SECTION_OF = {
-    riskProfile: "Profile", marketView: "Profile", horizon: "Profile",
-    country: "Profile",
-    sector: "Equities",
-    capitalIncome: "Fixed income", duration: "Fixed income", credit: "Fixed income",
-    leverage: "Structured notes",
-    usd: "FX"
+    riskProfile: "Risk profile", leverage: "Risk profile",
+    marketView: "Market view", horizon: "Market view",
+    credit: "Fixed income", duration: "Fixed income",
+    capitalIncome: "Equities", sector: "Equities",
+    usd: "FX", country: "FX"
   };
 
   var SHORT = {

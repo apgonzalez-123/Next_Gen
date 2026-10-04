@@ -41,10 +41,27 @@ window.SCHEMA = {
           label: "What is your risk profile?",
           options: [
             { v: 0, label: "Conservative", sub: "Protect what is there" },
-            { v: 1, label: "Moderate",     sub: "Balanced trade-off" },
+            { v: 1, label: "Neutral",      sub: "Balanced trade-off" },
             { v: 2, label: "Aggressive",   sub: "Accept real drawdowns" }
           ]
         },
+        {
+          id: "leverage",
+          kind: "choice",
+          label: "Would you use leverage?",
+          options: [
+            { v: "no",  label: "No",  sub: "Unlevered" },
+            { v: "yes", label: "Yes", sub: "Amplify both directions" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "marketview",
+      n: 2,
+      title: "Market View",
+      blurb: "Your read on markets, and how long you are investing for.",
+      questions: [
         {
           id: "marketView",
           kind: "scale",
@@ -66,24 +83,53 @@ window.SCHEMA = {
           matchScale: 14,
           minLabel: "1 year", maxLabel: "30 years",
           format: function (v) { return v + (v === 1 ? " year" : " years"); }
+        }
+      ]
+    },
+    {
+      id: "fixedincome",
+      n: 3,
+      title: "Fixed Income",
+      blurb: "Credit quality and how much rate risk you will carry.",
+      questions: [
+        {
+          id: "credit",
+          kind: "choice",
+          label: "Investment grade or high yield?",
+          options: [
+            { v: "ig", label: "Investment grade", sub: "Lower yield, lower risk" },
+            { v: "hy", label: "High yield",       sub: "Paid for the credit risk" }
+          ]
         },
         {
-          id: "country",
-          kind: "choice",
-          label: "What country of risk do you prefer?",
-          options: [
-            { v: "g7", label: "G7", sub: "Developed markets" },
-            { v: "em", label: "EM", sub: "Emerging markets" }
-          ]
+          id: "duration",
+          kind: "range",
+          label: "What duration would you run?",
+          hint: "Sensitivity to interest-rate moves, in years.",
+          min: 1, max: 30, step: 1, unit: "y", def: 5,
+          /* How far off is a total miss on this axis: see matchScale
+             in portfolios.js. six years of duration error is a different bond entirely. */
+          matchScale: 6,
+          minLabel: "1 year", maxLabel: "30 years",
+          format: function (v) { return v + (v === 1 ? " year" : " years"); }
         }
       ]
     },
     {
       id: "equities",
-      n: 2,
+      n: 4,
       title: "Equities",
-      blurb: "Where the growth engine sits.",
+      blurb: "What the book is for, and where it should be exposed.",
       questions: [
+        {
+          id: "capitalIncome",
+          kind: "choice",
+          label: "Are you looking for capital growth or income?",
+          options: [
+            { v: "capital", label: "Capital growth", sub: "Total return" },
+            { v: "income",  label: "Income",         sub: "A coupon to spend" }
+          ]
+        },
         {
           id: "sector",
           kind: "multi",
@@ -102,65 +148,10 @@ window.SCHEMA = {
       ]
     },
     {
-      id: "fixedincome",
-      n: 3,
-      title: "Fixed Income",
-      blurb: "The ballast, and how much credit risk it carries.",
-      questions: [
-        {
-          id: "capitalIncome",
-          kind: "choice",
-          label: "Are you looking for capital growth or income?",
-          options: [
-            { v: "capital", label: "Capital growth", sub: "Total return" },
-            { v: "income",  label: "Income",         sub: "A coupon to spend" }
-          ]
-        },
-        {
-          id: "duration",
-          kind: "range",
-          label: "What duration would you run?",
-          hint: "Sensitivity to interest-rate moves, in years.",
-          min: 1, max: 30, step: 1, unit: "y", def: 5,
-          /* How far off is a total miss on this axis: see matchScale
-             in portfolios.js. six years of duration error is a different bond entirely. */
-          matchScale: 6,
-          minLabel: "1 year", maxLabel: "30 years",
-          format: function (v) { return v + (v === 1 ? " year" : " years"); }
-        },
-        {
-          id: "credit",
-          kind: "choice",
-          label: "Investment grade or high yield?",
-          options: [
-            { v: "ig", label: "Investment grade", sub: "Lower yield, lower risk" },
-            { v: "hy", label: "High yield",       sub: "Paid for the credit risk" }
-          ]
-        }
-      ]
-    },
-    {
-      id: "notes",
-      n: 4,
-      title: "Structured Notes",
-      blurb: "Whether the book should gear its equity exposure.",
-      questions: [
-        {
-          id: "leverage",
-          kind: "choice",
-          label: "Would you use leverage?",
-          options: [
-            { v: "no",  label: "No",  sub: "Unlevered" },
-            { v: "yes", label: "Yes", sub: "Amplify both directions" }
-          ]
-        }
-      ]
-    },
-    {
       id: "fx",
       n: 5,
       title: "FX",
-      blurb: "How much of the book should sit in dollars.",
+      blurb: "Currency, and the markets the risk sits in.",
       questions: [
         {
           id: "usd",
@@ -173,6 +164,15 @@ window.SCHEMA = {
           matchScale: 55,
           minLabel: "0%", maxLabel: "100%",
           format: function (v) { return v + "%"; }
+        },
+        {
+          id: "country",
+          kind: "choice",
+          label: "What country of risk do you prefer?",
+          options: [
+            { v: "g7", label: "Developed markets", sub: "G7" },
+            { v: "em", label: "Emerging markets", sub: "Ex-G7" }
+          ]
         }
       ]
     }

@@ -527,7 +527,7 @@
      sit through the same loop from the same place. */
   var MASCOT_FRAMES = 8;
   var MASCOT_START = {
-    profile: 0, equities: 1, fixedincome: 5, notes: 6, fx: 3
+    profile: 0, marketview: 1, fixedincome: 5, equities: 6, fx: 3
   };
 
   function renderWaiting() {
@@ -566,7 +566,7 @@
      tweens limbs, gloves, sneakers and props between them, because it
      animates SVG geometry the same way on every phone. */
   var EXERCISE_FOR_STEP = {
-    profile: "jacks", equities: "curls", fixedincome: "zen", notes: "press", fx: "rope"
+    profile: "jacks", marketview: "curls", fixedincome: "zen", equities: "press", fx: "rope"
   };
   var SHOULDER = { l: [54, 64], r: [106, 64] }, HIP = { l: [70, 104], r: [90, 104] };
   var EASE = "0.45 0 0.55 1";
