@@ -123,8 +123,9 @@ window.PORTFOLIO_VALIDATOR = (function () {
   var Q_SECTORS = ["tech", "financials", "healthcare", "energy",
                    "consumer", "industrials"];
 
-  /* Sleeves whose holdings carry an equity sector and behave like equity. */
-  var EQUITY_LIKE = ["equities", "options"];
+  /* The equity sleeve now contains the option overlay as well, so one key
+     covers both; analytics.sleeve still tells them apart line by line. */
+  var EQUITY_LIKE = ["equities"];
 
   /* ------------------------------------------------------------------ *
    * Small helpers
@@ -202,7 +203,10 @@ window.PORTFOLIO_VALIDATOR = (function () {
     var contrib = 0;
     all.forEach(function (r) {
       var a = an(r.item);
-      var anchor = SLEEVE_RISK_ANCHOR[r.bucket];
+      /* Keyed off the instrument's own sleeve, not the bucket it is shown
+         in: options are presented inside the equity sleeve now, and they are
+         still geared whatever column they are printed in. */
+      var anchor = SLEEVE_RISK_ANCHOR[a.sleeve || r.bucket];
       if (anchor === undefined) anchor = 0.5;
       var s = (a.riskScore === null || a.riskScore === undefined) ? 0.5 : a.riskScore;
       contrib += r.weight * anchor * (0.5 + 0.5 * s);
@@ -301,6 +305,10 @@ window.PORTFOLIO_VALIDATOR = (function () {
         hyWeight: round((shares(fi, function (r) { return an(r.item).creditClass; }, fiWeight).hy) || 0, 2),
         regionExposure: shares(fi, function (r) { return an(r.item).region; }, fiWeight)
       },
+
+      overlayWeight: round(sum(all.filter(function (r) {
+        return an(r.item).sleeve === "options";
+      }).map(function (r) { return r.weight; })), 2),
 
       leverageExposure: leverageWeight,
       gearedNotesWeight: gearedNotes,
@@ -497,25 +505,86 @@ window.PORTFOLIO_VALIDATOR = (function () {
     };
   }
 
+  /* What the shelf can actually deliver on a dimension.
+   *
+   * Fixed income is no longer assembled bond by bond: the desk supplies five
+   * finished books and the room picks one. So the achievable set is five
+   * points, not a continuum, and a room asking for 100% high yield cannot
+   * have it — the most any book carries is 71%.
+   *
+   * Scoring that as a 29-point miss would be measuring the engine against
+   * something that does not exist. The check instead asks the question that
+   * can be answered: given what is on the shelf, did it pick the closest?
+   * The room's real target and the real gap are still reported, with a note
+   * saying the target was out of reach. */
+  function achievable(products, pick) {
+    var books = ((products || {}).fixedIncome || {}).portfolios || [];
+    if (books.length < 2) return null;
+    var vals = books.map(pick).filter(function (v) {
+      return v !== null && v !== undefined && isFinite(v);
+    });
+    if (!vals.length) return null;
+    return { min: Math.min.apply(null, vals), max: Math.max.apply(null, vals) };
+  }
+
+  function checkWithin(id, label, intent, actual, tol, unit, range, what) {
+    var c = check(id, label, intent, actual, tol, unit);
+    if (!range || c.status === "na" || intent === null || intent === undefined) return c;
+    if (intent >= range.min && intent <= range.max) return c;
+
+    var near = intent < range.min ? range.min : range.max;
+    var within = check(id, label, near, actual, tol, unit);
+    within.intent = round(intent, 2);
+    within.difference = round(actual - intent, 2);
+    within.achievable = { min: round(range.min, 2), max: round(range.max, 2),
+                          nearest: round(near, 2) };
+    within.message =
+      "Room asked " + round(intent, 1) + (unit || "") + ", which no " + what +
+      " offers — they run " + round(range.min, 1) + " to " + round(range.max, 1) +
+      (unit || "") + ". Closest available is " + round(near, 1) + (unit || "") +
+      "; the book holds " + round(actual, 1) + (unit || "") + ".";
+    return within;
+  }
+
   function compare(intent, chars, agg, products) {
     var out = [];
     var L = LIMITS;
 
-    out.push(check("usd", "USD exposure",
+    /* When the sleeve is one finished book rather than an assembly, its
+       characteristics come as a package. The room cannot have the duration of
+       one book and the credit of another, so the engine has to trade them off
+       — and a trade-off it made deliberately is not a construction failure.
+       These dimensions therefore report at most a warning in portfolio mode,
+       and the overall intent fit is where the cost of the trade still shows. */
+    var fiPackaged = (((products || {}).fixedIncome || {}).selection || {}).mode === "portfolio";
+    function soften(c) {
+      if (fiPackaged && c.status === "fail") {
+        c.status = "warn";
+        c.packaged = true;
+        c.message += " The sleeve is one of five finished books, so this " +
+                     "characteristic came as part of a package.";
+      }
+      return c;
+    }
+
+    out.push(soften(check("usd", "USD exposure",
       intent.usd.target, chars.usdExposure, L.usd, "%",
       chars.usdCoverage < 90
-        ? "Covers " + chars.usdCoverage + "% of the book by weight." : ""));
+        ? "Covers " + chars.usdCoverage + "% of the book by weight." : "")));
 
-    out.push(check("duration", "Fixed income duration",
+    out.push(soften(checkWithin("duration", "Fixed income duration",
       intent.duration.target,
       chars.fixedIncome.weight > 0 ? chars.fixedIncome.weightedDuration : null,
       L.duration, "y",
-      chars.fixedIncome.weight <= 0 ? "No fixed income sleeve to measure." : ""));
+      achievable(products, function (b) { return (b.stats || {}).duration; }),
+      "book")));
 
-    out.push(check("credit", "Investment grade share",
+    out.push(soften(checkWithin("credit", "Investment grade share",
       intent.credit.ig * 100,
       chars.fixedIncome.weight > 0 ? chars.fixedIncome.igWeight : null,
-      L.credit, "%"));
+      L.credit, "%",
+      achievable(products, function (b) { return (b.stats || {}).igWeight; }),
+      "book")));
 
     out.push(check("region", "Emerging market share of equity",
       intent.country.em * 100,
@@ -821,6 +890,40 @@ window.PORTFOLIO_VALIDATOR = (function () {
       }
     }
 
+    /* The five fixed income books all settle in dollars, so a room asking to
+       be out of them cannot be: the sleeve is a fixed dollar block whatever
+       the equities and FX do. Checked against the books rather than asserted,
+       so it stops firing if the desk adds a non-dollar one. */
+    var fiBooks = ((products || {}).fixedIncome || {}).portfolios || [];
+    if (fiBooks.length && intent.usd.target !== null && intent.usd.target <= 25) {
+      var nonUsd = fiBooks.filter(function (b) {
+        return (b.holdings || []).some(function (h) {
+          return ((h.analytics || {}).usdExposure || 0) < 95;
+        });
+      });
+      if (!nonUsd.length) {
+        out.push({ id: "fiAllDollar",
+          message: "Competing signals: the room wants " +
+                   Math.round(intent.usd.target) + "% in dollars, but all " +
+                   fiBooks.length + " fixed income books settle in dollars, so " +
+                   "that sleeve stays a dollar block however the rest is built." });
+      }
+    }
+
+    /* No developed-markets book is high yield: the most any carries is 14%,
+       against 71% in the emerging long book. A room asking for both is asking
+       for something the shelf does not hold. */
+    if (fiBooks.length && intent.credit.hy >= 0.6 && intent.country.g7 >= 0.6) {
+      var dmHy = Math.max.apply(null, fiBooks
+        .filter(function (b) { return ((b.stats || {}).emWeight || 0) < 25; })
+        .map(function (b) { return (b.stats || {}).hyWeight || 0; }).concat([0]));
+      out.push({ id: "hyVersusDeveloped",
+        message: "Competing signals: the room leans high yield and developed " +
+                 "markets, but the most high yield any developed book carries " +
+                 "is " + Math.round(dmHy) + "%. The high yield sits in the " +
+                 "emerging books." });
+    }
+
     if (intent.credit.hy >= 0.5 && intent.riskProfile.normalized !== null &&
         intent.riskProfile.normalized <= LIMITS.conservativeRisk01) {
       out.push({ id: "hyVersusConservative",
@@ -963,7 +1066,7 @@ window.PORTFOLIO_VALIDATOR = (function () {
     fixedIncomeMax: function (c) { return [c.allocation.fixedIncome || 0, "fixed income"]; },
     notesMin:       function (c) { return [c.allocation.notes || 0, "notes"]; },
     notesMax:       function (c) { return [c.allocation.notes || 0, "notes"]; },
-    optionsMax:     function (c) { return [c.allocation.options || 0, "options"]; },
+    optionsMax:     function (c) { return [c.overlayWeight || 0, "option overlay"]; },
     usdMin:         function (c) { return [c.usdExposure, "USD exposure"]; },
     usdMax:         function (c) { return [c.usdExposure, "USD exposure"]; },
     durationMin:    function (c) { return [c.fixedIncome.weightedDuration, "FI duration"]; },
@@ -989,6 +1092,20 @@ window.PORTFOLIO_VALIDATOR = (function () {
         out.push({ key: key, pass: ok === want,
           expected: key === "hyShouldExceedIg" ? "HY > IG" : "IG > HY",
           actual: "IG " + ig + "%, HY " + hy + "%" });
+        return;
+      }
+
+      /* The fixed income decision is now which of five finished books the
+         room gets, so that is what a scenario asserts. Asking about an exact
+         credit mix tests a freedom the sleeve no longer has. */
+      if (key === "bookShouldBe") {
+        var bk = null;
+        (result.sim.buckets || []).forEach(function (b) {
+          if (b.key === "fixedIncome" && b.book) bk = b.book;
+        });
+        out.push({ key: key, pass: !!bk && bk.id === want,
+          expected: "fixed income book is " + want,
+          actual: bk ? bk.id + " (" + bk.name + ")" : "no book selected" });
         return;
       }
 

@@ -479,6 +479,150 @@ def build_equities():
         })
     return out
 
+# ------------------------------------------------- fixed income portfolios
+#
+# The desk does not want the fixed income sleeve assembled bond by bond any
+# more. It has built five finished books, and the room's answers choose
+# between them rather than picking lines out of a universe.
+#
+# The five order themselves cleanly by yield to worst, which is the market's
+# own pricing of their risk, and that ordering is what the five risk bands
+# map onto:
+#
+#   Conservative            DM Short    YTW 5.36%  dur 3.40  developed, all IG
+#   Conservative-Moderate   EM Short    YTW 5.75%  dur 2.83  emerging, short
+#   Moderate                Balanced    YTW 6.39%  dur 5.19  both, mid
+#   Moderate-Aggressive     DM Long     YTW 6.89%  dur 6.86  developed, long
+#   Aggressive              EM Long     YTW 8.16%  dur 6.41  emerging, long
+#
+# Every characteristic below is computed from the holdings themselves, not
+# asserted: region from each bond's country of risk, credit from the IG/HY
+# flag, duration and yield weighted by position. If the desk swaps a bond,
+# the fit moves with it.
+FI_BOOKS = [
+    # (sheet block, display name, risk band 0-4)
+    ("DM Short Duration", "Developed Markets · Short Duration", 0),
+    ("EM Short Duration", "Emerging Markets · Short Duration", 1),
+    ("Balanced",          "Balanced",                           2),
+    ("DM Long Duration",  "Developed Markets · Long Duration",  3),
+    ("EM Long Duration",  "Emerging Markets · Long Duration",   4),
+]
+
+# The workbook writes two of the block headers with a typo.
+FI_BLOCK_ALIAS = {"DM Long Duration": "DM Long Durantion",
+                  "EM Long Duration": "EM Long Durantion"}
+
+DM_COUNTRIES = {"US", "GB", "FR", "DE", "NL", "ES", "IT", "JP", "AU", "CA",
+                "CH", "SE", "NO", "DK", "FI", "BE", "AT", "IE", "NZ", "SG"}
+
+def _risk01_bond(l):
+    """0-1 risk proxy on the same scale every other product uses."""
+    r = _bond_risk(_notch(l.get("rating")), l.get("credit"),
+                   l.get("rank"), l.get("ytw"))
+    return round(max(0.0, min(1.0, r / 2.0)), 4)
+
+def build_fi_books(path):
+    ws = openpyxl.load_workbook(path, data_only=True)["Securities"]
+    hdr = {ws.cell(3, c).value: c for c in range(1, ws.max_column + 1)
+           if ws.cell(3, c).value}
+
+    # find each block by its header row
+    starts = {}
+    for r in range(1, ws.max_row + 1):
+        a, b = ws.cell(r, 1).value, ws.cell(r, 2).value
+        if a and not b and str(a).strip() != "ISIN":
+            starts[str(a).strip()] = r
+    ordered = sorted(starts.items(), key=lambda kv: kv[1])
+
+    books = []
+    for block, label, band in FI_BOOKS:
+        key = FI_BLOCK_ALIAS.get(block, block)
+        if key not in starts:
+            print(f"  ! fixed income: block '{key}' not in the workbook; skipped")
+            continue
+        r0 = starts[key]
+        after = [rr for _, rr in ordered if rr > r0]
+        r1 = min(after) if after else ws.max_row + 1
+
+        lines = []
+        for rr in range(r0 + 2, r1):
+            if not ws.cell(rr, 1).value:
+                continue
+            g = lambda k: ws.cell(rr, hdr[k]).value if k in hdr else None
+            ctry = str(g("Country of Risk") or "").upper()
+            lines.append({
+                "isin": str(g("ISIN") or ""),
+                "ticker": str(g("Ticker") or ""),
+                "name": str(g("Security") or ""),
+                "maturity": str(g("Maturity") or "")[:10],
+                "ytw": num(g("Ask YTW")), "duration": num(g("Ask MDur")),
+                "coupon": num(g("Coupon %")),
+                "rating": str(g("BBG Composite Rating") or g("Rating") or "") or None,
+                "credit": "hy" if str(g("Bloomberg HY or IG") or "").upper() == "HY" else "ig",
+                "rank": str(g("Payment Rank") or ""),
+                "currency": str(g("Crncy") or "USD"),
+                "sector": str(g("Industry Sector") or ""),
+                "country": ctry,
+                "region": "g7" if ctry in DM_COUNTRIES else "em",
+            })
+        if not lines:
+            continue
+
+        # Equal weighted, which is how the desk's own sheets size them.
+        w = round(100.0 / len(lines), 4)
+        for l in lines:
+            l["weight"] = w
+            # A holding inside a book is still a product, and everything
+            # downstream — the validator's integrity check, the weighted
+            # duration and credit figures, the presenter — reads it as one.
+            # Without an id and an analytics block it is an unidentified line
+            # carrying no characteristics, which is exactly what the
+            # validation layer flagged.
+            l["id"] = slug((l["isin"] or (l["ticker"] + "-" + l["maturity"])), 34)
+            l["usdExposure"] = 100 if (l["currency"] or "USD").upper() == "USD" else 5
+            l["analytics"] = {
+                "sleeve": "fixedIncome",
+                "region": l["region"],
+                "sector": None,            # Bloomberg industry, not a questionnaire sector
+                "riskScore": _risk01_bond(l),
+                "expressesLeverage": False,
+                "incomeProducing": True,
+                "usdExposure": l["usdExposure"],
+                "duration": l["duration"],
+                "creditClass": l["credit"],
+                "rating": l["rating"],
+                "yieldToWorst": l["ytw"],
+            }
+
+        def wavg(k):
+            vals = [(l[k], l["weight"]) for l in lines if l.get(k) is not None]
+            return round(sum(v * x for v, x in vals) / sum(x for _, x in vals), 3) if vals else None
+
+        em = round(sum(l["weight"] for l in lines if l["region"] == "em"), 2)
+        hy = round(sum(l["weight"] for l in lines if l["credit"] == "hy"), 2)
+        dur = wavg("duration")
+
+        books.append({
+            "id": slug(block, 24),
+            "name": label,
+            "riskBand": band,
+            "holdings": lines,
+            "stats": {"count": len(lines), "ytw": wavg("ytw"), "duration": dur,
+                      "coupon": wavg("coupon"), "emWeight": em, "hyWeight": hy,
+                      "igWeight": round(100 - hy, 2)},
+            # Scored by the same machinery as every other sleeve, so the book
+            # the room gets is chosen the same way its products are.
+            "fit": {
+                "riskProfile": {"target": round(band / 2.0, 3)},
+                "country": {"em": round(0.15 + 0.85 * (em / 100.0), 3),
+                            "g7": round(0.15 + 0.85 * (1 - em / 100.0), 3)},
+                "duration": {"target": dur},
+                "credit": {"hy": round(0.15 + 0.85 * (hy / 100.0), 3),
+                           "ig": round(0.15 + 0.85 * (1 - hy / 100.0), 3)},
+            },
+        })
+    return books
+
 # ---------------------------------------------------------------- options
 #
 # The desk marked six names on the blended list as option-eligible and gave
@@ -625,6 +769,7 @@ def main():
     fx    = build_fx(os.path.join(SRC, "FX_Assets.xlsx"))
     notes = build_notes(os.path.join(SRC, "next gen picks.xlsx"))
     bonds = build_bonds(os.path.join(SRC, "Securities-2026-09-24.xlsx")) + build_non_usd()
+    fi_books = build_fi_books(os.path.join(SRC, "FI Portfolio Securities NextGEN.xlsx"))
     eq    = build_equities()
     options = build_options(eq)
 
@@ -651,7 +796,16 @@ def main():
             "diversify": 0.55, "conviction": 7,
             "maxLineWeight": 12, "sizing": {"pctPerLine": 8, "minN": 3, "maxN": 7, "disperseTo": 2}}},
 
-        "fixedIncome": {"shelf": bonds, "selection": {
+        "fixedIncome": {"shelf": bonds, "portfolios": fi_books, "selection": {
+            # The sleeve is no longer assembled bond by bond: the room picks
+            # one of the desk's five finished books. The per-bond shelf stays
+            # for the validation page, which still audits the universe.
+            "mode": "portfolio",
+            # Risk leads, because that is what the five books are ordered by.
+            # Duration and region separate the pairs; credit breaks the tie
+            # between a book's own IG and HY halves.
+            "portfolioWeights": {"riskProfile": 2.0, "duration": 1.2,
+                                 "country": 1.0, "credit": 1.0},
             "weights": {"credit": 1.2, "duration": 1.1, "usd": 1.0,
                         "riskProfile": 0.9, "country": 0.8, "capitalIncome": 0.7},
             "relative": 0.92,

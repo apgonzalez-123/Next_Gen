@@ -569,7 +569,7 @@ body.present {
    was still scanning, and a single vote filling a whole bar so one answer
    looked like a landslide. A stacked bar is honest at one vote and at
    thirty, and only the answers with votes get named. */
-.p-slide[data-slide="9"] .p-sub { margin-bottom: 14px; }
+.p-slide[data-slide="8"] .p-sub { margin-bottom: 14px; }
 
 .p-live {
   flex: 1 1 auto;
@@ -690,4 +690,33 @@ body.present {
 
 @media (max-width: 900px) {
   .lv-grid { grid-template-columns: 1fr; overflow-y: auto; }
+}
+
+/* An option line inside the equity sleeve. It is an overlay on stock the
+   book already holds, not a separate asset class, so it sits in the same
+   column and is marked rather than separated out. */
+.p-tag {
+  font-style: normal;
+  font-size: 0.62em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--series-options);
+  border: 1px solid var(--series-options);
+  border-radius: var(--r-xs);
+  padding: 1px 5px;
+  margin-right: 7px;
+  vertical-align: 0.15em;
+}
+.p-pos-overlay .p-pos-bar i { opacity: 0.72; }
+
+/* A long book: ten holdings instead of seven. */
+.p-sl-dense .p-pk { padding: clamp(5px, 0.85vh, 10px) 0; }
+.p-sl-dense .p-pk-name { font-size: clamp(12px, 1.02vw, 16px); }
+.p-sl-dense .p-pk-why { margin-top: 3px; font-size: clamp(10px, 0.76vw, 12.5px); }
+
+/* The positions board is a summary; the sleeve slides carry the full list. */
+.p-book-more {
+  margin-top: clamp(8px, 1.2vh, 14px);
+  font-size: clamp(10px, 0.78vw, 13px);
+  color: var(--muted);
 }

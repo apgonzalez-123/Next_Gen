@@ -1675,20 +1675,80 @@ window.ENGINE = (function () {
       lines: eqLines, scored: eq.all
     });
 
+    /* --- fixed income ---------------------------------------------------
+     *
+     * The desk builds five finished books rather than a universe to pick
+     * from, so the room chooses between them instead of having a sleeve
+     * assembled bond by bond. They run from developed/short to emerging/long,
+     * ordered by yield to worst, which is the market pricing the risk.
+     *
+     * They are scored by exactly the same machinery as every shelf — the
+     * same distance falloff, the same geometric blend — with the selection
+     * narrowed to one. That keeps one scoring path to validate rather than
+     * two, and means a book is chosen the way a product is.
+     */
+    function pickFixedIncomeBook(agg, products) {
+      var cfg = products.fixedIncome || {};
+      var books = cfg.portfolios || [];
+      if (!books.length) return null;
+      var sel = cfg.selection || {};
+      var scored = scoreShelf(agg, {
+        shelf: books,
+        selection: {
+          weights: sel.portfolioWeights || { riskProfile: 2, duration: 1.2 },
+          /* exactly one book, whole: no diversification, no quality cut */
+          sizing: { minN: 1, maxN: 1 },
+          relative: 0, diversify: 0, sectorCap: 1,
+          balance: sel.balance
+        }
+      }, { allocation: 0 });
+      return scored.picked.length
+        ? { book: scored.picked[0].item, score: scored.picked[0].score,
+            per: scored.picked[0].per, ranked: scored.all }
+        : null;
+    }
+
     /* --- fixed income: scored off its own shelf, same machinery -------- */
-    var fi = scoreShelf(agg, products.fixedIncome, { allocation: alloc.fixedIncome });
-    var fiLines = spreadFor(alloc.fixedIncome, products.fixedIncome, fi.picked.map(function (p) {
-      return { item: p.item, w: p.score };
-    }));
-    fiLines.forEach(function (l) {
-      var m = fi.picked.filter(function (p) { return p.item === l.item; })[0];
-      if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank;
-               l.adjusted = m.adjusted; l.shelfOf = m.shelfOf; }
-    });
-    buckets.push({
-      key: "fixedIncome", label: "Fixed income", weight: alloc.fixedIncome,
-      lines: fiLines, scored: fi.all
-    });
+    var fiBucket;
+    var fiMode = ((products.fixedIncome || {}).selection || {}).mode;
+    var chosen = fiMode === "portfolio" ? pickFixedIncomeBook(agg, products) : null;
+
+    if (chosen) {
+      /* The book is taken whole, at the weights the desk sized it with, and
+         rescaled to whatever share of the room's allocation fixed income
+         got. Nothing is re-picked inside it: the point of a finished book is
+         that it was built as one. */
+      var hs = chosen.book.holdings || [];
+      var fiLines = spread(alloc.fixedIncome, hs.map(function (h) {
+        return { item: h, w: h.weight || 1 };
+      }), 1, ((products.fixedIncome.selection || {}).maxLineWeight));
+      fiLines.forEach(function (l, i) {
+        l.rank = i + 1;
+        l.score = chosen.score;
+      });
+      fiBucket = {
+        key: "fixedIncome", label: "Fixed income", weight: alloc.fixedIncome,
+        lines: fiLines,
+        book: chosen.book, bookScore: chosen.score, bookPer: chosen.per,
+        bookRanked: chosen.ranked,
+        scored: []
+      };
+    } else {
+      var fi = scoreShelf(agg, products.fixedIncome, { allocation: alloc.fixedIncome });
+      var fiLines2 = spreadFor(alloc.fixedIncome, products.fixedIncome, fi.picked.map(function (p) {
+        return { item: p.item, w: p.score };
+      }));
+      fiLines2.forEach(function (l) {
+        var m = fi.picked.filter(function (p) { return p.item === l.item; })[0];
+        if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank;
+                 l.adjusted = m.adjusted; l.shelfOf = m.shelfOf; }
+      });
+      fiBucket = {
+        key: "fixedIncome", label: "Fixed income", weight: alloc.fixedIncome,
+        lines: fiLines2, scored: fi.all
+      };
+    }
+    buckets.push(fiBucket);
 
     /* --- structured notes: scored, then held to the index-note floor -- */
     var nt = scoreShelf(agg, products.notes, { allocation: alloc.notes });
@@ -1762,7 +1822,15 @@ window.ENGINE = (function () {
       lines: fxLines, scored: fxr.all
     });
 
-    /* --- options: the overlay carved out of equities above ----------- */
+    /* --- options: an overlay INSIDE the equity sleeve ------------------
+     *
+     * They were a sixth bucket, which read as a separate asset class. They
+     * are not one: a covered call is written against stock this book already
+     * holds, and a call replaces stock it would otherwise have bought. The
+     * weight is still carved out of equities when the allocation is struck —
+     * that part does not change — but the sleeve is presented as one thing,
+     * with the overlay lines marked.
+     */
     if (products.options && alloc.options > 0) {
       var op = scoreShelf(agg, products.options, { allocation: alloc.options });
       var opLines = spreadFor(alloc.options, products.options, op.picked.map(function (p) {
@@ -1772,11 +1840,15 @@ window.ENGINE = (function () {
         var m = op.picked.filter(function (p) { return p.item === l.item; })[0];
         if (m) { l.score = m.score; l.per = m.per; l.rank = m.rank;
                  l.adjusted = m.adjusted; l.shelfOf = m.shelfOf; }
+        l.overlay = true;
       });
-      buckets.push({
-        key: "options", label: "Options", weight: alloc.options,
-        lines: opLines, scored: op.all
-      });
+      var eqB = buckets.filter(function (b) { return b.key === "equities"; })[0];
+      if (eqB) {
+        eqB.lines = eqB.lines.concat(opLines);
+        eqB.weight = Math.round((eqB.weight + alloc.options) * 10) / 10;
+        eqB.overlayWeight = alloc.options;
+        eqB.overlayScored = op.all;
+      }
     }
 
     /* Present each sleeve in score order and number the lines 1..n.

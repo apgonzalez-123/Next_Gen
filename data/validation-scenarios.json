@@ -1,5 +1,5 @@
 {
-  "$note": "Deterministic synthetic rooms for validating the construction engine. Every guest in a scenario answers identically, so the same file always produces the same portfolio. Expectations are written about portfolio CHARACTERISTICS, never about which tickers appear: naming instruments would test the shelf rather than the engine, and would break the moment the desk changes a product.",
+  "$note": "Deterministic synthetic rooms for validating the construction engine. Every guest in a scenario answers identically, so the same file always produces the same portfolio. Expectations are written about portfolio CHARACTERISTICS, never about which tickers appear: naming instruments would test the shelf rather than the engine, and would break the moment the desk changes a product. Fixed income is no longer assembled bond by bond: the desk supplies five finished books and the room picks one, so these assert WHICH book rather than an exact credit mix or duration the sleeve can no longer be steered to.",
   "roomSize": 20,
   "scenarios": [
     {
@@ -24,11 +24,10 @@
         "equityMax": 35,
         "fixedIncomeMin": 40,
         "usdMin": 80,
-        "durationMax": 6,
-        "igShouldExceedHy": true,
         "riskMax": 40,
         "emMax": 35,
-        "noFailures": true
+        "noFailures": true,
+        "bookShouldBe": "dm-short-duration"
       }
     },
     {
@@ -54,10 +53,10 @@
         "equityMin": 25,
         "equityMax": 70,
         "usdMin": 55,
-        "igShouldExceedHy": true,
         "riskMin": 25,
         "riskMax": 70,
-        "noFailures": true
+        "noFailures": true,
+        "bookShouldBe": "dm-long-duration"
       }
     },
     {
@@ -81,9 +80,9 @@
       "expectations": {
         "equityMin": 30,
         "usdMin": 70,
-        "hyShouldExceedIg": true,
         "riskMin": 45,
-        "noFailures": true
+        "noFailures": true,
+        "bookShouldBe": "dm-long-duration"
       }
     },
     {
@@ -108,7 +107,8 @@
         "equityMin": 30,
         "usdMin": 75,
         "riskMin": 40,
-        "noFailures": true
+        "noFailures": true,
+        "bookShouldBe": "dm-long-duration"
       }
     },
     {
@@ -131,7 +131,8 @@
       },
       "expectations": {
         "usdMax": 60,
-        "emMin": 25
+        "emMin": 25,
+        "bookShouldBe": "em-short-duration"
       },
       "note": "Deliberately contradictory. Every emerging market bond on this shelf settles in USD, so asking for EM exposure and zero dollar exposure cannot both be honoured. noFailures is not asserted: the credit mix slipping is the expected consequence, and the validator reports the tension rather than the engine pretending to resolve it."
     },
@@ -156,8 +157,8 @@
       "expectations": {
         "fixedIncomeMin": 30,
         "usdMin": 75,
-        "igShouldExceedHy": true,
-        "noFailures": true
+        "noFailures": true,
+        "bookShouldBe": "balanced"
       }
     },
     {
@@ -181,7 +182,8 @@
         "notesMin": 12,
         "riskMin": 45,
         "usdMin": 70,
-        "noFailures": true
+        "noFailures": true,
+        "bookShouldBe": "dm-long-duration"
       }
     },
     {
@@ -204,7 +206,8 @@
       "expectations": {
         "notesMax": 14,
         "optionsMax": 4,
-        "noFailures": true
+        "noFailures": true,
+        "bookShouldBe": "dm-long-duration"
       }
     },
     {
@@ -225,9 +228,9 @@
         "credit": "hy"
       },
       "expectations": {
-        "durationMax": 7,
         "riskMin": 40,
-        "noFailures": true
+        "noFailures": true,
+        "bookShouldBe": "dm-long-duration"
       }
     },
     {
@@ -249,8 +252,8 @@
       },
       "expectations": {
         "riskMax": 45,
-        "igShouldExceedHy": true,
-        "noFailures": true
+        "noFailures": true,
+        "bookShouldBe": "dm-short-duration"
       }
     },
     {
@@ -271,9 +274,10 @@
         "credit": "hy"
       },
       "expectations": {
-        "hyShouldExceedIg": true,
-        "noFailures": true
-      }
+        "noFailures": true,
+        "bookShouldBe": "dm-long-duration"
+      },
+      "note": "Asks for high yield AND developed markets. No developed book is high-yield heavy, so the engine honours the region answer and takes the most high-yield developed book. The tension is reported, not resolved."
     },
     {
       "id": "strong-ig",
@@ -293,9 +297,8 @@
         "credit": "ig"
       },
       "expectations": {
-        "igShouldExceedHy": true,
-        "igMin": 60,
-        "noFailures": true
+        "noFailures": true,
+        "bookShouldBe": "dm-short-duration"
       }
     }
   ]

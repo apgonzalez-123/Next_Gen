@@ -139,7 +139,11 @@
     var alloc = window.ENGINE.roomAllocation(agg);
     renderWhy(agg, alloc, split);
     paintBook(agg);
-    paintSleeves(agg, alloc);
+    /* A throw inside one board used to leave that slide blank with nothing
+       said anywhere — the kind of failure you only find by looking at the
+       projector. */
+    try { paintSleeves(agg, alloc); }
+    catch (e) { console.error("present: sleeve boards failed", e); }
   }
 
   var WAITING = [
@@ -280,14 +284,22 @@
       var colour = BUCKET_COLOUR[b.key];
       var widest = b.lines.reduce(function (m, l) { return Math.max(m, l.weight); }, 0) || 1;
 
+      /* This board is the summary; each sleeve's own slide carries the full
+         list. A long book ran off the bottom of the column and simply
+         stopped, with nothing to say it had — which reads as the book being
+         shorter than it is. */
+      var SHOW = 6;
+      var hidden = Math.max(0, b.lines.length - SHOW);
       var lines = b.lines.length
-        ? b.lines.map(function (l) {
+        ? b.lines.slice(0, SHOW).map(function (l) {
             /* The room's own answer wins over the shelf's generic blurb:
                a duration note says something about THIS room. */
             var detail = l.note || l.item.detail || "";
-            return '<div class="p-pos">' +
+            return '<div class="p-pos' + (l.overlay ? " p-pos-overlay" : "") + '">' +
               '<div class="p-pos-top"><span class="p-pos-name">' +
-                '<i class="p-rank">' + (l.rank || "") + "</i>" + esc(l.item.name) + "</span>" +
+                '<i class="p-rank">' + (l.rank || "") + "</i>" +
+                (l.overlay ? '<em class="p-tag">overlay</em>' : "") +
+                esc(l.item.name) + "</span>" +
               '<span class="p-pos-w">' + l.weight + "%</span></div>" +
               '<div class="p-pos-bar"><i style="width:' +
                 Math.round((l.weight / widest) * 100) + "%;background:" + colour + '"></i></div>' +
@@ -296,7 +308,9 @@
                 esc(detail) +
               "</div>" +
               "</div>";
-          }).join("")
+          }).join("") +
+          (hidden ? '<p class="p-book-more">+ ' + hidden + " more on the " +
+                    esc(b.label.toLowerCase()) + " slide</p>" : "")
         : '<p class="p-book-empty">Nothing here.</p>';
 
       return '<div class="p-bucket">' +
@@ -480,11 +494,16 @@
     { key: "equities",    host: "sleeveEquities",    badge: "swEquities" },
     { key: "fixedIncome", host: "sleeveFixedIncome", badge: "swFixedIncome" },
     { key: "notes",       host: "sleeveNotes",       badge: "swNotes" },
-    { key: "fx",          host: "sleeveFx",          badge: "swFx" },
-    { key: "options",     host: "sleeveOptions",     badge: "swOptions" }
+    { key: "fx",          host: "sleeveFx",          badge: "swFx" }
   ];
 
   function pct(x) { return (Math.round(x * 10) / 10) + "%"; }
+  /* A plain rounded number, to as many places as asked. */
+  function pc(x, d) {
+    if (x === null || x === undefined || !isFinite(x)) return "&mdash;";
+    var f = Math.pow(10, d === undefined ? 1 : d);
+    return Math.round(x * f) / f;
+  }
   function signed(x) {
     var v = Math.round(x * 10) / 10;
     return (v > 0 ? "+" : v === 0 ? "" : "") + v + "%";
@@ -523,6 +542,8 @@
         sum:   ["Equity share of what is left", pct(share * 100)],
         total: ["of the " + pct(left) + " outside notes and FX", alloc.equities + "%"]
       },
+      fixedIncomeBook: null,   /* filled in by paintSleeves when one is chosen */
+
       fixedIncome: {
         rows: [
           ["Equities take their share first", "driven by the room's risk appetite", pct(share * 100)],
@@ -765,6 +786,27 @@
       }
 
       var T = terms[S.key] || { rows: [] };
+
+      /* Fixed income is no longer assembled line by line: the desk supplies
+         five finished books and the room picks one. So the "why this much"
+         column answers the question that was actually decided — which book,
+         and what it is — instead of walking through an allocation formula
+         that no longer drives the holdings. */
+      if (S.key === "fixedIncome" && bucket.book) {
+        var bk = bucket.book, st = bk.stats || {};
+        T = {
+          rows: [
+            ["Chosen book", bk.name, "&mdash;"],
+            ["Risk band", "the five books run developed and short to emerging " +
+                          "and long, ordered by yield", (bk.riskBand + 1) + " of 5"],
+            ["Yield to worst", "weighted across the book", pct(st.ytw)],
+            ["Duration", "weighted, in years", pc(st.duration, 2) + "y"],
+            ["Credit", "investment grade share of the book", pct(st.igWeight)],
+            ["Region", "emerging market share", pct(st.emWeight)]
+          ],
+          total: ["Fixed income", bucket.weight + "%"]
+        };
+      }
       var colour = BUCKET_COLOUR[S.key];
 
       var whyMuch =
@@ -778,6 +820,33 @@
                  "</span><b>" + T.sum[1] + "</b></div>" : "") +
         (T.total ? '<div class="p-term p-term-tot"><span class="p-term-l">' + T.total[0] +
                  "</span><b>" + T.total[1] + "</b></div>" : "");
+
+      if (S.key === "fixedIncome" && bucket.book) {
+        var hs = bucket.lines;
+        var picks2 = hs.map(function (l) {
+          var it = l.item;
+          return '<div class="p-pk"><div class="p-pk-top">' +
+            '<i class="p-rank">' + (l.rank || "") + "</i>" +
+            '<span class="p-pk-name">' + esc(it.name || it.ticker) + "</span>" +
+            '<b class="p-pk-w">' + l.weight + "%</b></div>" +
+            '<div class="p-pk-why">' +
+              esc([it.rating, it.credit && it.credit.toUpperCase(),
+                   it.country, it.maturity].filter(Boolean).join(" \u00b7 ")) +
+              (it.ytw ? " &middot; " + pc(it.ytw, 2) + "% to worst" : "") +
+              (it.duration ? " &middot; " + pc(it.duration, 1) + "y duration" : "") +
+            "</div></div>";
+        }).join("");
+        host.innerHTML =
+          '<div class="p-sl-col p-sl-why">' + whyMuch + "</div>" +
+          /* The Balanced book runs to ten bonds where the others run to
+             seven, and ten at the normal spacing falls off the bottom of a
+             1000px projector. Tighten rather than scroll: nobody scrolls a
+             slide. */
+          '<div class="p-sl-col p-sl-picks' + (hs.length > 7 ? " p-sl-dense" : "") +
+            '"><div class="p-sl-head">' + esc(bucket.book.name) + "</div>" +
+            picks2 + "</div>";
+        return;
+      }
 
       var n = bucket.lines.length;
       var heading = n === 1 ? "Why this one"
