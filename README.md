@@ -68,13 +68,16 @@ nothing to configure — deploy it anywhere and the code points to the right pla
 
 ## The ten questions
 
-| Section | Questions |
-|---|---|
-| 1 · Risk Profile | Risk profile · market view · investment horizon *(1–30y)* |
-| 2 · Positioning | Leverage · country of risk |
-| 3 · Equities | Sector exposure *(pick 3)* |
-| 4 · FX | USD share *(0–100%, quarters)* |
-| 5 · Fixed Income | Capital or income · duration *(1–30y)* · IG or HY |
+The five sections follow the running order of the trading-desk deck, so each
+one opens at the slide that has just covered it.
+
+| Section | Opens at | Questions |
+|---|---|---|
+| 1 · Risk Profile | *Audience Question — Initial Profile* | Risk profile · market view · investment horizon *(1–30y)* · country of risk |
+| 2 · Equities | *Audience Question — After Equities* | Sector exposure *(pick 3)* |
+| 3 · Fixed Income | *Audience Question — After Fixed Income* | Capital or income · duration *(1–30y)* · IG or HY |
+| 4 · Structured Notes | *Audience Question — After SP* | Leverage |
+| 5 · FX | *Audience Question — After FX* | USD share *(0–100%, quarters)* |
 
 Four question kinds:
 

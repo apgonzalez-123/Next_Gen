@@ -22,11 +22,15 @@ window.LIVEVOTES = (function () {
               alloc: null, bars: {}, keys: {}, qs: {} };
   var prev = { count: -1, bars: {} };
 
+  /* Mirrors the deck: the room is asked these in the order the presentation
+     reaches each desk, so a guest can find the question they just answered. */
   var SECTION_OF = {
     riskProfile: "Profile", marketView: "Profile", horizon: "Profile",
-    leverage: "Positioning", country: "Positioning",
-    sector: "Equities", usd: "FX",
-    capitalIncome: "Fixed income", duration: "Fixed income", credit: "Fixed income"
+    country: "Profile",
+    sector: "Equities",
+    capitalIncome: "Fixed income", duration: "Fixed income", credit: "Fixed income",
+    leverage: "Structured notes",
+    usd: "FX"
   };
 
   var SHORT = {

@@ -66,23 +66,6 @@ window.SCHEMA = {
           matchScale: 14,
           minLabel: "1 year", maxLabel: "30 years",
           format: function (v) { return v + (v === 1 ? " year" : " years"); }
-        }
-      ]
-    },
-    {
-      id: "positioning",
-      n: 2,
-      title: "Positioning",
-      blurb: "How the book is built, and where the risk sits.",
-      questions: [
-        {
-          id: "leverage",
-          kind: "choice",
-          label: "Would you use leverage?",
-          options: [
-            { v: "no",  label: "No",  sub: "Unlevered" },
-            { v: "yes", label: "Yes", sub: "Amplify both directions" }
-          ]
         },
         {
           id: "country",
@@ -97,7 +80,7 @@ window.SCHEMA = {
     },
     {
       id: "equities",
-      n: 3,
+      n: 2,
       title: "Equities",
       blurb: "Where the growth engine sits.",
       questions: [
@@ -119,28 +102,8 @@ window.SCHEMA = {
       ]
     },
     {
-      id: "fx",
-      n: 4,
-      title: "FX",
-      blurb: "How much of the book should sit in dollars.",
-      questions: [
-        {
-          id: "usd",
-          kind: "range",
-          label: "What share of the portfolio would you hold in USD?",
-          hint: "Moves in quarters.",
-          min: 0, max: 100, step: 25, unit: "%", def: 50,
-          /* How far off is a total miss on this axis: see matchScale
-             in portfolios.js. half the dollar range is already a different currency stance. */
-          matchScale: 55,
-          minLabel: "0%", maxLabel: "100%",
-          format: function (v) { return v + "%"; }
-        }
-      ]
-    },
-    {
       id: "fixedincome",
-      n: 5,
+      n: 3,
       title: "Fixed Income",
       blurb: "The ballast, and how much credit risk it carries.",
       questions: [
@@ -173,6 +136,43 @@ window.SCHEMA = {
             { v: "ig", label: "Investment grade", sub: "Lower yield, lower risk" },
             { v: "hy", label: "High yield",       sub: "Paid for the credit risk" }
           ]
+        }
+      ]
+    },
+    {
+      id: "notes",
+      n: 4,
+      title: "Structured Notes",
+      blurb: "Whether the book should gear its equity exposure.",
+      questions: [
+        {
+          id: "leverage",
+          kind: "choice",
+          label: "Would you use leverage?",
+          options: [
+            { v: "no",  label: "No",  sub: "Unlevered" },
+            { v: "yes", label: "Yes", sub: "Amplify both directions" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "fx",
+      n: 5,
+      title: "FX",
+      blurb: "How much of the book should sit in dollars.",
+      questions: [
+        {
+          id: "usd",
+          kind: "range",
+          label: "What share of the portfolio would you hold in USD?",
+          hint: "Moves in quarters.",
+          min: 0, max: 100, step: 25, unit: "%", def: 50,
+          /* How far off is a total miss on this axis: see matchScale
+             in portfolios.js. half the dollar range is already a different currency stance. */
+          matchScale: 55,
+          minLabel: "0%", maxLabel: "100%",
+          format: function (v) { return v + "%"; }
         }
       ]
     }
