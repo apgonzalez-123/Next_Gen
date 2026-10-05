@@ -950,41 +950,109 @@ button { font-family: inherit; color: inherit; }
 .wordmark > .brand-sep:first-child { display: none; }
 
 /* The shield mascot on the hold screen: eight poses in one strip, stepped
-   through so the character actually works out while a guest waits. The strip
-   is animated by moving the image inside a fixed window, rather than as a
-   background, so the img still fires onerror and the vector fallback can take
-   over on bad venue wifi. */
+   through so the character actually works out while a guest waits.
+
+   A single strip stepped with steps(8) cuts from one pose to the next with
+   nothing in between, which reads as a glitch however the container is
+   animated around it. So the strip is drawn TWICE, stacked: one layer holds
+   the even poses, the other the odd ones, each advancing at half speed, and
+   they cross-fade through each other. Every pose change happens while that
+   layer is at zero opacity, so the eye never sees a cut — only one pose
+   dissolving into the next.
+
+   The timing is all derived from --m-frame, the dwell on one pose:
+     strip layers   8 frames, steps(4), offset half a frame either way so the
+                    jump lands in the middle of that layer's hidden window
+     fade layers    two frames long, the two layers half a cycle apart
+     float          two frames long, continuous — never stepped
+
+   --m-offset is set per section in app.js so a guest held twice does not sit
+   through the same loop from the same place.
+
+   The strip is animated by moving the image inside a fixed window, rather
+   than as a background, so the img still fires onerror and the vector
+   fallback can take over on bad venue wifi. */
 .wait-mascot {
+  --m-frame: 1.05s;
+  --m-pair: 2.1s;    /* two frames */
+  --m-cycle: 8.4s;   /* eight frames */
   position: relative;
   overflow: hidden;
-  height: clamp(118px, 26vw, 176px);
+  /* Smaller than it was: on a phone the shield was taking the screen away
+     from the sentence that tells the guest what they are waiting for. */
+  height: clamp(78px, 16vw, 112px);
   aspect-ratio: 256 / 240;
-  /* A raw steps() flip reads as a glitch rather than a movement. Settling
-     the frame as it arrives — in time with the strip, so the two never
-     drift — makes it land like a pose instead of a cut. */
-  animation: wait-land 0.9s ease-out infinite;
+  /* A slow continuous float, not a per-frame landing bounce. Anything that
+     restarts on the frame boundary draws attention to the boundary. */
+  animation: wait-float var(--m-pair) ease-in-out infinite;
+  animation-delay: var(--m-offset, 0s);
   transform-origin: 50% 92%;
+  will-change: transform;
 }
-@keyframes wait-land {
-  0%   { transform: scale(1.045) translateY(-3px); }
-  22%  { transform: scale(0.992) translateY(1px); }
-  45%  { transform: scale(1) translateY(0); }
-  100% { transform: scale(1) translateY(0); }
+@keyframes wait-float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-3.5px) scale(1.014); }
 }
+
 .wait-mascot img {
   position: absolute;
   inset: 0 auto 0 0;
   height: 100%;
   width: 800%;       /* eight cells wide */
   max-width: none;
-  animation: wait-strip 7.2s steps(8) infinite;
+  animation-duration: var(--m-cycle), var(--m-pair);
+  animation-timing-function: steps(4), ease-in-out;
+  animation-iteration-count: infinite, infinite;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
 }
-@keyframes wait-strip {
+
+/* Even poses. The half-frame offsets (-0.525s = -0.5 frames, -7.875s =
+   +0.5 frames the long way round) put each layer's jump in the middle of
+   its own hidden window. */
+.wait-mascot .m-a {
+  animation-name: wait-strip-a, wait-fade-a;
+  animation-delay: calc(var(--m-offset, 0s) - 0.525s), var(--m-offset, 0s);
+}
+/* Odd poses, half a cycle behind. */
+.wait-mascot .m-b {
+  animation-name: wait-strip-b, wait-fade-b;
+  animation-delay: calc(var(--m-offset, 0s) - 7.875s), calc(var(--m-offset, 0s) - 1.05s);
+}
+
+@keyframes wait-strip-a {   /* cells 0, 2, 4, 6 */
   from { transform: translateX(0); }
   to   { transform: translateX(-100%); }
 }
+@keyframes wait-strip-b {   /* cells 1, 3, 5, 7 */
+  from { transform: translateX(-12.5%); }
+  to   { transform: translateX(-112.5%); }
+}
+
+/* 0% and 100% are both mid-ramp, so the loop point is continuous: there is
+   no instant at which either layer jumps in opacity. */
+@keyframes wait-fade-a {
+  0%   { opacity: 0.5; }
+  12%  { opacity: 1; }
+  38%  { opacity: 1; }
+  50%  { opacity: 0.5; }
+  62%  { opacity: 0; }
+  88%  { opacity: 0; }
+  100% { opacity: 0.5; }
+}
+@keyframes wait-fade-b {
+  0%   { opacity: 0.5; }
+  12%  { opacity: 0; }
+  38%  { opacity: 0; }
+  50%  { opacity: 0.5; }
+  62%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wait-mascot, .wait-mascot img { animation: none; }
+  .wait-mascot .m-b { opacity: 0; }
 }
 
 /* --- the asset summary -------------------------------------------------

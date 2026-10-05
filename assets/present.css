@@ -416,17 +416,55 @@ body.present {
   overflow: hidden;
 }
 
-/* With leverage the sleeves sum past 100, so a sleeve weight is a share of
-   CAPITAL, not of the book. Said once per slide, next to the number. */
-.p-sleeve-gross {
-  font-size: clamp(10px, 0.8vw, 13px);
+/* --- the sleeve tear sheets ---
+   Laid out like a desk sheet rather than a web table: ticket line, key
+   figures, position list with every figure in a monospaced column, and one
+   exposure bar. Numbers are tabular everywhere, so a column of them lines up
+   on the decimal point from the back of the room. */
+
+.p-sleeve { --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; }
+
+/* The ticket line: what this sleeve is, how big, and against what. */
+.p-tape {
+  flex: 0 0 auto;
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: clamp(14px, 2vw, 30px);
+  padding: clamp(7px, 1vh, 11px) clamp(10px, 1.1vw, 16px);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--line);
+  border-radius: var(--r-sm);
+  background: linear-gradient(180deg, rgba(255,255,255,0.025), transparent);
+}
+.p-tape-k {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: clamp(9.5px, 0.72vw, 12px);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text);
+}
+.p-tape-k s { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+.p-tape-i { display: inline-flex; align-items: baseline; gap: 7px; }
+.p-tape-i small {
+  font-size: clamp(8.5px, 0.62vw, 10.5px);
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+.p-tape-i b {
+  font-family: var(--mono); font-weight: 500;
+  font-size: clamp(11px, 0.92vw, 15px);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+.p-tape-n {
+  margin-left: auto;
+  font-size: clamp(9px, 0.7vw, 11.5px);
   color: var(--series-options);
-  margin-top: -4px;
+  white-space: nowrap;
 }
 
-.p-stats {
+/* Key figures. The unit is set small and dim beside the number so the eye
+   lands on the figure first, the way a term sheet reads. */
+.p-figs {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
   gap: 1px;
   background: var(--line);
   border: 1px solid var(--line);
@@ -434,69 +472,167 @@ body.present {
   overflow: hidden;
   flex: 0 0 auto;
 }
-.p-stat { background: var(--bg); padding: clamp(8px, 1.2vh, 14px) clamp(10px, 1vw, 16px); }
-.p-stat small {
-  display: block;
-  font-size: clamp(8.5px, 0.64vw, 11px);
-  letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 4px;
+.p-fig {
+  background: var(--bg);
+  padding: clamp(8px, 1.15vh, 13px) clamp(10px, 1vw, 15px);
 }
-.p-stat b {
+.p-fig small {
   display: block;
-  font-family: var(--font-display); font-weight: 600;
-  font-size: clamp(17px, 1.7vw, 27px); line-height: 1;
-  letter-spacing: -0.02em;
+  font-size: clamp(8.5px, 0.62vw, 10.5px);
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.p-fig b {
+  display: flex; align-items: baseline; gap: 3px;
+  font-family: var(--mono); font-weight: 500;
+  font-size: clamp(17px, 1.6vw, 26px); line-height: 1;
+  letter-spacing: -0.015em;
   color: var(--accent-bright);
   font-variant-numeric: tabular-nums;
 }
-.p-stat i {
-  display: block; font-style: normal; margin-top: 3px;
-  font-size: clamp(8.5px, 0.62vw, 10.5px); color: var(--muted);
+.p-fig .p-u {
+  font-family: var(--font-ui);
+  font-size: clamp(9px, 0.66vw, 12px); font-weight: 400;
+  color: var(--muted); letter-spacing: 0;
+}
+.p-fig i {
+  display: block; font-style: normal; margin-top: 4px;
+  font-size: clamp(8.5px, 0.6vw, 10.5px); color: var(--muted);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
+/* The position list. */
 .p-tblwrap { flex: 1 1 auto; min-height: 0; overflow: hidden; }
 .p-tbl { width: 100%; border-collapse: collapse; }
 .p-tbl th {
   text-align: left; font-weight: 550;
-  font-size: clamp(8.5px, 0.64vw, 11px);
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
-  padding: 0 10px clamp(6px, 0.9vh, 10px) 0;
+  font-size: clamp(8.5px, 0.62vw, 10.5px);
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  padding: 0 12px clamp(6px, 0.9vh, 10px) 0;
   border-bottom: 1px solid var(--line);
   white-space: nowrap;
 }
 .p-tbl td {
-  padding: clamp(7px, 1.15vh, 13px) 10px clamp(7px, 1.15vh, 13px) 0;
+  padding: clamp(6px, 1.05vh, 12px) 12px clamp(6px, 1.05vh, 12px) 0;
   border-bottom: 1px solid var(--line-soft);
-  font-size: clamp(11px, 0.95vw, 15px);
+  font-size: clamp(11px, 0.92vw, 14.5px);
   color: var(--text-2);
-  vertical-align: baseline;
+  vertical-align: middle;
+  white-space: nowrap;
 }
-.p-tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
-.p-tbl .p-w { color: var(--accent-bright); }
 .p-tbl tr:last-child td { border-bottom: none; }
-.p-tbl-dense td { padding-top: clamp(5px, 0.8vh, 9px); padding-bottom: clamp(5px, 0.8vh, 9px); }
-.p-tbl-dense td { font-size: clamp(10.5px, 0.85vw, 13.5px); }
+.p-tbl .p-nm { color: var(--text); white-space: normal; }
+.p-tbl .num {
+  text-align: right;
+  font-family: var(--mono); font-weight: 450;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.p-tbl-dense td { padding-top: clamp(4px, 0.7vh, 8px); padding-bottom: clamp(4px, 0.7vh, 8px); }
+.p-tbl-dense td { font-size: clamp(10.5px, 0.82vw, 13px); }
+.p-tbl-tight td { padding-top: clamp(2px, 0.45vh, 5px); padding-bottom: clamp(2px, 0.45vh, 5px); }
+.p-tbl-tight td { font-size: clamp(10px, 0.76vw, 12px); }
+.p-tbl-tight .p-tk { font-size: 0.82em; padding: 1px 4px; }
+
+/* Weight, as a number and as the track that gives the book its shape. The
+   track is inline, not behind the number: positioned absolutely it ran past
+   the right edge of the slide and clipped the last digit. */
+.p-wcell {
+  text-align: right; white-space: nowrap;
+  font-family: var(--mono); font-variant-numeric: tabular-nums;
+  color: var(--accent-bright); font-weight: 500;
+}
+.p-wcell span { display: inline-block; min-width: 3.4em; text-align: right; }
+.p-track {
+  display: inline-block; vertical-align: middle;
+  width: clamp(44px, 4.4vw, 78px);
+  height: clamp(8px, 1.1vh, 11px);
+  margin-right: 11px;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.p-track b {
+  display: block; height: 100%;
+  background: var(--accent-bright);
+  opacity: 0.82;
+  transition: width 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
 
 .p-r-ovl td { background: rgba(140, 92, 214, 0.07); }
+.p-cpn { color: var(--series-notes); }
 
+/* Credit quality, placed on the ladder. */
+.p-rate {
+  font-family: var(--mono); font-size: 0.86em; letter-spacing: 0.02em;
+  border-radius: var(--r-xs); padding: 2px 6px;
+  border: 1px solid currentColor;
+}
+.p-rate.t1, .p-rate.t2 { color: #4fb286; }
+.p-rate.t3            { color: #7bb36b; }
+.p-rate.t4            { color: #c9a227; }
+.p-rate.t5            { color: #d98026; }
+.p-rate.t6            { color: #d95926; }
+.p-rate.t0            { color: var(--muted); }
 .p-pillx {
   font-style: normal; font-size: 0.68em; letter-spacing: 0.06em;
   color: var(--muted); border: 1px solid var(--line);
   border-radius: var(--r-xs); padding: 1px 5px; margin-left: 5px;
 }
-.p-bookname { color: var(--text-2); }
-
-.p-foot-note {
-  flex: 0 0 auto;
-  display: flex; align-items: center; flex-wrap: wrap; gap: 7px;
-  font-size: clamp(9.5px, 0.74vw, 12.5px); color: var(--muted);
+/* Which side of the dollar a currency position actually sits on. */
+.p-side {
+  font-size: 0.78em; letter-spacing: 0.06em; text-transform: uppercase;
+  border-radius: var(--r-xs); padding: 2px 7px;
 }
+.p-side.long  { color: var(--pos); border: 1px solid rgba(25, 158, 112, 0.45); }
+.p-side.short { color: var(--neg); border: 1px solid rgba(217, 89, 38, 0.45); }
+
+/* The exposure that matters for this asset class, as one bar. */
+.p-expo { flex: 0 0 auto; }
+.p-expo > small {
+  display: block;
+  font-size: clamp(8.5px, 0.62vw, 10.5px);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 7px;
+}
+.p-expo-bar {
+  display: flex; height: clamp(9px, 1.3vh, 14px);
+  border-radius: var(--r-xs); overflow: hidden;
+  background: var(--surface-2);
+}
+.p-seg {
+  display: block; height: 100%;
+  transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.p-expo-keys {
+  display: flex; flex-wrap: wrap; gap: 7px 18px; margin-top: 9px;
+  font-size: clamp(9.5px, 0.72vw, 12px); color: var(--text-2);
+}
+.p-key { display: inline-flex; align-items: center; gap: 7px; }
+.p-key i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+.p-key b {
+  font-family: var(--mono); font-weight: 500; color: var(--accent-bright);
+  font-variant-numeric: tabular-nums;
+}
+/* One ramp, not six unrelated hues: the eye reads order off it, and the
+   segments stay legible against a projector's washed-out contrast. */
+.p-seg.s1, .p-key i.s1 { background: #3987e5; }
+.p-seg.s2, .p-key i.s2 { background: #4aa8c9; }
+.p-seg.s3, .p-key i.s3 { background: #199e70; }
+.p-seg.s4, .p-key i.s4 { background: #c9a227; }
+.p-seg.s5, .p-key i.s5 { background: #d95926; }
+.p-seg.s0              { background: rgba(255, 255, 255, 0.08); }
+
 .p-chip {
   display: inline-flex; align-items: baseline; gap: 5px;
   border: 1px solid var(--line); border-radius: var(--r-xs);
   padding: 2px 8px; color: var(--text-2);
 }
-.p-chip b { color: var(--accent-bright); font-weight: 400; font-variant-numeric: tabular-nums; }
+.p-chip b {
+  color: var(--accent-bright); font-weight: 400;
+  font-family: var(--mono); font-variant-numeric: tabular-nums;
+}
 
 @media (max-width: 1000px) {
   .p-tblwrap { overflow-x: auto; }
@@ -670,12 +806,6 @@ body.present {
   color: var(--muted);
 }
 .p-gearing b { color: var(--series-options); font-weight: 450; }
-
-/* The desk's equity books run to fifteen lines in the middle bands, which
-   clipped the last row off a 1000px projector. Nobody scrolls a slide. */
-.p-tbl-tight td { padding-top: clamp(3px, 0.5vh, 6px); padding-bottom: clamp(3px, 0.5vh, 6px); }
-.p-tbl-tight td { font-size: clamp(10px, 0.78vw, 12.5px); }
-.p-tbl-tight .p-tk { font-size: 0.82em; padding: 1px 4px; }
 
 /* Gearing, stated on the verdict slide beside the allocation it describes. */
 .p-verdict-gross {

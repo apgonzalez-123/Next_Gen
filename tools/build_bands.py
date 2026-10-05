@@ -93,6 +93,17 @@ NOTE_TYPE = {"AC": "Autocallable", "CLN": "Credit-linked note",
 # rather than on single names. The desk's rule holds half the sleeve in these.
 INDEX_UNDERLYINGS = re.compile(r"\b(SPY|SPX|IWM|QQQ|RTY|SX5E|NDX)\b", re.I)
 
+# "Long EUR/USD Call Spread" -> "EUR/USD". Falls back to the first word when
+# the sheet writes a position with no pair in it.
+FX_PAIR = re.compile(r"\b([A-Z]{3})\s*/\s*([A-Z]{3})\b", re.I)
+
+def fx_pair(name):
+    m = FX_PAIR.search(name or "")
+    if m:
+        return (m.group(1) + "/" + m.group(2)).upper()
+    w = re.sub(r"[^A-Za-z ]", " ", name or "").split()
+    return (w[0].upper() if w else "")
+
 def pct_text(v):
     """The sheet writes a coupon either as text ("11%mem") or as a fraction
     (0.1185). Printing the fraction raw put "0.1185" on the projector."""
@@ -187,7 +198,10 @@ def fx():
                 continue
             out[b].append({
                 "id": slug(name),
-                "ticker": re.sub(r"[^A-Z/]", "", name.upper()).replace("/", "")[:9],
+                # The pair itself, not a slug of the whole sentence. Stripping
+                # the punctuation out of "Long EUR/USD Call Spread" gave
+                # "LONGEURUS", which tells a reader nothing.
+                "ticker": fx_pair(name),
                 "name": name.title().replace("Usd", "USD").replace("Xau", "XAU")
                             .replace("Jpy", "JPY").replace("Eur", "EUR")
                             .replace("Brl", "BRL").replace("Mxn", "MXN")

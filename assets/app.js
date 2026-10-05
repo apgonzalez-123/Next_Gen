@@ -601,22 +601,33 @@
     var stepId = steps[waitingFor].id;
     var start = MASCOT_START[stepId] || 0;
     var s = el("section", "screen");
+    /* Two stacked copies of the same strip, cross-fading: one carries the
+       even poses, one the odd. See .wait-mascot in app.css — the whole
+       schedule is CSS, and both layers share one --m-offset so the section's
+       starting pose shifts them together instead of pulling them apart. */
+    var SRC = "assets/brand/mascot/workout.webp";
+    var FRAME = 1.05;
+    function layer(cls) {
+      /* No build stamp: bump-build.sh only rewrites URLs written in the
+         HTML, and the strip is immutable — replacing it means renaming it. */
+      return '<img class="' + cls + '" src="' + SRC + '" alt="" decoding="async">';
+    }
     s.appendChild(el("div", "wait",
       '<div class="wait-crest" aria-hidden="true">' +
-        '<div class="wait-mascot">' +
-          /* No build stamp: bump-build.sh only rewrites URLs written in the
-             HTML, and the strip is immutable — replacing it means renaming it. */
-          '<img src="assets/brand/mascot/workout.webp" alt="" decoding="async" ' +
-               'style="animation-delay:' + (-start * 0.9) + 's">' +
+        '<div class="wait-mascot" style="--m-offset:' + (-start * FRAME) + 's">' +
+          layer("m-a") + layer("m-b") +
         "</div>" +
       "</div>" +
       '<div class="eyebrow">Locked</div>' +
       '<h2 class="display">Hold on for the host to enable the next step.</h2>'));
     app.appendChild(s);
 
-    var img = s.querySelector(".wait-mascot img");
-    if (img) {
+    /* Two layers now, so two error events for one missing file. Swap once. */
+    var swapped = false;
+    Array.prototype.forEach.call(s.querySelectorAll(".wait-mascot img"), function (img) {
       img.addEventListener("error", function () {
+        if (swapped) return;
+        swapped = true;
         /* No strip: draw the vector mascot instead of leaving a gap. */
         var crest = s.querySelector(".wait-crest");
         crest.innerHTML = mascotSVG(stepId);
@@ -624,7 +635,7 @@
         if (m && m.pauseAnimations && window.matchMedia &&
             window.matchMedia("(prefers-reduced-motion: reduce)").matches) m.pauseAnimations();
       });
-    }
+    });
   }
 
   /* The Safra shield as a little gym mascot, doing a different exercise

@@ -925,10 +925,12 @@ window.ENGINE = (function () {
         "barriers, rather than by size. That is a different risk and does not " +
         "show in this number."
       ],
-      short: gross + "% of market exposure on " + alloc.net + "% of capital. " +
-             "The extra is notional — options and FX sized above the cash " +
-             "committed — not money borrowed. Gains and losses track the " +
-             "exposure, and an option can expire worthless."
+      /* Deliberately does NOT restate the headline: the two are printed
+         next to each other, and saying the same figure twice in one line
+         reads as a bug. */
+      short: "The extra " + over + " points are notional — options and FX " +
+             "sized above the cash committed — not money borrowed. Gains and " +
+             "losses track the exposure, and a long option can expire worthless."
     };
   }
 

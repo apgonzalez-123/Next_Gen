@@ -387,7 +387,7 @@
     "lines": [
      {
       "id": "long-xau-usd",
-      "ticker": "LONGXAUUS",
+      "ticker": "XAU/USD",
       "name": "Long XAU/USD",
       "kind": "spot",
       "weightOfSleeve": 1.0,
@@ -816,7 +816,7 @@
     "lines": [
      {
       "id": "long-xau-usd",
-      "ticker": "LONGXAUUS",
+      "ticker": "XAU/USD",
       "name": "Long XAU/USD",
       "kind": "spot",
       "weightOfSleeve": 0.5,
@@ -833,7 +833,7 @@
      },
      {
       "id": "long-usd-jpy-call-spread",
-      "ticker": "LONGUSDJP",
+      "ticker": "USD/JPY",
       "name": "Long USD/JPY Call Spread",
       "kind": "option structure",
       "weightOfSleeve": 0.25,
@@ -850,7 +850,7 @@
      },
      {
       "id": "long-eur-usd-call-spread",
-      "ticker": "LONGEURUS",
+      "ticker": "EUR/USD",
       "name": "Long EUR/USD Call Spread",
       "kind": "option structure",
       "weightOfSleeve": 0.25,
@@ -1323,7 +1323,7 @@
     "lines": [
      {
       "id": "long-xau-usd",
-      "ticker": "LONGXAUUS",
+      "ticker": "XAU/USD",
       "name": "Long XAU/USD",
       "kind": "spot",
       "weightOfSleeve": 0.33,
@@ -1340,7 +1340,7 @@
      },
      {
       "id": "long-usd-jpy-call",
-      "ticker": "LONGUSDJP",
+      "ticker": "USD/JPY",
       "name": "Long USD/JPY Call",
       "kind": "option",
       "weightOfSleeve": 0.33,
@@ -1357,7 +1357,7 @@
      },
      {
       "id": "long-eur-usd-call-spread",
-      "ticker": "LONGEURUS",
+      "ticker": "EUR/USD",
       "name": "Long EUR/USD Call Spread",
       "kind": "option structure",
       "weightOfSleeve": 0.34,
@@ -1852,7 +1852,7 @@
     "lines": [
      {
       "id": "long-xau-usd-call",
-      "ticker": "LONGXAUUS",
+      "ticker": "XAU/USD",
       "name": "Long XAU/USD Call",
       "kind": "option",
       "weightOfSleeve": 0.25,
@@ -1869,7 +1869,7 @@
      },
      {
       "id": "long-usd-jpy",
-      "ticker": "LONGUSDJP",
+      "ticker": "USD/JPY",
       "name": "Long USD/JPY",
       "kind": "spot",
       "weightOfSleeve": 0.25,
@@ -1886,7 +1886,7 @@
      },
      {
       "id": "long-eur-usd-put",
-      "ticker": "LONGEURUS",
+      "ticker": "EUR/USD",
       "name": "Long EUR/USD Put",
       "kind": "option",
       "weightOfSleeve": 0.25,
@@ -1903,7 +1903,7 @@
      },
      {
       "id": "short-usd-brl-ndf",
-      "ticker": "SHORTUSDB",
+      "ticker": "USD/BRL",
       "name": "Short USD/BRL NDF",
       "kind": "forward",
       "weightOfSleeve": 0.25,
@@ -2310,7 +2310,7 @@
     "lines": [
      {
       "id": "long-xau-usd",
-      "ticker": "LONGXAUUS",
+      "ticker": "XAU/USD",
       "name": "Long XAU/USD",
       "kind": "spot",
       "weightOfSleeve": 0.25,
@@ -2327,7 +2327,7 @@
      },
      {
       "id": "long-usd-jpy",
-      "ticker": "LONGUSDJP",
+      "ticker": "USD/JPY",
       "name": "Long USD/JPY",
       "kind": "spot",
       "weightOfSleeve": 0.25,
@@ -2344,7 +2344,7 @@
      },
      {
       "id": "short-usd-brl-ndf",
-      "ticker": "SHORTUSDB",
+      "ticker": "USD/BRL",
       "name": "Short USD/BRL NDF",
       "kind": "forward",
       "weightOfSleeve": 0.25,
@@ -2361,7 +2361,7 @@
      },
      {
       "id": "long-usd-mxn-call",
-      "ticker": "LONGUSDMX",
+      "ticker": "USD/MXN",
       "name": "Long USD/MXN Call",
       "kind": "option",
       "weightOfSleeve": 0.25,

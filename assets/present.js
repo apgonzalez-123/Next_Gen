@@ -323,7 +323,10 @@
          list. A long book ran off the bottom of the column and simply
          stopped, with nothing to say it had — which reads as the book being
          shorter than it is. */
-      var SHOW = 6;
+      /* Five, not six: the sixth row was being clipped through the middle of
+         its own name on a 1000px projector, which took the "+N more" note
+         with it and made a fifteen-line sleeve read as a six-line one. */
+      var SHOW = 5;
       var hidden = Math.max(0, b.lines.length - SHOW);
       var lines = b.lines.length
         ? b.lines.slice(0, SHOW).map(function (l) {
@@ -593,9 +596,78 @@
       });
   }
 
-  function statCell(label, value, sub) {
-    return '<div class="p-stat"><small>' + label + "</small><b>" + value + "</b>" +
+  /* ---- tear-sheet primitives -------------------------------------------
+   *
+   * These slides are read off a projector by people who read desk sheets for
+   * a living, so they are built like one rather than like a web table: a
+   * ticket line naming the sleeve and its size, a band of key figures with
+   * the unit set apart from the number, a position list whose figures sit in
+   * a monospaced column, and the one exposure that matters for that asset
+   * class drawn as a single bar instead of described in a sentence.
+   */
+
+  /* A figure and its unit are deliberately different sizes: the eye lands on
+     the number and picks the unit up afterwards, the way a term sheet reads.
+     `sub` is for the caveat that would otherwise go unsaid — an average over
+     half a sleeve is a different claim from one over all of it. */
+  function fig(label, value, unit, sub) {
+    return '<div class="p-fig"><small>' + label + "</small><b>" +
+      (value === null || value === undefined ? "—" : value) +
+      (unit ? '<span class="p-u">' + unit + "</span>" : "") + "</b>" +
       (sub ? "<i>" + sub + "</i>" : "") + "</div>";
+  }
+
+  /* Always the same number of decimals, or a monospaced column stops lining
+     up the moment one weight is a round number. */
+  function fxn(x, d) {
+    return (x === null || x === undefined || !isFinite(x))
+      ? "—" : Number(x).toFixed(d === undefined ? 1 : d);
+  }
+  function fx1(x) { return fxn(x, 1); }
+
+  /* A column of percentages all the same width hides the shape of the book.
+     The track is the shape — scaled to the largest line, so the sleeve fills
+     the column whether its biggest position is 3% or 30%. It sits inline
+     rather than behind the number: an absolutely-positioned bar ran off the
+     right edge of the slide and took the last digit with it. */
+  function wcell(w, max) {
+    var pct = max > 0 ? Math.max(3, (w / max) * 100) : 0;
+    return '<td class="p-wcell"><i class="p-track"><b style="width:' + pc(pct, 1) +
+      '%"></b></i><span>' + fx1(w) + "</span></td>";
+  }
+
+  /* The one breakdown that matters for this asset class, as a single bar.
+     Whatever is not in the top few is kept as a final segment rather than
+     dropped: a bar that stops short of the end reads as missing data. */
+  function expo(label, list, fmt) {
+    if (!list || !list.length) return "";
+    var used = list.reduce(function (t, x) { return t + x.pct; }, 0);
+    var segs = list.map(function (x, i) { return { key: x.key, pct: x.pct, i: i + 1 }; });
+    if (used < 99.4) segs.push({ key: null, pct: 100 - used, i: 0 });
+
+    var bar = segs.map(function (x) {
+      return '<i class="p-seg s' + x.i + '" style="width:' + pc(x.pct, 2) + '%"></i>';
+    }).join("");
+    var keys = list.map(function (x, i) {
+      return '<span class="p-key"><i class="s' + (i + 1) + '"></i>' +
+        esc(fmt ? fmt(x.key) : x.key) + "<b>" + pc(x.pct, 1) + "%</b></span>";
+    }).join("");
+
+    return '<div class="p-expo"><small>' + label + "</small>" +
+      '<div class="p-expo-bar">' + bar + "</div>" +
+      '<div class="p-expo-keys">' + keys + "</div></div>";
+  }
+
+  /* Credit quality is the first thing anyone looks for on a bond line, so it
+     is placed on the ladder and coloured rather than left as plain text. */
+  function ratingCell(r, cls) {
+    if (!r) return "<td>—</td>";
+    var h = String(r).toUpperCase().replace(/[^A-Z]/g, "");
+    var tier = /^AAA/.test(h) ? "t1" : /^AA/.test(h) ? "t2" : /^A/.test(h) ? "t3"
+             : /^BBB/.test(h) ? "t4" : /^BB/.test(h) ? "t5"
+             : /^B/.test(h) || /^C/.test(h) ? "t6" : "t0";
+    return '<td><span class="p-rate ' + tier + '">' + esc(r) + "</span>" +
+      (cls ? '<em class="p-pillx">' + cls.toUpperCase() + "</em>" : "") + "</td>";
   }
 
   function chips(list, fmt) {
@@ -611,10 +683,14 @@
     consumer: "Consumer", industrials: "Industrials"
   };
 
-  /* ---- the four sleeve tables ---- */
+  function maxw(lines) {
+    return lines.reduce(function (m, l) { return Math.max(m, l.weight || 0); }, 0);
+  }
+
+  /* ---- the four sleeve sheets ---- */
 
   function equityPanel(b) {
-    var lines = b.lines || [];
+    var lines = b.lines || [], mx = maxw(lines);
     var beta = wavg(lines, function (l) { return an(l.item).beta; });
     var vol  = wavg(lines, function (l) { return an(l.item).volatility; });
     var usd  = wavg(lines, function (l) { return an(l.item).usdExposure; });
@@ -622,154 +698,167 @@
     var ovl  = wshare(lines, function (l) { return l.overlay; });
     var sectors = topBy(lines.filter(function (l) {
       return an(l.item).sector && an(l.item).sector !== "core";
-    }), function (l) { return an(l.item).sector; }, 4);
+    }), function (l) { return an(l.item).sector; }, 5);
 
-    var stats =
-      statCell("Positions", lines.length) +
-      statCell("Weighted beta", pc(beta.value, 2),
-               beta.coverage < 0.99 ? pc(beta.coverage * 100, 0) + "% covered" : "") +
-      statCell("Weighted volatility", pc(vol.value, 2)) +
-      statCell("Dollar exposure", pc(usd.value, 0) + "%") +
-      statCell("Emerging markets", pc(em, 0) + "%") +
-      statCell("Option overlay", pc(ovl, 0) + "%", "of the sleeve");
+    var figs =
+      fig("Weighted beta", pc(beta.value, 2), "",
+          beta.coverage < 0.99 ? pc(beta.coverage * 100, 0) + "% covered" : "") +
+      fig("Daily volatility", pc(vol.value, 2), "%", "weighted") +
+      fig("Dollar exposure", pc(usd.value, 0), "%") +
+      fig("Emerging markets", pc(em, 0), "%") +
+      fig("Option overlay", pc(ovl, 0), "%", "of the sleeve") +
+      fig("Positions", lines.length, "", "lines");
 
     var rows = lines.map(function (l) {
-      var it = l.item, a = an(it);
-      var isOpt = !!l.overlay;
+      var it = l.item, a = an(it), isOpt = !!l.overlay;
       return "<tr" + (isOpt ? ' class="p-r-ovl"' : "") + ">" +
         "<td>" + tick(it.ticker) + "</td>" +
-        "<td>" + esc(it.name) + (isOpt ? ' <em class="p-tag">overlay</em>' : "") + "</td>" +
-        "<td>" + esc(isOpt ? (it.strategy || "") : (SECTOR_WORD[a.sector] || a.sector || "")) + "</td>" +
-        "<td>" + esc(isOpt ? (it.underlying || "") : (a.region === "em" ? "EM" : "Developed")) + "</td>" +
-        '<td class="num">' + (isOpt ? (it.moneyness ? pc(it.moneyness * 100, 0) + "%" : "&mdash;")
-                                    : (a.usdExposure === null ? "&mdash;" : a.usdExposure + "%")) + "</td>" +
-        '<td class="num">' + (isOpt ? (it.delta === null || it.delta === undefined ? "&mdash;" : pc(it.delta, 2))
-                                    : pc(a.beta, 2)) + "</td>" +
-        '<td class="num p-w">' + l.weight + "%</td></tr>";
+        '<td class="p-nm">' + esc(it.name) +
+          (isOpt ? ' <em class="p-tag">overlay</em>' : "") + "</td>" +
+        "<td>" + esc(isOpt ? (it.strategy || "")
+                           : (SECTOR_WORD[a.sector] || a.sector || "")) + "</td>" +
+        "<td>" + esc(isOpt ? (it.underlying || "")
+                           : (a.region === "em" ? "EM" : "Developed")) + "</td>" +
+        '<td class="num">' + (isOpt
+          ? (it.moneyness ? pc(it.moneyness * 100, 0) + "%" : "—")
+          : (a.usdExposure === null || a.usdExposure === undefined
+              ? "—" : a.usdExposure + "%")) + "</td>" +
+        '<td class="num">' + (isOpt
+          ? fxn(it.delta, 2)
+          : fxn(a.beta, 2)) + "</td>" +
+        wcell(l.weight, mx) + "</tr>";
     }).join("");
 
-    return panel(b, stats,
-      ["", "Holding", "Sector / structure", "Region / underlying", "USD % / strike", "Beta / delta", "Weight"],
+    return sheet(b, figs,
+      ["", "Holding", "Sector / structure", "Region / underlying",
+       ">USD % / strike", ">Beta / delta", ">Weight %"],
       rows,
-      sectors.length ? "Sector exposure " + chips(sectors, function (k) {
-        return SECTOR_WORD[k] || k;
-      }) : "");
+      expo("Sector exposure", sectors, function (k) { return SECTOR_WORD[k] || k; }));
   }
 
   function fixedIncomePanel(b) {
-    var lines = b.lines || [];
+    var lines = b.lines || [], mx = maxw(lines);
     var ytw = wavg(lines, function (l) { return an(l.item).yieldToWorst; });
     var dur = wavg(lines, function (l) { return an(l.item).duration; });
     var cpn = wavg(lines, function (l) { return (l.item || {}).coupon; });
     var ig  = wshare(lines, function (l) { return an(l.item).creditClass === "ig"; });
     var em  = wshare(lines, function (l) { return an(l.item).region === "em"; });
-    var countries = topBy(lines, function (l) { return an(l.item).country || (l.item || {}).country; }, 5);
+    var countries = topBy(lines, function (l) {
+      return an(l.item).country || (l.item || {}).country;
+    }, 5);
 
-    var stats =
-      statCell("Positions", lines.length) +
-      statCell("Weighted YTW", pc(ytw.value, 2) + "%") +
-      statCell("Weighted duration", pc(dur.value, 2) + "y") +
-      statCell("Weighted coupon", pc(cpn.value, 2) + "%") +
-      statCell("Investment grade", pc(ig, 0) + "%") +
-      statCell("Emerging markets", pc(em, 0) + "%");
+    var figs =
+      fig("Weighted YTW", pc(ytw.value, 2), "%") +
+      fig("Weighted duration", pc(dur.value, 2), "y") +
+      fig("Weighted coupon", pc(cpn.value, 2), "%") +
+      fig("Investment grade", pc(ig, 0), "%") +
+      fig("Emerging markets", pc(em, 0), "%") +
+      fig("Positions", lines.length, "", "lines");
 
     var rows = lines.map(function (l) {
       var it = l.item, a = an(it);
       return "<tr><td>" + tick(it.ticker) + "</td>" +
-        "<td>" + esc(it.name) + "</td>" +
-        "<td>" + esc(it.rating || "") +
-          (a.creditClass ? ' <em class="p-pillx">' + a.creditClass.toUpperCase() + "</em>" : "") + "</td>" +
+        '<td class="p-nm">' + esc(it.name) + "</td>" +
+        ratingCell(it.rating, a.creditClass) +
         "<td>" + esc(it.country || "") + "</td>" +
         "<td>" + esc(it.maturity || "") + "</td>" +
-        '<td class="num">' + pc(a.yieldToWorst, 2) + "</td>" +
-        '<td class="num">' + pc(a.duration, 2) + "</td>" +
-        '<td class="num p-w">' + l.weight + "%</td></tr>";
+        '<td class="num">' + fxn(a.yieldToWorst, 2) + "</td>" +
+        '<td class="num">' + fxn(a.duration, 2) + "</td>" +
+        wcell(l.weight, mx) + "</tr>";
     }).join("");
 
-    var book = b.book ? '<span class="p-bookname">' + esc(b.book.name) + "</span>" : "";
-    return panel(b, stats,
-      ["", "Issue", "Rating", "Country", "Maturity", "YTW", "Duration", "Weight"],
-      rows,
-      (book ? "Book " + book + " &nbsp; " : "") +
-      (countries.length ? "Country exposure " + chips(countries) : ""));
+    return sheet(b, figs,
+      ["", "Issue", "Rating", "Country", "Maturity", ">YTW %", ">Dur y", ">Weight %"],
+      rows, expo("Country exposure", countries));
   }
 
   function notesPanel(b) {
-    var lines = b.lines || [];
+    var lines = b.lines || [], mx = maxw(lines);
     var risk = wavg(lines, function (l) { return an(l.item).riskScore; });
     var ten  = wavg(lines, function (l) { return an(l.item).tenorYears; });
     var core = wshare(lines, function (l) { return (l.item || {}).isCore; });
     var prot = wshare(lines, function (l) { return an(l.item).principalProtected; });
     var em   = wshare(lines, function (l) { return an(l.item).region === "em"; });
+    var types = topBy(lines, function (l) { return (l.item || {}).type; }, 5);
 
-    var stats =
-      statCell("Structures", lines.length) +
-      statCell("Weighted tenor", pc(ten.value, 1) + "y") +
-      statCell("Index-linked", pc(core, 0) + "%", "of the sleeve") +
-      statCell("Principal protected", pc(prot, 0) + "%") +
-      statCell("Emerging markets", pc(em, 0) + "%") +
-      statCell("Risk proxy", pc(risk.value * 100, 0) + " / 100");
+    var figs =
+      fig("Weighted tenor", pc(ten.value, 1), "y") +
+      fig("Index-linked", pc(core, 0), "%", "of the sleeve") +
+      fig("Principal protected", pc(prot, 0), "%") +
+      fig("Emerging markets", pc(em, 0), "%") +
+      fig("Risk proxy", pc(risk.value * 100, 0), "/100") +
+      fig("Structures", lines.length, "", "lines");
 
     var rows = lines.map(function (l) {
       var it = l.item;
+      /* The name is just the type on the underlying, both of which have
+         their own column — printing all three said the same thing three
+         times and left the table no room. */
       return "<tr><td>" + tick(it.ticker) + "</td>" +
-        "<td>" + esc(it.name) + (it.isCore ? ' <em class="p-tag">index</em>' : "") + "</td>" +
-        "<td>" + esc(it.type || "") + "</td>" +
-        "<td>" + esc(it.underlying || "") + "</td>" +
-        "<td>" + esc(it.tenor || "") + "</td>" +
-        "<td>" + (it.barrier ? esc(it.barrier) : "\u2014") + "</td>" +
-        "<td>" + esc(it.coupon || "") + "</td>" +
-        '<td class="num p-w">' + l.weight + "%</td></tr>";
+        '<td class="p-nm">' + esc(it.type || "") +
+          (it.isCore ? ' <em class="p-tag">index</em>' : "") + "</td>" +
+        '<td class="p-nm">' + esc(it.underlying || "") + "</td>" +
+        '<td class="num">' + esc(it.tenor || "") + "</td>" +
+        '<td class="num">' + (it.barrier ? esc(it.barrier) : "—") + "</td>" +
+        '<td class="num p-cpn">' + esc(it.coupon || "—") + "</td>" +
+        wcell(l.weight, mx) + "</tr>";
     }).join("");
 
-    return panel(b, stats,
-      ["", "Structure", "Type", "Underlying", "Tenor", "Barrier", "Coupon", "Weight"],
-      rows, "");
+    return sheet(b, figs,
+      ["", "Structure", "Underlying", ">Tenor", ">Barrier", ">Coupon", ">Weight %"],
+      rows, expo("By structure", types));
   }
 
   function fxPanel(b) {
-    var lines = b.lines || [];
+    var lines = b.lines || [], mx = maxw(lines);
     var usd = wavg(lines, function (l) { return an(l.item).usdExposure; });
-    var kinds = topBy(lines, function (l) { return an(l.item).kind || (l.item || {}).kind; }, 4);
+    var kinds = topBy(lines, function (l) {
+      return an(l.item).kind || (l.item || {}).kind;
+    }, 5);
 
     /* NOT "does the name start with Long": every position here is a long of
-       something, and "Long Eur/Usd" is long the euro — short the dollar.
-       The dollar stance is the weighted dollar exposure and its complement,
-       which is what the instrument actually carries. */
+       something, and "Long Eur/Usd" is long the euro — short the dollar. The
+       dollar stance is the weighted dollar exposure and its complement,
+       which is what the instruments actually carry. */
     var away = usd.value === null ? null : 100 - usd.value;
 
-    var stats =
-      statCell("Positions", lines.length) +
-      statCell("Dollar exposure", pc(usd.value, 0) + "%", "weighted, of the sleeve") +
-      statCell("Away from the dollar", pc(away, 0) + "%") +
-      statCell("Instruments", kinds.map(function (k) { return k.key; }).join(", ") || "\u2014");
+    var figs =
+      fig("Dollar exposure", pc(usd.value, 0), "%", "weighted, of the sleeve") +
+      fig("Away from the dollar", pc(away, 0), "%") +
+      fig("Positions", lines.length, "", "lines") +
+      fig("Instruments", kinds.length, "", kinds.map(function (k) { return k.key; }).join(", "));
 
     var rows = lines.map(function (l) {
       var it = l.item, a = an(it);
+      var u = a.usdExposure;
       return "<tr><td>" + tick(it.ticker) + "</td>" +
-        "<td>" + esc(it.name) + "</td>" +
+        '<td class="p-nm">' + esc(it.name) + "</td>" +
         "<td>" + esc(it.kind || "") + "</td>" +
-        "<td>" + esc(it.note || "") + "</td>" +
-        '<td class="num">' + (a.usdExposure === null || a.usdExposure === undefined
-          ? "\u2014" : a.usdExposure + "%") + "</td>" +
-        '<td class="num p-w">' + l.weight + "%</td></tr>";
+        "<td>" + (u === null || u === undefined ? "—"
+          : '<span class="p-side ' + (u >= 50 ? "long" : "short") + '">' +
+            (u >= 50 ? "USD long" : "USD short") + "</span>") + "</td>" +
+        '<td class="num">' + (u === null || u === undefined ? "\u2014" : u + "%") + "</td>" +
+        wcell(l.weight, mx) + "</tr>";
     }).join("");
 
-    return panel(b, stats,
-      ["", "Position", "Instrument", "Exposure", "USD %", "Weight"], rows, "");
+    return sheet(b, figs,
+      ["", "Position", "Instrument", "Dollar side", ">USD %", ">Weight %"],
+      rows, expo("By instrument", kinds));
   }
 
   function tick(t) { return t ? '<span class="p-tk">' + esc(t) + "</span>" : ""; }
 
-  function panel(b, stats, head, rows, foot) {
-    return '<div class="p-stats">' + stats + "</div>" +
+  /* A head entry prefixed with ">" is a figure column and sits right. */
+  function sheet(b, figs, head, rows, foot) {
+    var n = (b.lines || []).length;
+    return '<div class="p-figs">' + figs + "</div>" +
       '<div class="p-tblwrap"><table class="p-tbl' +
-        ((b.lines || []).length > 12 ? " p-tbl-dense p-tbl-tight"
-          : (b.lines || []).length > 7 ? " p-tbl-dense" : "") + '">' +
-        "<thead><tr>" + head.map(function (h, i) {
-          return "<th" + (i >= head.length - 3 ? ' class="num"' : "") + ">" + h + "</th>";
+        (n > 12 ? " p-tbl-dense p-tbl-tight" : n > 7 ? " p-tbl-dense" : "") + '">' +
+        "<thead><tr>" + head.map(function (h) {
+          var num = h.charAt(0) === ">";
+          return "<th" + (num ? ' class="num"' : "") + ">" + (num ? h.slice(1) : h) + "</th>";
         }).join("") + "</tr></thead><tbody>" + rows + "</tbody></table></div>" +
-      (foot ? '<p class="p-foot-note">' + foot + "</p>" : "");
+      (foot || "");
   }
 
   var PANEL = {
@@ -801,17 +890,31 @@
         return;
       }
 
-      /* With leverage the sleeves sum past 100, so a sleeve weight is a share
-         of CAPITAL, not of the book — say which, or 69% equities next to 135%
-         gross looks like an error. */
+      /* The ticket line. With leverage the sleeves sum past 100, so a sleeve
+         weight is a share of CAPITAL, not of the book — say which, or 72.5%
+         equities beside 132.5% gross reads as an error. Share-of-gross is
+         given too, because that is the question the number raises. */
       if (badge) badge.textContent = bucket.weight + "%";
 
-      var head = lev
-        ? '<p class="p-sleeve-gross">' + bucket.weight + "% of capital &middot; the book runs " +
-          lev.gross + "% gross, " + lev.geared + " points of it notional</p>"
-        : "";
+      var share = lev && lev.gross ? (bucket.weight / lev.gross) * 100 : null;
+      var tape = '<div class="p-tape">' +
+        '<span class="p-tape-k"><s style="background:' +
+          (BUCKET_COLOUR[S.key] || "currentColor") + '"></s>' + esc(bucket.label) + "</span>" +
+        '<span class="p-tape-i"><small>of capital</small><b>' +
+          pc(bucket.weight, 1) + "%</b></span>" +
+        (bucket.book
+          ? '<span class="p-tape-i"><small>book</small><b>' +
+            esc(bucket.book.name) + "</b></span>"
+          : "") +
+        (lev
+          ? '<span class="p-tape-i"><small>of gross</small><b>' + pc(share, 1) + "%</b></span>" +
+            '<span class="p-tape-n">book ' + lev.gross + "% gross &middot; " +
+            lev.geared + " pts notional, not borrowed</span>"
+          : '<span class="p-tape-i"><small>of book</small><b>' +
+            pc(bucket.weight, 1) + "%</b></span>") +
+        "</div>";
 
-      host.innerHTML = head + (PANEL[S.key] || equityPanel)(bucket);
+      host.innerHTML = tape + (PANEL[S.key] || equityPanel)(bucket);
     });
   }
 
