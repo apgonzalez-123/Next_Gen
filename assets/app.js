@@ -407,17 +407,25 @@
     s.appendChild(el("div", "result-head",
       '<div class="eyebrow">Room average</div>' +
       '<h2 class="display">' + esc(p.name) + "</h2>" +
-      '<p class="tagline">' + esc(p.tagline) + "</p>"));
+      '<p class="tagline">' + roomCount + " guest" + (roomCount === 1 ? "" : "s") +
+        " averaged &middot; " + roomTop.fit + "% fit</p>"));
 
-    var about = el("div", "card");
-    about.innerHTML =
-      '<p class="body">' + esc(p.blurb) + "</p>" +
-      '<p class="footnote" style="margin-top:14px">' + roomCount + " guest" +
-        (roomCount === 1 ? "" : "s") + " averaged so far</p>";
-    s.appendChild(about);
+    /* The room's own book, not the band's target allocation: these are the
+       instruments the engine actually picked, from the desk's product files.
+       No commentary — a guest asked to see the portfolio wants the portfolio,
+       and the reasoning belongs on the projector where it can be talked
+       through. */
+    var sim = null;
+    if (window.PRODUCTS) {
+      try { sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS); }
+      catch (e) { console.error("results: could not build the book", e); }
+    }
 
-    s.appendChild(allocCard(p));
-
+    if (sim && sim.buckets && sim.buckets.length) {
+      s.appendChild(bookCard(sim));
+    } else {
+      s.appendChild(allocCard(p));
+    }
     if (roomData.mode === "demo" && roomData.synthetic) {
       s.appendChild(el("div", "notice",
         "<div><b>Demo mode.</b> " + roomData.synthetic +
@@ -464,6 +472,54 @@
     { k: "notes",       label: "Structured notes", c: "var(--series-notes)" },
     { k: "cash",        label: "Cash",             c: "var(--series-cash)" }
   ];
+
+  /* The asset summary: the allocation across the top, then every holding
+     grouped by sleeve. Weights are of the whole book, so a line can be read
+     against any other line without converting anything in your head. */
+  function bookCard(sim) {
+    var card = el("div", "card book");
+    var total = sim.buckets.reduce(function (t, b) { return t + (b.weight || 0); }, 0) || 100;
+
+    var bar = '<div class="alloc-bar">' + sim.buckets.map(function (b) {
+      return '<i style="flex:' + (b.weight || 0) + ' 0 0;background:' +
+             sleeveColour(b.key) + '"></i>';
+    }).join("") + "</div>" +
+    '<div class="legend">' + sim.buckets.map(function (b) {
+      return "<div><s style=\"background:" + sleeveColour(b.key) + '"></s>' +
+             esc(b.label) + "<b>" + (b.weight || 0) + "%</b></div>";
+    }).join("") + "</div>";
+
+    var sleeves = sim.buckets.filter(function (b) {
+      return b.lines && b.lines.length;
+    }).map(function (b) {
+      return '<section class="bk-sleeve">' +
+        '<header class="bk-head"><s style="background:' + sleeveColour(b.key) + '"></s>' +
+          "<h4>" + esc(b.label) + "</h4><b>" + (b.weight || 0) + "%</b></header>" +
+        '<ol class="bk-lines">' + b.lines.map(function (l) {
+          var it = l.item || {};
+          var tk = it.ticker || "";
+          return "<li>" +
+            (tk ? '<span class="bk-tk">' + esc(tk) + "</span>" : "") +
+            '<span class="bk-name">' + esc(it.name || tk) +
+              (l.overlay ? ' <em class="bk-tag">overlay</em>' : "") + "</span>" +
+            '<b class="bk-w">' + l.weight + "%</b>" +
+          "</li>";
+        }).join("") + "</ol>" +
+      "</section>";
+    }).join("");
+
+    card.innerHTML = "<h3>Allocation</h3>" + bar +
+      '<div class="bk-sleeves">' + sleeves + "</div>";
+    return card;
+  }
+
+  function sleeveColour(k) {
+    return ({ equities: "var(--series-equities)",
+              fixedIncome: "var(--series-fixedincome)",
+              notes: "var(--series-notes)",
+              fx: "var(--series-cash)",
+              options: "var(--series-options)" })[k] || "var(--muted)";
+  }
 
   function allocCard(p) {
     var card = el("div", "card");
