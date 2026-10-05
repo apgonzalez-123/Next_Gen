@@ -286,6 +286,7 @@ window.PORTFOLIO_VALIDATOR = (function () {
       /* Gross is what is at work in the market, net is the capital behind
          it, and the difference is borrowed. They are the same number unless
          the room asked for leverage. */
+      fromBandBook: !!sim.fromBandBook,
       gross: allocGross,
       net: (sim.alloc && sim.alloc.net) || null,
       financed: (sim.alloc && sim.alloc.financed) || 0,
@@ -566,7 +567,23 @@ window.PORTFOLIO_VALIDATOR = (function () {
        These dimensions therefore report at most a warning in portfolio mode,
        and the overall intent fit is where the cost of the trade still shows. */
     var fiPackaged = (((products || {}).fixedIncome || {}).selection || {}).mode === "portfolio";
+
+    /* When the whole book comes from the desk's band sheets, the engine does
+       not choose any product at all — it chooses which of five finished
+       portfolios the room gets. "Did the holdings match the preference" then
+       stops being a question about the engine and becomes one about the
+       desk's books, so every preference check reports as information. The
+       integrity checks stay hard: a book that does not add up is still
+       broken whoever wrote it. */
+    var deskBook = !!(chars && chars.fromBandBook);
     function soften(c) {
+      if (deskBook && c.status === "fail") {
+        c.status = "warn";
+        c.packaged = true;
+        c.message += " The book is one of the desk's five, written line by " +
+                     "line, so this is reported rather than treated as a fault.";
+        return c;
+      }
       if (fiPackaged && c.status === "fail") {
         c.status = "warn";
         c.packaged = true;
@@ -595,20 +612,20 @@ window.PORTFOLIO_VALIDATOR = (function () {
       achievable(products, function (b) { return (b.stats || {}).igWeight; }),
       "book")));
 
-    out.push(check("region", "Emerging market share of equity",
+    out.push(soften(check("region", "Emerging market share of equity",
       intent.country.em * 100,
       chars.equity.weight > 0 ? (chars.equity.regionExposure.em || 0) : null,
-      L.region, "%"));
+      L.region, "%")));
 
-    out.push(sectorCheck(intent, chars));
+    out.push(soften(sectorCheck(intent, chars)));
 
     /* Risk has to be put on one scale before the two sides can be compared
        at all: see SLEEVE_RISK_ANCHOR and RISK_INTENT_BASE. */
     var riskIntent = intent.riskProfile.normalized === null ? null
       : RISK_INTENT_BASE + RISK_INTENT_SPAN * intent.riskProfile.normalized;
-    out.push(check("risk", "Risk proxy",
+    out.push(soften(check("risk", "Risk proxy",
       riskIntent, chars.riskProxy, L.risk, "",
-      "Proxy, not a volatility estimate."));
+      "Proxy, not a volatility estimate.")));
 
     out.push(incomeCheck(intent, chars, agg, products));
 

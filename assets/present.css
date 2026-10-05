@@ -670,3 +670,9 @@ body.present {
   color: var(--muted);
 }
 .p-gearing b { color: var(--series-options); font-weight: 450; }
+
+/* The desk's equity books run to fifteen lines in the middle bands, which
+   clipped the last row off a 1000px projector. Nobody scrolls a slide. */
+.p-tbl-tight td { padding-top: clamp(3px, 0.5vh, 6px); padding-bottom: clamp(3px, 0.5vh, 6px); }
+.p-tbl-tight td { font-size: clamp(10px, 0.78vw, 12.5px); }
+.p-tbl-tight .p-tk { font-size: 0.82em; padding: 1px 4px; }

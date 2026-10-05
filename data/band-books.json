@@ -1,0 +1,2347 @@
+{
+ "$note": "Written by tools/build_bands.py from the desk's five-band workbooks. Every weight here is the desk's; nothing in this file is computed by the engine. Equity weights are GROSS and sum past 100% of the sleeve in every band, which is the leverage the desk intends.",
+ "asOf": "2026-10-04",
+ "bands": [
+  {
+   "id": "conservative",
+   "name": "Conservative",
+   "band": 0,
+   "equities": {
+    "lines": [
+     {
+      "id": "spy-us-equity",
+      "ticker": "SPY",
+      "name": "State Street SPDR S&P 500 ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 4.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.38,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.011,
+       "volatility": 0.68
+      }
+     },
+     {
+      "id": "long-put-spy",
+      "ticker": "SPY LP",
+      "name": "Long Put SPY",
+      "overlay": true,
+      "structure": "Long Put SPY",
+      "underlying": "SPY",
+      "moneyness": 0.93,
+      "weightOfSleeve": 0.05,
+      "weight": 5.0,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.35,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.011,
+       "volatility": 0.68
+      }
+     },
+     {
+      "id": "qqq-us-equity",
+      "ticker": "QQQ",
+      "name": "Invesco QQQ Trust Series 1",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.025,
+      "weight": 1.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.72,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.409,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "long-put-qqq",
+      "ticker": "QQQ LP",
+      "name": "Long Put QQQ",
+      "overlay": true,
+      "structure": "Long Put QQQ",
+      "underlying": "QQQ",
+      "moneyness": 0.93,
+      "weightOfSleeve": 0.05,
+      "weight": 5.0,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.35,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.409,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "vxus",
+      "ticker": "VXUS",
+      "name": "Vanguard Intl Stocks (FTSE Global)",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 4.0,
+      "analytics": {
+       "sleeve": "equities",
+       "sector": "core",
+       "region": "g7",
+       "usdExposure": 10,
+       "riskScore": 0.45,
+       "beta": null,
+       "volatility": null,
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "rsp",
+      "ticker": "RSP",
+      "name": "Ivesco S&P500 Equal weight",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.15,
+      "weight": 6.0,
+      "analytics": {
+       "sleeve": "equities",
+       "sector": "core",
+       "region": "g7",
+       "usdExposure": 100,
+       "riskScore": 0.48,
+       "beta": null,
+       "volatility": null,
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "xlf-us-equity",
+      "ticker": "XLF",
+      "name": "State Street Financial Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 2.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "financials",
+       "riskScore": 0.385,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.665,
+       "volatility": 1.17
+      }
+     },
+     {
+      "id": "xle-us-equity",
+      "ticker": "XLE",
+      "name": "State Street Energy Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 2.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "energy",
+       "riskScore": 0.45,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": -0.786,
+       "volatility": 1.81
+      }
+     },
+     {
+      "id": "xlu-us-equity",
+      "ticker": "XLU",
+      "name": "State Street Utilities Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.125,
+      "weight": 5.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "energy",
+       "riskScore": 0.05,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": -0.1,
+       "volatility": 1.31
+      }
+     },
+     {
+      "id": "xli-us-equity",
+      "ticker": "XLI",
+      "name": "State Street Industrial Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.15,
+      "weight": 6.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "industrials",
+       "riskScore": 0.395,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.703,
+       "volatility": 1.19
+      }
+     },
+     {
+      "id": "xlv-us-equity",
+      "ticker": "XLV",
+      "name": "State Street Health Care Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 4.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "healthcare",
+       "riskScore": 0.075,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.187,
+       "volatility": 1.13
+      }
+     },
+     {
+      "id": "schd-us-equity",
+      "ticker": "SCHD",
+      "name": "Schwab US Dividend Equity ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.15,
+      "weight": 6.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.04,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "usdExposure": 100,
+       "beta": 0.26,
+       "volatility": 0.77
+      }
+     }
+    ],
+    "grossOfSleeve": 1.1,
+    "weight": 50.0
+   },
+   "notes": {
+    "lines": [
+     {
+      "id": "spy-iwm-qqq-50-50-ac-3y",
+      "ticker": "AC",
+      "underlying": "SPY IWM QQQ 50/50",
+      "type": "AC",
+      "tenor": "3Y",
+      "barrier": "50/50",
+      "coupon": "0.075",
+      "name": "AC on SPY IWM QQQ 50/50",
+      "weightOfSleeve": 0.2,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 3.0
+      }
+     },
+     {
+      "id": "bac-jpm-c-ac-2y",
+      "ticker": "AC",
+      "underlying": "BAC JPM C",
+      "type": "AC",
+      "tenor": "2Y",
+      "barrier": "60/60",
+      "coupon": "11%mem",
+      "name": "AC on BAC JPM C",
+      "weightOfSleeve": 0.2,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 2.0
+      }
+     },
+     {
+      "id": "spx-ppn-3-5y",
+      "ticker": "PPN",
+      "underlying": "SPX",
+      "type": "PPN",
+      "tenor": "3.5Y",
+      "barrier": "-",
+      "coupon": "30%cap",
+      "name": "PPN on SPX",
+      "weightOfSleeve": 0.3,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": true,
+       "tenorYears": 3.5
+      }
+     },
+     {
+      "id": "spy-ac-3y",
+      "ticker": "AC",
+      "underlying": "SPY",
+      "type": "AC",
+      "tenor": "3Y",
+      "barrier": "65/65",
+      "coupon": "0.07",
+      "name": "AC on SPY",
+      "weightOfSleeve": 0.3,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 3.0
+      }
+     }
+    ],
+    "weight": 10.0,
+    "assumed": true
+   },
+   "fixedIncome": {
+    "weight": 40.0,
+    "assumed": true,
+    "book": 0
+   },
+   "fx": {
+    "lines": [
+     {
+      "id": "long-xau-usd",
+      "ticker": "LONGXAUUS",
+      "name": "Long XAU/USD",
+      "kind": "spot",
+      "weightOfSleeve": 1.0,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 0,
+       "riskScore": 0.5,
+       "kind": "spot",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     }
+    ],
+    "weight": 5.0,
+    "weightUnlevered": 5.0,
+    "leverage": 0,
+    "usdStance": -1.0
+   }
+  },
+  {
+   "id": "conservative-moderate",
+   "name": "Conservative to Moderate",
+   "band": 1,
+   "equities": {
+    "lines": [
+     {
+      "id": "spy-us-equity",
+      "ticker": "SPY",
+      "name": "State Street SPDR S&P 500 ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.125,
+      "weight": 6.25,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.38,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.011,
+       "volatility": 0.68
+      }
+     },
+     {
+      "id": "long-put-spy",
+      "ticker": "SPY LP",
+      "name": "Long Put SPY",
+      "overlay": true,
+      "structure": "Long Put SPY",
+      "underlying": "SPY",
+      "moneyness": 0.9,
+      "weightOfSleeve": 0.025,
+      "weight": 2.5,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.35,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.011,
+       "volatility": 0.68
+      }
+     },
+     {
+      "id": "qqq-us-equity",
+      "ticker": "QQQ",
+      "name": "Invesco QQQ Trust Series 1",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 2.5,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.72,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.409,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "long-put-qqq",
+      "ticker": "QQQ LP",
+      "name": "Long Put QQQ",
+      "overlay": true,
+      "structure": "Long Put QQQ",
+      "underlying": "QQQ",
+      "moneyness": 0.9,
+      "weightOfSleeve": 0.05,
+      "weight": 5.0,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.35,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.409,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "vxus",
+      "ticker": "VXUS",
+      "name": "Vanguard Intl Stocks (FTSE Global)",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 5.0,
+      "analytics": {
+       "sleeve": "equities",
+       "sector": "core",
+       "region": "g7",
+       "usdExposure": 10,
+       "riskScore": 0.45,
+       "beta": null,
+       "volatility": null,
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "rsp",
+      "ticker": "RSP",
+      "name": "Ivesco S&P500 Equal weight",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 5.0,
+      "analytics": {
+       "sleeve": "equities",
+       "sector": "core",
+       "region": "g7",
+       "usdExposure": 100,
+       "riskScore": 0.48,
+       "beta": null,
+       "volatility": null,
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "xlf-us-equity",
+      "ticker": "XLF",
+      "name": "State Street Financial Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.075,
+      "weight": 3.75,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "financials",
+       "riskScore": 0.385,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.665,
+       "volatility": 1.17
+      }
+     },
+     {
+      "id": "smh-us-equity",
+      "ticker": "SMH",
+      "name": "VanEck Semiconductor ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 2.5,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.945,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 2.013,
+       "volatility": 1.98
+      }
+     },
+     {
+      "id": "xle-us-equity",
+      "ticker": "XLE",
+      "name": "State Street Energy Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.075,
+      "weight": 3.75,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "energy",
+       "riskScore": 0.45,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": -0.786,
+       "volatility": 1.81
+      }
+     },
+     {
+      "id": "xlu-us-equity",
+      "ticker": "XLU",
+      "name": "State Street Utilities Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.125,
+      "weight": 6.25,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "energy",
+       "riskScore": 0.05,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": -0.1,
+       "volatility": 1.31
+      }
+     },
+     {
+      "id": "xli-us-equity",
+      "ticker": "XLI",
+      "name": "State Street Industrial Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 5.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "industrials",
+       "riskScore": 0.395,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.703,
+       "volatility": 1.19
+      }
+     },
+     {
+      "id": "xlv-us-equity",
+      "ticker": "XLV",
+      "name": "State Street Health Care Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.075,
+      "weight": 3.75,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "healthcare",
+       "riskScore": 0.075,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.187,
+       "volatility": 1.13
+      }
+     },
+     {
+      "id": "schd-us-equity",
+      "ticker": "SCHD",
+      "name": "Schwab US Dividend Equity ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.125,
+      "weight": 6.25,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.04,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "usdExposure": 100,
+       "beta": 0.26,
+       "volatility": 0.77
+      }
+     }
+    ],
+    "grossOfSleeve": 1.075,
+    "weight": 57.5
+   },
+   "notes": {
+    "lines": [
+     {
+      "id": "bac-jpm-c-ac-2y",
+      "ticker": "AC",
+      "underlying": "BAC JPM C",
+      "type": "AC",
+      "tenor": "2Y",
+      "barrier": "60/60",
+      "coupon": "11%mem",
+      "name": "AC on BAC JPM C",
+      "weightOfSleeve": 0.2,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 2.0
+      }
+     },
+     {
+      "id": "spy-iwm-qqq-ac-3y",
+      "ticker": "AC",
+      "underlying": "SPY IWM QQQ",
+      "type": "AC",
+      "tenor": "3Y",
+      "barrier": "60/60",
+      "coupon": "0.09",
+      "name": "AC on SPY IWM QQQ",
+      "weightOfSleeve": 0.4,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 3.0
+      }
+     },
+     {
+      "id": "spy-ac-3y",
+      "ticker": "AC",
+      "underlying": "SPY",
+      "type": "AC",
+      "tenor": "3Y",
+      "barrier": "70/70",
+      "coupon": "0.075",
+      "name": "AC on SPY",
+      "weightOfSleeve": 0.2,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 3.0
+      }
+     },
+     {
+      "id": "ma-v-axp-ac-2y",
+      "ticker": "AC",
+      "underlying": "MA V AXP",
+      "type": "AC",
+      "tenor": "2Y",
+      "barrier": "55/55",
+      "coupon": "8%mem",
+      "name": "AC on MA V AXP",
+      "weightOfSleeve": 0.2,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 2.0
+      }
+     }
+    ],
+    "weight": 12.0,
+    "assumed": true
+   },
+   "fixedIncome": {
+    "weight": 32.0,
+    "assumed": true,
+    "book": 1
+   },
+   "fx": {
+    "lines": [
+     {
+      "id": "long-xau-usd",
+      "ticker": "LONGXAUUS",
+      "name": "Long XAU/USD",
+      "kind": "spot",
+      "weightOfSleeve": 0.5,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 0,
+       "riskScore": 0.5,
+       "kind": "spot",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "long-usd-jpy-call-spread",
+      "ticker": "LONGUSDJP",
+      "name": "Long USD/JPY Call Spread",
+      "kind": "option structure",
+      "weightOfSleeve": 0.25,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.5,
+       "kind": "option structure",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "long-eur-usd-call-spread",
+      "ticker": "LONGEURUS",
+      "name": "Long EUR/USD Call Spread",
+      "kind": "option structure",
+      "weightOfSleeve": 0.25,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 0,
+       "riskScore": 0.5,
+       "kind": "option structure",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     }
+    ],
+    "weight": 10.0,
+    "weightUnlevered": 10.0,
+    "leverage": 0,
+    "usdStance": -0.5
+   }
+  },
+  {
+   "id": "moderate",
+   "name": "Moderate",
+   "band": 2,
+   "equities": {
+    "lines": [
+     {
+      "id": "spy-us-equity",
+      "ticker": "SPY",
+      "name": "State Street SPDR S&P 500 ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.125,
+      "weight": 7.5,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.38,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.011,
+       "volatility": 0.68
+      }
+     },
+     {
+      "id": "covered-call-on-spy",
+      "ticker": "SPY CC",
+      "name": "Covered Call on SPY",
+      "overlay": true,
+      "structure": "Covered Call on SPY",
+      "underlying": "SPY",
+      "moneyness": 1.07,
+      "weightOfSleeve": 0.05,
+      "weight": 5.0,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.3,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "usdExposure": 100,
+       "beta": 1.011,
+       "volatility": 0.68
+      }
+     },
+     {
+      "id": "qqq-us-equity",
+      "ticker": "QQQ",
+      "name": "Invesco QQQ Trust Series 1",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.075,
+      "weight": 4.5,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.72,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.409,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "covered-call-on-qqq",
+      "ticker": "QQQ CC",
+      "name": "Covered Call on QQQ",
+      "overlay": true,
+      "structure": "Covered Call on QQQ",
+      "underlying": "QQQ",
+      "moneyness": 1.07,
+      "weightOfSleeve": 0.05,
+      "weight": 5.0,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.3,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "usdExposure": 100,
+       "beta": 1.409,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "long-put-qqq",
+      "ticker": "QQQ LP",
+      "name": "Long Put QQQ",
+      "overlay": true,
+      "structure": "Long Put QQQ",
+      "underlying": "QQQ",
+      "moneyness": 0.85,
+      "weightOfSleeve": 0.025,
+      "weight": 2.5,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.35,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.409,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "vxus",
+      "ticker": "VXUS",
+      "name": "Vanguard Intl Stocks (FTSE Global)",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 6.0,
+      "analytics": {
+       "sleeve": "equities",
+       "sector": "core",
+       "region": "g7",
+       "usdExposure": 10,
+       "riskScore": 0.45,
+       "beta": null,
+       "volatility": null,
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "rsp",
+      "ticker": "RSP",
+      "name": "Ivesco S&P500 Equal weight",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 6.0,
+      "analytics": {
+       "sleeve": "equities",
+       "sector": "core",
+       "region": "g7",
+       "usdExposure": 100,
+       "riskScore": 0.48,
+       "beta": null,
+       "volatility": null,
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "xlf-us-equity",
+      "ticker": "XLF",
+      "name": "State Street Financial Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 6.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "financials",
+       "riskScore": 0.385,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.665,
+       "volatility": 1.17
+      }
+     },
+     {
+      "id": "smh-us-equity",
+      "ticker": "SMH",
+      "name": "VanEck Semiconductor ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 6.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.945,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 2.013,
+       "volatility": 1.98
+      }
+     },
+     {
+      "id": "xle-us-equity",
+      "ticker": "XLE",
+      "name": "State Street Energy Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 6.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "energy",
+       "riskScore": 0.45,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": -0.786,
+       "volatility": 1.81
+      }
+     },
+     {
+      "id": "eem-us-equity",
+      "ticker": "EEM",
+      "name": "iShares MSCI Emerging Markets ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 3.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "em",
+       "sector": "core",
+       "riskScore": 0.7,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 20,
+       "beta": 1.292,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "xlu-us-equity",
+      "ticker": "XLU",
+      "name": "State Street Utilities Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 3.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "energy",
+       "riskScore": 0.05,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": -0.1,
+       "volatility": 1.31
+      }
+     },
+     {
+      "id": "xli-us-equity",
+      "ticker": "XLI",
+      "name": "State Street Industrial Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 3.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "industrials",
+       "riskScore": 0.395,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.703,
+       "volatility": 1.19
+      }
+     },
+     {
+      "id": "xlv-us-equity",
+      "ticker": "XLV",
+      "name": "State Street Health Care Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 3.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "healthcare",
+       "riskScore": 0.075,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.187,
+       "volatility": 1.13
+      }
+     },
+     {
+      "id": "schd-us-equity",
+      "ticker": "SCHD",
+      "name": "Schwab US Dividend Equity ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 6.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.04,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "usdExposure": 100,
+       "beta": 0.26,
+       "volatility": 0.77
+      }
+     }
+    ],
+    "grossOfSleeve": 1.125,
+    "weight": 72.5
+   },
+   "notes": {
+    "lines": [
+     {
+      "id": "brazil-lifter-cln-cln-10y",
+      "ticker": "CLN",
+      "underlying": "Brazil Lifter CLN",
+      "type": "CLN",
+      "tenor": "10Y",
+      "barrier": "-",
+      "coupon": "0.1185",
+      "name": "CLN on Brazil Lifter CLN",
+      "weightOfSleeve": 0.2,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 10.0
+      }
+     },
+     {
+      "id": "spy-iwm-qqq-ac-3y",
+      "ticker": "AC",
+      "underlying": "SPY IWM QQQ",
+      "type": "AC",
+      "tenor": "3Y",
+      "barrier": "60/60",
+      "coupon": "0.09",
+      "name": "AC on SPY IWM QQQ",
+      "weightOfSleeve": 0.4,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 3.0
+      }
+     },
+     {
+      "id": "goog-aapl-amzn-msft-ac-3y",
+      "ticker": "AC",
+      "underlying": "GOOG AAPL AMZN MSFT",
+      "type": "AC",
+      "tenor": "3Y",
+      "barrier": "50/50",
+      "coupon": "11.5%mem",
+      "name": "AC on GOOG AAPL AMZN MSFT",
+      "weightOfSleeve": 0.2,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 3.0
+      }
+     },
+     {
+      "id": "ma-v-axp-ac-2y",
+      "ticker": "AC",
+      "underlying": "MA V AXP",
+      "type": "AC",
+      "tenor": "2Y",
+      "barrier": "60/60",
+      "coupon": "9%mem",
+      "name": "AC on MA V AXP",
+      "weightOfSleeve": 0.2,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 2.0
+      }
+     }
+    ],
+    "weight": 14.0,
+    "assumed": true
+   },
+   "fixedIncome": {
+    "weight": 24.0,
+    "assumed": true,
+    "book": 2
+   },
+   "fx": {
+    "lines": [
+     {
+      "id": "long-xau-usd",
+      "ticker": "LONGXAUUS",
+      "name": "Long XAU/USD",
+      "kind": "spot",
+      "weightOfSleeve": 0.33,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 0,
+       "riskScore": 0.5,
+       "kind": "spot",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "long-usd-jpy-call",
+      "ticker": "LONGUSDJP",
+      "name": "Long USD/JPY Call",
+      "kind": "option",
+      "weightOfSleeve": 0.33,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.5,
+       "kind": "option",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "long-eur-usd-call-spread",
+      "ticker": "LONGEURUS",
+      "name": "Long EUR/USD Call Spread",
+      "kind": "option structure",
+      "weightOfSleeve": 0.34,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 0,
+       "riskScore": 0.5,
+       "kind": "option structure",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     }
+    ],
+    "weight": 22.0,
+    "weightUnlevered": 20.0,
+    "leverage": 0.1,
+    "usdStance": -0.33
+   }
+  },
+  {
+   "id": "moderate-aggressive",
+   "name": "Moderate to Aggressive",
+   "band": 3,
+   "equities": {
+    "lines": [
+     {
+      "id": "spy-us-equity",
+      "ticker": "SPY",
+      "name": "State Street SPDR S&P 500 ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 7.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.38,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.011,
+       "volatility": 0.68
+      }
+     },
+     {
+      "id": "covered-call-on-spy",
+      "ticker": "SPY CC",
+      "name": "Covered Call on SPY",
+      "overlay": true,
+      "structure": "Covered Call on SPY",
+      "underlying": "SPY",
+      "moneyness": 1.07,
+      "weightOfSleeve": 0.075,
+      "weight": 7.5,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.3,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "usdExposure": 100,
+       "beta": 1.011,
+       "volatility": 0.68
+      }
+     },
+     {
+      "id": "long-call-spy",
+      "ticker": "SPY LC",
+      "name": "Long Call SPY",
+      "overlay": true,
+      "structure": "Long Call SPY",
+      "underlying": "SPY",
+      "moneyness": 0.95,
+      "weightOfSleeve": 0.05,
+      "weight": 5.0,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.9,
+       "expressesLeverage": true,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.011,
+       "volatility": 0.68
+      }
+     },
+     {
+      "id": "qqq-us-equity",
+      "ticker": "QQQ",
+      "name": "Invesco QQQ Trust Series 1",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 7.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.72,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.409,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "covered-call-on-qqq",
+      "ticker": "QQQ CC",
+      "name": "Covered Call on QQQ",
+      "overlay": true,
+      "structure": "Covered Call on QQQ",
+      "underlying": "QQQ",
+      "moneyness": 1.07,
+      "weightOfSleeve": 0.05,
+      "weight": 5.0,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.3,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "usdExposure": 100,
+       "beta": 1.409,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "long-call-qqq",
+      "ticker": "QQQ LC",
+      "name": "Long Call QQQ",
+      "overlay": true,
+      "structure": "Long Call QQQ",
+      "underlying": "QQQ",
+      "moneyness": 0.95,
+      "weightOfSleeve": 0.025,
+      "weight": 2.5,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.9,
+       "expressesLeverage": true,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.409,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "vxus",
+      "ticker": "VXUS",
+      "name": "Vanguard Intl Stocks (FTSE Global)",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.075,
+      "weight": 5.25,
+      "analytics": {
+       "sleeve": "equities",
+       "sector": "core",
+       "region": "g7",
+       "usdExposure": 10,
+       "riskScore": 0.45,
+       "beta": null,
+       "volatility": null,
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "rsp",
+      "ticker": "RSP",
+      "name": "Ivesco S&P500 Equal weight",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 3.5,
+      "analytics": {
+       "sleeve": "equities",
+       "sector": "core",
+       "region": "g7",
+       "usdExposure": 100,
+       "riskScore": 0.48,
+       "beta": null,
+       "volatility": null,
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "xlf-us-equity",
+      "ticker": "XLF",
+      "name": "State Street Financial Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.125,
+      "weight": 8.75,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "financials",
+       "riskScore": 0.385,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.665,
+       "volatility": 1.17
+      }
+     },
+     {
+      "id": "smh-us-equity",
+      "ticker": "SMH",
+      "name": "VanEck Semiconductor ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.15,
+      "weight": 10.5,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.945,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 2.013,
+       "volatility": 1.98
+      }
+     },
+     {
+      "id": "xle-us-equity",
+      "ticker": "XLE",
+      "name": "State Street Energy Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.075,
+      "weight": 5.25,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "energy",
+       "riskScore": 0.45,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": -0.786,
+       "volatility": 1.81
+      }
+     },
+     {
+      "id": "eem-us-equity",
+      "ticker": "EEM",
+      "name": "iShares MSCI Emerging Markets ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.15,
+      "weight": 10.5,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "em",
+       "sector": "core",
+       "riskScore": 0.7,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 20,
+       "beta": 1.292,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "xlu-us-equity",
+      "ticker": "XLU",
+      "name": "State Street Utilities Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 3.5,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "energy",
+       "riskScore": 0.05,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": -0.1,
+       "volatility": 1.31
+      }
+     },
+     {
+      "id": "xli-us-equity",
+      "ticker": "XLI",
+      "name": "State Street Industrial Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 3.5,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "industrials",
+       "riskScore": 0.395,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.703,
+       "volatility": 1.19
+      }
+     },
+     {
+      "id": "xlv-us-equity",
+      "ticker": "XLV",
+      "name": "State Street Health Care Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.025,
+      "weight": 1.75,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "healthcare",
+       "riskScore": 0.075,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.187,
+       "volatility": 1.13
+      }
+     },
+     {
+      "id": "schd-us-equity",
+      "ticker": "SCHD",
+      "name": "Schwab US Dividend Equity ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 3.5,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.04,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "usdExposure": 100,
+       "beta": 0.26,
+       "volatility": 0.77
+      }
+     }
+    ],
+    "grossOfSleeve": 1.2,
+    "weight": 90.0
+   },
+   "notes": {
+    "lines": [
+     {
+      "id": "brazil-lifter-cln-cln-10y",
+      "ticker": "CLN",
+      "underlying": "Brazil Lifter CLN",
+      "type": "CLN",
+      "tenor": "10Y",
+      "barrier": "-",
+      "coupon": "0.1185",
+      "name": "CLN on Brazil Lifter CLN",
+      "weightOfSleeve": 0.2,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 10.0
+      }
+     },
+     {
+      "id": "xle-xlf-xlk-ac-2y",
+      "ticker": "AC",
+      "underlying": "XLE XLF XLK",
+      "type": "AC",
+      "tenor": "2Y",
+      "barrier": "65/65",
+      "coupon": "11.50%mem",
+      "name": "AC on XLE XLF XLK",
+      "weightOfSleeve": 0.2,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 2.0
+      }
+     },
+     {
+      "id": "spy-iwm-qqq-ac-2y",
+      "ticker": "AC",
+      "underlying": "SPY IWM QQQ",
+      "type": "AC",
+      "tenor": "2Y",
+      "barrier": "70/70",
+      "coupon": "10%mem",
+      "name": "AC on SPY IWM QQQ",
+      "weightOfSleeve": 0.3,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 2.0
+      }
+     },
+     {
+      "id": "goog-aapl-amzn-msft-ac-3y",
+      "ticker": "AC",
+      "underlying": "GOOG AAPL AMZN MSFT",
+      "type": "AC",
+      "tenor": "3Y",
+      "barrier": "50/50",
+      "coupon": "11.5%mem",
+      "name": "AC on GOOG AAPL AMZN MSFT",
+      "weightOfSleeve": 0.3,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 3.0
+      }
+     }
+    ],
+    "weight": 16.0,
+    "assumed": true
+   },
+   "fixedIncome": {
+    "weight": 16.0,
+    "assumed": true,
+    "book": 3
+   },
+   "fx": {
+    "lines": [
+     {
+      "id": "long-xau-usd-call",
+      "ticker": "LONGXAUUS",
+      "name": "Long XAU/USD Call",
+      "kind": "option",
+      "weightOfSleeve": 0.25,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 0,
+       "riskScore": 0.5,
+       "kind": "option",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "long-usd-jpy",
+      "ticker": "LONGUSDJP",
+      "name": "Long USD/JPY",
+      "kind": "spot",
+      "weightOfSleeve": 0.25,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.5,
+       "kind": "spot",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "long-eur-usd-put",
+      "ticker": "LONGEURUS",
+      "name": "Long EUR/USD Put",
+      "kind": "option",
+      "weightOfSleeve": 0.25,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 0,
+       "riskScore": 0.5,
+       "kind": "option",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "short-usd-brl-ndf",
+      "ticker": "SHORTUSDB",
+      "name": "Short USD/BRL NDF",
+      "kind": "forward",
+      "weightOfSleeve": 0.25,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 0,
+       "riskScore": 0.5,
+       "kind": "forward",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     }
+    ],
+    "weight": 23.0,
+    "weightUnlevered": 20.0,
+    "leverage": 0.15,
+    "usdStance": -0.5
+   }
+  },
+  {
+   "id": "aggressive",
+   "name": "Aggressive",
+   "band": 4,
+   "equities": {
+    "lines": [
+     {
+      "id": "spy-us-equity",
+      "ticker": "SPY",
+      "name": "State Street SPDR S&P 500 ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.175,
+      "weight": 13.125,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.38,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.011,
+       "volatility": 0.68
+      }
+     },
+     {
+      "id": "covered-call-on-spy",
+      "ticker": "SPY CC",
+      "name": "Covered Call on SPY",
+      "overlay": true,
+      "structure": "Covered Call on SPY",
+      "underlying": "SPY",
+      "moneyness": 1.15,
+      "weightOfSleeve": 0.1,
+      "weight": 10.0,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.3,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "usdExposure": 100,
+       "beta": 1.011,
+       "volatility": 0.68
+      }
+     },
+     {
+      "id": "long-call-spy",
+      "ticker": "SPY LC",
+      "name": "Long Call SPY",
+      "overlay": true,
+      "structure": "Long Call SPY",
+      "underlying": "SPY",
+      "moneyness": 0.95,
+      "weightOfSleeve": 0.2,
+      "weight": 20.0,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.9,
+       "expressesLeverage": true,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.011,
+       "volatility": 0.68
+      }
+     },
+     {
+      "id": "qqq-us-equity",
+      "ticker": "QQQ",
+      "name": "Invesco QQQ Trust Series 1",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.15,
+      "weight": 11.25,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.72,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.409,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "long-call-qqq",
+      "ticker": "QQQ LC",
+      "name": "Long Call QQQ",
+      "overlay": true,
+      "structure": "Long Call QQQ",
+      "underlying": "QQQ",
+      "moneyness": 0.95,
+      "weightOfSleeve": 0.1,
+      "weight": 10.0,
+      "analytics": {
+       "sleeve": "options",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.9,
+       "expressesLeverage": true,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 1.409,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "vxus",
+      "ticker": "VXUS",
+      "name": "Vanguard Intl Stocks (FTSE Global)",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 3.75,
+      "analytics": {
+       "sleeve": "equities",
+       "sector": "core",
+       "region": "g7",
+       "usdExposure": 10,
+       "riskScore": 0.45,
+       "beta": null,
+       "volatility": null,
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "xlf-us-equity",
+      "ticker": "XLF",
+      "name": "State Street Financial Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 3.75,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "financials",
+       "riskScore": 0.385,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.665,
+       "volatility": 1.17
+      }
+     },
+     {
+      "id": "smh-us-equity",
+      "ticker": "SMH",
+      "name": "VanEck Semiconductor ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.2,
+      "weight": 15.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "tech",
+       "riskScore": 0.945,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 2.013,
+       "volatility": 1.98
+      }
+     },
+     {
+      "id": "xle-us-equity",
+      "ticker": "XLE",
+      "name": "State Street Energy Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.1,
+      "weight": 7.5,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "energy",
+       "riskScore": 0.45,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": -0.786,
+       "volatility": 1.81
+      }
+     },
+     {
+      "id": "eem-us-equity",
+      "ticker": "EEM",
+      "name": "iShares MSCI Emerging Markets ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.2,
+      "weight": 15.0,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "em",
+       "sector": "core",
+       "riskScore": 0.7,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 20,
+       "beta": 1.292,
+       "volatility": 1.01
+      }
+     },
+     {
+      "id": "xli-us-equity",
+      "ticker": "XLI",
+      "name": "State Street Industrial Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.05,
+      "weight": 3.75,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "industrials",
+       "riskScore": 0.395,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.703,
+       "volatility": 1.19
+      }
+     },
+     {
+      "id": "schd-us-equity",
+      "ticker": "SCHD",
+      "name": "Schwab US Dividend Equity ETF",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.025,
+      "weight": 1.875,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "core",
+       "riskScore": 0.04,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "usdExposure": 100,
+       "beta": 0.26,
+       "volatility": 0.77
+      }
+     }
+    ],
+    "grossOfSleeve": 1.4,
+    "weight": 115.0
+   },
+   "notes": {
+    "lines": [
+     {
+      "id": "spy-iwm-qqq-ac-2y",
+      "ticker": "AC",
+      "underlying": "SPY IWM QQQ",
+      "type": "AC",
+      "tenor": "2Y",
+      "barrier": "75/75",
+      "coupon": "11%mem",
+      "name": "AC on SPY IWM QQQ",
+      "weightOfSleeve": 0.3,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 2.0
+      }
+     },
+     {
+      "id": "goog-aapl-amzn-msft-ac-3y",
+      "ticker": "AC",
+      "underlying": "GOOG AAPL AMZN MSFT",
+      "type": "AC",
+      "tenor": "3Y",
+      "barrier": "50/50",
+      "coupon": "11.5%mem",
+      "name": "AC on GOOG AAPL AMZN MSFT",
+      "weightOfSleeve": 0.3,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 3.0
+      }
+     },
+     {
+      "id": "spcx-cat-3y",
+      "ticker": "CAT",
+      "underlying": "SPCX",
+      "type": "CAT",
+      "tenor": "3Y",
+      "barrier": "100/60",
+      "coupon": "0.3",
+      "name": "CAT on SPCX",
+      "weightOfSleeve": 0.2,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": true,
+       "tenorYears": 3.0
+      }
+     },
+     {
+      "id": "tsla-amd-ac-3y",
+      "ticker": "AC",
+      "underlying": "TSLA AMD",
+      "type": "AC",
+      "tenor": "3y",
+      "barrier": "50/50",
+      "coupon": "19%mem",
+      "name": "AC on TSLA AMD",
+      "weightOfSleeve": 0.2,
+      "analytics": {
+       "sleeve": "notes",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.55,
+       "expressesLeverage": false,
+       "incomeProducing": true,
+       "principalProtected": false,
+       "tenorYears": 3.0
+      }
+     }
+    ],
+    "weight": 18.0,
+    "assumed": true
+   },
+   "fixedIncome": {
+    "weight": 10.0,
+    "assumed": true,
+    "book": 4
+   },
+   "fx": {
+    "lines": [
+     {
+      "id": "long-xau-usd",
+      "ticker": "LONGXAUUS",
+      "name": "Long XAU/USD",
+      "kind": "spot",
+      "weightOfSleeve": 0.25,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 0,
+       "riskScore": 0.5,
+       "kind": "spot",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "long-usd-jpy",
+      "ticker": "LONGUSDJP",
+      "name": "Long USD/JPY",
+      "kind": "spot",
+      "weightOfSleeve": 0.25,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.5,
+       "kind": "spot",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "short-usd-brl-ndf",
+      "ticker": "SHORTUSDB",
+      "name": "Short USD/BRL NDF",
+      "kind": "forward",
+      "weightOfSleeve": 0.25,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 0,
+       "riskScore": 0.5,
+       "kind": "forward",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
+      "id": "long-usd-mxn-call",
+      "ticker": "LONGUSDMX",
+      "name": "Long USD/MXN Call",
+      "kind": "option",
+      "weightOfSleeve": 0.25,
+      "analytics": {
+       "sleeve": "fx",
+       "region": "g7",
+       "sector": null,
+       "usdExposure": 100,
+       "riskScore": 0.5,
+       "kind": "option",
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     }
+    ],
+    "weight": 24.0,
+    "weightUnlevered": 20.0,
+    "leverage": 0.2,
+    "usdStance": 0.0
+   }
+  }
+ ]
+}

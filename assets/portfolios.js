@@ -362,13 +362,7 @@ window.PORTFOLIOS =
 
 /* How much each answer moves the match. Risk appetite and protection
  * dominate; the FX opinion is flavour, not structure. */
-window.WEIGHTS = {
-  riskProfile: 1.8, marketView: 1.0, horizon: 1.3,
-  leverage: 0.9, country: 0.9,
-  sector: 0.8,
-  usd: 0.8,
-  capitalIncome: 1.2, duration: 1.0, credit: 1.2
-};
+window.WEIGHTS = {"riskProfile": 6, "marketView": 1, "horizon": 1.3, "leverage": 0.9, "country": 0.9, "sector": 0.8, "usd": 0.8, "capitalIncome": 1.2, "duration": 1, "credit": 1.2};
 
 window.ENGINE = (function () {
 
@@ -1254,7 +1248,106 @@ window.ENGINE = (function () {
     return scoreShelf(agg, products && products.equities, opts);
   }
 
+  /* ---- the desk's own book, by band -----------------------------------
+   *
+   * When data/band-books.json is present the portfolio is not constructed at
+   * all: the desk has written out, band by band, exactly what each of the
+   * five holds and at what weight, and the room's answers only choose which
+   * band. That is what the desk asked for — every question translates into
+   * which of the five portfolios is selected — and it means the weights on
+   * screen are the desk's, not the engine's.
+   *
+   * The sleeves deliberately do not sum to 100. The equity sheet alone runs
+   * 50% of capital at Conservative and 115% at Aggressive, because the book
+   * is geared; adding the other sleeves takes gross to between 105% and 167%.
+   * Forcing that back to 100 would be the same mistake as flattening
+   * leverage, just in a different place.
+   */
+  function bandBook(agg, products, bandsDoc) {
+    var top = rank(aggProfile(agg))[0];
+    if (!top || !top.portfolio) return null;
+    var band = (bandsDoc.bands || []).filter(function (b) {
+      return b.id === top.portfolio.id;
+    })[0];
+    if (!band) return null;
+
+    var buckets = [];
+
+    function lines(src, sleeveWeight, tag) {
+      var raw = (src || []).slice();
+      if (!raw.length) return [];
+      /* Equity lines already carry a weight as a share of the whole
+         portfolio. Notes and FX carry a share of their own sleeve, so they
+         are scaled onto the sleeve's weight. */
+      var haveAbs = raw.every(function (l) { return typeof l.weight === "number"; });
+      var tot = raw.reduce(function (t, l) {
+        return t + (haveAbs ? l.weight : (l.weightOfSleeve || 0));
+      }, 0) || 1;
+      return raw.map(function (l, i) {
+        var w = haveAbs ? l.weight : ((l.weightOfSleeve || 0) / tot) * sleeveWeight;
+        return {
+          item: l, weight: Math.round(w * 10) / 10, rank: i + 1,
+          overlay: !!l.overlay
+        };
+      }).filter(function (l) { return l.weight > 0; });
+    }
+
+    buckets.push({
+      key: "equities", label: "Equities",
+      weight: band.equities.weight,
+      overlayWeight: (band.equities.lines || []).filter(function (l) { return l.overlay; })
+        .reduce(function (t, l) { return t + (l.weight || 0); }, 0),
+      grossOfSleeve: band.equities.grossOfSleeve,
+      lines: lines(band.equities.lines, band.equities.weight), scored: []
+    });
+
+    /* Fixed income is the matching book out of the five, taken whole. */
+    var fiBooks = ((products.fixedIncome || {}).portfolios) || [];
+    var fiBook = fiBooks[band.fixedIncome.book] || null;
+    buckets.push({
+      key: "fixedIncome", label: "Fixed income",
+      weight: band.fixedIncome.weight,
+      book: fiBook, bookAssumedWeight: !!band.fixedIncome.assumed,
+      lines: fiBook ? lines((fiBook.holdings || []).map(function (h) {
+        return Object.assign({}, h, { weight: undefined, weightOfSleeve: h.weight });
+      }), band.fixedIncome.weight) : [],
+      scored: []
+    });
+
+    buckets.push({
+      key: "notes", label: "Structured notes",
+      weight: band.notes.weight,
+      lines: lines(band.notes.lines, band.notes.weight), scored: []
+    });
+
+    buckets.push({
+      key: "fx", label: "FX",
+      weight: band.fx.weight, fxLeverage: band.fx.leverage,
+      usdStance: band.fx.usdStance,
+      lines: lines(band.fx.lines, band.fx.weight), scored: []
+    });
+
+    var gross = buckets.reduce(function (t, b) { return t + (b.weight || 0); }, 0);
+    var alloc = {
+      equities: band.equities.weight, fixedIncome: band.fixedIncome.weight,
+      notes: band.notes.weight, fx: band.fx.weight, options: 0,
+      gross: Math.round(gross * 10) / 10, net: 100,
+      financed: Math.round((gross - 100) * 10) / 10,
+      levered: gross > 100.5,
+      band: band.id, bandName: band.name,
+      drivers: roomAllocation(agg).drivers
+    };
+
+    return { alloc: alloc, buckets: buckets, band: band, fromBandBook: true };
+  }
+
   function roomPortfolio(agg, products) {
+    /* The desk's own book wins when it is available. */
+    if (window.BANDS && window.BANDS.bands) {
+      var desk = bandBook(agg, products, window.BANDS);
+      if (desk) return desk;
+    }
+
     if (!products) return null;
     var alloc = roomAllocation(agg);
     /* Every sleeve is now scored off its own shelf with the same machinery,

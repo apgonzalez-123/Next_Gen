@@ -2,7 +2,7 @@
   "$schema": "The five risk bands the desk works in. The room is matched to one of these; the instruments it then holds come from data/products.json, not from here.",
   "version": 5,
   "weights": {
-    "riskProfile": 1.8,
+    "riskProfile": 6,
     "marketView": 1,
     "horizon": 1.3,
     "leverage": 0.9,

@@ -63,8 +63,23 @@ window.BASE = (function () {
 
   /* The product shelf for the room simulation. Optional: without it the
      admin board shows the allocation but not the instruments inside it. */
+  /* The desk's five finished books, one per risk band. When this loads the
+     room is given the band's book as written rather than having one built by
+     scoring a shelf. Optional: without it the engine falls back to
+     constructing the portfolio itself. */
+  window.BANDS = null;
+  fetch("data/band-books.json?v=202610050100")
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      if (d && Array.isArray(d.bands) && d.bands.length) window.BANDS = d;
+      else console.warn("band books missing or malformed; building the book instead");
+    })
+    .catch(function () {
+      console.warn("band books could not be loaded; building the book instead");
+    });
+
   window.PRODUCTS = null;
-  var productsReady = fetch("data/products.json?v=202610050045", { cache: "no-store" })
+  var productsReady = fetch("data/products.json?v=202610050100", { cache: "no-store" })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (d) {
       var ok = d && ["equities", "fixedIncome", "notes", "fx"]  /* options is optional */.every(function (b) {
@@ -77,7 +92,7 @@ window.BASE = (function () {
       console.warn("[NextGen] could not load data/products.json, room simulation disabled.");
     });
 
-  var ready = fetch("data/portfolios.json?v=202610050045", { cache: "no-store" })
+  var ready = fetch("data/portfolios.json?v=202610050100", { cache: "no-store" })
     .then(function (r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.json();

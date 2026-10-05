@@ -741,7 +741,8 @@
   function panel(b, stats, head, rows, foot) {
     return '<div class="p-stats">' + stats + "</div>" +
       '<div class="p-tblwrap"><table class="p-tbl' +
-        ((b.lines || []).length > 7 ? " p-tbl-dense" : "") + '">' +
+        ((b.lines || []).length > 12 ? " p-tbl-dense p-tbl-tight"
+          : (b.lines || []).length > 7 ? " p-tbl-dense" : "") + '">' +
         "<thead><tr>" + head.map(function (h, i) {
           return "<th" + (i >= head.length - 3 ? ' class="num"' : "") + ">" + h + "</th>";
         }).join("") + "</tr></thead><tbody>" + rows + "</tbody></table></div>" +
