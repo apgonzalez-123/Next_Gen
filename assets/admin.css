@@ -273,3 +273,20 @@ a.p-btn { text-decoration: none; display: inline-block; }
 }
 .a-fit i u { display: block; height: 100%; text-decoration: none; border-radius: var(--r-xs); }
 .a-fit b { color: var(--text-2); font-variant-numeric: tabular-nums; font-weight: 400; }
+
+/* Gearing, above the simulated book: the sleeves below sum past 100 when
+   the room asked for leverage, and a total that looks like an arithmetic
+   error needs explaining next to the numbers. */
+.a-gearing {
+  border: 1px solid rgba(140,92,214,0.4);
+  border-radius: var(--r-md);
+  background: rgba(140,92,214,0.06);
+  padding: 13px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.a-gearing b { color: var(--series-options); font-weight: 550; }
+.a-gearing ul { margin: 8px 0 0; padding-left: 18px; }
+.a-gearing li { color: var(--muted); margin-bottom: 4px; }

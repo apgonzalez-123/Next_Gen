@@ -720,3 +720,14 @@ body.present {
   font-size: clamp(10px, 0.78vw, 13px);
   color: var(--muted);
 }
+
+/* Gearing note under the positions board. */
+.p-gearing {
+  margin-top: clamp(10px, 1.6vh, 18px);
+  padding-top: clamp(8px, 1.2vh, 14px);
+  border-top: 1px solid var(--line);
+  font-size: clamp(11px, 0.85vw, 14px);
+  line-height: 1.5;
+  color: var(--muted);
+}
+.p-gearing b { color: var(--series-options); font-weight: 450; }

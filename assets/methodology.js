@@ -180,6 +180,33 @@
   /* The fixed income sleeve is not assembled from the shelf above: the desk
      supplies five finished books and the room picks one. This shows what they
      are, computed from their own holdings, so the choice can be argued with. */
+  /* Leverage changes what the allocation means, so the page that explains
+     the allocation has to explain that too. */
+  function renderGearing() {
+    var host = el("gearingNote");
+    if (!host) return;
+    host.innerHTML =
+      "<h4>Leverage</h4>" +
+      "<p>Everything in the formula above sums to 100: that is the capital. " +
+      "Leverage is not a reshuffle of it &mdash; it is borrowing, and a borrowed " +
+      "book works more than the money behind it. So when the room asks for " +
+      "leverage the sleeves deliberately sum to <b>more</b> than 100, net stays " +
+      "at 100, and the difference is financed.</p>" +
+      "<p>The uplift reaches <b>35 percentage points</b> when the whole room " +
+      "wants it, so a fully levered book runs at 1.35&times; gross. It goes to " +
+      "the two sleeves a desk actually lends against, equities and FX; nobody " +
+      "gears a structured note by borrowing, and the gearing in a note is " +
+      "inside the structure already. That cap is a judgement, stated here " +
+      "rather than buried: it is not a margin model and makes no claim about " +
+      "what any client would be offered.</p>" +
+      "<p>Everywhere a geared book is shown it carries the same disclosure, " +
+      "written once in <b>ENGINE.leverageDisclosure()</b> so the guest screen, " +
+      "the projector and the admin board cannot drift into saying different " +
+      "things about the same portfolio: the borrowing is repayable whatever " +
+      "the portfolio does, losses are amplified on the same terms as gains, " +
+      "and the financing cost appears in none of the figures on screen.</p>";
+  }
+
   function renderBooks(P) {
     var host = el("fiBooks"), lead = el("fiLead"), note = el("fiNote");
     if (!host) return;
@@ -535,6 +562,7 @@
     renderBuckets();
     renderUniLead(P);
     renderBooks(P);
+    renderGearing();
     renderNav(P);
     renderShelf(P);
     renderAllWeights(P);

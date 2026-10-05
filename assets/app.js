@@ -508,7 +508,18 @@
       "</section>";
     }).join("");
 
-    card.innerHTML = "<h3>Allocation</h3>" + bar +
+    /* A geared book totals more than the capital behind it, so the figure
+       has to be explained where it is shown, not in a footnote somewhere
+       else. */
+    var lev = window.ENGINE.leverageDisclosure(sim.alloc);
+    var head = "<h3>Allocation</h3>";
+    if (lev) {
+      head = '<div class="bk-gross"><h3>Allocation</h3>' +
+        '<span class="bk-mult">' + lev.multiple + "&times; geared</span></div>" +
+        '<p class="bk-gross-note"><b>' + lev.gross + "% invested against 100% of capital.</b> " +
+        esc(lev.short) + "</p>";
+    }
+    card.innerHTML = head + bar +
       '<div class="bk-sleeves">' + sleeves + "</div>";
     return card;
   }

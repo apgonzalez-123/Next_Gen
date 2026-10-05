@@ -268,6 +268,20 @@
     var sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS);
     if (!sim) { grid.innerHTML = ""; return; }
 
+    /* The sleeves below sum past 100 when the room asked for leverage. Say
+       why, next to the numbers, rather than leaving a total that looks like
+       an arithmetic error. */
+    var lev = window.ENGINE.leverageDisclosure(sim.alloc);
+    var levNote = document.getElementById("simGearing");
+    if (levNote) {
+      levNote.hidden = !lev;
+      levNote.innerHTML = lev
+        ? "<b>" + esc(lev.headline) + ".</b><ul>" +
+          lev.points.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") +
+          "</ul>"
+        : "";
+    }
+
     grid.innerHTML = sim.buckets.map(function (b) {
       var colour = BUCKET_COLOUR[b.key];
       /* Line bars scale within their own bucket, so a 3% line in a small

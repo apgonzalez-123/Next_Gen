@@ -51,7 +51,12 @@
   function generate() {
     var base = document.getElementById("baseUrl").value.trim();
     if (!base) {
-      base = window.location.href.split("?")[0].replace(/qr-gen\.html?$/, "");
+      /* Same source as the projector's join code: a printed card must send
+         the guest to the public address, not to whichever host the cards
+         happened to be generated from. */
+      var cfg = (window.CONFIG || {}).GUEST_URL;
+      base = cfg ? cfg.replace(/\/+$/, "") + "/"
+                 : window.location.href.split("?")[0].replace(/qr-gen\.html?$/, "");
       document.getElementById("baseUrl").value = base;
     }
     var rows = parseList(document.getElementById("guests").value);

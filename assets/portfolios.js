@@ -839,11 +839,91 @@ window.ENGINE = (function () {
       out[biggest] += 100 - sum;
     }
 
+    /* ---- leverage ----
+     *
+     * Everything above sums to 100: that is the capital. Leverage is not a
+     * reshuffle of it, it is borrowing, and a borrowed book works MORE than
+     * the money behind it. Forcing the sleeves back to 100 when the room
+     * asked for leverage showed a levered portfolio as though it were
+     * unlevered, which is the one thing it is not.
+     *
+     * So the uplift is added on top and the sleeves deliberately sum to more
+     * than 100. Net stays 100 — the client's capital — and the difference is
+     * financed. It goes to the two sleeves a desk actually lends against,
+     * equities and FX; nobody gears a structured note by borrowing.
+     *
+     * The cap is a judgement, stated plainly rather than buried: a room
+     * unanimously asking for leverage reaches 1.35x gross, which is within
+     * what a diversified managed book is normally financed to. It is NOT a
+     * margin model and makes no claim about what any client would be
+     * offered.
+     */
+    var MAX_UPLIFT = 35;                 /* percentage points at full appetite */
+    var EQUITY_SHARE_OF_UPLIFT = 0.72;   /* the rest goes to FX */
+
+    var uplift = Math.round(levered * MAX_UPLIFT);
+    if (uplift > 0) {
+      var toEq = Math.round(uplift * EQUITY_SHARE_OF_UPLIFT);
+      out.equities += toEq;
+      out.fx += uplift - toEq;
+    }
+
+    var gross = ["equities", "fixedIncome", "notes", "fx", "options"]
+      .reduce(function (t, k) { return t + (out[k] || 0); }, 0);
+
+    out.gross = gross;          /* what is at work in the market */
+    out.net = 100;              /* the capital behind it */
+    out.financed = gross - 100; /* borrowed, and repayable whatever happens */
+    out.levered = uplift > 0;
+
     out.drivers = {
       risk: risk, view: view, horizon: horizon, usd: usd,
-      levered: levered, income: income, overlay: overlay
+      levered: levered, income: income, overlay: overlay, uplift: uplift
     };
     return out;
+  }
+
+  /* ---- leverage disclosure -------------------------------------------
+   *
+   * One wording, used everywhere a levered book is shown, so the guest
+   * screen, the projector, the admin board and the methodology page cannot
+   * drift into saying different things about the same portfolio.
+   *
+   * It states the borrowing plainly and does not soften it. Leverage
+   * amplifies losses exactly as it amplifies gains; the borrowing is
+   * repayable whatever the portfolio does; and the financing cost is not in
+   * any of the figures on screen. Those are facts about the structure, not
+   * a view on whether it is suitable for anyone.
+   */
+  function leverageDisclosure(alloc) {
+    if (!alloc || !alloc.financed || alloc.financed <= 0) return null;
+    var gross = alloc.gross, financed = alloc.financed;
+    var x = Math.round((gross / 100) * 100) / 100;
+    return {
+      gross: gross, net: alloc.net, financed: financed, multiple: x,
+      headline: "Geared " + x + "x: " + gross + "% invested against 100% of capital",
+      points: [
+        financed + "% of this portfolio is borrowed. It is repayable in full " +
+        "whatever the portfolio does.",
+
+        "Losses are amplified on the same terms as gains. A 10% fall in the " +
+        "geared sleeves costs " + Math.round(gross / 10) + "% of capital, not 10%.",
+
+        "The cost of the borrowing is not in any figure shown here. It is " +
+        "charged whether or not the portfolio makes money.",
+
+        "A lender can ask for more collateral, or close positions, if the " +
+        "portfolio falls far enough — and will do so at the worst moment, " +
+        "because that is when the test is failed.",
+
+        "Only the equity and FX sleeves are geared. The structured notes are " +
+        "not borrowed against; their gearing is inside the structure itself."
+      ],
+      /* One line, for where there is no room for five */
+      short: financed + "% of this book is borrowed. Gearing amplifies losses " +
+             "as well as gains, the borrowing is repayable whatever happens, " +
+             "and its cost is not shown in these figures."
+    };
   }
 
   /* ---- the room's simulated book -------------------------------------
@@ -1562,6 +1642,7 @@ window.ENGINE = (function () {
     rank: rank,
     eligible: eligible,
     roomAllocation: roomAllocation,
+    leverageDisclosure: leverageDisclosure,
     roomPortfolio: roomPortfolio,
     backtest: backtest,
     scoreEquityShelf: scoreEquityShelf,

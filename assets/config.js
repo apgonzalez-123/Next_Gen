@@ -37,6 +37,16 @@ window.CONFIG = {
    *   STEPS: ["profile", "marketview", "fixedincome", "equities", "fx"],  */
   STEPS: "all",
 
+  /* --- where the QR sends people -------------------------------------
+   *
+   * Empty means "wherever this page is served from", which is right for a
+   * rehearsal off GitHub Pages. For the event the deck runs from one place
+   * and the guests should land on another: the projector can sit on the
+   * Pages URL while the room scans a short, branded domain.
+   *
+   * Set it to the public address, with no trailing path. */
+  GUEST_URL: "https://nextgensafra.com/",
+
   /* --- who answered what ---------------------------------------------
    * "required"  guests give a name before they can start (responses are
    *             attributable in the admin export)

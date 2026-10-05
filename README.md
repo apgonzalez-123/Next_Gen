@@ -185,14 +185,13 @@ else needs to change.
   "weights": { "horizon": 1.2, "maxLoss": 1.6, ... },
   "portfolios": [
     {
-      "id": "shield",
-      "name": "Capital Shield",
-      "tagline": "Preserve first. Return second.",
-      "blurb": "One or two sentences shown on the result screen.",
-      "alloc": { "equities": 10, "fixedIncome": 55, "notes": 25, "cash": 10 },
-      "expReturn": "4 – 6%",
+      "id": "conservative",
+      "name": "Conservative",
+      "tagline": "Capital first. Income from high-grade credit.",
+      "blurb": "One or two sentences, shown on the projector.",
+      "alloc": { "equities": 15, "fixedIncome": 60, "notes": 15, "cash": 10 },
+      "expReturn": "3-6%",
       "vol": "Low",
-      "traits": ["Senior secured credit", "Sub-2y duration"],
       "target": {
         "horizon": 0, "maxLoss": 0,                      // scale: 0–3
         "sector": { "v": "consumer", "also": ["healthcare"] },  // choice
@@ -249,11 +248,17 @@ Rules:
   disagree.
 - Valid `choice` and `multi` values are the option `v` keys in `assets/schema.js`.
 - The file is **validated on load**. If anything is wrong the site falls back
-  to the eight built-in portfolios and prints exactly what failed to the browser
-  console — check there if a change does not appear.
+  to the built-in copy and prints exactly what failed to the browser console —
+  check there if a change does not appear. That copy lives in
+  `assets/portfolios.js` and must be kept in step with this file: a guest whose
+  fetch fails seeing a different set of names from the rest of the room is
+  worse than seeing none.
 
-Six to eight portfolios is the sweet spot. Check they are all *reachable*:
-if one can never win, guests will never see it.
+The desk works in **five risk bands** — Conservative, Conservative to Moderate,
+Moderate, Moderate to Aggressive, Aggressive — and the room is matched to one
+of them. They carry no holdings: the band is the match, and the instruments
+come from `data/products.json`. Check all five are *reachable*; if one can
+never win, nobody will ever see it.
 
 To change the **questions** themselves, edit `assets/schema.js` — the matching
 engine, both result screens and the admin export all derive from it. Any new

@@ -41,6 +41,12 @@
      stripped, so the QR is right wherever the site is deployed and there
      is nothing to configure by hand. */
   function guestUrl() {
+    /* CONFIG.GUEST_URL wins when it is set, so the room can be sent to the
+       public domain while the projector runs from wherever is convenient.
+       Falling back to this page's own address keeps a rehearsal working
+       with no configuration at all. */
+    var cfg = (window.CONFIG || {}).GUEST_URL;
+    if (cfg) return cfg.replace(/\/+$/, "") + "/";
     var u = window.location.href.split("?")[0].split("#")[0];
     return u.replace(/present\.html?$/, "").replace(/\/$/, "") + "/";
   }
@@ -273,6 +279,7 @@
      appear or drop out, and at four columns a repaint is cheap. */
   function paintBook(agg) {
     var host = document.getElementById("book");
+    paintGearing(agg);
     if (!window.PRODUCTS) {
       host.innerHTML = '<p class="p-book-empty">Product shelf not loaded.</p>';
       return;
@@ -319,6 +326,20 @@
         '<div class="p-bucket-w">' + b.weight + "%</div>" +
         lines + "</div>";
     }).join("");
+  }
+
+  /* A geared book is shown at its gross weight, so the slide has to say so.
+     Printed once, under the positions, rather than on every sleeve. */
+  function paintGearing(agg) {
+    var host = document.getElementById("gearing");
+    if (!host) return;
+    var lev = null;
+    try { lev = window.ENGINE.leverageDisclosure(window.ENGINE.roomAllocation(agg)); }
+    catch (e) { lev = null; }
+    if (!lev) { host.innerHTML = ""; host.hidden = true; return; }
+    host.hidden = false;
+    host.innerHTML =
+      '<b>' + esc(lev.headline) + ".</b> " + esc(lev.short);
   }
 
   /* ---------- why this portfolio ----------
