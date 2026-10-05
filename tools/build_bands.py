@@ -85,6 +85,40 @@ def equities():
     return out, gross, levered
 
 # ---------------------------------------------------------------- notes
+NOTE_TYPE = {"AC": "Autocallable", "CLN": "Credit-linked note",
+             "PPN": "Principal protected note", "CAT": "Capital protected",
+             "IC": "Income certificate", "CP": "Capped participation"}
+
+# An index-linked note is one struck on a broad index or basket of indices
+# rather than on single names. The desk's rule holds half the sleeve in these.
+INDEX_UNDERLYINGS = re.compile(r"\b(SPY|SPX|IWM|QQQ|RTY|SX5E|NDX)\b", re.I)
+
+def pct_text(v):
+    """The sheet writes a coupon either as text ("11%mem") or as a fraction
+    (0.1185). Printing the fraction raw put "0.1185" on the projector."""
+    if v is None:
+        return ""
+    s = str(v).strip()
+    if not s or s == "-":
+        return ""
+    if isinstance(v, (int, float)):
+        return f"{v * 100:.2f}%" if v < 1 else f"{v:.2f}%"
+    try:
+        f = float(s)
+        return f"{f * 100:.2f}%" if f < 1 else f"{f:.2f}%"
+    except ValueError:
+        pass
+    # Written as text, e.g. "11%mem" or "9.5% mem" — a memory coupon, which
+    # pays the missed observations when it next pays. Space it so the column
+    # reads as a number and a qualifier rather than one run-on token.
+    m = re.match(r"^\s*([0-9]+(?:\.[0-9]+)?)\s*%\s*(.*)$", s)
+    if m:
+        num = float(m.group(1))
+        tail = m.group(2).strip()
+        tail = {"mem": "mem", "memory": "mem"}.get(tail.lower(), tail)
+        return f"{num:.2f}%" + (" " + tail if tail else "")
+    return s
+
 def notes():
     ws = openpyxl.load_workbook(os.path.join(SRC, "next gen portoflios.xlsx"),
                                 data_only=True)["Sheet1"]
@@ -107,15 +141,22 @@ def notes():
         if not typ:
             continue
         w = num(ws.cell(r, 9).value)
+        full = NOTE_TYPE.get(typ.upper(), typ)
+        under = a.strip()
+        # "CLN on Brazil Lifter CLN" read twice; drop the code where the
+        # underlying already carries it.
+        bare = re.sub(r"\s*\b" + re.escape(typ) + r"\b\s*$", "", under).strip() or under
+        barrier = str(ws.cell(r, 7).value or "").strip()
         out[cur].append({
             "id": slug(a + "-" + typ + "-" + str(ws.cell(r, 6).value)),
-            "ticker": typ,
-            "underlying": a,
-            "type": typ,
-            "tenor": str(ws.cell(r, 6).value or "").strip(),
-            "barrier": str(ws.cell(r, 7).value or "").strip(),
-            "coupon": str(ws.cell(r, 8).value or "").strip(),
-            "name": typ + " on " + a,
+            "ticker": typ.upper(),
+            "underlying": bare,
+            "type": full,
+            "tenor": str(ws.cell(r, 6).value or "").strip().upper(),
+            "barrier": "" if barrier in ("-", "") else barrier,
+            "coupon": pct_text(ws.cell(r, 8).value),
+            "name": full + " on " + bare,
+            "isCore": bool(INDEX_UNDERLYINGS.search(bare)),
             "weightOfSleeve": round(w, 4) if w is not None else None,
         })
     return out
@@ -234,8 +275,10 @@ def attach_analytics(bands, products_path):
                 "sleeve": "notes", "region": "g7", "sector": None,
                 "usdExposure": 100, "riskScore": 0.55,
                 "expressesLeverage": False, "incomeProducing": True,
-                "principalProtected": line.get("type", "").upper() in ("PPN", "CAT"),
+                # type is now the full name, not the sheet's code
+                "principalProtected": bool(re.search(r"protect", line.get("type", ""), re.I)),
                 "tenorYears": num(line.get("tenor")),
+                "isCore": bool(line.get("isCore")),
             }
         for line in bk["fx"]["lines"]:
             nm = line["name"].upper()

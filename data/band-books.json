@@ -282,11 +282,12 @@
       "id": "spy-iwm-qqq-50-50-ac-3y",
       "ticker": "AC",
       "underlying": "SPY IWM QQQ 50/50",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "3Y",
       "barrier": "50/50",
-      "coupon": "0.075",
-      "name": "AC on SPY IWM QQQ 50/50",
+      "coupon": "7.50%",
+      "name": "Autocallable on SPY IWM QQQ 50/50",
+      "isCore": true,
       "weightOfSleeve": 0.2,
       "analytics": {
        "sleeve": "notes",
@@ -297,18 +298,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 3.0
+       "tenorYears": 3.0,
+       "isCore": true
       }
      },
      {
       "id": "bac-jpm-c-ac-2y",
       "ticker": "AC",
       "underlying": "BAC JPM C",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "2Y",
       "barrier": "60/60",
-      "coupon": "11%mem",
-      "name": "AC on BAC JPM C",
+      "coupon": "11.00% mem",
+      "name": "Autocallable on BAC JPM C",
+      "isCore": false,
       "weightOfSleeve": 0.2,
       "analytics": {
        "sleeve": "notes",
@@ -319,18 +322,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 2.0
+       "tenorYears": 2.0,
+       "isCore": false
       }
      },
      {
       "id": "spx-ppn-3-5y",
       "ticker": "PPN",
       "underlying": "SPX",
-      "type": "PPN",
+      "type": "Principal protected note",
       "tenor": "3.5Y",
-      "barrier": "-",
-      "coupon": "30%cap",
-      "name": "PPN on SPX",
+      "barrier": "",
+      "coupon": "30.00% cap",
+      "name": "Principal protected note on SPX",
+      "isCore": true,
       "weightOfSleeve": 0.3,
       "analytics": {
        "sleeve": "notes",
@@ -341,18 +346,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": true,
-       "tenorYears": 3.5
+       "tenorYears": 3.5,
+       "isCore": true
       }
      },
      {
       "id": "spy-ac-3y",
       "ticker": "AC",
       "underlying": "SPY",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "3Y",
       "barrier": "65/65",
-      "coupon": "0.07",
-      "name": "AC on SPY",
+      "coupon": "7.00%",
+      "name": "Autocallable on SPY",
+      "isCore": true,
       "weightOfSleeve": 0.3,
       "analytics": {
        "sleeve": "notes",
@@ -363,7 +370,8 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 3.0
+       "tenorYears": 3.0,
+       "isCore": true
       }
      }
     ],
@@ -703,11 +711,12 @@
       "id": "bac-jpm-c-ac-2y",
       "ticker": "AC",
       "underlying": "BAC JPM C",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "2Y",
       "barrier": "60/60",
-      "coupon": "11%mem",
-      "name": "AC on BAC JPM C",
+      "coupon": "11.00% mem",
+      "name": "Autocallable on BAC JPM C",
+      "isCore": false,
       "weightOfSleeve": 0.2,
       "analytics": {
        "sleeve": "notes",
@@ -718,18 +727,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 2.0
+       "tenorYears": 2.0,
+       "isCore": false
       }
      },
      {
       "id": "spy-iwm-qqq-ac-3y",
       "ticker": "AC",
       "underlying": "SPY IWM QQQ",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "3Y",
       "barrier": "60/60",
-      "coupon": "0.09",
-      "name": "AC on SPY IWM QQQ",
+      "coupon": "9.00%",
+      "name": "Autocallable on SPY IWM QQQ",
+      "isCore": true,
       "weightOfSleeve": 0.4,
       "analytics": {
        "sleeve": "notes",
@@ -740,18 +751,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 3.0
+       "tenorYears": 3.0,
+       "isCore": true
       }
      },
      {
       "id": "spy-ac-3y",
       "ticker": "AC",
       "underlying": "SPY",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "3Y",
       "barrier": "70/70",
-      "coupon": "0.075",
-      "name": "AC on SPY",
+      "coupon": "7.50%",
+      "name": "Autocallable on SPY",
+      "isCore": true,
       "weightOfSleeve": 0.2,
       "analytics": {
        "sleeve": "notes",
@@ -762,18 +775,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 3.0
+       "tenorYears": 3.0,
+       "isCore": true
       }
      },
      {
       "id": "ma-v-axp-ac-2y",
       "ticker": "AC",
       "underlying": "MA V AXP",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "2Y",
       "barrier": "55/55",
-      "coupon": "8%mem",
-      "name": "AC on MA V AXP",
+      "coupon": "8.00% mem",
+      "name": "Autocallable on MA V AXP",
+      "isCore": false,
       "weightOfSleeve": 0.2,
       "analytics": {
        "sleeve": "notes",
@@ -784,7 +799,8 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 2.0
+       "tenorYears": 2.0,
+       "isCore": false
       }
      }
     ],
@@ -1201,12 +1217,13 @@
      {
       "id": "brazil-lifter-cln-cln-10y",
       "ticker": "CLN",
-      "underlying": "Brazil Lifter CLN",
-      "type": "CLN",
+      "underlying": "Brazil Lifter",
+      "type": "Credit-linked note",
       "tenor": "10Y",
-      "barrier": "-",
-      "coupon": "0.1185",
-      "name": "CLN on Brazil Lifter CLN",
+      "barrier": "",
+      "coupon": "11.85%",
+      "name": "Credit-linked note on Brazil Lifter",
+      "isCore": false,
       "weightOfSleeve": 0.2,
       "analytics": {
        "sleeve": "notes",
@@ -1217,18 +1234,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 10.0
+       "tenorYears": 10.0,
+       "isCore": false
       }
      },
      {
       "id": "spy-iwm-qqq-ac-3y",
       "ticker": "AC",
       "underlying": "SPY IWM QQQ",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "3Y",
       "barrier": "60/60",
-      "coupon": "0.09",
-      "name": "AC on SPY IWM QQQ",
+      "coupon": "9.00%",
+      "name": "Autocallable on SPY IWM QQQ",
+      "isCore": true,
       "weightOfSleeve": 0.4,
       "analytics": {
        "sleeve": "notes",
@@ -1239,18 +1258,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 3.0
+       "tenorYears": 3.0,
+       "isCore": true
       }
      },
      {
       "id": "goog-aapl-amzn-msft-ac-3y",
       "ticker": "AC",
       "underlying": "GOOG AAPL AMZN MSFT",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "3Y",
       "barrier": "50/50",
-      "coupon": "11.5%mem",
-      "name": "AC on GOOG AAPL AMZN MSFT",
+      "coupon": "11.50% mem",
+      "name": "Autocallable on GOOG AAPL AMZN MSFT",
+      "isCore": false,
       "weightOfSleeve": 0.2,
       "analytics": {
        "sleeve": "notes",
@@ -1261,18 +1282,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 3.0
+       "tenorYears": 3.0,
+       "isCore": false
       }
      },
      {
       "id": "ma-v-axp-ac-2y",
       "ticker": "AC",
       "underlying": "MA V AXP",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "2Y",
       "barrier": "60/60",
-      "coupon": "9%mem",
-      "name": "AC on MA V AXP",
+      "coupon": "9.00% mem",
+      "name": "Autocallable on MA V AXP",
+      "isCore": false,
       "weightOfSleeve": 0.2,
       "analytics": {
        "sleeve": "notes",
@@ -1283,7 +1306,8 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 2.0
+       "tenorYears": 2.0,
+       "isCore": false
       }
      }
     ],
@@ -1722,12 +1746,13 @@
      {
       "id": "brazil-lifter-cln-cln-10y",
       "ticker": "CLN",
-      "underlying": "Brazil Lifter CLN",
-      "type": "CLN",
+      "underlying": "Brazil Lifter",
+      "type": "Credit-linked note",
       "tenor": "10Y",
-      "barrier": "-",
-      "coupon": "0.1185",
-      "name": "CLN on Brazil Lifter CLN",
+      "barrier": "",
+      "coupon": "11.85%",
+      "name": "Credit-linked note on Brazil Lifter",
+      "isCore": false,
       "weightOfSleeve": 0.2,
       "analytics": {
        "sleeve": "notes",
@@ -1738,18 +1763,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 10.0
+       "tenorYears": 10.0,
+       "isCore": false
       }
      },
      {
       "id": "xle-xlf-xlk-ac-2y",
       "ticker": "AC",
       "underlying": "XLE XLF XLK",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "2Y",
       "barrier": "65/65",
-      "coupon": "11.50%mem",
-      "name": "AC on XLE XLF XLK",
+      "coupon": "11.50% mem",
+      "name": "Autocallable on XLE XLF XLK",
+      "isCore": false,
       "weightOfSleeve": 0.2,
       "analytics": {
        "sleeve": "notes",
@@ -1760,18 +1787,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 2.0
+       "tenorYears": 2.0,
+       "isCore": false
       }
      },
      {
       "id": "spy-iwm-qqq-ac-2y",
       "ticker": "AC",
       "underlying": "SPY IWM QQQ",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "2Y",
       "barrier": "70/70",
-      "coupon": "10%mem",
-      "name": "AC on SPY IWM QQQ",
+      "coupon": "10.00% mem",
+      "name": "Autocallable on SPY IWM QQQ",
+      "isCore": true,
       "weightOfSleeve": 0.3,
       "analytics": {
        "sleeve": "notes",
@@ -1782,18 +1811,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 2.0
+       "tenorYears": 2.0,
+       "isCore": true
       }
      },
      {
       "id": "goog-aapl-amzn-msft-ac-3y",
       "ticker": "AC",
       "underlying": "GOOG AAPL AMZN MSFT",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "3Y",
       "barrier": "50/50",
-      "coupon": "11.5%mem",
-      "name": "AC on GOOG AAPL AMZN MSFT",
+      "coupon": "11.50% mem",
+      "name": "Autocallable on GOOG AAPL AMZN MSFT",
+      "isCore": false,
       "weightOfSleeve": 0.3,
       "analytics": {
        "sleeve": "notes",
@@ -1804,7 +1835,8 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 3.0
+       "tenorYears": 3.0,
+       "isCore": false
       }
      }
     ],
@@ -2173,11 +2205,12 @@
       "id": "spy-iwm-qqq-ac-2y",
       "ticker": "AC",
       "underlying": "SPY IWM QQQ",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "2Y",
       "barrier": "75/75",
-      "coupon": "11%mem",
-      "name": "AC on SPY IWM QQQ",
+      "coupon": "11.00% mem",
+      "name": "Autocallable on SPY IWM QQQ",
+      "isCore": true,
       "weightOfSleeve": 0.3,
       "analytics": {
        "sleeve": "notes",
@@ -2188,18 +2221,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 2.0
+       "tenorYears": 2.0,
+       "isCore": true
       }
      },
      {
       "id": "goog-aapl-amzn-msft-ac-3y",
       "ticker": "AC",
       "underlying": "GOOG AAPL AMZN MSFT",
-      "type": "AC",
+      "type": "Autocallable",
       "tenor": "3Y",
       "barrier": "50/50",
-      "coupon": "11.5%mem",
-      "name": "AC on GOOG AAPL AMZN MSFT",
+      "coupon": "11.50% mem",
+      "name": "Autocallable on GOOG AAPL AMZN MSFT",
+      "isCore": false,
       "weightOfSleeve": 0.3,
       "analytics": {
        "sleeve": "notes",
@@ -2210,18 +2245,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 3.0
+       "tenorYears": 3.0,
+       "isCore": false
       }
      },
      {
       "id": "spcx-cat-3y",
       "ticker": "CAT",
       "underlying": "SPCX",
-      "type": "CAT",
+      "type": "Capital protected",
       "tenor": "3Y",
       "barrier": "100/60",
-      "coupon": "0.3",
-      "name": "CAT on SPCX",
+      "coupon": "30.00%",
+      "name": "Capital protected on SPCX",
+      "isCore": false,
       "weightOfSleeve": 0.2,
       "analytics": {
        "sleeve": "notes",
@@ -2232,18 +2269,20 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": true,
-       "tenorYears": 3.0
+       "tenorYears": 3.0,
+       "isCore": false
       }
      },
      {
       "id": "tsla-amd-ac-3y",
       "ticker": "AC",
       "underlying": "TSLA AMD",
-      "type": "AC",
-      "tenor": "3y",
+      "type": "Autocallable",
+      "tenor": "3Y",
       "barrier": "50/50",
-      "coupon": "19%mem",
-      "name": "AC on TSLA AMD",
+      "coupon": "19.00% mem",
+      "name": "Autocallable on TSLA AMD",
+      "isCore": false,
       "weightOfSleeve": 0.2,
       "analytics": {
        "sleeve": "notes",
@@ -2254,7 +2293,8 @@
        "expressesLeverage": false,
        "incomeProducing": true,
        "principalProtected": false,
-       "tenorYears": 3.0
+       "tenorYears": 3.0,
+       "isCore": false
       }
      }
     ],

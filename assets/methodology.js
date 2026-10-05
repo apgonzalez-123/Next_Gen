@@ -188,23 +188,27 @@
     host.innerHTML =
       "<h4>Leverage</h4>" +
       "<p>Everything in the formula above sums to 100: that is the capital. " +
-      "Leverage is not a reshuffle of it &mdash; it is borrowing, and a borrowed " +
-      "book works more than the money behind it. So when the room asks for " +
-      "leverage the sleeves deliberately sum to <b>more</b> than 100, net stays " +
-      "at 100, and the difference is financed.</p>" +
+      "Leverage is not a reshuffle of it. The room's exposure runs <b>past</b> " +
+      "its capital, because positions are taken through instruments whose " +
+      "notional is larger than the cash committed to them. So when the room " +
+      "asks for leverage the sleeves deliberately sum to more than 100, net " +
+      "stays at 100, and the difference is notional.</p>" +
       "<p>The uplift reaches <b>35 percentage points</b> when the whole room " +
-      "wants it, so a fully levered book runs at 1.35&times; gross. It goes to " +
-      "the two sleeves a desk actually lends against, equities and FX; nobody " +
-      "gears a structured note by borrowing, and the gearing in a note is " +
-      "inside the structure already. That cap is a judgement, stated here " +
-      "rather than buried: it is not a margin model and makes no claim about " +
-      "what any client would be offered.</p>" +
-      "<p>Everywhere a geared book is shown it carries the same disclosure, " +
-      "written once in <b>ENGINE.leverageDisclosure()</b> so the guest screen, " +
-      "the projector and the admin board cannot drift into saying different " +
-      "things about the same portfolio: the borrowing is repayable whatever " +
-      "the portfolio does, losses are amplified on the same terms as gains, " +
-      "and the financing cost appears in none of the figures on screen.</p>";
+      "wants it, so a fully geared book runs at 1.35&times; gross. It goes to " +
+      "the two sleeves where that notional lives &mdash; the equity options " +
+      "and the FX sleeve. A structured note is geared inside its own " +
+      "structure, through its barriers, rather than by being held larger. " +
+      "That cap is a judgement, stated here rather than buried: it is not a " +
+      "margin model and makes no claim about what any client would be " +
+      "offered.</p>" +
+      "<p><b>Nothing here is borrowed.</b> No cash is lent, nothing is " +
+      "repayable and there is no margin call &mdash; the gearing is the size " +
+      "of the contracts, not a loan against them. Everywhere a geared book is " +
+      "shown it carries the same disclosure, written once in " +
+      "<b>ENGINE.leverageDisclosure()</b> so the guest screen, the projector " +
+      "and the admin board cannot drift into saying different things about " +
+      "the same portfolio: gains and losses track the exposure rather than " +
+      "the cash, and a long option can expire worthless.</p>";
   }
 
   function renderBooks(P) {

@@ -836,21 +836,25 @@ window.ENGINE = (function () {
     /* ---- leverage ----
      *
      * Everything above sums to 100: that is the capital. Leverage is not a
-     * reshuffle of it, it is borrowing, and a borrowed book works MORE than
-     * the money behind it. Forcing the sleeves back to 100 when the room
-     * asked for leverage showed a levered portfolio as though it were
-     * unlevered, which is the one thing it is not.
+     * reshuffle of it. The room's exposure runs PAST its capital, because
+     * positions are taken through instruments whose notional is bigger than
+     * the cash committed to them. Forcing the sleeves back to 100 when the
+     * room asked for leverage showed a geared portfolio as though it were
+     * ungeared, which is the one thing it is not.
      *
      * So the uplift is added on top and the sleeves deliberately sum to more
      * than 100. Net stays 100 — the client's capital — and the difference is
-     * financed. It goes to the two sleeves a desk actually lends against,
-     * equities and FX; nobody gears a structured note by borrowing.
+     * notional. It goes to the two sleeves where that notional actually
+     * lives: the equity options and the FX sleeve. A structured note is
+     * geared inside its own structure, not by being held larger.
+     *
+     * Nothing here is borrowed. No cash is lent, nothing is repayable and
+     * there is no margin call: the gearing is the size of the contracts, not
+     * a loan against them.
      *
      * The cap is a judgement, stated plainly rather than buried: a room
-     * unanimously asking for leverage reaches 1.35x gross, which is within
-     * what a diversified managed book is normally financed to. It is NOT a
-     * margin model and makes no claim about what any client would be
-     * offered.
+     * unanimously asking for leverage reaches 1.35x gross. It is NOT a margin
+     * model and makes no claim about what any client would be offered.
      */
     var MAX_UPLIFT = 35;                 /* percentage points at full appetite */
     var EQUITY_SHARE_OF_UPLIFT = 0.72;   /* the rest goes to FX */
@@ -867,7 +871,7 @@ window.ENGINE = (function () {
 
     out.gross = gross;          /* what is at work in the market */
     out.net = 100;              /* the capital behind it */
-    out.financed = gross - 100; /* borrowed, and repayable whatever happens */
+    out.geared = gross - 100;   /* notional above capital, not money borrowed */
     out.levered = uplift > 0;
 
     out.drivers = {
@@ -877,46 +881,54 @@ window.ENGINE = (function () {
     return out;
   }
 
-  /* ---- leverage disclosure -------------------------------------------
+  /* ---- gearing disclosure ---------------------------------------------
    *
-   * One wording, used everywhere a levered book is shown, so the guest
-   * screen, the projector, the admin board and the methodology page cannot
-   * drift into saying different things about the same portfolio.
+   * One wording, used everywhere the book is shown, so the guest screen, the
+   * projector, the admin board and the methodology page cannot drift into
+   * saying different things about the same portfolio.
    *
-   * It states the borrowing plainly and does not soften it. Leverage
-   * amplifies losses exactly as it amplifies gains; the borrowing is
-   * repayable whatever the portfolio does; and the financing cost is not in
-   * any of the figures on screen. Those are facts about the structure, not
-   * a view on whether it is suitable for anyone.
+   * It describes GEARING, not borrowing. An earlier version talked about
+   * money being lent, repayable in full, and a lender calling for collateral.
+   * None of that happens here: the exposure runs past capital because
+   * positions are held through instruments whose notional is larger than the
+   * cash committed to them — a long call controls the whole underlying for
+   * the premium, and the FX sleeve is sized the same way. There is no loan,
+   * so there is nothing to repay and no margin call. What there is, is a book
+   * that moves as though it were bigger than it is, which is the part that
+   * has to be said out loud.
    */
   function leverageDisclosure(alloc) {
-    if (!alloc || !alloc.financed || alloc.financed <= 0) return null;
-    var gross = alloc.gross, financed = alloc.financed;
+    if (!alloc || !alloc.geared || alloc.geared <= 0) return null;
+    var gross = alloc.gross, over = alloc.geared;
     var x = Math.round((gross / 100) * 100) / 100;
     return {
-      gross: gross, net: alloc.net, financed: financed, multiple: x,
-      headline: "Geared " + x + "x: " + gross + "% invested against 100% of capital",
+      gross: gross, net: alloc.net, geared: over, multiple: x,
+      headline: "Geared " + x + "x: " + gross + "% of market exposure on 100% of capital",
       points: [
-        financed + "% of this portfolio is borrowed. It is repayable in full " +
-        "whatever the portfolio does.",
+        "The book carries " + gross + "% of exposure against " + alloc.net +
+        "% of capital. The extra " + over + " points are notional, not money " +
+        "borrowed: nothing is lent and nothing is repayable.",
 
-        "Losses are amplified on the same terms as gains. A 10% fall in the " +
-        "geared sleeves costs " + Math.round(gross / 10) + "% of capital, not 10%.",
+        "It comes from the instruments themselves. An option controls the " +
+        "whole position for the premium, and the FX sleeve is sized the same " +
+        "way, so the exposure is larger than the cash committed to it.",
 
-        "The cost of the borrowing is not in any figure shown here. It is " +
-        "charged whether or not the portfolio makes money.",
+        "Gains and losses track the exposure, not the cash. A 10% move in the " +
+        "geared sleeves is worth about " + Math.round(gross / 10) + "% of " +
+        "capital, in either direction.",
 
-        "A lender can ask for more collateral, or close positions, if the " +
-        "portfolio falls far enough — and will do so at the worst moment, " +
-        "because that is when the test is failed.",
+        "An option can expire worthless. Where the gearing comes from a long " +
+        "call or a long put, the premium is the most that position can lose — " +
+        "and losing all of it is an ordinary outcome, not a tail.",
 
-        "Only the equity and FX sleeves are geared. The structured notes are " +
-        "not borrowed against; their gearing is inside the structure itself."
+        "The structured notes are geared inside the structure, through their " +
+        "barriers, rather than by size. That is a different risk and does not " +
+        "show in this number."
       ],
-      /* One line, for where there is no room for five */
-      short: financed + "% of this book is borrowed. Gearing amplifies losses " +
-             "as well as gains, the borrowing is repayable whatever happens, " +
-             "and its cost is not shown in these figures."
+      short: gross + "% of market exposure on " + alloc.net + "% of capital. " +
+             "The extra is notional — options and FX sized above the cash " +
+             "committed — not money borrowed. Gains and losses track the " +
+             "exposure, and an option can expire worthless."
     };
   }
 
@@ -1332,7 +1344,7 @@ window.ENGINE = (function () {
       equities: band.equities.weight, fixedIncome: band.fixedIncome.weight,
       notes: band.notes.weight, fx: band.fx.weight, options: 0,
       gross: Math.round(gross * 10) / 10, net: 100,
-      financed: Math.round((gross - 100) * 10) / 10,
+      geared: Math.round((gross - 100) * 10) / 10,
       levered: gross > 100.5,
       band: band.id, bandName: band.name,
       drivers: roomAllocation(agg).drivers

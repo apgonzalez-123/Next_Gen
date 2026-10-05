@@ -676,3 +676,10 @@ body.present {
 .p-tbl-tight td { padding-top: clamp(3px, 0.5vh, 6px); padding-bottom: clamp(3px, 0.5vh, 6px); }
 .p-tbl-tight td { font-size: clamp(10px, 0.78vw, 12.5px); }
 .p-tbl-tight .p-tk { font-size: 0.82em; padding: 1px 4px; }
+
+/* Gearing, stated on the verdict slide beside the allocation it describes. */
+.p-verdict-gross {
+  margin-top: 12px;
+  font-size: clamp(11px, 0.85vw, 14px);
+  color: var(--series-options);
+}

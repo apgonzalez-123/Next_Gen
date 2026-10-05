@@ -284,12 +284,13 @@ window.PORTFOLIO_VALIDATOR = (function () {
       lineCount: all.length,
 
       /* Gross is what is at work in the market, net is the capital behind
-         it, and the difference is borrowed. They are the same number unless
-         the room asked for leverage. */
+         it, and the difference is notional carried through options and FX
+         rather than money borrowed. They are the same number unless the room
+         asked for leverage. */
       fromBandBook: !!sim.fromBandBook,
       gross: allocGross,
       net: (sim.alloc && sim.alloc.net) || null,
-      financed: (sim.alloc && sim.alloc.financed) || 0,
+      geared: (sim.alloc && sim.alloc.geared) || 0,
 
       allocation: declared,
       allocationFromLines: actual,
@@ -700,12 +701,12 @@ window.PORTFOLIO_VALIDATOR = (function () {
       out.push(c);
     }
 
-    /* A levered book is SUPPOSED to total more than 100: the excess is
-       borrowed. Checking it against 100 regardless would report every
-       levered portfolio as broken and, worse, would have hidden the real
+    /* A geared book is SUPPOSED to total more than 100: the excess is
+       notional. Checking it against 100 regardless would report every
+       geared portfolio as broken and, worse, would have hidden the real
        bug — that the engine was forcing leverage back down to 100 and
-       showing a geared book as though it were unlevered. The target is the
-       gross the allocation declares, and the financed part is reported. */
+       showing a geared book as though it were ungeared. The target is the
+       gross the allocation declares, and the geared part is reported. */
     var grossTarget = (chars.gross !== null && chars.gross !== undefined)
       ? chars.gross : 100;
     var drift = round(chars.totalWeight - grossTarget, 2);
@@ -713,7 +714,7 @@ window.PORTFOLIO_VALIDATOR = (function () {
       Math.abs(drift) <= L.totalWeightTolerance, false,
       "Portfolio totals " + chars.totalWeight + "% against a declared gross of " +
       grossTarget + "%" +
-      (chars.financed ? ", of which " + chars.financed + "% is financed" : "") + ".",
+      (chars.geared ? ", of which " + chars.geared + " points are notional above capital" : "") + ".",
       { intent: grossTarget, actual: chars.totalWeight, difference: drift, unit: "pp" });
 
     /* Each sleeve's lines must add up to the sleeve weight the rest of the

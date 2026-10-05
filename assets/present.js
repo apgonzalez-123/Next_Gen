@@ -149,9 +149,14 @@
     var roomProfile = window.ENGINE.aggProfile(agg);
     var split = window.ENGINE.aggSplit(agg);
     paintSplit(split);
-    paintVerdict(window.ENGINE.rank(roomProfile)[0], agg.count);
+    var vSim = null;
+    if (window.PRODUCTS) {
+      try { vSim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS); } catch (e) { vSim = null; }
+    }
+    paintVerdict(window.ENGINE.rank(roomProfile)[0], agg.count, vSim);
     var alloc = window.ENGINE.roomAllocation(agg);
-    renderWhy(agg, alloc, split);
+    /* No "why" on the projector. The presenter is making that case out loud;
+       on screen it only competes with the numbers. */
     paintBook(agg);
     /* A throw inside one board used to leave that slide blank with nothing
        said anywhere — the kind of failure you only find by looking at the
@@ -164,7 +169,6 @@
     ["splitBars", "Each guest is matched on their own answers. The split appears here as they finish."],
     ["verdict",   "Every answer averaged into one profile, then matched. Waiting on the room."],
     ["book",      "The book the room's answers build. Waiting on the room."],
-    ["why",       ""],
     ["sleeveEquities",    "Why the equity sleeve is the size it is, and why these funds. Waiting on the room."],
     ["sleeveFixedIncome", "Why the fixed-income sleeve is the size it is, and why these bonds. Waiting on the room."],
     ["sleeveNotes",       "Why the notes sleeve is the size it is, and why these structures. Waiting on the room."],
@@ -202,42 +206,58 @@
     });
   }
 
-  function ALLOC_KEYS() {
-    return [
+  /* The sleeves the book actually has. This listed "cash", which the desk's
+     books do not hold, and omitted FX, which they do — so the verdict slide
+     printed Cash 0% and silently dropped a 22% FX sleeve out of the bar. */
+  function ALLOC_KEYS(alloc) {
+    var all = [
       { k: "equities",    label: "Equities",         c: "var(--series-equities)" },
       { k: "fixedIncome", label: "Fixed income",     c: "var(--series-fixedincome)" },
       { k: "notes",       label: "Structured notes", c: "var(--series-notes)" },
-      { k: "cash",        label: "Cash",             c: "var(--series-cash)" }
+      { k: "fx",          label: "FX",               c: "var(--series-cash)" },
+      { k: "options",     label: "Options",          c: "var(--series-options)" },
+      { k: "cash",        label: "Cash",             c: "var(--muted)" }
     ];
+    if (!alloc) return all.slice(0, 4);
+    return all.filter(function (x) { return (alloc[x.k] || 0) > 0; });
   }
 
-  function paintVerdict(top, n) {
+  function paintVerdict(top, n, sim) {
     var p = top.portfolio;
     var host = document.getElementById("verdict");
     var keys = ALLOC_KEYS();
 
+    /* The allocation the room actually gets, which is the book's, not the
+       band's target. These were different numbers on two slides of the same
+       deck: this one read the band's headline split while the sleeve slides
+       read the desk's book. */
+    var alloc = (sim && sim.alloc) || p.alloc;
+    var lev = sim ? window.ENGINE.leverageDisclosure(sim.alloc) : null;
+    keys = ALLOC_KEYS(alloc);
+
     /* Only rebuild when the winning portfolio actually changes — otherwise
        just refresh the numbers that move. */
-    if (lastVerdictId !== p.id) {
-      lastVerdictId = p.id;
+    if (lastVerdictId !== p.id + ":" + JSON.stringify(alloc)) {
+      lastVerdictId = p.id + ":" + JSON.stringify(alloc);
       host.innerHTML =
         "<div>" +
           "<h1>" + esc(p.name) + "</h1>" +
           '<p class="tagline">' + esc(p.tagline) + "</p>" +
-          '<p class="body">' + esc(p.blurb) + "</p>" +
         "</div>" +
         "<div>" +
           '<div class="p-fit"><b id="vFit">0</b><span>fit out of 100<br><span id="vN">0</span> responses</span></div>' +
           '<div class="alloc-bar">' +
             keys.map(function (x) {
-              return '<i style="flex:' + p.alloc[x.k] + ' 0 0;background:' + x.c + '"></i>';
+              return '<i style="flex:' + (alloc[x.k] || 0) + ' 0 0;background:' + x.c + '"></i>';
             }).join("") +
           "</div>" +
           '<div class="legend">' +
             keys.map(function (x) {
-              return '<div><s style="background:' + x.c + '"></s>' + x.label + "<b>" + p.alloc[x.k] + "%</b></div>";
+              return '<div><s style="background:' + x.c + '"></s>' + x.label +
+                     "<b>" + (alloc[x.k] || 0) + "%</b></div>";
             }).join("") +
           "</div>" +
+          (lev ? '<p class="p-verdict-gross">' + esc(lev.headline) + "</p>" : "") +
           riskStrip(p) +
         "</div>";
     }
@@ -342,8 +362,11 @@
     var host = document.getElementById("gearing");
     if (!host) return;
     var lev = null;
-    try { lev = window.ENGINE.leverageDisclosure(window.ENGINE.roomAllocation(agg)); }
-    catch (e) { lev = null; }
+    try {
+      var sim = window.PRODUCTS ? window.ENGINE.roomPortfolio(agg, window.PRODUCTS) : null;
+      lev = window.ENGINE.leverageDisclosure(
+        (sim && sim.alloc) || window.ENGINE.roomAllocation(agg));
+    } catch (e) { lev = null; }
     if (!lev) { host.innerHTML = ""; host.hidden = true; return; }
     host.hidden = false;
     host.innerHTML =
@@ -758,7 +781,12 @@
     if (!window.PRODUCTS) return;
     var sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS);
     if (!sim) return;
-    var lev = window.ENGINE.leverageDisclosure(alloc);
+    /* The book's own allocation, not one recomputed beside it. These had
+       drifted apart: the sleeve weights came from the desk's band book while
+       the gross printed above them came from the engine's own calculation,
+       so one slide said 72.5% equities and 135% gross when the book it was
+       describing was 132.5%. */
+    var lev = window.ENGINE.leverageDisclosure(sim.alloc || alloc);
 
     SLEEVE_SLIDES.forEach(function (S) {
       var host = document.getElementById(S.host);
@@ -780,7 +808,7 @@
 
       var head = lev
         ? '<p class="p-sleeve-gross">' + bucket.weight + "% of capital &middot; the book runs " +
-          lev.gross + "% gross, " + lev.financed + "% of it financed</p>"
+          lev.gross + "% gross, " + lev.geared + " points of it notional</p>"
         : "";
 
       host.innerHTML = head + (PANEL[S.key] || equityPanel)(bucket);
