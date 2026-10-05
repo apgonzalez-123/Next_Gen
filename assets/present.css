@@ -394,174 +394,113 @@ body.present {
 }
 
 /* --- slides 5-8: one sleeve at a time ---
-   Two columns: the allocation arithmetic on the left, the instruments and
-   their reasons on the right. The left column is the narrower of the two
-   because a presenter talks through it once; the picks are what the room
-   reads while they listen. */
-.p-sleeve {
-  flex: 1 1 auto;
-  min-height: 0;
-  display: grid;
-  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
-  gap: clamp(28px, 4vw, 64px);
-  align-content: start;
-  overflow: hidden;
-}
-
-.p-sl-col { min-width: 0; display: flex; flex-direction: column; }
-
-.p-sl-head {
-  font-size: clamp(12px, 1.1vw, 16px);
-  font-weight: 550;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-2);
-  padding-bottom: 10px;
-  margin-bottom: clamp(14px, 2vh, 22px);
-  border-bottom: 1px solid var(--line);
-}
-
-/* The weight, repeated in the slide title so the sleeve is identified
-   before the presenter says a word. */
+   A table, not an argument. The weighted characteristics of the sleeve
+   across the top, then every position with the columns that matter for that
+   asset class. Sized to be read from the back of a room, which is why the
+   type scales with the viewport and the row count rather than being fixed. */
+/* The weight beside the sleeve name. It is an <i> for the markup's sake,
+   not because it should be italic. */
 .p-h-w {
   font-style: normal;
   color: var(--accent-bright);
   font-variant-numeric: tabular-nums;
-  margin-left: 0.4em;
+  margin-left: 0.3em;
 }
 
-/* One term of the allocation arithmetic. */
-.p-term {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 16px;
-  padding: clamp(9px, 1.3vh, 15px) 0;
-  border-bottom: 1px solid var(--line-soft);
-}
-.p-term-l {
-  font-size: clamp(13px, 1.1vw, 18px);
-  line-height: 1.3;
-  color: var(--text-2);
-  min-width: 0;
-}
-/* The half-sentence under each term that says where the number came from. */
-.p-term-l i {
-  display: block;
-  font-style: normal;
-  margin-top: 4px;
-  font-size: clamp(11px, 0.8vw, 13px);
-  line-height: 1.4;
-  color: var(--muted);
-}
-.p-term b {
-  font-size: clamp(14px, 1.25vw, 20px);
-  color: var(--text);
-  font-variant-numeric: tabular-nums;
-  flex: 0 0 auto;
-}
-.p-term-sum b { color: var(--text-2); }
-.p-term-tot {
-  border-bottom: none;
-  border-top: 1px solid var(--line);
-  margin-top: 4px;
-  padding-top: clamp(12px, 1.6vh, 18px);
-}
-.p-term-tot b {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(28px, 3vw, 48px);
-  line-height: 1;
-  letter-spacing: -0.03em;
-  color: var(--accent-bright);
-}
-
-/* One instrument and the reason it is here. */
-.p-pk {
-  padding: clamp(10px, 1.5vh, 16px) 0;
-  border-bottom: 1px solid var(--line-soft);
-}
-.p-pk:last-child { border-bottom: none; }
-.p-pk-top { display: flex; align-items: baseline; gap: 10px; }
-.p-pk-name {
-  font-size: clamp(13px, 1.15vw, 19px);
-  line-height: 1.3;
-  color: var(--text-2);
-  flex: 1 1 auto;
-  min-width: 0;
-}
-.p-pk-w {
-  font-size: clamp(13px, 1.15vw, 19px);
-  color: var(--accent-bright);
-  font-variant-numeric: tabular-nums;
-  flex: 0 0 auto;
-  font-weight: 400;
-}
-.p-pk-why {
-  margin-top: 5px;
-  font-size: clamp(11px, 0.85vw, 14px);
-  line-height: 1.45;
-  color: var(--muted);
-}
-.p-pk-why em { font-style: normal; color: var(--line); margin: 0 4px; }
-
-/* Three strongest axes, as bars. Enough to show the shape of the fit
-   without turning the slide into the validation page. */
-.p-pk-axes { display: flex; gap: 14px; margin-top: 8px; }
-.p-ax { display: flex; align-items: center; gap: 6px; flex: 1 1 0; min-width: 0; }
-.p-ax em {
-  font-style: normal;
-  font-size: clamp(9px, 0.62vw, 11px);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--muted);
-  flex: 0 0 auto;
-}
-.p-ax i {
-  display: block;
-  flex: 1 1 auto;
-  height: 3px;
-  border-radius: var(--r-xs);
-  background: var(--line-soft);
-  overflow: hidden;
-}
-.p-ax i u {
-  display: block;
-  height: 100%;
-  border-radius: var(--r-xs);
-  text-decoration: none;
-  transition: width 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-
-/* On a laptop the two columns stop fitting side by side long before the
-   projector does. */
-@media (max-width: 1100px) {
-  .p-sleeve { grid-template-columns: 1fr; gap: 24px; overflow-y: auto; }
-}
-
-/* --- slide 9: the engine ---
-   A canvas, sized to the slide. The legend matters: without it the map is
-   just moving dots, and the whole point is that every dimension on screen
-   is a real measurement. */
-.p-brain {
+.p-sleeve {
   flex: 1 1 auto;
   min-height: 0;
-  position: relative;
-  margin-top: clamp(8px, 1.4vh, 16px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.6vh, 18px);
+  overflow: hidden;
 }
-.p-brain canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
-.p-brain-key {
-  display: flex; flex-wrap: wrap; gap: 10px 26px;
-  margin-top: clamp(8px, 1.4vh, 16px);
-  font-size: clamp(10px, 0.78vw, 13px);
-  color: var(--muted);
+/* With leverage the sleeves sum past 100, so a sleeve weight is a share of
+   CAPITAL, not of the book. Said once per slide, next to the number. */
+.p-sleeve-gross {
+  font-size: clamp(10px, 0.8vw, 13px);
+  color: var(--series-options);
+  margin-top: -4px;
 }
-.p-brain-key span { display: inline-flex; align-items: center; gap: 8px; }
-.p-brain-key s { width: 10px; height: 10px; border-radius: 50%; text-decoration: none; flex: 0 0 auto; }
-.p-brain-key .k-q { background: #5b8fd6; }
-.p-brain-key .k-e { background: transparent; border: 2px solid #5b8fd6; }
-.p-brain-key .k-b { background: var(--series-equities); border-radius: 2px; width: 5px; height: 12px; }
+
+.p-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+.p-stat { background: var(--bg); padding: clamp(8px, 1.2vh, 14px) clamp(10px, 1vw, 16px); }
+.p-stat small {
+  display: block;
+  font-size: clamp(8.5px, 0.64vw, 11px);
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 4px;
+}
+.p-stat b {
+  display: block;
+  font-family: var(--font-display); font-weight: 600;
+  font-size: clamp(17px, 1.7vw, 27px); line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--accent-bright);
+  font-variant-numeric: tabular-nums;
+}
+.p-stat i {
+  display: block; font-style: normal; margin-top: 3px;
+  font-size: clamp(8.5px, 0.62vw, 10.5px); color: var(--muted);
+}
+
+.p-tblwrap { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.p-tbl { width: 100%; border-collapse: collapse; }
+.p-tbl th {
+  text-align: left; font-weight: 550;
+  font-size: clamp(8.5px, 0.64vw, 11px);
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  padding: 0 10px clamp(6px, 0.9vh, 10px) 0;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.p-tbl td {
+  padding: clamp(7px, 1.15vh, 13px) 10px clamp(7px, 1.15vh, 13px) 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: clamp(11px, 0.95vw, 15px);
+  color: var(--text-2);
+  vertical-align: baseline;
+}
+.p-tbl .num { text-align: right; font-variant-numeric: tabular-nums; }
+.p-tbl .p-w { color: var(--accent-bright); }
+.p-tbl tr:last-child td { border-bottom: none; }
+.p-tbl-dense td { padding-top: clamp(5px, 0.8vh, 9px); padding-bottom: clamp(5px, 0.8vh, 9px); }
+.p-tbl-dense td { font-size: clamp(10.5px, 0.85vw, 13.5px); }
+
+.p-r-ovl td { background: rgba(140, 92, 214, 0.07); }
+
+.p-pillx {
+  font-style: normal; font-size: 0.68em; letter-spacing: 0.06em;
+  color: var(--muted); border: 1px solid var(--line);
+  border-radius: var(--r-xs); padding: 1px 5px; margin-left: 5px;
+}
+.p-bookname { color: var(--text-2); }
+
+.p-foot-note {
+  flex: 0 0 auto;
+  display: flex; align-items: center; flex-wrap: wrap; gap: 7px;
+  font-size: clamp(9.5px, 0.74vw, 12.5px); color: var(--muted);
+}
+.p-chip {
+  display: inline-flex; align-items: baseline; gap: 5px;
+  border: 1px solid var(--line); border-radius: var(--r-xs);
+  padding: 2px 8px; color: var(--text-2);
+}
+.p-chip b { color: var(--accent-bright); font-weight: 400; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 1000px) {
+  .p-tblwrap { overflow-x: auto; }
+}
 
 /* --- slide 10: the room voting, live ---
    One stacked bar per question, two columns. The first version gave every

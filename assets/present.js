@@ -24,6 +24,14 @@
   var splitRows = {};     /* portfolio id -> { root, fill, val, name } */
   var lastVerdictId = null;
 
+  /* A rounded number, to as many places as asked; an em dash when there is
+     nothing to round. Lives beside esc() because every board needs both. */
+  function pc(x, d) {
+    if (x === null || x === undefined || !isFinite(x)) return "\u2014";
+    var f = Math.pow(10, d === undefined ? 1 : d);
+    return Math.round(x * f) / f;
+  }
+
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
@@ -503,14 +511,17 @@
 
   /* ---------- one slide per sleeve ----------
    *
-   * Two questions a client always asks: why this much of it, and why these
-   * instruments. Both answers are read back out of the same allocation and
-   * the same scores the book itself is built from — this is a restatement
-   * of the engine, never a second opinion about it. If the arithmetic below
-   * ever stops matching ENGINE.roomAllocation(), the slide is wrong and the
-   * engine is right.
+   * A table, not an argument. These slides used to spend half their width
+   * explaining why each line was chosen, which is a conversation the
+   * presenter is having out loud anyway — on screen it just crowded out the
+   * holdings themselves and made the numbers hard to read.
+   *
+   * So each sleeve now shows what a desk would actually put in front of a
+   * client: the weighted characteristics of the sleeve across the top, then
+   * every position underneath with the columns that matter for that asset
+   * class. Different asset classes get different columns, because a bond and
+   * an FX forward have nothing in common worth tabulating.
    */
-
   var SLEEVE_SLIDES = [
     { key: "equities",    host: "sleeveEquities",    badge: "swEquities" },
     { key: "fixedIncome", host: "sleeveFixedIncome", badge: "swFixedIncome" },
@@ -518,274 +529,235 @@
     { key: "fx",          host: "sleeveFx",          badge: "swFx" }
   ];
 
-  function pct(x) { return (Math.round(x * 10) / 10) + "%"; }
-  /* A plain rounded number, to as many places as asked. */
-  function pc(x, d) {
-    if (x === null || x === undefined || !isFinite(x)) return "&mdash;";
-    var f = Math.pow(10, d === undefined ? 1 : d);
-    return Math.round(x * f) / f;
+  function an(it) { return (it && it.analytics) || {}; }
+
+  /* Weighted by position, over the lines that actually carry the field. The
+     share of the sleeve each average covers is returned with it, because an
+     average over half a sleeve is a different claim from one over all of it. */
+  function wavg(lines, get) {
+    var num = 0, den = 0, total = 0;
+    lines.forEach(function (l) {
+      var w = l.weight || 0; total += w;
+      var v = get(l);
+      if (v === null || v === undefined || !isFinite(v)) return;
+      num += w * v; den += w;
+    });
+    return { value: den > 0 ? num / den : null, coverage: total > 0 ? den / total : 0 };
   }
-  function signed(x) {
-    var v = Math.round(x * 10) / 10;
-    return (v > 0 ? "+" : v === 0 ? "" : "") + v + "%";
+
+  function wshare(lines, test) {
+    var hit = 0, total = 0;
+    lines.forEach(function (l) {
+      var w = l.weight || 0; total += w;
+      if (test(l)) hit += w;
+    });
+    return total > 0 ? (hit / total) * 100 : 0;
   }
 
-  /* The allocation arithmetic, restated term by term. Mirrors
-     ENGINE.roomAllocation() exactly. */
-  function allocTerms(alloc) {
-    var d = alloc.drivers;
-    var notesRaw = 8 + d.levered * 14;
-    var fxRaw    = 5 + (Math.abs(d.usd - 50) / 50) * 12;
-    var left     = 100 - notesRaw - fxRaw;
+  /* Top few of something, by weight: countries for bonds, sectors for equity. */
+  function topBy(lines, get, n) {
+    var acc = {}, total = 0;
+    lines.forEach(function (l) {
+      var k = get(l); var w = l.weight || 0; total += w;
+      if (k === null || k === undefined || k === "") return;
+      acc[k] = (acc[k] || 0) + w;
+    });
+    return Object.keys(acc)
+      .sort(function (a, b) { return acc[b] - acc[a]; })
+      .slice(0, n || 4)
+      .map(function (k) {
+        return { key: k, pct: total > 0 ? (acc[k] / total) * 100 : 0 };
+      });
+  }
 
-    var eqRisk = (d.risk / 2) * 0.60;
-    var eqView = (d.view - 1) * 0.08;
-    var eqHor  = Math.max(-0.10, Math.min(0.10, ((d.horizon - 10) / 20) * 0.10));
-    var eqInc  = -d.income * 0.16;
-    var share  = Math.max(0.05, Math.min(0.90, 0.15 + eqRisk + eqView + eqHor + eqInc));
+  function statCell(label, value, sub) {
+    return '<div class="p-stat"><small>' + label + "</small><b>" + value + "</b>" +
+      (sub ? "<i>" + sub + "</i>" : "") + "</div>";
+  }
 
-    var riskWord = band(d.risk, [0.7, 1.35], ["cautious", "moderate", "risk-seeking"]);
-    var viewWord = band(d.view, [0.7, 1.35], ["bearish", "neutral", "bullish"]);
-
-    return {
-      equities: {
-        rows: [
-          ["Starting risk budget", "every room begins here", signed(15)],
-          ["Risk appetite &mdash; " + riskWord,
-           "averaged " + (Math.round(d.risk * 100) / 100) + " of 2", signed(eqRisk * 100)],
-          ["Market view &mdash; " + viewWord,
-           "averaged " + (Math.round(d.view * 100) / 100) + " of 2", signed(eqView * 100)],
-          ["Horizon &mdash; " + Math.round(d.horizon) + " years",
-           "against a 10-year baseline", signed(eqHor * 100)],
-          ["Income seekers",
-           Math.round(d.income * 100) + "% of the room wanted income", signed(eqInc * 100)]
-        ],
-        sum:   ["Equity share of what is left", pct(share * 100)],
-        total: ["of the " + pct(left) + " outside notes and FX", alloc.equities + "%"]
-      },
-      fixedIncomeBook: null,   /* filled in by paintSleeves when one is chosen */
-
-      fixedIncome: {
-        rows: [
-          ["Equities take their share first", "driven by the room's risk appetite", pct(share * 100)],
-          ["Fixed income takes the rest", "it is the residual, not a target", pct((1 - share) * 100)]
-        ],
-        sum:   ["Share of what is left", pct((1 - share) * 100)],
-        total: ["of the " + pct(left) + " outside notes and FX", alloc.fixedIncome + "%"]
-      },
-      notes: {
-        rows: [
-          ["Base allocation", "a standing place in the book", signed(8)],
-          ["Leverage appetite",
-           Math.round(d.levered * 100) + "% of the room said yes &mdash; expressed through notes, not margin",
-           signed(d.levered * 14)]
-        ],
-        total: ["Structured notes", alloc.notes + "%"]
-      },
-      options: {
-        rows: [
-          ["Carved out of equities", "an overlay on stock the book already owns, " +
-           "not a separate bet", "&mdash;"],
-          ["Leverage appetite",
-           Math.round(d.levered * 100) + "% of the room would use it &mdash; expressed " +
-           "as calls rather than margin", signed(d.levered * 18) + " of equity"],
-          ["Bullish tilt",
-           "the room averaged " + (Math.round(d.view * 100) / 100) + " of 2 on markets",
-           signed(Math.max(0, d.view - 1) * 10) + " of equity"],
-          ["Income mandate",
-           Math.round(d.income * 100) + "% want income &mdash; earned by selling upside " +
-           "or being paid to bid below the market",
-           signed(d.income * 12) + " of equity"],
-          ["Defensive tilt",
-           "a cautious room buys cover rather than gearing",
-           signed(Math.max(0, 1 - d.view) * 10) + " of equity"]
-        ],
-        sum:   ["Share of the equity sleeve overlaid",
-                pct(Math.min(30, (d.levered * 18) + Math.max(0, d.view - 1) * 10 +
-                                 d.income * 12 + Math.max(0, 1 - d.view) * 10))],
-        total: ["Options", alloc.options + "%"]
-      },
-
-      fx: {
-        rows: [
-          ["Base allocation", "a standing place in the book", signed(5)],
-          ["Dollar conviction",
-           "the room averaged " + Math.round(d.usd) + "% in dollars, " +
-           Math.round(Math.abs(d.usd - 50)) + " points off indifference",
-           signed((Math.abs(d.usd - 50) / 50) * 12)]
-        ],
-        total: ["FX", alloc.fx + "%"]
-      }
-    };
+  function chips(list, fmt) {
+    return list.map(function (x) {
+      return '<span class="p-chip">' + esc(fmt ? fmt(x.key) : x.key) +
+             "<b>" + pc(x.pct, 0) + "%</b></span>";
+    }).join("");
   }
 
   var SECTOR_WORD = {
-    core: "broad market", tech: "technology", financials: "financials",
-    healthcare: "healthcare", energy: "energy and materials",
-    consumer: "consumer", industrials: "industrials"
+    core: "Broad market", tech: "Technology", financials: "Financials",
+    healthcare: "Healthcare", energy: "Energy & materials",
+    consumer: "Consumer", industrials: "Industrials"
   };
 
-  /* Why THIS instrument, in concrete terms. A reason that could be printed
-     against any line in the sleeve is not a reason, so each one names the
-     actual fact that earned the place: the sector, the rating, the tenor,
-     the dollar weight. */
-  /* An option is defined by what it does, not by which axis it scores well
-     on. "Carries the gearing the room wanted" is true of a long call and
-     tells a client nothing; "geared to the upside, struck 5% below spot,
-     costing 8.7% of notional" is the trade. */
-  function optionPhrase(item) {
-    var strat = (item.strategy || "").toLowerCase();
-    var m = item.moneyness ? Math.round(item.moneyness * 100) : null;
-    var cost = item.premiumPct !== null && item.premiumPct !== undefined
-      ? item.premiumPct.toFixed(1) + "% of notional" : null;
-    var away = m === null ? "" : (m >= 100 ? (m - 100) + "% above spot"
-                                           : (100 - m) + "% below spot");
-    switch (strat) {
-      case "long call":
-        return "geared to the upside" + (away ? ", struck " + away : "") +
-               (cost ? ", costing " + cost : "");
-      case "covered call":
-        return "sells the upside " + away + " for premium" +
-               (cost ? " of " + cost : "");
-      case "short put":
-        return "paid " + (cost || "premium") + " to bid " + away;
-      case "long put":
-        return "downside cover from " + away + (cost ? ", costing " + cost : "");
-      default:
-        return item.strategy || "option overlay";
-    }
+  /* ---- the four sleeve tables ---- */
+
+  function equityPanel(b) {
+    var lines = b.lines || [];
+    var beta = wavg(lines, function (l) { return an(l.item).beta; });
+    var vol  = wavg(lines, function (l) { return an(l.item).volatility; });
+    var usd  = wavg(lines, function (l) { return an(l.item).usdExposure; });
+    var em   = wshare(lines, function (l) { return an(l.item).region === "em"; });
+    var ovl  = wshare(lines, function (l) { return l.overlay; });
+    var sectors = topBy(lines.filter(function (l) {
+      return an(l.item).sector && an(l.item).sector !== "core";
+    }), function (l) { return an(l.item).sector; }, 4);
+
+    var stats =
+      statCell("Positions", lines.length) +
+      statCell("Weighted beta", pc(beta.value, 2),
+               beta.coverage < 0.99 ? pc(beta.coverage * 100, 0) + "% covered" : "") +
+      statCell("Weighted volatility", pc(vol.value, 2)) +
+      statCell("Dollar exposure", pc(usd.value, 0) + "%") +
+      statCell("Emerging markets", pc(em, 0) + "%") +
+      statCell("Option overlay", pc(ovl, 0) + "%", "of the sleeve");
+
+    var rows = lines.map(function (l) {
+      var it = l.item, a = an(it);
+      var isOpt = !!l.overlay;
+      return "<tr" + (isOpt ? ' class="p-r-ovl"' : "") + ">" +
+        "<td>" + tick(it.ticker) + "</td>" +
+        "<td>" + esc(it.name) + (isOpt ? ' <em class="p-tag">overlay</em>' : "") + "</td>" +
+        "<td>" + esc(isOpt ? (it.strategy || "") : (SECTOR_WORD[a.sector] || a.sector || "")) + "</td>" +
+        "<td>" + esc(isOpt ? (it.underlying || "") : (a.region === "em" ? "EM" : "Developed")) + "</td>" +
+        '<td class="num">' + (isOpt ? (it.moneyness ? pc(it.moneyness * 100, 0) + "%" : "&mdash;")
+                                    : (a.usdExposure === null ? "&mdash;" : a.usdExposure + "%")) + "</td>" +
+        '<td class="num">' + (isOpt ? (it.delta === null || it.delta === undefined ? "&mdash;" : pc(it.delta, 2))
+                                    : pc(a.beta, 2)) + "</td>" +
+        '<td class="num p-w">' + l.weight + "%</td></tr>";
+    }).join("");
+
+    return panel(b, stats,
+      ["", "Holding", "Sector / structure", "Region / underlying", "USD % / strike", "Beta / delta", "Weight"],
+      rows,
+      sectors.length ? "Sector exposure " + chips(sectors, function (k) {
+        return SECTOR_WORD[k] || k;
+      }) : "");
   }
 
-  function axisPhrase(axisId, agg, item) {
-    if (item && item.strategy) return optionPhrase(item);
-    var f = item.fit || {}, d = item.data || {};
-    function roomLeads(k) {
-      var c = (agg.axes[axisId] || {}).counts || {}, best = null;
-      Object.keys(c).forEach(function (x) { if (!best || c[x] > c[best]) best = x; });
-      return best === k;
-    }
-    switch (axisId) {
-      case "sector": {
-        var w = SECTOR_WORD[item.sector] || item.sector;
-        if (!w) return "the sector mix the room asked for";
-        var asked = ((agg.axes.sector || {}).counts || {})[item.sector];
-        return w + (asked ? " &mdash; a sector the room chose" : ", for breadth");
-      }
-      case "country":
-        return (item.region === "em" || item.region === "EM")
-          ? "emerging markets" : "developed markets";
-      case "usd": {
-        var t = f.usd && f.usd.target;
-        if (t === undefined) return "the dollar weight the room wanted";
-        return t >= 95 ? "fully dollar-denominated"
-             : t <= 10 ? "priced outside the dollar"
-             : Math.round(t) + "% dollar exposure";
-      }
-      case "riskProfile": {
-        var r = f.riskProfile && f.riskProfile.target;
-        if (r === undefined) return "sits where the room's risk sits";
-        return r >= 1.5 ? "high beta, which the room asked for"
-             : r <= 0.5 ? "defensive, as the room asked"
-             : "mid risk, where the room landed";
-      }
-      case "capitalIncome": return roomLeads("income") ? "pays a coupon" : "held for capital growth";
-      case "duration":      return d.duration ? (Math.round(d.duration * 10) / 10) + "-year duration" : "the duration the room asked for";
-      case "credit":        return item.rating ? "rated " + item.rating : (roomLeads("hy") ? "the credit risk the room accepted" : "investment grade, as asked");
-      case "horizon":       return item.tenor ? item.tenor + " tenor" : "tenor matches the room's horizon";
-      case "leverage":      return "carries the gearing the room wanted";
-      default:              return axisId;
-    }
+  function fixedIncomePanel(b) {
+    var lines = b.lines || [];
+    var ytw = wavg(lines, function (l) { return an(l.item).yieldToWorst; });
+    var dur = wavg(lines, function (l) { return an(l.item).duration; });
+    var cpn = wavg(lines, function (l) { return (l.item || {}).coupon; });
+    var ig  = wshare(lines, function (l) { return an(l.item).creditClass === "ig"; });
+    var em  = wshare(lines, function (l) { return an(l.item).region === "em"; });
+    var countries = topBy(lines, function (l) { return an(l.item).country || (l.item || {}).country; }, 5);
+
+    var stats =
+      statCell("Positions", lines.length) +
+      statCell("Weighted YTW", pc(ytw.value, 2) + "%") +
+      statCell("Weighted duration", pc(dur.value, 2) + "y") +
+      statCell("Weighted coupon", pc(cpn.value, 2) + "%") +
+      statCell("Investment grade", pc(ig, 0) + "%") +
+      statCell("Emerging markets", pc(em, 0) + "%");
+
+    var rows = lines.map(function (l) {
+      var it = l.item, a = an(it);
+      return "<tr><td>" + tick(it.ticker) + "</td>" +
+        "<td>" + esc(it.name) + "</td>" +
+        "<td>" + esc(it.rating || "") +
+          (a.creditClass ? ' <em class="p-pillx">' + a.creditClass.toUpperCase() + "</em>" : "") + "</td>" +
+        "<td>" + esc(it.country || "") + "</td>" +
+        "<td>" + esc(it.maturity || "") + "</td>" +
+        '<td class="num">' + pc(a.yieldToWorst, 2) + "</td>" +
+        '<td class="num">' + pc(a.duration, 2) + "</td>" +
+        '<td class="num p-w">' + l.weight + "%</td></tr>";
+    }).join("");
+
+    var book = b.book ? '<span class="p-bookname">' + esc(b.book.name) + "</span>" : "";
+    return panel(b, stats,
+      ["", "Issue", "Rating", "Country", "Maturity", "YTW", "Duration", "Weight"],
+      rows,
+      (book ? "Book " + book + " &nbsp; " : "") +
+      (countries.length ? "Country exposure " + chips(countries) : ""));
   }
 
-  /* Rank the axes an instrument is unusually strong on, measured against
-     the rest of its own shelf. */
-  function edges(line, scored, W) {
-    var per = line.per || {}, axes = Object.keys(per);
-    var mean = {};
-    axes.forEach(function (ax) {
-      var t = 0, n = 0;
-      scored.forEach(function (r) {
-        if (r.per && r.per[ax] !== undefined) { t += r.per[ax]; n++; }
-      });
-      mean[ax] = n ? t / n : 0;
-    });
-    return axes.map(function (ax) {
-      return { ax: ax, edge: (W[ax] || 1) * (per[ax] - mean[ax]), score: per[ax] };
-    }).filter(function (x) { return x.edge > 0.015 && x.score >= 0.45; })
-      .sort(function (a, b) { return b.edge - a.edge; });
+  function notesPanel(b) {
+    var lines = b.lines || [];
+    var risk = wavg(lines, function (l) { return an(l.item).riskScore; });
+    var ten  = wavg(lines, function (l) { return an(l.item).tenorYears; });
+    var core = wshare(lines, function (l) { return (l.item || {}).isCore; });
+    var prot = wshare(lines, function (l) { return an(l.item).principalProtected; });
+    var em   = wshare(lines, function (l) { return an(l.item).region === "em"; });
+
+    var stats =
+      statCell("Structures", lines.length) +
+      statCell("Weighted tenor", pc(ten.value, 1) + "y") +
+      statCell("Index-linked", pc(core, 0) + "%", "of the sleeve") +
+      statCell("Principal protected", pc(prot, 0) + "%") +
+      statCell("Emerging markets", pc(em, 0) + "%") +
+      statCell("Risk proxy", pc(risk.value * 100, 0) + " / 100");
+
+    var rows = lines.map(function (l) {
+      var it = l.item;
+      return "<tr><td>" + tick(it.ticker) + "</td>" +
+        "<td>" + esc(it.name) + (it.isCore ? ' <em class="p-tag">index</em>' : "") + "</td>" +
+        "<td>" + esc(it.type || "") + "</td>" +
+        "<td>" + esc(it.underlying || "") + "</td>" +
+        "<td>" + esc(it.tenor || "") + "</td>" +
+        "<td>" + (it.barrier ? esc(it.barrier) : "\u2014") + "</td>" +
+        "<td>" + esc(it.coupon || "") + "</td>" +
+        '<td class="num p-w">' + l.weight + "%</td></tr>";
+    }).join("");
+
+    return panel(b, stats,
+      ["", "Structure", "Type", "Underlying", "Tenor", "Barrier", "Coupon", "Weight"],
+      rows, "");
   }
 
-  /* Reasons are assigned across the whole sleeve at once. Five lines that
-     each say "matches the room's risk" tell a client nothing, so once an
-     angle is used it is not repeated while another one is still available. */
-  /* What a line IS, for when what it is good at has already been claimed
-     by something above it. */
-  function identityPhrase(item, used) {
-    var f = item.fit || {}, d = item.data || {};
-    var cands = [];
-    if (item.strategy) {
-      cands.push(optionPhrase(item));
-      if (item.underlying) cands.push("on " + item.underlying + ", " + (item.days || item.tenor) + " days");
-    }
-    if (item.sector && SECTOR_WORD[item.sector]) {
-      cands.push(SECTOR_WORD[item.sector] + " &mdash; breadth beyond the lead exposures");
-    }
-    if (item.rating) cands.push("rated " + item.rating + ", spreading issuer risk");
-    if (item.tenor)  cands.push(item.tenor + " tenor, laddering the sleeve");
-    if (d.duration)  cands.push((Math.round(d.duration * 10) / 10) + "-year duration, laddering the sleeve");
-    if (item.region) cands.push((item.region === "em" || item.region === "EM"
-      ? "emerging market" : "developed market") + " exposure, for spread");
-    cands.push("closest remaining fit once the sleeve was diversified");
-    for (var i = 0; i < cands.length; i++) {
-      if (!used[cands[i]]) { used[cands[i]] = 1; return cands[i]; }
-    }
-    return cands[cands.length - 1];
+  function fxPanel(b) {
+    var lines = b.lines || [];
+    var usd = wavg(lines, function (l) { return an(l.item).usdExposure; });
+    var kinds = topBy(lines, function (l) { return an(l.item).kind || (l.item || {}).kind; }, 4);
+
+    /* NOT "does the name start with Long": every position here is a long of
+       something, and "Long Eur/Usd" is long the euro — short the dollar.
+       The dollar stance is the weighted dollar exposure and its complement,
+       which is what the instrument actually carries. */
+    var away = usd.value === null ? null : 100 - usd.value;
+
+    var stats =
+      statCell("Positions", lines.length) +
+      statCell("Dollar exposure", pc(usd.value, 0) + "%", "weighted, of the sleeve") +
+      statCell("Away from the dollar", pc(away, 0) + "%") +
+      statCell("Instruments", kinds.map(function (k) { return k.key; }).join(", ") || "\u2014");
+
+    var rows = lines.map(function (l) {
+      var it = l.item, a = an(it);
+      return "<tr><td>" + tick(it.ticker) + "</td>" +
+        "<td>" + esc(it.name) + "</td>" +
+        "<td>" + esc(it.kind || "") + "</td>" +
+        "<td>" + esc(it.note || "") + "</td>" +
+        '<td class="num">' + (a.usdExposure === null || a.usdExposure === undefined
+          ? "\u2014" : a.usdExposure + "%") + "</td>" +
+        '<td class="num p-w">' + l.weight + "%</td></tr>";
+    }).join("");
+
+    return panel(b, stats,
+      ["", "Position", "Instrument", "Exposure", "USD %", "Weight"], rows, "");
   }
 
-  function reasonsForSleeve(lines, scored, W, agg) {
-    /* Tracked by wording, not by axis. Two funds can both be strongest on
-       sector and still earn different sentences ("technology", "healthcare"),
-       but four funds that are all simply mid-risk produce the same sentence
-       four times, which reads as the deck having nothing to say. */
-    var used = {};
-    function take(e, line) {
-      for (var i = 0; i < e.length; i++) {
-        var phrase = axisPhrase(e[i].ax, agg, line.item);
-        if (!used[phrase]) { used[phrase] = 1; return { phrase: phrase, edge: e[i].edge }; }
-      }
-      return null;
-    }
+  function tick(t) { return t ? '<span class="p-tk">' + esc(t) + "</span>" : ""; }
 
-    return lines.map(function (l) {
-      var out = [], e = edges(l, scored, W);
-
-      var first = take(e, l);
-      if (first) out.push(first.phrase);
-
-      /* A second angle only when it is genuinely strong and not already
-         said somewhere else in this sleeve. */
-      var second = take(e.filter(function (x) { return x.edge >= 0.05; }), l);
-      if (second) out.push(second.phrase);
-
-      if (l.shelfRank && l.rank && l.shelfRank > l.rank + 1) {
-        out.push("#" + l.shelfRank + (l.shelfOf ? " of " + l.shelfOf : "") +
-                 " on fit alone &mdash; held for breadth");
-      }
-      if (l.item && l.item.isCore) out.push("index-linked, counts toward the 50% floor");
-
-      /* Nothing distinctive left to say is itself the honest answer — the
-         sleeve had already taken the obvious exposures — but it should
-         still name what this line adds rather than repeating a shrug. */
-      if (!out.length) out.push(identityPhrase(l.item, used));
-      return out;
-    });
+  function panel(b, stats, head, rows, foot) {
+    return '<div class="p-stats">' + stats + "</div>" +
+      '<div class="p-tblwrap"><table class="p-tbl' +
+        ((b.lines || []).length > 7 ? " p-tbl-dense" : "") + '">' +
+        "<thead><tr>" + head.map(function (h, i) {
+          return "<th" + (i >= head.length - 3 ? ' class="num"' : "") + ">" + h + "</th>";
+        }).join("") + "</tr></thead><tbody>" + rows + "</tbody></table></div>" +
+      (foot ? '<p class="p-foot-note">' + foot + "</p>" : "");
   }
+
+  var PANEL = {
+    equities: equityPanel, fixedIncome: fixedIncomePanel,
+    notes: notesPanel, fx: fxPanel
+  };
 
   function paintSleeves(agg, alloc) {
     if (!window.PRODUCTS) return;
     var sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS);
     if (!sim) return;
-    var terms = allocTerms(alloc);
+    var lev = window.ENGINE.leverageDisclosure(alloc);
 
     SLEEVE_SLIDES.forEach(function (S) {
       var host = document.getElementById(S.host);
@@ -794,134 +766,26 @@
 
       var bucket = null;
       sim.buckets.forEach(function (b) { if (b.key === S.key) bucket = b; });
-      if (!bucket) { host.innerHTML = ""; return; }
-
-      if (badge) badge.textContent = bucket.weight + "%";
-
-      var cfg = window.PRODUCTS[S.key] || {};
-      var W = (cfg.selection || {}).weights || {};
-      var scored = bucket.scored || [];
-      if (!scored.length) {
-        try { scored = window.ENGINE.scoreShelf(agg, cfg, { allocation: bucket.weight }).all; }
-        catch (e) { scored = []; }
-      }
-
-      var T = terms[S.key] || { rows: [] };
-
-      /* Fixed income is no longer assembled line by line: the desk supplies
-         five finished books and the room picks one. So the "why this much"
-         column answers the question that was actually decided — which book,
-         and what it is — instead of walking through an allocation formula
-         that no longer drives the holdings. */
-      if (S.key === "fixedIncome" && bucket.book) {
-        var bk = bucket.book, st = bk.stats || {};
-        T = {
-          rows: [
-            ["Chosen book", bk.name, "&mdash;"],
-            ["Risk band", "the five books run developed and short to emerging " +
-                          "and long, ordered by yield", (bk.riskBand + 1) + " of 5"],
-            ["Yield to worst", "weighted across the book", pct(st.ytw)],
-            ["Duration", "weighted, in years", pc(st.duration, 2) + "y"],
-            ["Credit", "investment grade share of the book", pct(st.igWeight)],
-            ["Region", "emerging market share", pct(st.emWeight)]
-          ],
-          total: ["Fixed income", bucket.weight + "%"]
-        };
-      }
-      var colour = BUCKET_COLOUR[S.key];
-
-      var whyMuch =
-        '<div class="p-sl-head">Why ' + bucket.weight + '%</div>' +
-        T.rows.map(function (r) {
-          return '<div class="p-term">' +
-            '<span class="p-term-l">' + r[0] + '<i>' + r[1] + "</i></span>" +
-            '<b>' + r[2] + "</b></div>";
-        }).join("") +
-        (T.sum ? '<div class="p-term p-term-sum"><span class="p-term-l">' + T.sum[0] +
-                 "</span><b>" + T.sum[1] + "</b></div>" : "") +
-        (T.total ? '<div class="p-term p-term-tot"><span class="p-term-l">' + T.total[0] +
-                 "</span><b>" + T.total[1] + "</b></div>" : "");
-
-      if (S.key === "fixedIncome" && bucket.book) {
-        var hs = bucket.lines;
-        var picks2 = hs.map(function (l) {
-          var it = l.item;
-          return '<div class="p-pk"><div class="p-pk-top">' +
-            '<i class="p-rank">' + (l.rank || "") + "</i>" +
-            '<span class="p-pk-name">' + esc(it.name || it.ticker) + "</span>" +
-            '<b class="p-pk-w">' + l.weight + "%</b></div>" +
-            '<div class="p-pk-why">' +
-              esc([it.rating, it.credit && it.credit.toUpperCase(),
-                   it.country, it.maturity].filter(Boolean).join(" \u00b7 ")) +
-              (it.ytw ? " &middot; " + pc(it.ytw, 2) + "% to worst" : "") +
-              (it.duration ? " &middot; " + pc(it.duration, 1) + "y duration" : "") +
-            "</div></div>";
-        }).join("");
-        host.innerHTML =
-          '<div class="p-sl-col p-sl-why">' + whyMuch + "</div>" +
-          /* The Balanced book runs to ten bonds where the others run to
-             seven, and ten at the normal spacing falls off the bottom of a
-             1000px projector. Tighten rather than scroll: nobody scrolls a
-             slide. */
-          '<div class="p-sl-col p-sl-picks' + (hs.length > 7 ? " p-sl-dense" : "") +
-            '"><div class="p-sl-head">' + esc(bucket.book.name) + "</div>" +
-            picks2 + "</div>";
+      if (!bucket || !bucket.lines || !bucket.lines.length) {
+        if (badge) badge.textContent = "";
+        host.innerHTML = '<p class="p-book-empty">Nothing in this sleeve.</p>';
         return;
       }
 
-      var n = bucket.lines.length;
-      var heading = n === 1 ? "Why this one"
-                  : n === 2 ? "Why these two"
-                  : n === 3 ? "Why these three"
-                  : "Why these " + n;
+      /* With leverage the sleeves sum past 100, so a sleeve weight is a share
+         of CAPITAL, not of the book — say which, or 69% equities next to 135%
+         gross looks like an error. */
+      if (badge) badge.textContent = bucket.weight + "%";
 
-      /* The same three axes down the whole sleeve, so the bars can be read
-         against each other. Picking each line's own best three made every
-         row a different chart. */
-      var present = {};
-      bucket.lines.forEach(function (l) {
-        Object.keys(l.per || {}).forEach(function (ax) { present[ax] = 1; });
-      });
-      var showAxes = Object.keys(present).sort(function (a, b) {
-        return (W[b] || 1) - (W[a] || 1);
-      }).slice(0, 3);
+      var head = lev
+        ? '<p class="p-sleeve-gross">' + bucket.weight + "% of capital &middot; the book runs " +
+          lev.gross + "% gross, " + lev.financed + "% of it financed</p>"
+        : "";
 
-      var allReasons = reasonsForSleeve(bucket.lines, scored, W, agg);
-
-      var picks = bucket.lines.length
-        ? bucket.lines.map(function (l, idx) {
-            var per = l.per || {};
-            var bars = showAxes.map(function (ax) {
-              var v = per[ax];
-              return '<span class="p-ax"><em>' + esc(shortAxis(ax)) + "</em>" +
-                '<i><u style="width:' + (v === undefined ? 0 : Math.round(v * 100)) +
-                "%;background:" + colour + '"></u></i></span>';
-            }).join("");
-
-            return '<div class="p-pk">' +
-              '<div class="p-pk-top"><i class="p-rank">' + (l.rank || "") + "</i>" +
-                '<span class="p-pk-name">' + esc(l.item.name) + "</span>" +
-                '<b class="p-pk-w">' + l.weight + "%</b></div>" +
-              '<div class="p-pk-why">' + allReasons[idx].join(" <em>&middot;</em> ") + "</div>" +
-              '<div class="p-pk-axes">' + bars + "</div>" +
-              "</div>";
-          }).join("")
-        : '<p class="p-book-empty">Nothing in this sleeve.</p>';
-
-      host.innerHTML =
-        '<div class="p-sl-col p-sl-why">' + whyMuch + "</div>" +
-        '<div class="p-sl-col p-sl-picks"><div class="p-sl-head">' + heading + "</div>" +
-          picks + "</div>";
+      host.innerHTML = head + (PANEL[S.key] || equityPanel)(bucket);
     });
   }
 
-  /* Axis labels are full questions; a bar needs a word. */
-  function shortAxis(id) {
-    return ({ riskProfile: "risk", marketView: "view", horizon: "horizon",
-              leverage: "gearing", country: "region", sector: "sector",
-              usd: "dollar", capitalIncome: "cap/inc", duration: "duration",
-              credit: "credit" })[id] || id;
-  }
 
   /* ---------- the room voting, live ---------- */
   var liveReady = false;
