@@ -172,3 +172,118 @@ body.val { background: var(--bg); color: var(--text); }
   .v-head { gap: 16px; }
   .v-status { margin-left: 0; }
 }
+
+/* --- all five portfolios ---
+   The platform has exactly five possible books. This section lays all of
+   them out so every output can be checked before the event instead of
+   discovered on the projector. */
+.v-band {
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--line);
+  border-radius: var(--r-sm);
+  margin-bottom: 10px;
+  background: var(--bg);
+}
+.v-band-pass { border-left-color: var(--pos); }
+.v-band-warn { border-left-color: #c9a227; }
+.v-band-fail { border-left-color: var(--neg); }
+.v-band > summary {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 13px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+.v-band > summary::-webkit-details-marker { display: none; }
+.v-band > summary::before {
+  content: "\25B8";
+  color: var(--muted); font-size: 11px;
+  transition: transform 0.15s ease;
+}
+.v-band[open] > summary::before { transform: rotate(90deg); }
+.v-band-n { font-size: 14.5px; font-weight: 550; color: var(--text); }
+.v-band-s {
+  margin-left: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.v-band-s b { color: var(--text); font-weight: 500; }
+
+.v-band-body { padding: 4px 16px 18px; border-top: 1px solid var(--line-soft); }
+.v-band-kv {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 0 26px; margin: 14px 0 18px;
+}
+
+.v-band-dur { margin-bottom: 18px; }
+.v-band-dur h4, .v-sleeve h4 {
+  display: flex; align-items: baseline; gap: 9px;
+  font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); font-weight: 550; margin-bottom: 9px;
+}
+.v-sleeve h4 b {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--text); font-variant-numeric: tabular-nums; letter-spacing: 0;
+}
+.v-sleeve h4 em {
+  margin-left: auto; font-style: normal; letter-spacing: 0; text-transform: none;
+}
+
+/* Duration in lots: a weighted average of 5.2 years is the same number for
+   a book that sits at five and a book that is half at two and half at nine. */
+.v-lots {
+  display: flex; height: 11px; border-radius: 2px; overflow: hidden;
+  background: var(--surface-2);
+}
+.v-lot { display: block; height: 100%; }
+.v-lot-1 { background: #4aa8c9; }
+.v-lot-2 { background: #3987e5; }
+.v-lot-3 { background: #8c5cd6; }
+.v-lots-k {
+  display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 8px;
+  font-size: 11.5px; color: var(--text-2);
+}
+.v-lots-k span { display: inline-flex; align-items: center; gap: 7px; }
+.v-lots-k i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+.v-lots-k b {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 500; color: var(--text); font-variant-numeric: tabular-nums;
+}
+
+.v-band-sleeves {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 22px;
+}
+.v-sleeve { min-width: 0; }
+.v-mini { width: 100%; border-collapse: collapse; }
+.v-mini td {
+  padding: 4px 8px 4px 0;
+  font-size: 12px; color: var(--text-2);
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: baseline;
+}
+.v-mini tr:last-child td { border-bottom: none; }
+.v-mini .num {
+  text-align: right;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums; color: var(--text);
+  white-space: nowrap;
+}
+.v-tk {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10.5px; color: var(--muted); white-space: nowrap;
+}
+.v-ovl {
+  font-style: normal; font-size: 9.5px; letter-spacing: 0.05em;
+  color: var(--series-options); border: 1px solid var(--series-options);
+  border-radius: var(--r-xs); padding: 0 4px; margin-left: 5px;
+}
+.v-band-checks { margin-top: 16px; }
+.v-chk {
+  display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap;
+  font-size: 12px; color: var(--text-2);
+  padding: 7px 0; border-top: 1px solid var(--line-soft);
+}
+.v-chk b { color: var(--text); font-weight: 500; }
+
+.v-dim { font-style: normal; font-weight: 400; color: var(--muted); font-size: 10.5px; margin-left: 7px; }

@@ -1284,7 +1284,22 @@ window.ENGINE = (function () {
       return b.id === top.portfolio.id;
     })[0];
     if (!band) return null;
+    return buildBandBook(band, products, agg);
+  }
 
+  /* The book for ONE band, with no room involved.
+   *
+   * There are exactly five possible outputs, so they can all be inspected
+   * ahead of the event rather than discovered on the projector. This is what
+   * the validation page enumerates; bandBook() above is the same thing with
+   * the band chosen by the room instead of named outright. */
+  function bookForBand(bandId, products) {
+    if (!window.BANDS || !window.BANDS.bands) return null;
+    var band = window.BANDS.bands.filter(function (b) { return b.id === bandId; })[0];
+    return band ? buildBandBook(band, products, null) : null;
+  }
+
+  function buildBandBook(band, products, agg) {
     var buckets = [];
 
     function lines(src, sleeveWeight, tag) {
@@ -1375,7 +1390,7 @@ window.ENGINE = (function () {
       geared: Math.round((gross - 100) * 10) / 10,
       levered: gross > 100.5,
       band: band.id, bandName: band.name,
-      drivers: roomAllocation(agg).drivers
+      drivers: agg ? roomAllocation(agg).drivers : null
     };
 
     return { alloc: alloc, buckets: buckets, band: band, fromBandBook: true };
@@ -1777,6 +1792,7 @@ window.ENGINE = (function () {
     roomAllocation: roomAllocation,
     leverageDisclosure: leverageDisclosure,
     roomPortfolio: roomPortfolio,
+    bookForBand: bookForBand,
     backtest: backtest,
     scoreEquityShelf: scoreEquityShelf,
     scoreShelf: scoreShelf,

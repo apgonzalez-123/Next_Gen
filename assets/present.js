@@ -331,14 +331,11 @@
     }
     out += "</dl>";
 
-    if (r && r.scenarios) {
-      out += '<div class="p-scen">' + r.scenarios.map(function (sc) {
-        var up = sc.pct >= 0;
-        return '<div><span class="lbl">' + esc(sc.label) + "</span>" +
-               '<span class="val ' + (up ? "up" : "down") + '">' +
-               (up ? "+" : "") + sc.pct.toFixed(1) + "%</span></div>";
-      }).join("") + "</div>";
-    }
+    /* No bull / base / bear strip. Those three numbers are a band-level
+       illustration, not anything this room's book produces, and sitting
+       under the room's own allocation they read as a forecast of it. The
+       expected-return and drawdown rows above already carry the shape of
+       the risk without implying a path. */
 
     return out;
   }
@@ -898,14 +895,35 @@
         "</div>" +
 
         (bar === null
-          ? '<div class="p-cd-barrier p-cd-nobar"><small>No barrier</small>' +
-            "<p>Credit-linked: the risk is the reference entity, not a level.</p></div>"
+          ? '<div class="p-cd-barrier p-cd-nobar">' +
+              "<small>Protection</small>" +
+              "<p><b>No barrier.</b> A credit-linked note pays unless the " +
+              "reference entity defaults \u2014 the risk is that credit event, " +
+              "not a market level.</p>" +
+            "</div>"
           : '<div class="p-cd-barrier">' +
-              '<small>Barrier ' + bar + '</small>' +
-              '<div class="p-cd-gauge"><i style="width:' + bar + '%"></i>' +
-                '<u style="left:' + bar + '%"></u></div>' +
-              "<p>Protected while the underlying holds above &minus;" +
-                (100 - bar) + "%</p>" +
+              "<small>Protection</small>" +
+              '<div class="p-cd-prot">' +
+                '<div class="p-cd-prot-n"><b>\u2212' + (100 - bar) + '%</b>' +
+                  "<span>buffer before capital is at risk</span></div>" +
+              "</div>" +
+              /* The scale runs from a total loss on the left to today's level
+                 on the right, with the barrier marked. The green stretch is
+                 the fall the note absorbs; the red is where the investor
+                 starts taking the underlying's loss. */
+              '<div class="p-cd-gauge">' +
+                '<i style="width:' + bar + '%"></i>' +
+                '<u style="left:' + bar + '%"></u>' +
+              "</div>" +
+              '<div class="p-cd-gauge-ends">' +
+                "<span>&minus;100%</span>" +
+                '<span class="p-cd-gauge-mark" style="left:' + bar + '%">barrier ' +
+                  bar + "</span>" +
+                "<span>today</span>" +
+              "</div>" +
+              "<p>Capital is returned in full while the underlying stays " +
+              "above <b>" + bar + "% of its level today</b>. Below it, the " +
+              "investor takes the full fall.</p>" +
             "</div>") +
 
         cardFoot(l, mx, "of capital") +

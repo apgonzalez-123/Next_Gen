@@ -45,7 +45,8 @@ window.PORTFOLIO_VALIDATOR = (function () {
     /* Years. */
     duration: { pass: 2, warn: 4 },
 
-    /* The risk proxy runs 0-100; see riskProxy() for what it is. */
+    /* The risk proxy is anchored so 100 is an ungeared book at full risk
+       weight; a geared one runs past it. See riskProxy(). */
     risk:     { pass: 15, warn: 26 },
 
     /* Concentration, as a share of the whole book. */
@@ -119,6 +120,60 @@ window.PORTFOLIO_VALIDATOR = (function () {
     duration:      ["fixedIncomeSelection"],
     credit:        ["fixedIncomeSelection"]
   };
+
+  /* ---- duration lots ---------------------------------------------------
+   *
+   * A single weighted duration hides the shape of a bond book: 5.2 years is
+   * the same number whether every line sits at five years or half sit at two
+   * and half at nine, and those are different portfolios with different
+   * behaviour in a rate move. So duration is also reported in lots, and the
+   * room's answer is placed in one.
+   *
+   * Three lots, chosen to match how a desk actually talks about the curve
+   * rather than to be evenly spaced: inside four years a bond is a cash
+   * substitute, four to eight is the belly where most credit sits, and past
+   * eight the position is a rates view whatever the credit says.
+   */
+  var DURATION_LOTS = [
+    { id: "short", label: "1\u20134y", lo: 0, hi: 4 },
+    { id: "belly", label: "4\u20138y", lo: 4, hi: 8 },
+    { id: "long",  label: "8y+",      lo: 8, hi: Infinity }
+  ];
+
+  function durationLot(years) {
+    if (years === null || years === undefined || !isFinite(years)) return null;
+    for (var i = 0; i < DURATION_LOTS.length; i++) {
+      if (years < DURATION_LOTS[i].hi) return DURATION_LOTS[i];
+    }
+    return DURATION_LOTS[DURATION_LOTS.length - 1];
+  }
+
+  function durationLotLabel(years) {
+    var l = durationLot(years);
+    return l ? l.label : "\u2014";
+  }
+
+  /* How the sleeve's weight is spread across the lots. This is the figure a
+     single weighted average cannot give you. */
+  function durationSpread(rows, total) {
+    var acc = {};
+    DURATION_LOTS.forEach(function (l) { acc[l.id] = 0; });
+    var covered = 0;
+    rows.forEach(function (r) {
+      var d = an(r.item).duration;
+      var l = durationLot(d);
+      if (!l) return;
+      acc[l.id] += r.weight || 0;
+      covered += r.weight || 0;
+    });
+    return DURATION_LOTS.map(function (l) {
+      return {
+        id: l.id, label: l.label,
+        weight: round(acc[l.id], 2),
+        pct: round(total > 0 ? (acc[l.id] / total) * 100 : 0, 1)
+      };
+    });
+  }
 
   var Q_SECTORS = ["tech", "financials", "healthcare", "energy",
                    "consumer", "industrials"];
@@ -195,11 +250,16 @@ window.PORTFOLIO_VALIDATOR = (function () {
    * ------------------------------------------------------------------ */
 
   function riskProxy(all) {
-    /* A 0-100 PROXY, not a volatility and not a VaR. Each line contributes
-       its weight times its sleeve's risk anchor, modulated +/-50% by the
+    /* A PROXY, not a volatility and not a VaR. Each line contributes its
+       weight times its sleeve's risk anchor, modulated +/-50% by the
        product's own risk score. Transparent on purpose: it exists so that
        "did this room get the risk it asked for" has a single number, and it
-       should never be presented as an estimate of loss. */
+       should never be presented as an estimate of loss.
+
+       100 is an UNGEARED book carried at full risk weight, not a ceiling.
+       Because the sum is over weight and a geared book carries more than
+       100% of it, the aggressive band reads about 120 — which is the point,
+       and why this is not clamped at 100. */
     var contrib = 0;
     all.forEach(function (r) {
       var a = an(r.item);
@@ -314,6 +374,8 @@ window.PORTFOLIO_VALIDATOR = (function () {
         weight: fiWeight,
         weightedDuration: round(dur.value, 2),
         durationCoverage: round(dur.coverage * 100, 1),
+        durationLot: durationLotLabel(dur.value),
+        durationSpread: durationSpread(fi, fiWeight),
         igWeight: round((shares(fi, function (r) { return an(r.item).creditClass; }, fiWeight).ig) || 0, 2),
         hyWeight: round((shares(fi, function (r) { return an(r.item).creditClass; }, fiWeight).hy) || 0, 2),
         regionExposure: shares(fi, function (r) { return an(r.item).region; }, fiWeight)
@@ -607,6 +669,39 @@ window.PORTFOLIO_VALIDATOR = (function () {
       L.duration, "y",
       achievable(products, function (b) { return (b.stats || {}).duration; }),
       "book")));
+
+    /* Same axis, read in lots rather than as one average. A book can sit two
+       years from the room's answer and still be in the lot the room asked
+       for, or sit half a year away and straddle two — the average cannot
+       tell those apart and this does. */
+    if (chars.fixedIncome.weight > 0) {
+      var wantLot = durationLot(intent.duration.target);
+      var gotLot = durationLot(chars.fixedIncome.weightedDuration);
+      var spread = chars.fixedIncome.durationSpread || [];
+      var inWanted = wantLot
+        ? (spread.filter(function (x) { return x.id === wantLot.id; })[0] || {}).pct || 0
+        : 0;
+      var lotOk = !!(wantLot && gotLot && wantLot.id === gotLot.id);
+      out.push({
+        id: "durationLot", label: "Duration lot",
+        /* A warn, never a fail: the sleeve is one of five finished books,
+           so the lot is whatever the chosen book happens to carry. */
+        status: !wantLot || !gotLot ? "na" : lotOk ? "pass" : "warn",
+        score: lotOk ? 1 : 0,
+        intent: wantLot ? wantLot.label : null,
+        actual: gotLot ? gotLot.label : null,
+        difference: null, unit: "",
+        message:
+          (wantLot ? "Room asked in the " + wantLot.label + " lot" : "No duration asked") +
+          (gotLot ? "; the book averages " + gotLot.label : "") + ". Sleeve sits " +
+          spread.filter(function (x) { return x.pct > 0; }).map(function (x) {
+            return x.pct + "% in " + x.label;
+          }).join(", ") + "." +
+          (wantLot && inWanted < 50
+            ? " Only " + inWanted + "% of it is in the lot the room asked for."
+            : "")
+      });
+    }
 
     out.push(soften(checkWithin("credit", "Investment grade share",
       intent.credit.ig * 100,

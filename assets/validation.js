@@ -25,6 +25,131 @@
     return '<span class="v-pill v-' + status + '">' + status.toUpperCase() + "</span>";
   }
 
+
+  /* ---------- the five fixed outputs ------------------------------------
+   *
+   * The platform has exactly five possible books. Everything else on this
+   * page measures the ONE the current room landed on; this section lays out
+   * all five, in full, so every output can be checked before the event
+   * rather than discovered on the projector.
+   *
+   * Each is built by ENGINE.bookForBand(), the same code path the room
+   * takes with the band named instead of voted for, and run through the
+   * same characteristics() and integrity checks.
+   */
+  function lotBar(spread) {
+    if (!spread || !spread.length) return "";
+    return '<div class="v-lots">' +
+      spread.map(function (x, i) {
+        return x.pct > 0
+          ? '<i class="v-lot v-lot-' + (i + 1) + '" style="width:' + x.pct +
+            '%" title="' + esc(x.label) + " " + x.pct + '%"></i>'
+          : "";
+      }).join("") +
+      "</div>" +
+      '<div class="v-lots-k">' +
+        spread.map(function (x, i) {
+          return '<span><i class="v-lot-' + (i + 1) + '"></i>' + esc(x.label) +
+            " <b>" + x.pct + "%</b></span>";
+        }).join("") +
+      "</div>";
+  }
+
+  function bandSleeve(b) {
+    var lines = (b.lines || []).map(function (l) {
+      var it = l.item || {};
+      return "<tr>" +
+        '<td class="v-tk">' + esc(it.ticker || "") + "</td>" +
+        "<td>" + esc(it.name || "") +
+          (l.overlay ? ' <em class="v-ovl">overlay</em>' : "") + "</td>" +
+        '<td class="num">' + pc(l.weight, 2) + "</td></tr>";
+    }).join("");
+
+    return '<div class="v-sleeve">' +
+      '<h4><span>' + esc(b.label) + "</span><b>" + pc(b.weight, 1) + "%</b>" +
+      "<em>" + (b.lines || []).length + " lines</em></h4>" +
+      '<table class="v-table v-mini"><tbody>' + lines + "</tbody></table></div>";
+  }
+
+  function renderCatalogue() {
+    var host = el("catalogue");
+    if (!host) return;
+    if (!window.PRODUCTS || !window.BANDS || !window.BANDS.bands) {
+      host.innerHTML = '<p class="v-note">Product shelf or band books not loaded.</p>';
+      return;
+    }
+
+    var html = window.BANDS.bands.map(function (band) {
+      var sim = window.ENGINE.bookForBand(band.id, window.PRODUCTS);
+      if (!sim) return "";
+      var c = V.characteristics(sim);
+      /* integrity() only. sanity() compares a ROOM's intent against the
+         book, and a fixed output has no room — what matters here is whether
+         the book itself holds together. */
+      var checks = V.integrity(sim, c, window.PRODUCTS);
+      var fails = checks.filter(function (x) { return x.status === "fail"; });
+      var warns = checks.filter(function (x) { return x.status === "warn"; });
+      var status = fails.length ? "fail" : warns.length ? "warn" : "pass";
+      var cap = sim.alloc.capital || {};
+      var nt = sim.alloc.notional || {};
+      var fi = c.fixedIncome || {};
+
+      return '<details class="v-band v-band-' + status + '"' +
+        (status === "pass" ? "" : " open") + ">" +
+        "<summary>" +
+          '<span class="v-band-n">' + esc(band.name) + "</span>" +
+          '<span class="v-band-s">' +
+            "<b>" + pc(sim.alloc.gross, 1) + "%</b> gross &middot; " +
+            c.lineCount + " lines &middot; risk proxy " + pc(c.riskProxy, 0) +
+          "</span>" +
+          pill(status) +
+        "</summary>" +
+
+        '<div class="v-band-body">' +
+          '<div class="v-band-kv">' +
+            row("Capital", "cash equities " + pc(cap.equities, 1) + "% &middot; fixed income " +
+                pc(cap.fixedIncome, 1) + "% &middot; notes " + pc(cap.notes, 1) + "%") +
+            row("Notional on top", "equity options +" + pc(nt.equityOptions, 1) +
+                "% &middot; FX +" + pc(nt.fx, 1) + "%") +
+            row("Fixed income book", esc((sim.buckets.filter(function (x) {
+              return x.key === "fixedIncome"; })[0] || {}).book
+              ? sim.buckets.filter(function (x) { return x.key === "fixedIncome"; })[0].book.name
+              : "—")) +
+            row("Duration", pc(fi.weightedDuration, 2) + "y &middot; lot " +
+                esc(fi.durationLot || "—")) +
+            row("Credit", "IG " + pc(fi.igWeight, 0) + "% / HY " + pc(fi.hyWeight, 0) + "%") +
+            row("Equity", "beta " + pc(c.equity.weightedBeta, 2) + " &middot; EM " +
+                pc((c.equity.regionExposure || {}).em || 0, 1) + "%") +
+            row("USD exposure", pc(c.usdExposure, 1) + "%") +
+            row("Income tilt", pc(c.incomeTilt, 1) + "% ex fixed income") +
+            row("Concentration", "largest " + pc(c.concentration.largestPosition, 1) +
+                "% &middot; top 3 " + pc(c.concentration.top3Positions, 1) +
+                "% &middot; top 5 " + pc(c.concentration.top5Positions, 1) + "%") +
+          "</div>" +
+
+          '<div class="v-band-dur">' +
+            "<h4>Fixed income by duration lot</h4>" + lotBar(fi.durationSpread) +
+          "</div>" +
+
+          '<div class="v-band-sleeves">' +
+            sim.buckets.map(bandSleeve).join("") +
+          "</div>" +
+
+          (fails.length || warns.length
+            ? '<div class="v-band-checks">' +
+                fails.concat(warns).map(function (x) {
+                  return '<p class="v-chk v-' + x.status + '">' + pill(x.status) +
+                    "<b>" + esc(x.label) + "</b> " + esc(x.message) + "</p>";
+                }).join("") +
+              "</div>"
+            : '<p class="v-note">Every integrity and sanity check passes.</p>') +
+        "</div>" +
+      "</details>";
+    }).join("");
+
+    host.innerHTML = html;
+  }
+
   /* ---------- panels ---------- */
 
   function row(k, v) {
@@ -97,7 +222,10 @@
                            pc(c.equity.regionExposure.em || 0) + "%") +
       row("Equity beta", pc(c.equity.weightedBeta, 2)) +
       row("Top sectors", top.length ? top.join(", ") : "&mdash;") +
-      row("Risk proxy", pc(c.riskProxy) + " / 100") +
+      /* Not "/ 100": the proxy sums over WEIGHT, so a geared book reads
+         above 100 by construction. 100 is an ungeared book carried at full
+         risk weight, not a ceiling. */
+      row("Risk proxy", pc(c.riskProxy) + ' <i class="v-dim">100 = ungeared, full risk weight</i>') +
       row("Income tilt", pc(c.incomeTilt) + "% <i class=\"v-cov\">ex fixed income</i>") +
       row("Concentration", "largest " + pc(c.concentration.largestPosition) + "% · top3 " +
                            pc(c.concentration.top3Positions) + "% · top5 " +
@@ -294,6 +422,9 @@
     el("btnMono").addEventListener("click", runMono);
     el("btnSens").addEventListener("click", runSens);
     selectSource();
+    /* The five fixed books do not depend on the room, so they are drawn
+       once and never repainted when the source selector changes. */
+    renderCatalogue();
   }
 
   /* The shelf is fetched by base-loader; wait for it rather than racing it. */

@@ -385,22 +385,6 @@ body.present {
 }
 
 /* --- verdict slide: scenarios and top holdings --- */
-.p-scen {
-  display: flex;
-  gap: 10px;
-  margin-top: 18px;
-}
-.p-scen > div {
-  flex: 1;
-  background: var(--surface);
-  border: 1px solid var(--line-soft);
-  border-radius: var(--r-sm);
-  padding: 11px 13px;
-}
-.p-scen .lbl { display: block; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
-.p-scen .val { font-family: var(--font-display); font-weight: 600; font-size: clamp(20px, 1.9vw, 28px); font-variant-numeric: tabular-nums; }
-.p-scen .val.up   { color: var(--pos); }
-.p-scen .val.down { color: var(--neg); }
 
 /* The projector carries the lockup larger. The mark and rule are sized in
    em, so raising the wordmark size scales all three together. */
@@ -473,9 +457,6 @@ body.present {
 .p-slide[data-slide="2"] .p-fit { margin-bottom: 16px; }
 .p-slide[data-slide="2"] .p-fit b { font-size: clamp(40px, 4.6vw, 66px); }
 .p-slide[data-slide="2"] .kv { padding: 7px 0; font-size: 13px; }
-.p-slide[data-slide="2"] .p-scen { margin-top: 12px; }
-.p-slide[data-slide="2"] .p-scen > div { padding: 8px 11px; }
-.p-slide[data-slide="2"] .p-scen .val { font-size: clamp(17px, 1.5vw, 22px); }
 .p-slide[data-slide="2"] .alloc-bar { height: 24px; }
 
 /* The why block holds its own height rather than being squeezed out. */
@@ -1112,12 +1093,49 @@ body.present {
   text-decoration: none;
 }
 .p-cd-barrier p {
-  margin-top: 9px;
+  margin-top: 11px;
   font-size: clamp(9.5px, 0.72vw, 12px);
-  line-height: 1.45;
+  line-height: 1.5;
   color: var(--text-2);
 }
+.p-cd-barrier p b { color: var(--accent-bright); font-weight: 500; }
 .p-cd-nobar p { margin-top: 0; }
+
+/* The buffer, as a number, because "barrier 60" is a level and what a
+   client asks is how far the underlying can fall first. */
+.p-cd-prot { margin-bottom: clamp(9px, 1.3vh, 14px); }
+.p-cd-prot-n { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.p-cd-prot-n b {
+  font-family: var(--mono); font-weight: 500;
+  font-size: clamp(20px, 1.9vw, 31px); line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--pos);
+  font-variant-numeric: tabular-nums;
+}
+.p-cd-prot-n span {
+  font-size: clamp(9px, 0.7vw, 11.5px);
+  line-height: 1.35;
+  color: var(--muted);
+  max-width: 15ch;
+}
+
+/* The scale under the gauge: total loss on the left, today on the right,
+   the barrier marked where it actually sits. */
+.p-cd-gauge-ends {
+  position: relative;
+  height: 1.5em;
+  margin-top: 6px;
+  font-size: clamp(8.5px, 0.62vw, 10.5px);
+  color: var(--muted);
+}
+.p-cd-gauge-ends > span:first-child { position: absolute; left: 0; }
+.p-cd-gauge-ends > span:last-child  { position: absolute; right: 0; }
+.p-cd-gauge-mark {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  color: var(--accent-bright);
+}
 
 /* FX: the position on a scale with the dollar at one end, which cannot be
    read backwards the way a "long" label can. */
