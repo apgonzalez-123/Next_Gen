@@ -44,8 +44,12 @@ window.CONFIG = {
    * and the guests should land on another: the projector can sit on the
    * Pages URL while the room scans a short, branded domain.
    *
-   * Set it to the public address, with no trailing path. */
-  GUEST_URL: "https://nextgensafra.com/",
+   * Set it to the public address, with no trailing path.
+   *
+   * 2026-10-05: pointed back at GitHub Pages. nextgensafra.com drew a
+   * phishing complaint and is down, and a QR the room cannot load is worse
+   * than a long URL. Put the custom domain back here once it resolves. */
+  GUEST_URL: "https://apgonzalez-123.github.io/Next_Gen/",
 
   /* --- who answered what ---------------------------------------------
    * "required"  guests give a name before they can start (responses are

@@ -44,12 +44,19 @@ def equities():
     inner, outer = wb["Sheet1"], wb["Sheet1 (2)"]
     cols = [3, 5, 7, 9, 11]            # one per band; moneyness sits at col+1
     out = {b: [] for b in BANDS}
-    gross, levered = {}, {}
+    gross, levered, cash = {}, {}, {}
 
     for bi, col in enumerate(cols):
         b = BANDS[bi]
         gross[b] = round(num(inner.cell(21, col).value) or 0, 4)
+        # Sheet1 (2) states both, on its own rows, and they are different
+        # things: row 21 "Levered Position" is the equity sleeve's GROSS
+        # market exposure including the option notional; row 23 "Unlevered
+        # EQ" is the cash actually in equities. The difference is the option
+        # overlay, and reading only the first made the funded book look 15 to
+        # 40 points bigger than it is.
         levered[b] = round(num(outer.cell(21, col).value) or 0, 4)
+        cash[b] = round(num(outer.cell(23, col).value) or 0, 4)
         for r in range(3, 21):
             ticker = str(inner.cell(r, 2).value or "").strip()
             if not ticker:
@@ -82,7 +89,7 @@ def equities():
                 "weightOfSleeve": round(w_inner, 4) if w_inner is not None else None,
                 "weight": round(w_outer * 100, 4),       # % of the portfolio
             })
-    return out, gross, levered
+    return out, gross, levered, cash
 
 # ---------------------------------------------------------------- notes
 NOTE_TYPE = {"AC": "Autocallable", "CLN": "Credit-linked note",
@@ -213,16 +220,48 @@ def fx():
             })
     return out, share, stance, lev
 
-# The workbooks specify the equity and FX sleeve shares. They do NOT specify
-# the structured-note or fixed-income shares, and nothing in the deck does
-# either. These are therefore DEFAULTS, written here so the desk can set the
-# real numbers in one place rather than hunting them through the engine —
-# they taper the bond sleeve as risk rises and grow the note sleeve, which is
-# the direction the five fixed income books themselves move in.
+# ---- how the 100% of capital is divided -------------------------------
 #
-# Everything else in this file is the desk's own number. These two are not.
-ASSUMED_NOTES = [10.0, 12.0, 14.0, 16.0, 18.0]
-ASSUMED_FI    = [40.0, 32.0, 24.0, 16.0, 10.0]
+# The workbooks give four of the five numbers outright:
+#
+#   equity cash      "Unlevered EQ"     40 / 50 / 60 / 70 / 75
+#   equity gross     "Levered Position" 50 / 57.5 / 72.5 / 90 / 115
+#   FX share         "% of FX in the portfolio"  5 / 10 / 20 / 20 / 20
+#   FX leverage      "Leverage"          0 / 0 / 0.10 / 0.15 / 0.20
+#
+# The difference between equity gross and equity cash is the option overlay,
+# and it is NOTIONAL: a long call controls the underlying for its premium, so
+# it adds market exposure without consuming the capital the cash book sits
+# in. The FX sleeve is the same shape — calls, call spreads and NDFs, sized
+# by notional rather than funded outright.
+#
+# So capital and exposure are tracked separately:
+#
+#   FUNDED CAPITAL  equity cash + fixed income + structured notes  = 100%
+#   NOTIONAL ON TOP equity options + the FX overlay
+#   GROSS EXPOSURE  the two added together
+#
+# That leaves exactly ONE number the desk has not written down: how much of
+# the funded book is in structured notes. It is set here, deliberately in one
+# place, as a ladder that grows with risk appetite and stays inside the 20%
+# cap a private bank normally puts on structured product. Fixed income is
+# then the remainder, so the funded book always reconciles to 100 instead of
+# being a second guess that has to be made to fit.
+#
+# Everything else in this file is the desk's own number. This one is not.
+NOTES_LADDER = [10.0, 12.0, 14.0, 16.0, 18.0]
+
+def funded_split(eq_cash_pct, i):
+    """Equity cash is the desk's; notes are the ladder above; fixed income is
+    whatever is left, so the three always sum to 100."""
+    notes = NOTES_LADDER[i]
+    fi = round(100.0 - eq_cash_pct - notes, 2)
+    if fi < 0:
+        raise SystemExit(
+            f"band {BANDS[i]}: equity cash {eq_cash_pct}% + notes {notes}% is over "
+            f"100% of capital, leaving {fi}% for fixed income. Lower NOTES_LADDER."
+        )
+    return fi, notes
 
 # A line in a band book is still a product, and everything downstream reads
 # it as one: the validator's sector and currency checks, the weighted figures
@@ -308,37 +347,68 @@ def attach_analytics(bands, products_path):
         print(f"  ! no analytics for: {', '.join(sorted(missing))}")
 
 def main():
-    eq, eqGross, eqLevered = equities()
+    eq, eqGross, eqLevered, eqCash = equities()
     nt = notes()
     fxp, fxShare, fxStance, fxLev = fx()
 
     books = []
     for i, b in enumerate(BANDS):
+        cash_pct = round(eqCash[b] * 100, 2)          # funded equity
+        gross_pct = round(eqLevered[b] * 100, 2)      # equity incl. option notional
+        opt_pct = round(gross_pct - cash_pct, 2)      # the overlay, notional only
+        fi_pct, note_pct = funded_split(cash_pct, i)
+
+        fx_cash = round(fxShare[b], 2)
+        fx_gross = round(fx_cash * (1 + fxLev[b]), 2)
+
         books.append({
             "id": b, "name": BAND_NAME[i], "band": i,
+
+            # What 100% of the client's capital is divided into. These three
+            # sum to exactly 100 in every band.
+            "capital": {
+                "equities": cash_pct,
+                "fixedIncome": fi_pct,
+                "notes": note_pct,
+            },
+            # Market exposure taken on top of that capital, through
+            # instruments whose notional exceeds the cash committed to them.
+            "notional": {
+                "equityOptions": opt_pct,
+                "fx": fx_gross,
+            },
+            "grossExposure": round(gross_pct + fi_pct + note_pct + fx_gross, 2),
+
             "equities": {
                 "lines": eq[b],
                 "grossOfSleeve": eqGross[b],      # 1.10 .. 1.40
-                "weight": round(eqLevered[b] * 100, 2),   # % of portfolio, gross
+                "weight": gross_pct,              # % of portfolio, gross
+                "weightCash": cash_pct,           # % of portfolio, funded
+                "weightOptions": opt_pct,         # % of portfolio, notional
             },
-            "notes": {"lines": nt[b], "weight": ASSUMED_NOTES[i], "assumed": True},
-            "fixedIncome": {"weight": ASSUMED_FI[i], "assumed": True,
+            "notes": {"lines": nt[b], "weight": note_pct, "assumed": True},
+            "fixedIncome": {"weight": fi_pct, "derived": True,
                             "book": i},   # band i takes fixed income book i
             "fx": {
                 "lines": fxp[b],
-                "weight": round(fxShare[b] * (1 + fxLev[b]), 2),   # gross % of portfolio
-                "weightUnlevered": fxShare[b],
+                "weight": fx_gross,               # gross % of portfolio
+                "weightUnlevered": fx_cash,
                 "leverage": fxLev[b],
                 "usdStance": fxStance[b],
+                "overlay": True,                  # notional, not funded
             },
         })
 
     doc = {
         "$note": ("Written by tools/build_bands.py from the desk's five-band workbooks. "
-                  "Every weight here is the desk's; nothing in this file is computed by "
-                  "the engine. Equity weights are GROSS and sum past 100% of the sleeve "
-                  "in every band, which is the leverage the desk intends."),
-        "asOf": "2026-10-04",
+                  "`capital` is the funded book and sums to 100% in every band. "
+                  "`notional` is the market exposure taken on top of it through the "
+                  "equity options and the FX overlay, which carry notional larger than "
+                  "the cash committed to them. Every number is the desk's except the "
+                  "structured-note ladder (NOTES_LADDER in the builder); fixed income "
+                  "is the remainder, so the funded book always reconciles."),
+        "asOf": "2026-10-05",
+        "notesLadder": NOTES_LADDER,
         "bands": books,
     }
     attach_analytics(books, os.path.join(os.path.dirname(__file__), "..", "data", "products.json"))
@@ -347,13 +417,16 @@ def main():
     json.dump(doc, open(out, "w"), indent=1)
 
     print(f"{len(books)} bands")
+    print(f"  {'band':<26} {'EQ':>6} {'FI':>6} {'NOTE':>6} {'=cap':>6} "
+          f"{'+opt':>6} {'+fx':>6} {'=gross':>7}")
     for bk in books:
-        print(f"  {bk['name']:<26} equity {bk['equities']['weight']:>6.2f}% "
-              f"(gross {bk['equities']['grossOfSleeve']:.3f} of sleeve, "
-              f"{len(bk['equities']['lines']):>2} lines)  "
-              f"notes {len(bk['notes']['lines'])}  "
-              f"fx {bk['fx']['weight']:>5.1f}% (x{1 + bk['fx']['leverage']:.2f}) "
-              f"({len(bk['fx']['lines'])} lines, USD stance {bk['fx']['usdStance']})")
+        c, n = bk["capital"], bk["notional"]
+        cap = c["equities"] + c["fixedIncome"] + c["notes"]
+        print(f"  {bk['name']:<26} {c['equities']:>6.1f} {c['fixedIncome']:>6.1f} "
+              f"{c['notes']:>6.1f} {cap:>6.1f} {n['equityOptions']:>6.1f} "
+              f"{n['fx']:>6.1f} {bk['grossExposure']:>7.1f}")
+        if abs(cap - 100) > 0.01:
+            print(f"    ! funded capital is {cap}%, not 100%")
 
 if __name__ == "__main__":
     main()

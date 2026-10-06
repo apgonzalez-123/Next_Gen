@@ -1312,6 +1312,8 @@ window.ENGINE = (function () {
       overlayWeight: (band.equities.lines || []).filter(function (l) { return l.overlay; })
         .reduce(function (t, l) { return t + (l.weight || 0); }, 0),
       grossOfSleeve: band.equities.grossOfSleeve,
+      weightCash: band.equities.weightCash,
+      weightOptions: band.equities.weightOptions,
       lines: lines(band.equities.lines, band.equities.weight), scored: []
     });
 
@@ -1321,7 +1323,7 @@ window.ENGINE = (function () {
     buckets.push({
       key: "fixedIncome", label: "Fixed income",
       weight: band.fixedIncome.weight,
-      book: fiBook, bookAssumedWeight: !!band.fixedIncome.assumed,
+      book: fiBook, weightDerived: !!band.fixedIncome.derived,
       lines: fiBook ? lines((fiBook.holdings || []).map(function (h) {
         return Object.assign({}, h, { weight: undefined, weightOfSleeve: h.weight });
       }), band.fixedIncome.weight) : [],
@@ -1337,14 +1339,38 @@ window.ENGINE = (function () {
     buckets.push({
       key: "fx", label: "FX",
       weight: band.fx.weight, fxLeverage: band.fx.leverage,
-      usdStance: band.fx.usdStance,
+      usdStance: band.fx.usdStance, overlay: true,
+      weightUnlevered: band.fx.weightUnlevered,
       lines: lines(band.fx.lines, band.fx.weight), scored: []
     });
 
     var gross = buckets.reduce(function (t, b) { return t + (b.weight || 0); }, 0);
+    var cap = band.capital || {};
+    var notional = band.notional || {};
+
+    /* Two different things, kept apart because the room will ask:
+     *
+     *   capital   what 100% of the client's money is divided into. The desk's
+     *             equity cash book, the fixed income book, the notes. These
+     *             three sum to 100 in every band.
+     *   notional  market exposure taken on top of that, through the equity
+     *             options and the FX overlay — instruments whose notional is
+     *             larger than the cash committed to them.
+     *
+     * `equities` stays the GROSS equity figure because that is what the
+     * equity slide lists line by line; `equitiesCash` is the funded part. */
     var alloc = {
-      equities: band.equities.weight, fixedIncome: band.fixedIncome.weight,
+      equities: band.equities.weight,
+      equitiesCash: band.equities.weightCash,
+      equitiesOptions: band.equities.weightOptions,
+      fixedIncome: band.fixedIncome.weight,
       notes: band.notes.weight, fx: band.fx.weight, options: 0,
+      capital: {
+        equities: cap.equities, fixedIncome: cap.fixedIncome, notes: cap.notes
+      },
+      notional: {
+        equityOptions: notional.equityOptions, fx: notional.fx
+      },
       gross: Math.round(gross * 10) / 10, net: 100,
       geared: Math.round((gross - 100) * 10) / 10,
       levered: gross > 100.5,

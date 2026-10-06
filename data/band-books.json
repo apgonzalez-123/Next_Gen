@@ -1,11 +1,28 @@
 {
- "$note": "Written by tools/build_bands.py from the desk's five-band workbooks. Every weight here is the desk's; nothing in this file is computed by the engine. Equity weights are GROSS and sum past 100% of the sleeve in every band, which is the leverage the desk intends.",
- "asOf": "2026-10-04",
+ "$note": "Written by tools/build_bands.py from the desk's five-band workbooks. `capital` is the funded book and sums to 100% in every band. `notional` is the market exposure taken on top of it through the equity options and the FX overlay, which carry notional larger than the cash committed to them. Every number is the desk's except the structured-note ladder (NOTES_LADDER in the builder); fixed income is the remainder, so the funded book always reconciles.",
+ "asOf": "2026-10-05",
+ "notesLadder": [
+  10.0,
+  12.0,
+  14.0,
+  16.0,
+  18.0
+ ],
  "bands": [
   {
    "id": "conservative",
    "name": "Conservative",
    "band": 0,
+   "capital": {
+    "equities": 40.0,
+    "fixedIncome": 50.0,
+    "notes": 10.0
+   },
+   "notional": {
+    "equityOptions": 10.0,
+    "fx": 5.0
+   },
+   "grossExposure": 115.0,
    "equities": {
     "lines": [
      {
@@ -274,7 +291,9 @@
      }
     ],
     "grossOfSleeve": 1.1,
-    "weight": 50.0
+    "weight": 50.0,
+    "weightCash": 40.0,
+    "weightOptions": 10.0
    },
    "notes": {
     "lines": [
@@ -379,8 +398,8 @@
     "assumed": true
    },
    "fixedIncome": {
-    "weight": 40.0,
-    "assumed": true,
+    "weight": 50.0,
+    "derived": true,
     "book": 0
    },
    "fx": {
@@ -406,13 +425,24 @@
     "weight": 5.0,
     "weightUnlevered": 5.0,
     "leverage": 0,
-    "usdStance": -1.0
+    "usdStance": -1.0,
+    "overlay": true
    }
   },
   {
    "id": "conservative-moderate",
    "name": "Conservative to Moderate",
    "band": 1,
+   "capital": {
+    "equities": 50.0,
+    "fixedIncome": 38.0,
+    "notes": 12.0
+   },
+   "notional": {
+    "equityOptions": 7.5,
+    "fx": 10.0
+   },
+   "grossExposure": 117.5,
    "equities": {
     "lines": [
      {
@@ -703,7 +733,9 @@
      }
     ],
     "grossOfSleeve": 1.075,
-    "weight": 57.5
+    "weight": 57.5,
+    "weightCash": 50.0,
+    "weightOptions": 7.5
    },
    "notes": {
     "lines": [
@@ -808,8 +840,8 @@
     "assumed": true
    },
    "fixedIncome": {
-    "weight": 32.0,
-    "assumed": true,
+    "weight": 38.0,
+    "derived": true,
     "book": 1
    },
    "fx": {
@@ -869,13 +901,24 @@
     "weight": 10.0,
     "weightUnlevered": 10.0,
     "leverage": 0,
-    "usdStance": -0.5
+    "usdStance": -0.5,
+    "overlay": true
    }
   },
   {
    "id": "moderate",
    "name": "Moderate",
    "band": 2,
+   "capital": {
+    "equities": 60.0,
+    "fixedIncome": 26.0,
+    "notes": 14.0
+   },
+   "notional": {
+    "equityOptions": 12.5,
+    "fx": 22.0
+   },
+   "grossExposure": 134.5,
    "equities": {
     "lines": [
      {
@@ -1210,7 +1253,9 @@
      }
     ],
     "grossOfSleeve": 1.125,
-    "weight": 72.5
+    "weight": 72.5,
+    "weightCash": 60.0,
+    "weightOptions": 12.5
    },
    "notes": {
     "lines": [
@@ -1315,8 +1360,8 @@
     "assumed": true
    },
    "fixedIncome": {
-    "weight": 24.0,
-    "assumed": true,
+    "weight": 26.0,
+    "derived": true,
     "book": 2
    },
    "fx": {
@@ -1376,13 +1421,24 @@
     "weight": 22.0,
     "weightUnlevered": 20.0,
     "leverage": 0.1,
-    "usdStance": -0.33
+    "usdStance": -0.33,
+    "overlay": true
    }
   },
   {
    "id": "moderate-aggressive",
    "name": "Moderate to Aggressive",
    "band": 3,
+   "capital": {
+    "equities": 70.0,
+    "fixedIncome": 14.0,
+    "notes": 16.0
+   },
+   "notional": {
+    "equityOptions": 20.0,
+    "fx": 23.0
+   },
+   "grossExposure": 143.0,
    "equities": {
     "lines": [
      {
@@ -1739,7 +1795,9 @@
      }
     ],
     "grossOfSleeve": 1.2,
-    "weight": 90.0
+    "weight": 90.0,
+    "weightCash": 70.0,
+    "weightOptions": 20.0
    },
    "notes": {
     "lines": [
@@ -1844,8 +1902,8 @@
     "assumed": true
    },
    "fixedIncome": {
-    "weight": 16.0,
-    "assumed": true,
+    "weight": 14.0,
+    "derived": true,
     "book": 3
    },
    "fx": {
@@ -1922,13 +1980,24 @@
     "weight": 23.0,
     "weightUnlevered": 20.0,
     "leverage": 0.15,
-    "usdStance": -0.5
+    "usdStance": -0.5,
+    "overlay": true
    }
   },
   {
    "id": "aggressive",
    "name": "Aggressive",
    "band": 4,
+   "capital": {
+    "equities": 75.0,
+    "fixedIncome": 7.0,
+    "notes": 18.0
+   },
+   "notional": {
+    "equityOptions": 40.0,
+    "fx": 24.0
+   },
+   "grossExposure": 164.0,
    "equities": {
     "lines": [
      {
@@ -2197,7 +2266,9 @@
      }
     ],
     "grossOfSleeve": 1.4,
-    "weight": 115.0
+    "weight": 115.0,
+    "weightCash": 75.0,
+    "weightOptions": 40.0
    },
    "notes": {
     "lines": [
@@ -2302,8 +2373,8 @@
     "assumed": true
    },
    "fixedIncome": {
-    "weight": 10.0,
-    "assumed": true,
+    "weight": 7.0,
+    "derived": true,
     "book": 4
    },
    "fx": {
@@ -2380,7 +2451,8 @@
     "weight": 24.0,
     "weightUnlevered": 20.0,
     "leverage": 0.2,
-    "usdStance": 0.0
+    "usdStance": 0.0,
+    "overlay": true
    }
   }
  ]

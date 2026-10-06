@@ -222,6 +222,41 @@
     return all.filter(function (x) { return (alloc[x.k] || 0) > 0; });
   }
 
+  /* The five bands, with the one the room landed on lit up.
+   *
+   * There is a lot of slide under the band name, and this is the thing worth
+   * putting in it: the room does not get a portfolio assembled from scratch,
+   * it gets one of five books the desk has written, and the ladder shows
+   * both that fact and where this room sits on it. Each rung carries its own
+   * funded split, so the shape of the answer is visible without leaving the
+   * slide. */
+  function bandLadder(selectedId) {
+    var bands = (window.BANDS && window.BANDS.bands) || [];
+    if (bands.length < 2) return "";
+
+    return '<div class="p-ladder">' + bands.map(function (b) {
+      var c = b.capital || {};
+      var on = b.id === selectedId;
+      var parts = [
+        ["equities", c.equities], ["fixedIncome", c.fixedIncome], ["notes", c.notes]
+      ].filter(function (x) { return x[1]; });
+
+      return '<div class="p-rung' + (on ? " on" : "") + '">' +
+        '<span class="p-rung-n">' + esc(b.name) + "</span>" +
+        '<span class="p-rung-bar">' +
+          parts.map(function (x) {
+            return '<i style="width:' + pc(x[1], 1) + "%;background:" +
+              BUCKET_COLOUR[x[0]] + '"></i>';
+          }).join("") +
+        "</span>" +
+        '<span class="p-rung-g">' + pc(b.grossExposure, 0) + "%</span>" +
+      "</div>";
+    }).join("") +
+    '<p class="p-ladder-note">Five books, written by the desk. The bars are the ' +
+    'funded split of each; the figure on the right is its gross exposure once the ' +
+    'options and the FX overlay are counted.</p></div>';
+  }
+
   function paintVerdict(top, n, sim) {
     var p = top.portfolio;
     var host = document.getElementById("verdict");
@@ -243,6 +278,7 @@
         "<div>" +
           "<h1>" + esc(p.name) + "</h1>" +
           '<p class="tagline">' + esc(p.tagline) + "</p>" +
+          bandLadder(p.id) +
         "</div>" +
         "<div>" +
           '<div class="p-fit"><b id="vFit">0</b><span>fit out of 100<br><span id="vN">0</span> responses</span></div>' +
@@ -305,6 +341,48 @@
   /* The room's book, one column per bucket. Repainted wholesale rather
      than diffed: it changes shape as answers land, since a sleeve can
      appear or drop out, and at four columns a repaint is cheap. */
+  /* The second line under a holding, where the column can afford one. Terms
+     the room would otherwise have to wait for the sleeve slide to see. */
+  function bits(parts) {
+    return parts.filter(function (x) { return x; }).map(esc).join(" \u00b7 ");
+  }
+  var HOLD_META = {
+    notes: function (l) {
+      var it = l.item;
+      return bits([it.tenor, it.barrier ? "barrier " + it.barrier : null, it.coupon]);
+    },
+    fx: function (l) {
+      var it = l.item, u = (it.analytics || {}).usdExposure;
+      return bits([it.kind,
+        u === null || u === undefined ? null : (u >= 50 ? "USD long" : "USD short")]);
+    },
+    equities: function (l) {
+      var a = l.item.analytics || {};
+      if (l.overlay) {
+        return bits([l.item.strategy || "Option",
+          l.item.moneyness ? pc(l.item.moneyness * 100, 0) + "% strike" : null]);
+      }
+      return bits([SECTOR_WORD[a.sector] || a.sector,
+        a.region === "em" ? "EM" : "Developed"]);
+    },
+    fixedIncome: function (l) {
+      var it = l.item, a = it.analytics || {};
+      return bits([it.rating, it.country,
+        a.yieldToWorst ? fxn(a.yieldToWorst, 2) + "% YTW" : null]);
+    }
+  };
+
+  /* The whole book, every line of it.
+   *
+   * This slide used to show the first five of each sleeve and a "+N more"
+   * note pointing at the sleeve slides. The room asked to see exactly what
+   * it had bought, so it now lists all of it: four columns, one row per
+   * position, sized so thirty-odd lines fit a projector without scrolling.
+   *
+   * Above it, the one thing the weights needed stating outright — which part
+   * of the book is the client's capital and which part is notional taken on
+   * top of it.
+   */
   function paintBook(agg) {
     var host = document.getElementById("book");
     paintGearing(agg);
@@ -315,48 +393,95 @@
     var sim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS);
     if (!sim) { host.innerHTML = ""; return; }
 
-    host.innerHTML = sim.buckets.map(function (b) {
+    var alloc = sim.alloc || {};
+    var cap = alloc.capital || {};
+    var nt = alloc.notional || {};
+
+    /* Funded capital first, always summing to 100, then what sits on top.
+       One bar, two halves, so nobody has to add the sleeves up themselves. */
+    var capRows = [
+      ["equities", "Cash equities", cap.equities],
+      ["fixedIncome", "Fixed income", cap.fixedIncome],
+      ["notes", "Structured notes", cap.notes]
+    ].filter(function (r) { return r[2]; });
+    var ntRows = [
+      ["options", "Equity options", nt.equityOptions],
+      ["fx", "FX overlay", nt.fx]
+    ].filter(function (r) { return r[2]; });
+
+    var capTotal = capRows.reduce(function (t, r) { return t + r[2]; }, 0);
+    var ntTotal = ntRows.reduce(function (t, r) { return t + r[2]; }, 0);
+
+    function seg(rows, total) {
+      return rows.map(function (r) {
+        return '<i style="width:' + pc((r[2] / (total || 1)) * 100, 2) +
+          "%;background:" + (BUCKET_COLOUR[r[0]] || "#888") + '"></i>';
+      }).join("");
+    }
+    function keys(rows) {
+      return rows.map(function (r) {
+        return '<span class="p-key"><i style="background:' +
+          (BUCKET_COLOUR[r[0]] || "#888") + '"></i>' + esc(r[1]) +
+          "<b>" + pc(r[2], 1) + "%</b></span>";
+      }).join("");
+    }
+
+    var band = capRows.length
+      ? '<div class="p-capital">' +
+          '<div class="p-cap-side">' +
+            '<div class="p-cap-h"><small>Capital</small><b>' + pc(capTotal, 0) + "%</b></div>" +
+            '<div class="p-cap-bar">' + seg(capRows, capTotal) + "</div>" +
+            '<div class="p-cap-keys">' + keys(capRows) + "</div>" +
+          "</div>" +
+          (ntRows.length
+            ? '<div class="p-cap-side p-cap-nt">' +
+                '<div class="p-cap-h"><small>Notional on top</small><b>+' +
+                  pc(ntTotal, 1) + "%</b></div>" +
+                '<div class="p-cap-bar">' + seg(ntRows, ntTotal) + "</div>" +
+                '<div class="p-cap-keys">' + keys(ntRows) + "</div>" +
+              "</div>"
+            : "") +
+        "</div>"
+      : "";
+
+    var cols = sim.buckets.map(function (b) {
       var colour = BUCKET_COLOUR[b.key];
       var widest = b.lines.reduce(function (m, l) { return Math.max(m, l.weight); }, 0) || 1;
+      var n = b.lines.length;
 
-      /* This board is the summary; each sleeve's own slide carries the full
-         list. A long book ran off the bottom of the column and simply
-         stopped, with nothing to say it had — which reads as the book being
-         shorter than it is. */
-      /* Five, not six: the sixth row was being clipped through the middle of
-         its own name on a 1000px projector, which took the "+N more" note
-         with it and made a fifteen-line sleeve read as a six-line one. */
-      var SHOW = 5;
-      var hidden = Math.max(0, b.lines.length - SHOW);
-      var lines = b.lines.length
-        ? b.lines.slice(0, SHOW).map(function (l) {
-            /* The room's own answer wins over the shelf's generic blurb:
-               a duration note says something about THIS room. */
-            var detail = l.note || l.item.detail || "";
-            return '<div class="p-pos' + (l.overlay ? " p-pos-overlay" : "") + '">' +
-              '<div class="p-pos-top"><span class="p-pos-name">' +
-                '<i class="p-rank">' + (l.rank || "") + "</i>" +
-                (l.overlay ? '<em class="p-tag">overlay</em>' : "") +
-                esc(l.item.name) + "</span>" +
-              '<span class="p-pos-w">' + l.weight + "%</span></div>" +
-              '<div class="p-pos-bar"><i style="width:' +
-                Math.round((l.weight / widest) * 100) + "%;background:" + colour + '"></i></div>' +
-              '<div class="p-pos-meta">' +
-                (l.item.ticker ? '<span class="p-tk">' + esc(l.item.ticker) + "</span>" : "") +
-                esc(detail) +
-              "</div>" +
-              "</div>";
-          }).join("") +
-          (hidden ? '<p class="p-book-more">+ ' + hidden + " more on the " +
-                    esc(b.label.toLowerCase()) + " slide</p>" : "")
+      /* A sleeve of four structures has room on this slide that a sleeve of
+         fifteen funds does not, so it spends it on the terms rather than on
+         air: what the structure pays, what the currency position is. */
+      var meta = n <= 8 ? HOLD_META[b.key] : null;
+
+      var lines = n
+        ? b.lines.map(function (l) {
+            var m = meta ? meta(l) : "";
+            return '<div class="p-hold' + (l.overlay ? " p-hold-ovl" : "") +
+              (m ? " p-hold-2" : "") + '">' +
+              '<span class="p-hold-tk">' + esc(l.item.ticker || "") + "</span>" +
+              '<span class="p-hold-nm">' + esc(l.item.name) + "</span>" +
+              '<span class="p-hold-w">' + fxn(l.weight, 1) + "</span>" +
+              (m ? '<span class="p-hold-meta">' + m + "</span>" : "") +
+              '<i class="p-hold-bar" style="width:' +
+                pc((l.weight / widest) * 100, 1) + "%;background:" + colour + '"></i>' +
+            "</div>";
+          }).join("")
         : '<p class="p-book-empty">Nothing here.</p>';
 
-      return '<div class="p-bucket">' +
+      return '<div class="p-bucket' +
+        (n > 10 ? " p-bucket-tight" : n <= 6 ? " p-bucket-roomy" : "") + '">' +
         '<div class="p-bucket-top"><s style="background:' + colour + '"></s>' +
-        "<h3>" + esc(b.label) + "</h3></div>" +
-        '<div class="p-bucket-w">' + b.weight + "%</div>" +
-        lines + "</div>";
+        "<h3>" + esc(b.label) + "</h3>" +
+        '<em>' + n + "</em></div>" +
+        '<div class="p-bucket-w">' + pc(b.weight, 1) + "<i>%</i>" +
+          (b.key === "fx" || (b.key === "equities" && b.weightOptions)
+            ? '<u>gross</u>' : "") +
+        "</div>" +
+        '<div class="p-holds">' + lines + "</div></div>";
     }).join("");
+
+    host.innerHTML = band + '<div class="p-buckets">' + cols + "</div>";
   }
 
   /* A geared book is shown at its gross weight, so the slide has to say so.
@@ -601,9 +726,11 @@
    * These slides are read off a projector by people who read desk sheets for
    * a living, so they are built like one rather than like a web table: a
    * ticket line naming the sleeve and its size, a band of key figures with
-   * the unit set apart from the number, a position list whose figures sit in
-   * a monospaced column, and the one exposure that matters for that asset
-   * class drawn as a single bar instead of described in a sentence.
+   * the unit set apart from the number, the positions themselves, and the
+   * one exposure that matters for that asset class as a single bar.
+   *
+   * Each sleeve declares its COLUMNS once, and both layouts are derived from
+   * that declaration — see render() for why there are two.
    */
 
   /* A figure and its unit are deliberately different sizes: the eye lands on
@@ -623,18 +750,13 @@
     return (x === null || x === undefined || !isFinite(x))
       ? "—" : Number(x).toFixed(d === undefined ? 1 : d);
   }
-  function fx1(x) { return fxn(x, 1); }
 
-  /* A column of percentages all the same width hides the shape of the book.
-     The track is the shape — scaled to the largest line, so the sleeve fills
-     the column whether its biggest position is 3% or 30%. It sits inline
-     rather than behind the number: an absolutely-positioned bar ran off the
-     right edge of the slide and took the last digit with it. */
-  function wcell(w, max) {
-    var pct = max > 0 ? Math.max(3, (w / max) * 100) : 0;
-    return '<td class="p-wcell"><i class="p-track"><b style="width:' + pc(pct, 1) +
-      '%"></b></i><span>' + fx1(w) + "</span></td>";
+  function pctOr(v, suffix) {
+    return (v === null || v === undefined || !isFinite(v))
+      ? "—" : pc(v, 0) + (suffix === undefined ? "%" : suffix);
   }
+
+  function tick(t) { return t ? '<span class="p-tk">' + esc(t) + "</span>" : ""; }
 
   /* The one breakdown that matters for this asset class, as a single bar.
      Whatever is not in the top few is kept as a final segment rather than
@@ -660,21 +782,20 @@
 
   /* Credit quality is the first thing anyone looks for on a bond line, so it
      is placed on the ladder and coloured rather than left as plain text. */
-  function ratingCell(r, cls) {
-    if (!r) return "<td>—</td>";
+  function rateHtml(r, cls) {
+    if (!r) return "—";
     var h = String(r).toUpperCase().replace(/[^A-Z]/g, "");
     var tier = /^AAA/.test(h) ? "t1" : /^AA/.test(h) ? "t2" : /^A/.test(h) ? "t3"
              : /^BBB/.test(h) ? "t4" : /^BB/.test(h) ? "t5"
              : /^B/.test(h) || /^C/.test(h) ? "t6" : "t0";
-    return '<td><span class="p-rate ' + tier + '">' + esc(r) + "</span>" +
-      (cls ? '<em class="p-pillx">' + cls.toUpperCase() + "</em>" : "") + "</td>";
+    return '<span class="p-rate ' + tier + '">' + esc(r) + "</span>" +
+      (cls ? '<em class="p-pillx">' + cls.toUpperCase() + "</em>" : "");
   }
 
-  function chips(list, fmt) {
-    return list.map(function (x) {
-      return '<span class="p-chip">' + esc(fmt ? fmt(x.key) : x.key) +
-             "<b>" + pc(x.pct, 0) + "%</b></span>";
-    }).join("");
+  function sideHtml(u) {
+    if (u === null || u === undefined) return "—";
+    return '<span class="p-side ' + (u >= 50 ? "long" : "short") + '">' +
+      (u >= 50 ? "USD long" : "USD short") + "</span>";
   }
 
   var SECTOR_WORD = {
@@ -687,57 +808,138 @@
     return lines.reduce(function (m, l) { return Math.max(m, l.weight || 0); }, 0);
   }
 
+  /* ---- one declaration, two layouts ------------------------------------
+   *
+   * Four structures or three currency positions do not fill a projector as a
+   * table: they leave two thirds of the slide empty, which reads as missing
+   * data rather than as a short list. So a sleeve of seven lines or fewer is
+   * laid out as cards and a longer one as a table — the same facts either
+   * way, because both are generated from the same column spec.
+   *
+   * A column is { head, get, num, role }. `role` is what the cards do with
+   * it: "tag" the ticker chip, "title" the heading, "sub" the line under it,
+   * and anything else becomes a labelled row inside the card.
+   */
+  var CARD_MAX = 7;
+
+  function render(b, figs, cols, foot) {
+    var lines = b.lines || [];
+    return '<div class="p-figs">' + figs + "</div>" +
+      (lines.length > CARD_MAX ? asTable(lines, cols) : asCards(lines, cols)) +
+      (foot || "");
+  }
+
+  function asTable(lines, cols) {
+    var mx = maxw(lines);
+    var head = cols.map(function (c) {
+      return "<th" + (c.num ? ' class="num"' : "") + ">" + esc(c.head || "") + "</th>";
+    }).join("") + '<th class="num">Weight %</th>';
+
+    var body = lines.map(function (l) {
+      var cells = cols.map(function (c) {
+        var cls = c.num ? "num" : (c.role === "title" ? "p-nm" : "");
+        return "<td" + (cls ? ' class="' + cls + '"' : "") + ">" + c.get(l) + "</td>";
+      }).join("");
+      return "<tr" + (l.overlay ? ' class="p-r-ovl"' : "") + ">" + cells +
+        wcell(l.weight, mx) + "</tr>";
+    }).join("");
+
+    var n = lines.length;
+    return '<div class="p-tblwrap"><table class="p-tbl' +
+      (n > 12 ? " p-tbl-dense p-tbl-tight" : n > 7 ? " p-tbl-dense" : "") + '">' +
+      "<thead><tr>" + head + "</tr></thead><tbody>" + body + "</tbody></table></div>";
+  }
+
+  function asCards(lines, cols) {
+    var mx = maxw(lines);
+    var byRole = {};
+    cols.forEach(function (c) { if (c.role) byRole[c.role] = c; });
+    var rows = cols.filter(function (c) { return !c.role; });
+
+    var cards = lines.map(function (l) {
+      var kv = rows.map(function (c) {
+        return '<div class="p-cd-kv"><small>' + esc(c.head || "") + "</small><b>" +
+          c.get(l) + "</b></div>";
+      }).join("");
+      var pct = mx > 0 ? Math.max(3, (l.weight / mx) * 100) : 0;
+      return '<div class="p-cd' + (l.overlay ? " p-cd-ovl" : "") + '">' +
+        '<div class="p-cd-top">' +
+          (byRole.tag ? byRole.tag.get(l) : "") +
+          '<span class="p-cd-w">' + fxn(l.weight, 1) + "<i>%</i></span>" +
+        "</div>" +
+        '<div class="p-cd-title">' + (byRole.title ? byRole.title.get(l) : "") + "</div>" +
+        (byRole.sub ? '<div class="p-cd-sub">' + byRole.sub.get(l) + "</div>" : "") +
+        '<div class="p-cd-kvs">' + kv + "</div>" +
+        '<div class="p-cd-track"><i style="width:' + pc(pct, 1) + '%"></i></div>' +
+      "</div>";
+    }).join("");
+
+    return '<div class="p-cards" style="--n:' + Math.min(lines.length, 4) + '">' +
+      cards + "</div>";
+  }
+
+  /* A column of percentages all the same width hides the shape of the book.
+     The track is the shape — scaled to the largest line, so the sleeve fills
+     the column whether its biggest position is 3% or 30%. It sits inline
+     rather than behind the number: an absolutely-positioned bar ran off the
+     right edge of the slide and took the last digit with it. */
+  function wcell(w, max) {
+    var pct = max > 0 ? Math.max(3, (w / max) * 100) : 0;
+    return '<td class="p-wcell"><i class="p-track"><b style="width:' + pc(pct, 1) +
+      '%"></b></i><span>' + fxn(w, 1) + "</span></td>";
+  }
+
   /* ---- the four sleeve sheets ---- */
 
   function equityPanel(b) {
-    var lines = b.lines || [], mx = maxw(lines);
+    var lines = b.lines || [];
     var beta = wavg(lines, function (l) { return an(l.item).beta; });
     var vol  = wavg(lines, function (l) { return an(l.item).volatility; });
     var usd  = wavg(lines, function (l) { return an(l.item).usdExposure; });
     var em   = wshare(lines, function (l) { return an(l.item).region === "em"; });
-    var ovl  = wshare(lines, function (l) { return l.overlay; });
     var sectors = topBy(lines.filter(function (l) {
       return an(l.item).sector && an(l.item).sector !== "core";
     }), function (l) { return an(l.item).sector; }, 5);
 
+    /* Cash and notional are different money and the room will ask which is
+       which, so they are two figures rather than one total. */
     var figs =
+      fig("Cash equities", pc(b.weightCash, 1), "%", "funded") +
+      fig("Option overlay", pc(b.weightOptions, 1), "%", "notional, on top") +
       fig("Weighted beta", pc(beta.value, 2), "",
           beta.coverage < 0.99 ? pc(beta.coverage * 100, 0) + "% covered" : "") +
       fig("Daily volatility", pc(vol.value, 2), "%", "weighted") +
       fig("Dollar exposure", pc(usd.value, 0), "%") +
-      fig("Emerging markets", pc(em, 0), "%") +
-      fig("Option overlay", pc(ovl, 0), "%", "of the sleeve") +
-      fig("Positions", lines.length, "", "lines");
+      fig("Emerging markets", pc(em, 0), "%");
 
-    var rows = lines.map(function (l) {
-      var it = l.item, a = an(it), isOpt = !!l.overlay;
-      return "<tr" + (isOpt ? ' class="p-r-ovl"' : "") + ">" +
-        "<td>" + tick(it.ticker) + "</td>" +
-        '<td class="p-nm">' + esc(it.name) +
-          (isOpt ? ' <em class="p-tag">overlay</em>' : "") + "</td>" +
-        "<td>" + esc(isOpt ? (it.strategy || "")
-                           : (SECTOR_WORD[a.sector] || a.sector || "")) + "</td>" +
-        "<td>" + esc(isOpt ? (it.underlying || "")
-                           : (a.region === "em" ? "EM" : "Developed")) + "</td>" +
-        '<td class="num">' + (isOpt
-          ? (it.moneyness ? pc(it.moneyness * 100, 0) + "%" : "—")
-          : (a.usdExposure === null || a.usdExposure === undefined
-              ? "—" : a.usdExposure + "%")) + "</td>" +
-        '<td class="num">' + (isOpt
-          ? fxn(it.delta, 2)
-          : fxn(a.beta, 2)) + "</td>" +
-        wcell(l.weight, mx) + "</tr>";
-    }).join("");
+    var cols = [
+      { head: "", role: "tag", get: function (l) { return tick(l.item.ticker); } },
+      { head: "Holding", role: "title", get: function (l) {
+          return esc(l.item.name) + (l.overlay ? ' <em class="p-tag">overlay</em>' : "");
+        } },
+      { head: "Sector / structure", role: "sub", get: function (l) {
+          return esc(l.overlay ? (l.item.strategy || "Option")
+                               : (SECTOR_WORD[an(l.item).sector] || an(l.item).sector || ""));
+        } },
+      { head: "Region / underlying", get: function (l) {
+          return esc(l.overlay ? (l.item.underlying || "")
+                               : (an(l.item).region === "em" ? "EM" : "Developed"));
+        } },
+      { head: "USD % / strike", num: true, get: function (l) {
+          return l.overlay ? (l.item.moneyness ? pc(l.item.moneyness * 100, 0) + "%" : "—")
+                           : pctOr(an(l.item).usdExposure);
+        } },
+      { head: "Beta / delta", num: true, get: function (l) {
+          return l.overlay ? fxn(l.item.delta, 2) : fxn(an(l.item).beta, 2);
+        } }
+    ];
 
-    return sheet(b, figs,
-      ["", "Holding", "Sector / structure", "Region / underlying",
-       ">USD % / strike", ">Beta / delta", ">Weight %"],
-      rows,
+    return render(b, figs, cols,
       expo("Sector exposure", sectors, function (k) { return SECTOR_WORD[k] || k; }));
   }
 
   function fixedIncomePanel(b) {
-    var lines = b.lines || [], mx = maxw(lines);
+    var lines = b.lines || [];
     var ytw = wavg(lines, function (l) { return an(l.item).yieldToWorst; });
     var dur = wavg(lines, function (l) { return an(l.item).duration; });
     var cpn = wavg(lines, function (l) { return (l.item || {}).coupon; });
@@ -753,27 +955,25 @@
       fig("Weighted coupon", pc(cpn.value, 2), "%") +
       fig("Investment grade", pc(ig, 0), "%") +
       fig("Emerging markets", pc(em, 0), "%") +
-      fig("Positions", lines.length, "", "lines");
+      fig("Positions", lines.length, "", "all funded");
 
-    var rows = lines.map(function (l) {
-      var it = l.item, a = an(it);
-      return "<tr><td>" + tick(it.ticker) + "</td>" +
-        '<td class="p-nm">' + esc(it.name) + "</td>" +
-        ratingCell(it.rating, a.creditClass) +
-        "<td>" + esc(it.country || "") + "</td>" +
-        "<td>" + esc(it.maturity || "") + "</td>" +
-        '<td class="num">' + fxn(a.yieldToWorst, 2) + "</td>" +
-        '<td class="num">' + fxn(a.duration, 2) + "</td>" +
-        wcell(l.weight, mx) + "</tr>";
-    }).join("");
+    var cols = [
+      { head: "", role: "tag", get: function (l) { return tick(l.item.ticker); } },
+      { head: "Issue", role: "title", get: function (l) { return esc(l.item.name); } },
+      { head: "Rating", role: "sub", get: function (l) {
+          return rateHtml(l.item.rating, an(l.item).creditClass);
+        } },
+      { head: "Country", get: function (l) { return esc(l.item.country || ""); } },
+      { head: "Maturity", get: function (l) { return esc(l.item.maturity || ""); } },
+      { head: "YTW %", num: true, get: function (l) { return fxn(an(l.item).yieldToWorst, 2); } },
+      { head: "Dur y", num: true, get: function (l) { return fxn(an(l.item).duration, 2); } }
+    ];
 
-    return sheet(b, figs,
-      ["", "Issue", "Rating", "Country", "Maturity", ">YTW %", ">Dur y", ">Weight %"],
-      rows, expo("Country exposure", countries));
+    return render(b, figs, cols, expo("Country exposure", countries));
   }
 
   function notesPanel(b) {
-    var lines = b.lines || [], mx = maxw(lines);
+    var lines = b.lines || [];
     var risk = wavg(lines, function (l) { return an(l.item).riskScore; });
     var ten  = wavg(lines, function (l) { return an(l.item).tenorYears; });
     var core = wshare(lines, function (l) { return (l.item || {}).isCore; });
@@ -787,30 +987,31 @@
       fig("Principal protected", pc(prot, 0), "%") +
       fig("Emerging markets", pc(em, 0), "%") +
       fig("Risk proxy", pc(risk.value * 100, 0), "/100") +
-      fig("Structures", lines.length, "", "lines");
+      fig("Structures", lines.length, "", "all funded");
 
-    var rows = lines.map(function (l) {
-      var it = l.item;
-      /* The name is just the type on the underlying, both of which have
-         their own column — printing all three said the same thing three
-         times and left the table no room. */
-      return "<tr><td>" + tick(it.ticker) + "</td>" +
-        '<td class="p-nm">' + esc(it.type || "") +
-          (it.isCore ? ' <em class="p-tag">index</em>' : "") + "</td>" +
-        '<td class="p-nm">' + esc(it.underlying || "") + "</td>" +
-        '<td class="num">' + esc(it.tenor || "") + "</td>" +
-        '<td class="num">' + (it.barrier ? esc(it.barrier) : "—") + "</td>" +
-        '<td class="num p-cpn">' + esc(it.coupon || "—") + "</td>" +
-        wcell(l.weight, mx) + "</tr>";
-    }).join("");
+    var cols = [
+      { head: "", role: "tag", get: function (l) { return tick(l.item.ticker); } },
+      { head: "Structure", role: "title", get: function (l) {
+          return esc(l.item.type || "") +
+            (l.item.isCore ? ' <em class="p-tag">index</em>' : "");
+        } },
+      { head: "Underlying", role: "sub", get: function (l) {
+          return esc(l.item.underlying || "");
+        } },
+      { head: "Tenor", num: true, get: function (l) { return esc(l.item.tenor || "—"); } },
+      { head: "Barrier", num: true, get: function (l) {
+          return l.item.barrier ? esc(l.item.barrier) : "—";
+        } },
+      { head: "Coupon", num: true, get: function (l) {
+          return '<span class="p-cpn">' + esc(l.item.coupon || "—") + "</span>";
+        } }
+    ];
 
-    return sheet(b, figs,
-      ["", "Structure", "Underlying", ">Tenor", ">Barrier", ">Coupon", ">Weight %"],
-      rows, expo("By structure", types));
+    return render(b, figs, cols, expo("By structure", types));
   }
 
   function fxPanel(b) {
-    var lines = b.lines || [], mx = maxw(lines);
+    var lines = b.lines || [];
     var usd = wavg(lines, function (l) { return an(l.item).usdExposure; });
     var kinds = topBy(lines, function (l) {
       return an(l.item).kind || (l.item || {}).kind;
@@ -823,42 +1024,20 @@
     var away = usd.value === null ? null : 100 - usd.value;
 
     var figs =
+      fig("Sleeve notional", pc(b.weight, 1), "%", "of capital, on top of it") +
       fig("Dollar exposure", pc(usd.value, 0), "%", "weighted, of the sleeve") +
       fig("Away from the dollar", pc(away, 0), "%") +
-      fig("Positions", lines.length, "", "lines") +
-      fig("Instruments", kinds.length, "", kinds.map(function (k) { return k.key; }).join(", "));
+      fig("Positions", lines.length, "", "all notional");
 
-    var rows = lines.map(function (l) {
-      var it = l.item, a = an(it);
-      var u = a.usdExposure;
-      return "<tr><td>" + tick(it.ticker) + "</td>" +
-        '<td class="p-nm">' + esc(it.name) + "</td>" +
-        "<td>" + esc(it.kind || "") + "</td>" +
-        "<td>" + (u === null || u === undefined ? "—"
-          : '<span class="p-side ' + (u >= 50 ? "long" : "short") + '">' +
-            (u >= 50 ? "USD long" : "USD short") + "</span>") + "</td>" +
-        '<td class="num">' + (u === null || u === undefined ? "\u2014" : u + "%") + "</td>" +
-        wcell(l.weight, mx) + "</tr>";
-    }).join("");
+    var cols = [
+      { head: "", role: "tag", get: function (l) { return tick(l.item.ticker); } },
+      { head: "Position", role: "title", get: function (l) { return esc(l.item.name); } },
+      { head: "Instrument", role: "sub", get: function (l) { return esc(l.item.kind || ""); } },
+      { head: "Dollar side", get: function (l) { return sideHtml(an(l.item).usdExposure); } },
+      { head: "USD %", num: true, get: function (l) { return pctOr(an(l.item).usdExposure); } }
+    ];
 
-    return sheet(b, figs,
-      ["", "Position", "Instrument", "Dollar side", ">USD %", ">Weight %"],
-      rows, expo("By instrument", kinds));
-  }
-
-  function tick(t) { return t ? '<span class="p-tk">' + esc(t) + "</span>" : ""; }
-
-  /* A head entry prefixed with ">" is a figure column and sits right. */
-  function sheet(b, figs, head, rows, foot) {
-    var n = (b.lines || []).length;
-    return '<div class="p-figs">' + figs + "</div>" +
-      '<div class="p-tblwrap"><table class="p-tbl' +
-        (n > 12 ? " p-tbl-dense p-tbl-tight" : n > 7 ? " p-tbl-dense" : "") + '">' +
-        "<thead><tr>" + head.map(function (h) {
-          var num = h.charAt(0) === ">";
-          return "<th" + (num ? ' class="num"' : "") + ">" + (num ? h.slice(1) : h) + "</th>";
-        }).join("") + "</tr></thead><tbody>" + rows + "</tbody></table></div>" +
-      (foot || "");
+    return render(b, figs, cols, expo("By instrument", kinds));
   }
 
   var PANEL = {
@@ -896,22 +1075,42 @@
          given too, because that is the question the number raises. */
       if (badge) badge.textContent = bucket.weight + "%";
 
+      /* Say, per sleeve, which kind of money this is. The equity sleeve is
+         part funded and part notional; FX is notional throughout; fixed
+         income and the notes are funded outright. Printing one undifferent-
+         iated "% of capital" on all four is what made the weights unclear in
+         the first place. */
       var share = lev && lev.gross ? (bucket.weight / lev.gross) * 100 : null;
+      var kind = S.key === "fx" ? "notional"
+               : S.key === "equities" && bucket.weightOptions ? "split"
+               : "funded";
+
+      var sizeBits =
+        kind === "split"
+          ? '<span class="p-tape-i"><small>cash</small><b>' +
+              pc(bucket.weightCash, 1) + "%</b></span>" +
+            '<span class="p-tape-i p-tape-nt"><small>options</small><b>+' +
+              pc(bucket.weightOptions, 1) + "%</b></span>"
+          : kind === "notional"
+            ? '<span class="p-tape-i p-tape-nt"><small>notional</small><b>+' +
+                pc(bucket.weight, 1) + "%</b></span>"
+            : '<span class="p-tape-i"><small>of capital</small><b>' +
+                pc(bucket.weight, 1) + "%</b></span>";
+
       var tape = '<div class="p-tape">' +
         '<span class="p-tape-k"><s style="background:' +
           (BUCKET_COLOUR[S.key] || "currentColor") + '"></s>' + esc(bucket.label) + "</span>" +
-        '<span class="p-tape-i"><small>of capital</small><b>' +
-          pc(bucket.weight, 1) + "%</b></span>" +
+        sizeBits +
         (bucket.book
           ? '<span class="p-tape-i"><small>book</small><b>' +
             esc(bucket.book.name) + "</b></span>"
           : "") +
+        '<span class="p-tape-i"><small>lines</small><b>' +
+          (bucket.lines || []).length + "</b></span>" +
         (lev
-          ? '<span class="p-tape-i"><small>of gross</small><b>' + pc(share, 1) + "%</b></span>" +
-            '<span class="p-tape-n">book ' + lev.gross + "% gross &middot; " +
-            lev.geared + " pts notional, not borrowed</span>"
-          : '<span class="p-tape-i"><small>of book</small><b>' +
-            pc(bucket.weight, 1) + "%</b></span>") +
+          ? '<span class="p-tape-n">capital 100% &middot; book runs ' + lev.gross +
+            "% gross, " + lev.geared + " pts notional</span>"
+          : "") +
         "</div>";
 
       host.innerHTML = tape + (PANEL[S.key] || equityPanel)(bucket);

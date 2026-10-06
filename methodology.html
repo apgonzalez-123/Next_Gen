@@ -6,16 +6,16 @@
 <title>NextGen Methodology</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#0B0F14">
-<link rel="preload" href="assets/fonts/geist-400-latin.woff2?v=202610050507" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="assets/fonts/geist-600-latin.woff2?v=202610050507" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/app.css?v=202610050507">
-<link rel="stylesheet" href="assets/methodology.css?v=202610050507">
+<link rel="preload" href="assets/fonts/geist-400-latin.woff2?v=202610060042" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/geist-600-latin.woff2?v=202610060042" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/app.css?v=202610060042">
+<link rel="stylesheet" href="assets/methodology.css?v=202610060042">
 </head>
 <body class="meth">
 
 <header class="m-top">
   <div class="wordmark">
-    <img class="brand-mark" src="assets/brand/safra-logo.png?v=202610050507" alt="Safra" onerror="this.remove()">
+    <img class="brand-mark" src="assets/brand/safra-logo.png?v=202610060042" alt="Safra" onerror="this.remove()">
     <span class="brand-sep" aria-hidden="true"></span>
     <b>NextGen</b> <span>Methodology</span>
   </div>
@@ -41,12 +41,23 @@
   <section class="m-sec">
     <h2><span class="m-n">01</span>From answers to buckets</h2>
     <p class="m-lead">
-      Four sleeves. The specialist ones are carved out first, then equities and fixed
-      income split what is left. Adding them on top instead made the result
-      non-monotonic: a levered room ended up with less equity than an income-seeking one.
+      The room&rsquo;s answers pick one of five bands, and the band is a book the desk
+      has already written. So the question is not how the sleeves are computed but what
+      each band holds &mdash; which is the table below: what 100% of the capital is
+      divided into, and what notional sits on top of it.
+    </p>
+    <div class="m-scroll"><div id="bandWeights"></div></div>
+    <div class="m-note" id="gearingNote"></div>
+
+    <h3 class="m-sechead">If the band books are not loaded</h3>
+    <p class="m-lead">
+      The table above is what the room is actually shown. These formulas are the
+      fallback the engine uses only when <code>data/band-books.json</code> is missing
+      or malformed &mdash; it then builds a book by scoring the shelf instead of handing
+      over one the desk wrote. They are kept, and kept tested, because a projector with
+      no portfolio on it is worse than one showing a constructed approximation.
     </p>
     <div class="m-formula" id="bucketFormula"></div>
-    <div class="m-note" id="gearingNote"></div>
     <div class="m-note">
       Every input is read from the aggregate rather than a modal pick, so the split moves
       smoothly as answers land instead of jumping when one option overtakes another.
@@ -165,11 +176,11 @@
   </p>
 </main>
 
-<script src="assets/config.js?v=202610050507"></script>
-<script src="assets/schema.js?v=202610050507"></script>
-<script src="assets/portfolios.js?v=202610050507"></script>
-<script src="assets/base-loader.js?v=202610050507"></script>
-<script src="assets/store.js?v=202610050507"></script>
-<script src="assets/methodology.js?v=202610050507"></script>
+<script src="assets/config.js?v=202610060042"></script>
+<script src="assets/schema.js?v=202610060042"></script>
+<script src="assets/portfolios.js?v=202610060042"></script>
+<script src="assets/base-loader.js?v=202610060042"></script>
+<script src="assets/store.js?v=202610060042"></script>
+<script src="assets/methodology.js?v=202610060042"></script>
 </body>
 </html>

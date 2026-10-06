@@ -256,9 +256,44 @@ Rules:
 
 The desk works in **five risk bands** — Conservative, Conservative to Moderate,
 Moderate, Moderate to Aggressive, Aggressive — and the room is matched to one
-of them. They carry no holdings: the band is the match, and the instruments
-come from `data/products.json`. Check all five are *reachable*; if one can
+of them. They carry no holdings: the band is the match, and the book it maps
+to lives in `data/band-books.json`. Check all five are *reachable*; if one can
 never win, nobody will ever see it.
+
+### What each band actually weighs
+
+`tools/build_bands.py` reads the desk's workbooks and writes the five books.
+Capital and exposure are tracked separately, because they are not the same
+money:
+
+| Band | Cash equities | Fixed income | Notes | **Capital** | + Equity options | + FX overlay | **Gross** |
+|---|---|---|---|---|---|---|---|
+| Conservative             | 40 | 50 | 10 | **100** | +10.0 | +5  | **115.0** |
+| Conservative to Moderate | 50 | 38 | 12 | **100** | +7.5  | +10 | **117.5** |
+| Moderate                 | 60 | 26 | 14 | **100** | +12.5 | +22 | **134.5** |
+| Moderate to Aggressive   | 70 | 14 | 16 | **100** | +20.0 | +23 | **143.0** |
+| Aggressive               | 75 | 7  | 18 | **100** | +40.0 | +24 | **164.0** |
+
+Four of those columns are the desk's own numbers, read straight out of the
+sheets and not adjusted:
+
+* **cash equities** — the `Unlevered EQ` row of `NxtGen Alloc Eq.xlsx`
+* **equity options** — the gap between that and the `Levered Position` row
+* **FX overlay** — `% of FX in the portfolio` grossed up by the `Leverage`
+  row of `FX_Assets.xlsx`
+
+**One number is a judgement**: `NOTES_LADDER` in `tools/build_bands.py`, the
+share of the funded book held in structured notes (10 / 12 / 14 / 16 / 18%).
+Fixed income is then the *remainder*, which is why capital reconciles to
+exactly 100 rather than nearly 100. Change the ladder in that one place and
+the fixed income column follows; the builder refuses to write a band whose
+equity cash plus notes would exceed capital.
+
+The options and the FX overlay are **notional, not borrowed**: a long call
+controls the underlying for its premium, and the currency sleeve is sized the
+same way, so both add market exposure without consuming capital. The
+validator checks funded capital is 100% on every room
+(`portfolio-validator.js`, check id `capital`).
 
 To change the **questions** themselves, edit `assets/schema.js` — the matching
 engine, both result screens and the admin export all derive from it. Any new

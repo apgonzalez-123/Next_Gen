@@ -292,3 +292,42 @@ body.meth { min-height: 100vh; }
 }
 .m-book-tbl { width: 100%; }
 .m-book-tbl td, .m-book-tbl th { font-size: 12.5px; }
+
+/* The five bands' weights. The one table on this page that answers a
+   question people ask out loud: what is in each portfolio, and how much of
+   it is the client's money rather than notional sitting on top. */
+.m-bands { width: 100%; border-collapse: collapse; margin-top: 6px; }
+.m-bands th, .m-bands td { padding: 9px 14px; white-space: nowrap; }
+.m-bands thead th {
+  font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); font-weight: 550; text-align: left;
+  border-bottom: 1px solid var(--line); vertical-align: bottom;
+}
+.m-bands tbody th {
+  text-align: left; font-weight: 500; color: var(--text);
+  font-size: 13.5px;
+}
+.m-bands tbody tr { border-bottom: 1px solid var(--line-soft); }
+.m-bands tbody tr:last-child { border-bottom: none; }
+.m-bands .num {
+  text-align: right;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px; color: var(--text-2);
+}
+.m-bands td.m-tot { color: var(--accent-bright); font-weight: 500; }
+.m-bands th.m-tot { color: var(--text-2); }
+.m-bands .m-nt { color: var(--series-options); }
+.m-bands thead th.m-tot,
+.m-bands thead th.m-nt { border-left: 1px solid var(--line); }
+.m-bands tbody td.m-tot,
+.m-bands tbody td.m-nt:first-of-type { border-left: 1px solid var(--line-soft); }
+
+/* A heading inside a section, for the fallback formulas that sit under the
+   table of what the room is actually shown. (`m-sub` is already taken, by
+   the muted caption under a stat.) */
+.m-sechead {
+  margin: 30px 0 10px;
+  font-size: 15px; font-weight: 550; letter-spacing: 0.01em;
+  color: var(--text);
+}

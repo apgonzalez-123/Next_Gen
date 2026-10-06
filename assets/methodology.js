@@ -182,33 +182,85 @@
      are, computed from their own holdings, so the choice can be argued with. */
   /* Leverage changes what the allocation means, so the page that explains
      the allocation has to explain that too. */
+  /* The question this page exists to answer: for each of the five bands,
+     what is 100% of the capital divided into, and what sits on top of it.
+     Read straight out of data/band-books.json so the table cannot drift from
+     what the room is actually shown. */
+  function renderBandWeights() {
+    var host = el("bandWeights");
+    if (!host) return;
+    var bands = (window.BANDS && window.BANDS.bands) || [];
+    if (!bands.length) {
+      host.innerHTML = '<p class="m-note">Band books not loaded.</p>';
+      return;
+    }
+
+    function n(v, d) {
+      return (v === null || v === undefined || !isFinite(v))
+        ? "&mdash;" : Number(v).toFixed(d === undefined ? 1 : d);
+    }
+
+    var rows = bands.map(function (b) {
+      var c = b.capital || {}, t = b.notional || {};
+      var cap = (c.equities || 0) + (c.fixedIncome || 0) + (c.notes || 0);
+      return "<tr><th>" + b.name + "</th>" +
+        '<td class="num">' + n(c.equities) + "</td>" +
+        '<td class="num">' + n(c.fixedIncome) + "</td>" +
+        '<td class="num">' + n(c.notes) + "</td>" +
+        '<td class="num m-tot">' + n(cap) + "</td>" +
+        '<td class="num m-nt">+' + n(t.equityOptions) + "</td>" +
+        '<td class="num m-nt">+' + n(t.fx) + "</td>" +
+        '<td class="num m-tot">' + n(b.grossExposure) + "</td></tr>";
+    }).join("");
+
+    host.innerHTML =
+      '<table class="m-table m-bands">' +
+      "<thead><tr><th></th>" +
+        '<th class="num">Cash equities</th>' +
+        '<th class="num">Fixed income</th>' +
+        '<th class="num">Notes</th>' +
+        '<th class="num m-tot">Capital</th>' +
+        '<th class="num m-nt">+ Equity options</th>' +
+        '<th class="num m-nt">+ FX overlay</th>' +
+        '<th class="num m-tot">Gross exposure</th>' +
+      "</tr></thead><tbody>" + rows + "</tbody></table>";
+  }
+
   function renderGearing() {
     var host = el("gearingNote");
     if (!host) return;
+    var ladder = (window.BANDS && window.BANDS.notesLadder) || [];
     host.innerHTML =
-      "<h4>Leverage</h4>" +
-      "<p>Everything in the formula above sums to 100: that is the capital. " +
-      "Leverage is not a reshuffle of it. The room's exposure runs <b>past</b> " +
-      "its capital, because positions are taken through instruments whose " +
-      "notional is larger than the cash committed to them. So when the room " +
-      "asks for leverage the sleeves deliberately sum to more than 100, net " +
-      "stays at 100, and the difference is notional.</p>" +
-      "<p>The uplift reaches <b>35 percentage points</b> when the whole room " +
-      "wants it, so a fully geared book runs at 1.35&times; gross. It goes to " +
-      "the two sleeves where that notional lives &mdash; the equity options " +
-      "and the FX sleeve. A structured note is geared inside its own " +
-      "structure, through its barriers, rather than by being held larger. " +
-      "That cap is a judgement, stated here rather than buried: it is not a " +
-      "margin model and makes no claim about what any client would be " +
-      "offered.</p>" +
+      "<h4>Where each number comes from</h4>" +
+      "<p>Four of the five columns above are the desk's own, read out of the " +
+      "workbooks and not adjusted here. <b>Cash equities</b> is the " +
+      "&ldquo;Unlevered EQ&rdquo; row of <code>NxtGen Alloc Eq.xlsx</code>; " +
+      "<b>equity options</b> is the gap between that and the " +
+      "&ldquo;Levered Position&rdquo; row on the same sheet; the <b>FX " +
+      "overlay</b> is the sheet's &ldquo;% of FX in the portfolio&rdquo; " +
+      "grossed up by its own &ldquo;Leverage&rdquo; row.</p>" +
+      "<p>One number is a judgement, and it is this one: how much of the " +
+      "funded book sits in <b>structured notes</b>. Nothing in the workbooks " +
+      "or the deck sets it, so it is a ladder &mdash; " +
+      (ladder.length ? "<b>" + ladder.join("% / ") + "%</b>" : "10% to 18%") +
+      " across the five bands &mdash; rising with risk appetite and staying " +
+      "inside the 20% cap a private bank normally puts on structured product. " +
+      "<b>Fixed income is then the remainder</b>, which is why the capital " +
+      "column is exactly 100 in every band rather than nearly 100: it is " +
+      "derived, not guessed a second time.</p>" +
+      "<p><b>Capital and exposure are different things.</b> The three funded " +
+      "sleeves are what the client's money buys. The equity options and the " +
+      "FX overlay are notional: a long call controls the underlying for its " +
+      "premium, and the currency sleeve is sized the same way, so both add " +
+      "market exposure without consuming the capital. That is why gross runs " +
+      "from 115% to 164% while capital never moves off 100%.</p>" +
       "<p><b>Nothing here is borrowed.</b> No cash is lent, nothing is " +
       "repayable and there is no margin call &mdash; the gearing is the size " +
-      "of the contracts, not a loan against them. Everywhere a geared book is " +
-      "shown it carries the same disclosure, written once in " +
-      "<b>ENGINE.leverageDisclosure()</b> so the guest screen, the projector " +
-      "and the admin board cannot drift into saying different things about " +
-      "the same portfolio: gains and losses track the exposure rather than " +
-      "the cash, and a long option can expire worthless.</p>";
+      "of the contracts, not a loan against them. Every screen carries the " +
+      "same wording, written once in <b>ENGINE.leverageDisclosure()</b>, so " +
+      "the guest screen, the projector and the admin board cannot drift: " +
+      "gains and losses track the exposure rather than the cash, and a long " +
+      "option can expire worthless.</p>";
   }
 
   function renderBooks(P) {
@@ -566,6 +618,7 @@
     renderBuckets();
     renderUniLead(P);
     renderBooks(P);
+    renderBandWeights();
     renderGearing();
     renderNav(P);
     renderShelf(P);

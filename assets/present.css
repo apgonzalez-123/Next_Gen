@@ -134,68 +134,168 @@ body.present {
 .p-fit span { font-size: 15px; color: var(--muted); }
 
 /* --- slide 4: the room's book ---
-   Four columns, sized so the whole book reads from the back of a room
-   without scrolling. The bucket weight is the headline; each position
-   carries a bar scaled within its own bucket. */
+   Every line of it. The slide used to show five per sleeve and point at the
+   sleeve slides for the rest; the room asked to see exactly what it had
+   bought, so all thirty-odd positions are here, in four columns sized to a
+   projector. Above them, the one thing the weights needed stated outright:
+   which part is the client's capital and which part is notional on top. */
 .p-book {
   flex: 1 1 auto;
   min-height: 0;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 30px;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 1.8vh, 22px);
   overflow: hidden;
 }
 
-.p-bucket { min-width: 0; display: flex; flex-direction: column; }
+/* Capital, then what sits on top of it. Two bars, never one, because they
+   are not the same money. */
+.p-capital {
+  flex: 0 0 auto;
+  display: flex; gap: clamp(18px, 2.4vw, 40px);
+  align-items: flex-start;
+}
+.p-cap-side { flex: 1 1 auto; min-width: 0; }
+.p-cap-side.p-cap-nt { flex: 0 1 38%; }
+.p-cap-h { display: flex; align-items: baseline; gap: 10px; margin-bottom: 7px; }
+.p-cap-h small {
+  font-size: clamp(8.5px, 0.62vw, 11px);
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+.p-cap-h b {
+  font-family: var(--mono, ui-monospace, Menlo, monospace);
+  font-size: clamp(13px, 1.1vw, 18px); font-weight: 500;
+  color: var(--accent-bright); font-variant-numeric: tabular-nums;
+}
+.p-cap-nt .p-cap-h b { color: var(--series-options); }
+.p-cap-bar {
+  display: flex; height: clamp(10px, 1.4vh, 16px);
+  border-radius: var(--r-xs); overflow: hidden; background: var(--surface-2);
+}
+.p-cap-bar i { display: block; height: 100%; transition: width 0.8s cubic-bezier(0.2,0.8,0.2,1); }
+.p-cap-nt .p-cap-bar { opacity: 0.72; }
+.p-cap-keys {
+  display: flex; flex-wrap: wrap; gap: 5px 16px; margin-top: 8px;
+  font-size: clamp(9.5px, 0.74vw, 12.5px); color: var(--text-2);
+}
+
+/* The four sleeves. */
+.p-buckets {
+  flex: 1 1 auto; min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(16px, 2vw, 32px);
+  overflow: hidden;
+}
+.p-bucket { min-width: 0; display: flex; flex-direction: column; min-height: 0; }
 .p-bucket-top {
   display: flex; align-items: center; gap: 9px;
-  padding-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--line);
+  flex: 0 0 auto;
 }
-.p-bucket-top s { width: 10px; height: 10px; border-radius: var(--r-xs); text-decoration: none; flex: 0 0 auto; }
+.p-bucket-top s { width: 9px; height: 9px; border-radius: 2px; text-decoration: none; flex: 0 0 auto; }
 .p-bucket-top h3 {
-  font-size: clamp(12px, 1.1vw, 16px);
+  font-size: clamp(10px, 0.86vw, 13px);
   font-weight: 550;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.p-bucket-top em {
+  margin-left: auto; font-style: normal;
+  font-family: var(--mono, ui-monospace, Menlo, monospace);
+  font-size: clamp(9.5px, 0.74vw, 12px);
+  color: var(--muted);
 }
 .p-bucket-w {
+  display: flex; align-items: baseline; gap: 3px;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(40px, 4.4vw, 76px);
+  font-size: clamp(22px, 2.3vw, 38px);
   line-height: 1;
   letter-spacing: -0.035em;
   color: var(--accent-bright);
   font-variant-numeric: tabular-nums;
-  margin: clamp(18px, 2.4vh, 30px) 0 clamp(20px, 3vh, 36px);
-}
-
-.p-pos { margin-bottom: clamp(16px, 2.2vh, 26px); }
-.p-pos-top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 6px; }
-.p-pos-name {
-  font-size: clamp(13px, 1.15vw, 19px);
-  line-height: 1.3;
-  color: var(--text-2);
-  min-width: 0;
-}
-.p-pos-w {
-  font-size: clamp(13px, 1.15vw, 19px);
-  color: var(--accent-bright);
-  font-variant-numeric: tabular-nums;
+  margin: clamp(5px, 0.8vh, 10px) 0 clamp(5px, 0.8vh, 10px);
   flex: 0 0 auto;
 }
-.p-pos-bar { height: 5px; border-radius: var(--r-xs); background: var(--line-soft); overflow: hidden; }
-
-/* What the position actually is. Small, but sized to stay legible from
-   the back of a room rather than shrinking to a caption. */
-.p-pos-meta {
-  margin-top: 7px;
-  font-size: clamp(11px, 0.82vw, 14px);
-  line-height: 1.4;
-  color: var(--muted);
+.p-bucket-w i {
+  font-style: normal; font-weight: 400;
+  font-size: clamp(10px, 0.8vw, 13px); color: var(--muted);
 }
+.p-bucket-w u {
+  text-decoration: none; margin-left: 5px;
+  font-size: clamp(8px, 0.56vw, 9.5px); letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--series-options);
+}
+
+/* One row per holding: ticker, name, weight, and the bar underneath.
+   Every line of the book is on this slide, so the row has to be sized by
+   how many there are — fifteen equity lines and three currency lines cannot
+   share a height without one of them being clipped or marooned. */
+.p-holds { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.p-hold {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 8px;
+  padding: clamp(5px, 0.8vh, 9px) 0 clamp(6px, 0.95vh, 11px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.p-hold:last-child { border-bottom: none; }
+.p-hold-tk {
+  font-family: var(--mono, ui-monospace, Menlo, monospace);
+  font-size: clamp(8px, 0.62vw, 10.5px);
+  color: var(--muted);
+  background: var(--surface-2);
+  border-radius: 2px; padding: 1px 5px;
+  white-space: nowrap;
+}
+.p-hold-nm {
+  font-size: clamp(10px, 0.82vw, 13px);
+  line-height: 1.2;
+  color: var(--text-2);
+  min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.p-hold-w {
+  font-family: var(--mono, ui-monospace, Menlo, monospace);
+  font-size: clamp(10px, 0.82vw, 13px);
+  color: var(--accent-bright);
+  font-variant-numeric: tabular-nums;
+}
+.p-hold-bar {
+  position: absolute; left: 0; bottom: 0; height: 2px;
+  border-radius: 1px;
+  transition: width 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+/* With a second line the row becomes two, so the grid gains one. */
+.p-hold-2 { grid-template-rows: auto auto; row-gap: 3px; }
+.p-hold-meta {
+  grid-column: 2 / -1;
+  font-size: clamp(8.5px, 0.66vw, 11px);
+  color: var(--muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.p-hold-ovl .p-hold-nm { color: var(--series-options); }
+.p-hold-ovl .p-hold-bar { opacity: 0.7; }
+
+/* Eleven lines or more: the rows give up everything they can spare. */
+.p-bucket-tight .p-hold { padding: 3px 0 5px; gap: 6px; }
+.p-bucket-tight .p-hold-nm,
+.p-bucket-tight .p-hold-w { font-size: clamp(9px, 0.73vw, 11.8px); line-height: 1.2; }
+.p-bucket-tight .p-hold-tk { font-size: clamp(7px, 0.55vw, 9px); padding: 0 4px; }
+.p-bucket-tight .p-bucket-w { font-size: clamp(20px, 2vw, 32px); }
+
+/* Six lines or fewer: let them breathe rather than marooning them at the
+   top of an empty column. */
+.p-bucket-roomy .p-hold { padding: clamp(8px, 1.4vh, 16px) 0 clamp(9px, 1.6vh, 18px); }
+.p-bucket-roomy .p-hold-nm,
+.p-bucket-roomy .p-hold-w { font-size: clamp(11px, 0.92vw, 15px); }
+
 .p-tk {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.88em;
@@ -205,10 +305,6 @@ body.present {
   padding: 2px 6px;
   margin-right: 7px;
   white-space: nowrap;
-}
-.p-pos-bar i {
-  display: block; height: 100%; border-radius: var(--r-xs);
-  transition: width 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .p-book-empty { font-size: 14px; color: var(--muted); }
@@ -265,10 +361,12 @@ body.present {
 }
 
 @media (max-width: 1240px) {
-  .p-book { grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  .p-buckets { grid-template-columns: repeat(2, 1fr); gap: 22px; }
 }
 @media (max-width: 1000px) {
-  .p-book { grid-template-columns: repeat(2, 1fr); }
+  .p-buckets { grid-template-columns: repeat(2, 1fr); }
+  .p-capital { flex-direction: column; gap: 14px; }
+  .p-cap-side.p-cap-nt { flex: 1 1 auto; }
   .p-join, .p-verdict { grid-template-columns: 1fr; gap: 28px; }
   .p-bar { grid-template-columns: 150px 1fr 88px; gap: 14px; }
   .p-top, .p-stage, .p-foot { padding-left: 22px; padding-right: 22px; }
@@ -291,17 +389,6 @@ body.present {
 .p-scen .val { font-family: var(--font-display); font-weight: 600; font-size: clamp(20px, 1.9vw, 28px); font-variant-numeric: tabular-nums; }
 .p-scen .val.up   { color: var(--pos); }
 .p-scen .val.down { color: var(--neg); }
-
-.p-hold { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line-soft); }
-.p-hold-h { font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-.p-hold-row {
-  display: flex; justify-content: space-between; gap: 16px;
-  font-size: clamp(12px, 1.05vw, 15px);
-  color: var(--text-2);
-  padding: 5px 0;
-}
-.p-hold-row b { color: var(--accent-bright); font-weight: 550; font-variant-numeric: tabular-nums; }
-.p-hold-more { font-size: 11px; color: var(--muted); margin-top: 8px; }
 
 /* The projector carries the lockup larger. The mark and rule are sized in
    em, so raising the wordmark size scales all three together. */
@@ -453,6 +540,7 @@ body.present {
   font-variant-numeric: tabular-nums;
   color: var(--text);
 }
+.p-tape-nt b { color: var(--series-options); }
 .p-tape-n {
   margin-left: auto;
   font-size: clamp(9px, 0.7vw, 11.5px);
@@ -474,7 +562,7 @@ body.present {
 }
 .p-fig {
   background: var(--bg);
-  padding: clamp(8px, 1.15vh, 13px) clamp(10px, 1vw, 15px);
+  padding: clamp(6px, 0.95vh, 11px) clamp(10px, 1vw, 15px);
 }
 .p-fig small {
   display: block;
@@ -486,7 +574,7 @@ body.present {
 .p-fig b {
   display: flex; align-items: baseline; gap: 3px;
   font-family: var(--mono); font-weight: 500;
-  font-size: clamp(17px, 1.6vw, 26px); line-height: 1;
+  font-size: clamp(16px, 1.45vw, 23px); line-height: 1;
   letter-spacing: -0.015em;
   color: var(--accent-bright);
   font-variant-numeric: tabular-nums;
@@ -531,7 +619,7 @@ body.present {
 }
 .p-tbl-dense td { padding-top: clamp(4px, 0.7vh, 8px); padding-bottom: clamp(4px, 0.7vh, 8px); }
 .p-tbl-dense td { font-size: clamp(10.5px, 0.82vw, 13px); }
-.p-tbl-tight td { padding-top: clamp(2px, 0.45vh, 5px); padding-bottom: clamp(2px, 0.45vh, 5px); }
+.p-tbl-tight td { padding-top: clamp(1px, 0.3vh, 3.5px); padding-bottom: clamp(1px, 0.3vh, 3.5px); }
 .p-tbl-tight td { font-size: clamp(10px, 0.76vw, 12px); }
 .p-tbl-tight .p-tk { font-size: 0.82em; padding: 1px 4px; }
 
@@ -587,6 +675,88 @@ body.present {
 }
 .p-side.long  { color: var(--pos); border: 1px solid rgba(25, 158, 112, 0.45); }
 .p-side.short { color: var(--neg); border: 1px solid rgba(217, 89, 38, 0.45); }
+
+/* Short sleeves as cards.
+   Four structures or three currency positions laid out as table rows leave
+   two thirds of a projector empty, which reads as missing data rather than
+   as a short list. The same facts, sized to the space they have. */
+.p-cards {
+  flex: 1 1 auto; min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--n, 4), 1fr);
+  gap: clamp(12px, 1.4vw, 24px);
+  align-content: stretch;
+}
+.p-cd {
+  display: flex; flex-direction: column;
+  min-width: 0;
+  padding: clamp(12px, 1.8vh, 22px) clamp(13px, 1.2vw, 20px);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: linear-gradient(180deg, rgba(255,255,255,0.028), transparent 55%);
+}
+.p-cd-ovl { border-color: rgba(140, 92, 214, 0.34); }
+.p-cd-top {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; margin-bottom: clamp(10px, 1.4vh, 16px);
+}
+.p-cd-top .p-tk { margin-right: 0; }
+.p-cd-w {
+  font-family: var(--mono); font-weight: 500;
+  font-size: clamp(19px, 1.9vw, 31px); line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--accent-bright); font-variant-numeric: tabular-nums;
+}
+.p-cd-w i {
+  font-style: normal; font-family: var(--font-ui);
+  font-size: clamp(10px, 0.72vw, 13px); color: var(--muted);
+  margin-left: 2px;
+}
+.p-cd-title {
+  font-size: clamp(14px, 1.22vw, 21px);
+  line-height: 1.22;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+.p-cd-sub {
+  font-size: clamp(10.5px, 0.84vw, 13.5px);
+  color: var(--muted);
+  margin-bottom: clamp(12px, 1.8vh, 20px);
+}
+.p-cd-kvs {
+  flex: 1 1 auto;
+  display: flex; flex-direction: column; justify-content: space-between;
+  gap: clamp(7px, 1.1vh, 13px);
+}
+.p-cd-kv {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px;
+  padding-bottom: clamp(6px, 0.9vh, 11px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.p-cd-kv:last-child { border-bottom: none; }
+.p-cd-kv small {
+  font-size: clamp(8.5px, 0.62vw, 11px);
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted);
+  white-space: nowrap;
+}
+.p-cd-kv b {
+  font-family: var(--mono); font-weight: 500;
+  font-size: clamp(11.5px, 0.95vw, 15px);
+  color: var(--text); font-variant-numeric: tabular-nums;
+  text-align: right; min-width: 0;
+}
+.p-cd-track {
+  margin-top: clamp(12px, 1.8vh, 20px);
+  height: 3px; border-radius: 2px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+.p-cd-track i {
+  display: block; height: 100%;
+  background: var(--accent-bright); opacity: 0.8;
+  transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
 
 /* The exposure that matters for this asset class, as one bar. */
 .p-expo { flex: 0 0 auto; }
@@ -782,19 +952,11 @@ body.present {
   margin-right: 7px;
   vertical-align: 0.15em;
 }
-.p-pos-overlay .p-pos-bar i { opacity: 0.72; }
 
 /* A long book: ten holdings instead of seven. */
 .p-sl-dense .p-pk { padding: clamp(5px, 0.85vh, 10px) 0; }
 .p-sl-dense .p-pk-name { font-size: clamp(12px, 1.02vw, 16px); }
 .p-sl-dense .p-pk-why { margin-top: 3px; font-size: clamp(10px, 0.76vw, 12.5px); }
-
-/* The positions board is a summary; the sleeve slides carry the full list. */
-.p-book-more {
-  margin-top: clamp(8px, 1.2vh, 14px);
-  font-size: clamp(10px, 0.78vw, 13px);
-  color: var(--muted);
-}
 
 /* Gearing note under the positions board. */
 .p-gearing {
@@ -812,4 +974,47 @@ body.present {
   margin-top: 12px;
   font-size: clamp(11px, 0.85vw, 14px);
   color: var(--series-options);
+}
+
+/* The five bands on the verdict slide, with the room's own lit up.
+   The left column under the band name was empty; this is the fact worth
+   putting there — the room gets one of five books the desk wrote, and this
+   shows both that and where the room landed. */
+.p-ladder { margin-top: clamp(22px, 3.2vh, 44px); max-width: 680px; }
+.p-rung {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(90px, 2.1fr) auto;
+  align-items: center;
+  gap: clamp(12px, 1.4vw, 22px);
+  padding: clamp(11px, 1.9vh, 21px) 0;
+  border-bottom: 1px solid var(--line-soft);
+  opacity: 0.44;
+  transition: opacity 0.5s ease;
+}
+.p-rung:last-of-type { border-bottom: none; }
+.p-rung.on { opacity: 1; }
+.p-rung-n {
+  font-size: clamp(11px, 0.95vw, 15px);
+  color: var(--text-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.p-rung.on .p-rung-n { color: var(--accent-bright); font-weight: 500; }
+.p-rung-bar {
+  display: flex; height: clamp(7px, 1vh, 11px);
+  border-radius: 2px; overflow: hidden;
+  background: var(--surface-2);
+}
+.p-rung-bar i { display: block; height: 100%; }
+.p-rung-g {
+  font-family: var(--mono, ui-monospace, Menlo, monospace);
+  font-size: clamp(10px, 0.82vw, 13px);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.p-rung.on .p-rung-g { color: var(--series-options); }
+.p-ladder-note {
+  margin-top: clamp(10px, 1.5vh, 16px);
+  font-size: clamp(9.5px, 0.74vw, 12.5px);
+  line-height: 1.5;
+  color: var(--muted);
 }

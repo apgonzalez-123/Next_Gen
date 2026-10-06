@@ -291,6 +291,8 @@ window.PORTFOLIO_VALIDATOR = (function () {
       gross: allocGross,
       net: (sim.alloc && sim.alloc.net) || null,
       geared: (sim.alloc && sim.alloc.geared) || 0,
+      capital: (sim.alloc && sim.alloc.capital) || null,
+      notionalSplit: (sim.alloc && sim.alloc.notional) || null,
 
       allocation: declared,
       allocationFromLines: actual,
@@ -716,6 +718,31 @@ window.PORTFOLIO_VALIDATOR = (function () {
       grossTarget + "%" +
       (chars.geared ? ", of which " + chars.geared + " points are notional above capital" : "") + ".",
       { intent: grossTarget, actual: chars.totalWeight, difference: drift, unit: "pp" });
+
+    /* The funded book is the client's money and must be exactly 100%. Gross
+       may run past it — that is the notional — but if capital itself does
+       not reconcile then one of the five sleeve weights is wrong, and the
+       room would be shown a portfolio that cannot be bought. This is the
+       check that would have caught the sleeve shares being four separate
+       guesses rather than three numbers and a remainder. */
+    if (chars.capital) {
+      var capParts = ["equities", "fixedIncome", "notes"];
+      var capTotal = round(capParts.reduce(function (t, k) {
+        return t + (chars.capital[k] || 0);
+      }, 0), 2);
+      var capDrift = round(capTotal - 100, 2);
+      push("capital", "Funded capital is 100%",
+        Math.abs(capDrift) <= 0.5, false,
+        "Cash equities " + (chars.capital.equities || 0) + "%, fixed income " +
+        (chars.capital.fixedIncome || 0) + "%, structured notes " +
+        (chars.capital.notes || 0) + "% \u2014 " + capTotal + "% of capital." +
+        (chars.notionalSplit
+          ? " On top of it: " + (chars.notionalSplit.equityOptions || 0) +
+            " points of equity options and " + (chars.notionalSplit.fx || 0) +
+            " points of FX, both notional."
+          : ""),
+        { intent: 100, actual: capTotal, difference: capDrift, unit: "pp" });
+    }
 
     /* Each sleeve's lines must add up to the sleeve weight the rest of the
        app displays; otherwise the presenter and the book disagree. */
