@@ -68,7 +68,12 @@ window.SCHEMA = {
           label: "What are your current market views?",
           options: [
             { v: 0, label: "Bearish" },
-            { v: 1, label: "Neutral" },
+            /* "Unsure", not "Neutral": on a view question the middle option
+               is usually someone who has not formed one, and calling that
+               neutral reads as a held position it is not. The risk-profile
+               question keeps "Neutral", where the middle genuinely is a
+               stance. */
+            { v: 1, label: "Unsure" },
             { v: 2, label: "Bullish" }
           ]
         },

@@ -183,8 +183,10 @@ body.present {
 .p-buckets {
   flex: 1 1 auto; min-height: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: clamp(16px, 2vw, 32px);
+  /* Equities carries fifteen lines and FX three, so they do not get the
+     same width. The wide column flows its holdings into two. */
+  grid-template-columns: 2.2fr 1.1fr 1.15fr 1.05fr;
+  gap: clamp(16px, 2vw, 34px);
   overflow: hidden;
 }
 .p-bucket { min-width: 0; display: flex; flex-direction: column; min-height: 0; }
@@ -241,29 +243,36 @@ body.present {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: baseline;
-  gap: 8px;
-  padding: clamp(5px, 0.8vh, 9px) 0 clamp(6px, 0.95vh, 11px);
+  gap: 9px;
+  padding: clamp(7px, 1.15vh, 13px) 0 clamp(8px, 1.3vh, 15px);
   border-bottom: 1px solid var(--line-soft);
 }
 .p-hold:last-child { border-bottom: none; }
 .p-hold-tk {
   font-family: var(--mono, ui-monospace, Menlo, monospace);
-  font-size: clamp(8px, 0.62vw, 10.5px);
+  font-size: clamp(8.5px, 0.68vw, 11px);
   color: var(--muted);
   background: var(--surface-2);
   border-radius: 2px; padding: 1px 5px;
   white-space: nowrap;
 }
 .p-hold-nm {
-  font-size: clamp(10px, 0.82vw, 13px);
-  line-height: 1.2;
+  font-size: clamp(11.5px, 0.96vw, 15.5px);
+  line-height: 1.22;
   color: var(--text-2);
   min-width: 0;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  /* Wrap to a second line rather than truncate. "State Street SPDR S&P…"
+     names three different funds on this shelf, so an ellipsis here is not a
+     shortened label, it is an ambiguous one. */
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .p-hold-w {
   font-family: var(--mono, ui-monospace, Menlo, monospace);
-  font-size: clamp(10px, 0.82vw, 13px);
+  font-size: clamp(11.5px, 0.96vw, 15.5px);
   color: var(--accent-bright);
   font-variant-numeric: tabular-nums;
 }
@@ -276,19 +285,22 @@ body.present {
 .p-hold-2 { grid-template-rows: auto auto; row-gap: 3px; }
 .p-hold-meta {
   grid-column: 2 / -1;
-  font-size: clamp(8.5px, 0.66vw, 11px);
+  font-size: clamp(9.5px, 0.74vw, 12.5px);
   color: var(--muted);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .p-hold-ovl .p-hold-nm { color: var(--series-options); }
 .p-hold-ovl .p-hold-bar { opacity: 0.7; }
 
-/* Eleven lines or more: the rows give up everything they can spare. */
-.p-bucket-tight .p-hold { padding: 3px 0 5px; gap: 6px; }
-.p-bucket-tight .p-hold-nm,
-.p-bucket-tight .p-hold-w { font-size: clamp(9px, 0.73vw, 11.8px); line-height: 1.2; }
-.p-bucket-tight .p-hold-tk { font-size: clamp(7px, 0.55vw, 9px); padding: 0 4px; }
-.p-bucket-tight .p-bucket-w { font-size: clamp(20px, 2vw, 32px); }
+/* Eleven lines or more: two columns rather than smaller type. */
+.p-bucket-wide .p-holds {
+  columns: 2;
+  column-gap: clamp(16px, 1.8vw, 30px);
+  column-fill: balance;
+}
+.p-bucket-wide .p-hold { break-inside: avoid; -webkit-column-break-inside: avoid; }
+/* A column rule would double up with the row borders; the gap is enough. */
+.p-bucket-wide .p-holds > :first-child { margin-top: 0; }
 
 /* Six lines or fewer: let them breathe rather than marooning them at the
    top of an empty column. */
@@ -752,7 +764,8 @@ body.present {
   background: rgba(255, 255, 255, 0.07);
   overflow: hidden;
 }
-.p-cd-track i {
+.p-cd-track i,
+.p-cd-track b {
   display: block; height: 100%;
   background: var(--accent-bright); opacity: 0.8;
   transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -1032,3 +1045,125 @@ body.present {
   color: var(--muted);
   word-break: break-all;
 }
+
+/* --- structured notes and FX, as term sheets ---
+   The generic card put the product type in the headline and the coupon in a
+   row of key-values, which is backwards: nobody asks what kind of note it is
+   before asking what it pays and how far the underlying can fall first. */
+.p-cd-note, .p-cd-fx { justify-content: space-between; }
+.p-cd-type {
+  font-size: clamp(9.5px, 0.74vw, 12.5px);
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  text-align: right;
+}
+.p-cd-under {
+  font-size: clamp(16px, 1.45vw, 25px);
+  line-height: 1.18;
+  color: var(--accent-bright);
+  margin: clamp(10px, 1.6vh, 18px) 0 clamp(12px, 2vh, 22px);
+}
+
+/* Coupon and tenor, side by side: the two numbers a client asks for. */
+.p-cd-hero {
+  display: flex; gap: clamp(14px, 1.6vw, 28px);
+  padding-bottom: clamp(12px, 1.8vh, 20px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.p-cd-hero > div { min-width: 0; }
+.p-cd-hero b {
+  display: block;
+  font-family: var(--mono); font-weight: 500;
+  font-size: clamp(19px, 1.85vw, 30px); line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--series-notes);
+  font-variant-numeric: tabular-nums;
+}
+.p-cd-hero > div + div b { color: var(--text); }
+.p-cd-hero small {
+  display: block; margin-top: 6px;
+  font-size: clamp(8.5px, 0.62vw, 11px);
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+}
+
+/* The barrier, drawn. The distance to it is the whole risk of the
+   structure, and a number on its own does not show a distance. */
+.p-cd-barrier { margin-top: clamp(12px, 1.8vh, 20px); }
+.p-cd-barrier small {
+  display: block; margin-bottom: 8px;
+  font-size: clamp(8.5px, 0.62vw, 11px);
+  letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted);
+}
+.p-cd-gauge {
+  position: relative;
+  height: clamp(8px, 1.1vh, 12px);
+  border-radius: 2px;
+  background: linear-gradient(90deg,
+    rgba(217, 89, 38, 0.30) 0%, rgba(217, 89, 38, 0.12) 100%);
+  overflow: visible;
+}
+.p-cd-gauge i {
+  display: block; height: 100%; border-radius: 2px 0 0 2px;
+  background: rgba(25, 158, 112, 0.42);
+}
+.p-cd-gauge u {
+  position: absolute; top: -3px; bottom: -3px; width: 2px;
+  background: var(--accent-bright);
+  text-decoration: none;
+}
+.p-cd-barrier p {
+  margin-top: 9px;
+  font-size: clamp(9.5px, 0.72vw, 12px);
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.p-cd-nobar p { margin-top: 0; }
+
+/* FX: the position on a scale with the dollar at one end, which cannot be
+   read backwards the way a "long" label can. */
+.p-cd-fxside { margin-top: clamp(4px, 0.8vh, 10px); }
+.p-cd-fxside .p-side {
+  display: inline-block; margin-bottom: clamp(12px, 1.8vh, 18px);
+  font-size: clamp(9.5px, 0.74vw, 12px);
+}
+.p-cd-scale {
+  position: relative;
+  height: clamp(8px, 1.1vh, 12px);
+  border-radius: 2px;
+  background: var(--surface-2);
+  overflow: visible;
+}
+.p-cd-scale-fill {
+  display: block; height: 100%; border-radius: 2px 0 0 2px;
+  background: rgba(201, 133, 0, 0.5);
+}
+.p-cd-scale u {
+  position: absolute; top: -3px; bottom: -3px; width: 2px;
+  background: var(--accent-bright);
+  text-decoration: none;
+}
+.p-cd-scale-ends {
+  display: flex; justify-content: space-between; gap: 10px;
+  margin-top: 8px;
+  font-size: clamp(8.5px, 0.64vw, 11px);
+  color: var(--muted);
+}
+
+/* Both bespoke cards end the same way: weight, and the track for it. */
+.p-cd-foot {
+  margin-top: clamp(14px, 2vh, 22px);
+  padding-top: clamp(10px, 1.5vh, 16px);
+  border-top: 1px solid var(--line-soft);
+}
+.p-cd-foot span {
+  display: block; margin-bottom: 7px;
+  font-family: var(--mono);
+  font-size: clamp(10.5px, 0.84vw, 13.5px);
+  color: var(--accent-bright);
+  font-variant-numeric: tabular-nums;
+}
+.p-cd-foot .p-cd-track { display: block; margin-top: 0; }
+
+/* The FX card's two numbers sit flush, not spread: the gauge below is what
+   the space is for. */
+.p-cd-fx .p-cd-kvs { flex: 0 0 auto; gap: 0; }

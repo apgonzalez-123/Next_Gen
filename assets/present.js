@@ -482,8 +482,12 @@
           }).join("")
         : '<p class="p-book-empty">Nothing here.</p>';
 
+      /* A sleeve of fifteen lines in a quarter of the slide forces type
+         nobody can read from the back. It gets a double-width column and
+         flows its holdings into two, so every sleeve can use the same
+         comfortable row height instead of the longest one setting it. */
       return '<div class="p-bucket' +
-        (n > 10 ? " p-bucket-tight" : n <= 6 ? " p-bucket-roomy" : "") + '">' +
+        (n > 10 ? " p-bucket-wide" : n <= 6 ? " p-bucket-roomy" : "") + '">' +
         '<div class="p-bucket-top"><s style="background:' + colour + '"></s>' +
         "<h3>" + esc(b.label) + "</h3>" +
         '<em>' + n + "</em></div>" +
@@ -835,12 +839,129 @@
    */
   var CARD_MAX = 7;
 
-  function render(b, figs, cols, foot) {
+  function render(b, figs, cols, foot, cardFn) {
     var lines = b.lines || [];
     return '<div class="p-figs">' + figs + "</div>" +
-      (lines.length > CARD_MAX ? asTable(lines, cols) : asCards(lines, cols)) +
+      (lines.length > CARD_MAX ? asTable(lines, cols)
+                               : (cardFn || asCards)(lines, cols)) +
       (foot || "");
   }
+
+  function cardGrid(lines, inner) {
+    return '<div class="p-cards" style="--n:' + Math.min(lines.length, 4) + '">' +
+      lines.map(inner).join("") + "</div>";
+  }
+
+  /* The weight track every card ends on. */
+  function cardFoot(l, mx, label) {
+    var pct = mx > 0 ? Math.max(3, (l.weight / mx) * 100) : 0;
+    return '<div class="p-cd-foot">' +
+      "<span>" + fxn(l.weight, 1) + "% " + label + "</span>" +
+      '<i class="p-cd-track"><b style="width:' + pc(pct, 1) + '%"></b></i>' +
+    "</div>";
+  }
+
+  /* ---- structured notes, as term sheets --------------------------------
+   *
+   * The generic card put the type in the headline and the coupon in a row
+   * of key-values, which is backwards: nobody asks what kind of note it is
+   * before asking what it pays and how far the underlying can fall first.
+   * So the coupon is the headline, the underlying is the title, and the
+   * barrier is drawn rather than stated — the distance to it is the whole
+   * risk of the structure and a number alone does not show it.
+   */
+  function barrierPct(b) {
+    var m = /(\d{2,3})/.exec(String(b || ""));
+    return m ? Math.max(0, Math.min(100, parseInt(m[1], 10))) : null;
+  }
+
+  function notesCards(lines) {
+    var mx = maxw(lines);
+    return cardGrid(lines, function (l) {
+      var it = l.item;
+      var bar = barrierPct(it.barrier);
+      var cpn = String(it.coupon || "").trim();
+      var cpnNum = /^[\d.]+%/.exec(cpn);
+
+      return '<div class="p-cd p-cd-note">' +
+        '<div class="p-cd-top">' + tick(it.ticker) +
+          '<span class="p-cd-type">' + esc(it.type || "") +
+          (it.isCore ? ' <em class="p-tag">index</em>' : "") + "</span>" +
+        "</div>" +
+
+        '<div class="p-cd-under">' + esc(it.underlying || "\u2014") + "</div>" +
+
+        '<div class="p-cd-hero">' +
+          "<div><b>" + esc(cpnNum ? cpnNum[0] : (cpn || "\u2014")) + "</b>" +
+            "<small>coupon" + (/mem/i.test(cpn) ? ", with memory" : "") + "</small></div>" +
+          "<div><b>" + esc(it.tenor || "\u2014") + "</b><small>tenor</small></div>" +
+        "</div>" +
+
+        (bar === null
+          ? '<div class="p-cd-barrier p-cd-nobar"><small>No barrier</small>' +
+            "<p>Credit-linked: the risk is the reference entity, not a level.</p></div>"
+          : '<div class="p-cd-barrier">' +
+              '<small>Barrier ' + bar + '</small>' +
+              '<div class="p-cd-gauge"><i style="width:' + bar + '%"></i>' +
+                '<u style="left:' + bar + '%"></u></div>' +
+              "<p>Protected while the underlying holds above &minus;" +
+                (100 - bar) + "%</p>" +
+            "</div>") +
+
+        cardFoot(l, mx, "of capital") +
+      "</div>";
+    });
+  }
+
+  /* ---- FX, as a dollar-side gauge --------------------------------------
+   *
+   * Every one of these is long something; what the room needs to read off
+   * the slide is which side of the DOLLAR that puts it on, and a label alone
+   * kept being misread. So the position sits on a scale with the dollar at
+   * one end, which cannot be read backwards.
+   */
+  function fxCards(lines) {
+    var mx = maxw(lines);
+    return cardGrid(lines, function (l) {
+      var it = l.item, u = (it.analytics || {}).usdExposure;
+      var longUsd = u !== null && u !== undefined && u >= 50;
+
+      return '<div class="p-cd p-cd-fx">' +
+        '<div class="p-cd-top">' + tick(it.ticker) +
+          '<span class="p-cd-type">' + esc(it.kind || "") + "</span>" +
+        "</div>" +
+
+        '<div class="p-cd-under">' + esc(it.name) + "</div>" +
+
+        /* Three currency positions do not fill a projector on their own, so
+           the card carries the two numbers behind the gauge rather than
+           spacing out what little it has. */
+        '<div class="p-cd-kvs">' +
+          '<div class="p-cd-kv"><small>Dollar content</small><b>' +
+            pctOr(u) + "</b></div>" +
+          '<div class="p-cd-kv"><small>Share of sleeve</small><b>' +
+            (it.weightOfSleeve ? pc(it.weightOfSleeve * 100, 0) + "%" : "\u2014") +
+          "</b></div>" +
+        "</div>" +
+
+        (u === null || u === undefined
+          ? ""
+          : '<div class="p-cd-fxside">' +
+              '<div class="p-side ' + (longUsd ? "long" : "short") + '">' +
+                (longUsd ? "USD long" : "USD short") + "</div>" +
+              '<div class="p-cd-scale">' +
+                '<i class="p-cd-scale-fill" style="width:' + pc(u, 0) + '%"></i>' +
+                '<u style="left:' + pc(u, 0) + '%"></u>' +
+              "</div>" +
+              '<div class="p-cd-scale-ends"><span>away from the dollar</span>' +
+                "<span>into the dollar</span></div>" +
+            "</div>") +
+
+        cardFoot(l, mx, "notional") +
+      "</div>";
+    });
+  }
+
 
   function asTable(lines, cols) {
     var mx = maxw(lines);
@@ -1020,7 +1141,7 @@
         } }
     ];
 
-    return render(b, figs, cols, expo("By structure", types));
+    return render(b, figs, cols, expo("By structure", types), notesCards);
   }
 
   function fxPanel(b) {
@@ -1050,7 +1171,7 @@
       { head: "USD %", num: true, get: function (l) { return pctOr(an(l.item).usdExposure); } }
     ];
 
-    return render(b, figs, cols, expo("By instrument", kinds));
+    return render(b, figs, cols, expo("By instrument", kinds), fxCards);
   }
 
   var PANEL = {
