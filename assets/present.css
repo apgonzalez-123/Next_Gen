@@ -1018,3 +1018,17 @@ body.present {
   line-height: 1.5;
   color: var(--muted);
 }
+
+/* The address the QR actually encodes, under the code.
+   A stale GUEST_URL sent a room to a domain that was down and nothing on
+   screen said so — the code looked fine and failed in the guests' hands.
+   Small enough not to invite typing, large enough to read from the lectern. */
+.qr-url {
+  margin-top: clamp(10px, 1.4vh, 16px);
+  text-align: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: clamp(10px, 0.8vw, 13px);
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  word-break: break-all;
+}

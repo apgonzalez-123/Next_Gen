@@ -49,10 +49,18 @@
      stripped, so the QR is right wherever the site is deployed and there
      is nothing to configure by hand. */
   function guestUrl() {
-    /* CONFIG.GUEST_URL wins when it is set, so the room can be sent to the
-       public domain while the projector runs from wherever is convenient.
-       Falling back to this page's own address keeps a rehearsal working
-       with no configuration at all. */
+    /* This page's own address is the DEFAULT, not the fallback.
+     *
+     * Pointing the QR at a hard-coded domain means the one thing the whole
+     * event depends on is a constant that can go stale in a cached copy of
+     * this file — which is exactly what happened: the projector kept sending
+     * the room to a domain that was down. Serving the guests from wherever
+     * the projector itself is being served from cannot go stale, because
+     * both come out of the same deployment.
+     *
+     * CONFIG.GUEST_URL still overrides it, for the case it was written for:
+     * a short branded domain the room can also type. Set it only when that
+     * domain is known good. */
     var cfg = (window.CONFIG || {}).GUEST_URL;
     if (cfg) return cfg.replace(/\/+$/, "") + "/";
     var u = window.location.href.split("?")[0].split("#")[0];
@@ -60,9 +68,12 @@
   }
 
   function renderQR() {
-    /* The address is deliberately not printed on the projector: the room
-       scans the code, and a long URL on screen only invites typos. It is
-       still logged here for whoever is driving the deck. */
+    /* The address IS printed now, small, under the code.
+     *
+     * A stale GUEST_URL in a cached copy of this page sent the room to a
+     * domain that was down, and nothing on screen said so — the QR looked
+     * fine and failed only in the guests' hands. Printing where it actually
+     * points makes that visible from the lectern in one glance. */
     var url = guestUrl();
     console.log("[NextGen] guest URL:", url);
     new QRCode(document.getElementById("qr"), {
@@ -75,6 +86,8 @@
          survives a projector washing out the contrast. */
       correctLevel: QRCode.CorrectLevel.H
     });
+    var out = document.getElementById("qrUrl");
+    if (out) out.textContent = url.replace(/^https?:\/\//, "").replace(/\/$/, "");
   }
 
   /* ---------- skeletons, built once ---------- */
