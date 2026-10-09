@@ -990,6 +990,18 @@ button { font-family: inherit; color: inherit; }
   backface-visibility: hidden;
 }
 
+/* A pose that arrived as its own file rather than as a cell of the strip:
+   one image, no frame offset, and its own aspect ratio. The push-up render
+   is much larger than a strip cell, so it is also allowed more height. */
+.wait-mascot.is-solo {
+  aspect-ratio: var(--m-aspect, 760 / 642);
+  height: clamp(96px, 20vw, 150px);
+}
+.wait-mascot.is-solo img { left: 0; width: 100%; }
+/* The arms are planted and the body travels, so the whole image must not
+   scale about its feet the way an upright pose does. */
+.wait-mascot.is-solo { transform-origin: 50% 88%; }
+
 /* The floor. Without something to push against, every profile reads as
    drifting rather than as effort. */
 .wait-mascot::after {
@@ -1062,6 +1074,33 @@ button { font-family: inherit; color: inherit; }
   0%, 100% { opacity: 0.55; transform: translateX(-50%) scaleX(1); }
   44%      { opacity: 0.4;  transform: translateX(-50%) scaleX(0.93); }
 }
+
+/* --- push-up: down on a count, press up, a beat at the top ---
+   The arms are planted in the artwork, so the read comes from the body
+   dropping and the slight compression that goes with it, not from travel.
+   Slow enough to look controlled rather than frantic: this is the pose a
+   guest stares at longest. */
+.wait-mascot.m-pushup        { animation: m-pushup 2.4s cubic-bezier(0.42, 0, 0.3, 1) infinite; }
+.wait-mascot.m-pushup::after { animation: m-pushup-floor 2.4s cubic-bezier(0.42, 0, 0.3, 1) infinite; }
+/* Travel is a PERCENTAGE of the element's own height, not a pixel count:
+   the same keyframes then read identically on a phone and on a projector.
+   At 11px on a 150px render the dip was invisible. */
+@keyframes m-pushup {
+  0%   { transform: translateY(0)      scale(1, 1); }
+  30%  { transform: translateY(8.5%)   scale(1.045, 0.915); }   /* down     */
+  42%  { transform: translateY(9.5%)   scale(1.05, 0.905); }    /* held     */
+  72%  { transform: translateY(-3.5%)  scale(0.982, 1.034); }   /* press up */
+  88%  { transform: translateY(0.6%)   scale(1.004, 0.995); }   /* settle   */
+  100% { transform: translateY(0)      scale(1, 1); }
+}
+@keyframes m-pushup-floor {
+  0%, 100% { opacity: 0.5;  transform: translateX(-50%) scaleX(1); }
+  30%, 40% { opacity: 0.88; transform: translateX(-50%) scaleX(1.14); }
+  70%      { opacity: 0.34; transform: translateX(-50%) scaleX(0.9); }
+}
+/* Wider and lower than the upright poses: the hands are set apart and the
+   whole body is close to the ground. */
+.wait-mascot.m-pushup::after { width: 74%; bottom: 0; height: 7px; }
 
 @media (prefers-reduced-motion: reduce) {
   .wait-mascot, .wait-mascot::after { animation: none; }

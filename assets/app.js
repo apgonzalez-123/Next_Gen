@@ -582,54 +582,50 @@
     });
   }
 
-  /* The five mascot frames are cut from the desk's rendered shield artwork,
-     one per section, and they are the first choice because they are the real
-     thing rather than an approximation of it. The procedural SVG below stays
-     as the fallback: it needs no network, so a guest on bad venue wifi still
-     gets a mascot rather than a hole in the screen. */
-  /* Eight poses cut from the desk's rendered shield artwork, laid out as one
-     strip and stepped through in CSS. One request rather than eight, and the
-     animation is real frames rather than a transform pretending to be one.
-     Each section starts on a different pose, so a guest held twice does not
-     sit through the same loop from the same place. */
-  var MASCOT_FRAMES = 8;
-  var MASCOT_START = {
-    profile: 0, marketview: 1, fixedincome: 5, equities: 6, fx: 3
+  /* What the guest looks at while a section is locked.
+   *
+   * Two sources, because the desk's artwork arrived in two forms. Most poses
+   * are cells of one sprite strip — eight exercises laid out side by side,
+   * fetched in a single request. The push-up is a separate, much larger
+   * render that came later; it is the best of the artwork, so it leads.
+   *
+   * A pose is { frame } into the strip, or { img } for a standalone file,
+   * plus the motion that suits it. The cells are different EXERCISES rather
+   * than frames of one movement, so there is nothing to tween between them
+   * and one shared bob would make all of them look like the same picture
+   * drifting; each pose gets a cadence of its own instead. See .wait-mascot
+   * in app.css.
+   *
+   * Every section gets a different pose, so a guest held three times does
+   * not watch the same loop three times.
+   */
+  var MASCOT_POSE = {
+    profile:     { img: "pushup.webp", motion: "m-pushup", ratio: "760 / 642" },
+    marketview:  { frame: 1, motion: "m-run"  },   /* running          */
+    fixedincome: { img: "pushup.webp", motion: "m-pushup", ratio: "760 / 642" },
+    equities:    { frame: 6, motion: "m-pull" },   /* pull-up bar      */
+    fx:          { frame: 3, motion: "m-hop"  }    /* skipping rope    */
   };
-
-  /* Each cell of the strip is a DIFFERENT exercise, so one generic bob makes
-     all of them look like the same thing wobbling. The motion is picked to
-     match the pose instead: a run gets a fast two-step cadence, a skip gets
-     a light hop, a pull-up travels vertically on a slow count, a flex just
-     breathes. That is what reads as movement rather than as a drifting
-     picture. See .wait-mascot in app.css for the profiles. */
-  var MASCOT_MOTION = {
-    0: "m-flex",   /* arms up           */
-    1: "m-run",    /* running           */
-    2: "m-hop",
-    3: "m-hop",    /* skipping rope     */
-    4: "m-flex",
-    5: "m-run",    /* lunge / stride    */
-    6: "m-pull",   /* pull-up bar       */
-    7: "m-flex"
-  };
+  var MASCOT_FALLBACK = { frame: 0, motion: "m-flex" };
 
   function renderWaiting() {
     var stepId = steps[waitingFor].id;
-    var start = MASCOT_START[stepId] || 0;
+    var pose = MASCOT_POSE[stepId] || MASCOT_FALLBACK;
     var s = el("section", "screen");
-    /* One pose, held. The eight poses in the strip are different exercises
-       rather than frames of one movement, so there is nothing to tween
-       between them — the motion is the rep, which is pure CSS on the
-       container. See .wait-mascot in app.css. */
-    var SRC = "assets/brand/mascot/workout.webp";
+
+    /* No build stamp on either file: bump-build.sh only rewrites URLs
+       written in the HTML, and both are immutable — replacing one means
+       renaming it. */
+    var src = "assets/brand/mascot/" + (pose.img || "workout.webp");
+    var style = pose.img
+      ? "--m-aspect:" + pose.ratio
+      : "--m-frame-index:" + pose.frame;
+
     s.appendChild(el("div", "wait",
       '<div class="wait-crest" aria-hidden="true">' +
-        '<div class="wait-mascot ' + (MASCOT_MOTION[start] || "m-flex") +
-          '" style="--m-frame-index:' + start + '">' +
-          /* No build stamp: bump-build.sh only rewrites URLs written in the
-             HTML, and the strip is immutable — replacing it means renaming it. */
-          '<img src="' + SRC + '" alt="" decoding="async">' +
+        '<div class="wait-mascot ' + pose.motion +
+          (pose.img ? " is-solo" : "") + '" style="' + style + '">' +
+          '<img src="' + src + '" alt="" decoding="async">' +
         "</div>" +
       "</div>" +
       '<div class="eyebrow">Locked</div>' +
@@ -639,7 +635,7 @@
     var img = s.querySelector(".wait-mascot img");
     if (img) {
       img.addEventListener("error", function () {
-        /* No strip: draw the vector mascot instead of leaving a gap. */
+        /* No artwork: draw the vector mascot instead of leaving a gap. */
         var crest = s.querySelector(".wait-crest");
         crest.innerHTML = mascotSVG(stepId);
         var m = crest.querySelector(".mascot");
