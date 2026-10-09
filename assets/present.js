@@ -161,12 +161,14 @@
 
     var roomProfile = window.ENGINE.aggProfile(agg);
     var split = window.ENGINE.aggSplit(agg);
-    paintSplit(split);
+    var topBand = window.ENGINE.rank(roomProfile)[0];
+    paintSplit(split, topBand && topBand.portfolio
+      ? window.ENGINE.roomConsensus(agg, topBand.portfolio.id) : null);
     var vSim = null;
     if (window.PRODUCTS) {
       try { vSim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS); } catch (e) { vSim = null; }
     }
-    paintVerdict(window.ENGINE.rank(roomProfile)[0], agg.count, vSim);
+    paintVerdict(window.ENGINE.rank(roomProfile)[0], agg.count, vSim, agg);
     var alloc = window.ENGINE.roomAllocation(agg);
     /* No "why" on the projector. The presenter is making that case out loud;
        on screen it only competes with the numbers. */
@@ -208,15 +210,33 @@
     });
   }
 
-  function paintSplit(split) {
+  function paintSplit(split, con) {
+    var top = 0;
+    split.forEach(function (row) { top = Math.max(top, row.count); });
+
     split.forEach(function (row, i) {
       var r = splitRows[row.portfolio.id];
       if (!r) return;
-      r.root.style.order = i;                 /* reorder without rebuilding */
-      r.root.classList.toggle("lead", i === 0 && row.count > 0);
+      /* Risk order, fixed. The rows used to be re-ordered by share, which
+         turned the ladder into a leaderboard and hid the shape of a split
+         room; see ENGINE.aggSplit(). */
+      r.root.style.order = i;
+      r.root.classList.toggle("lead", row.count > 0 && row.count === top);
+      r.root.classList.toggle("none", row.count === 0);
       r.fill.style.width = row.pct + "%";     /* CSS transition does the rest */
       r.val.innerHTML = row.pct + "%";
     });
+
+    /* The same sentence as the verdict slide, where the split is visible
+       rather than inferred: if the room has two poles, name them here. */
+    var sub = document.getElementById("splitSub");
+    if (sub) {
+      sub.innerHTML = con && (con.empty || con.divided)
+        ? "Every guest matched on their own answers. <b>The room has two poles</b> &mdash; " +
+          con.poles.map(function (x) { return x.pct + "% " + esc(x.name); }).join(" and ") +
+          " &mdash; so the average lands between them."
+        : "Every guest matched on their own answers.";
+    }
   }
 
   /* The sleeves the book actually has. This listed "cash", which the desk's
@@ -233,6 +253,30 @@
     ];
     if (!alloc) return all.slice(0, 4);
     return all.filter(function (x) { return (alloc[x.k] || 0) > 0; });
+  }
+
+  /* An average is not a member.
+   *
+   * The room's band is the average of everyone's answers, which is the right
+   * way to build ONE portfolio for a room. But a room split between two
+   * poles averages into a middle nobody picked, and the projector would then
+   * show "Moderate" on this slide and "Moderate 0%" on the one before it
+   * with nothing to join them up. Said plainly here, it becomes the most
+   * interesting thing on the slide instead of the thing someone catches. */
+  function consensusNote(con) {
+    if (!con || (!con.empty && !con.divided)) return "";
+    var poles = con.poles.map(function (x) {
+      return x.pct + "% " + esc(x.name);
+    }).join(" and ");
+
+    return '<p class="p-consensus">' +
+      (con.empty
+        ? "<b>No guest landed here on their own answers.</b> The room splits " +
+          poles + " \u2014 this band is the average of those views, not one " +
+          "anyone holds."
+        : "<b>Only " + con.inWinnerPct + "% of the room landed here individually.</b> " +
+          "The rest splits " + poles + "; this band is where their answers average.") +
+      "</p>";
   }
 
   /* The five bands, with the one the room landed on lit up.
@@ -270,7 +314,7 @@
     'options and the FX overlay are counted.</p></div>';
   }
 
-  function paintVerdict(top, n, sim) {
+  function paintVerdict(top, n, sim, agg) {
     var p = top.portfolio;
     var host = document.getElementById("verdict");
     var keys = ALLOC_KEYS();
@@ -282,15 +326,21 @@
     var alloc = (sim && sim.alloc) || p.alloc;
     var lev = sim ? window.ENGINE.leverageDisclosure(sim.alloc) : null;
     keys = ALLOC_KEYS(alloc);
+    var con = agg ? window.ENGINE.roomConsensus(agg, p.id) : null;
 
     /* Only rebuild when the winning portfolio actually changes — otherwise
        just refresh the numbers that move. */
-    if (lastVerdictId !== p.id + ":" + JSON.stringify(alloc)) {
-      lastVerdictId = p.id + ":" + JSON.stringify(alloc);
+    /* The note depends on the room, not just on the book, so it joins the
+       cache key \u2014 otherwise it would freeze at whatever the first paint saw. */
+    var key = p.id + ":" + JSON.stringify(alloc) + ":" +
+              (con ? con.inWinner + "/" + con.total : "");
+    if (lastVerdictId !== key) {
+      lastVerdictId = key;
       host.innerHTML =
         "<div>" +
           "<h1>" + esc(p.name) + "</h1>" +
           '<p class="tagline">' + esc(p.tagline) + "</p>" +
+          consensusNote(con) +
           bandLadder(p.id) +
         "</div>" +
         "<div>" +

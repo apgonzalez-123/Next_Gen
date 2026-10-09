@@ -737,14 +737,68 @@ window.ENGINE = (function () {
     return total ? Math.round((below / total) * 100) : null;
   }
 
+  /* The five bands in RISK ORDER, always — never sorted by share.
+   *
+   * Sorting by count turned the ladder into a ranking, and the shape of the
+   * room disappeared with it: a room split half Conservative and half
+   * Aggressive came out as "Conservative, Aggressive, Conservative to
+   * Moderate, Moderate, Moderate to Aggressive", which reads as a leaderboard
+   * rather than as the two poles it actually is. With five ordered bands the
+   * order IS the information. */
   function aggSplit(agg) {
     var total = Object.keys(agg.matches || {}).reduce(function (t, k) { return t + agg.matches[k]; }, 0);
     return window.PORTFOLIOS.map(function (p) {
       var count = (agg.matches && agg.matches[p.id]) || 0;
       return { portfolio: p, count: count, pct: total ? Math.round((count / total) * 100) : 0 };
     }).sort(function (a, b) {
-      return b.count - a.count || indexOf(a.portfolio) - indexOf(b.portfolio);
+      return indexOf(a.portfolio) - indexOf(b.portfolio);
     });
+  }
+
+  /* ---- is the room actually in the band it averaged into? -------------
+   *
+   * Averaging answers and then matching is the premise of the event, and it
+   * is right: the room's collective view is the average of what the room
+   * said. But an average is not a member. Two guests at Conservative and two
+   * at Aggressive average to Moderate, and the projector would then show
+   * "Moderate" on one slide and "Moderate 0%" on the next with nothing to
+   * explain it.
+   *
+   * This reports the divergence so the presenter can say it out loud instead
+   * of being asked. It changes no weight and no selection. */
+  function roomConsensus(agg, winnerId) {
+    var matches = agg.matches || {};
+    var total = Object.keys(matches).reduce(function (t, k) { return t + matches[k]; }, 0);
+    if (!total) return null;
+
+    var inWinner = matches[winnerId] || 0;
+    var ranked = window.PORTFOLIOS
+      .map(function (p) { return { p: p, n: matches[p.id] || 0 }; })
+      .filter(function (x) { return x.n > 0; })
+      .sort(function (a, b) { return b.n - a.n || indexOf(a.p) - indexOf(b.p); });
+
+    /* How far apart the room's own answers are, on the band ladder: the
+       weighted mean absolute distance from the winning band. One full band
+       of average distance is already a visibly split room. */
+    var wi = window.PORTFOLIOS.map(function (p) { return p.id; }).indexOf(winnerId);
+    var spread = 0;
+    window.PORTFOLIOS.forEach(function (p, i) {
+      spread += ((matches[p.id] || 0) / total) * Math.abs(i - wi);
+    });
+
+    return {
+      total: total,
+      inWinner: inWinner,
+      inWinnerPct: Math.round((inWinner / total) * 100),
+      spread: Math.round(spread * 100) / 100,
+      poles: ranked.slice(0, 2).map(function (x) {
+        return { name: x.p.name, pct: Math.round((x.n / total) * 100) };
+      }),
+      /* Nobody actually sits where the average landed. */
+      empty: inWinner === 0,
+      /* Or they do, but they are the minority of a divided room. */
+      divided: inWinner > 0 && (inWinner / total) < 0.34 && spread >= 1
+    };
   }
 
   /* ---- where the room landed, as an allocation ----------------------
@@ -1800,6 +1854,7 @@ window.ENGINE = (function () {
     aggProfile: aggProfile,
     aggDistribution: aggDistribution,
     aggSplit: aggSplit,
+    roomConsensus: roomConsensus,
     percentile: percentile,
     rangeBuckets: rangeBuckets,
     span: span,

@@ -1185,3 +1185,22 @@ body.present {
 /* The FX card's two numbers sit flush, not spread: the gauge below is what
    the space is for. */
 .p-cd-fx .p-cd-kvs { flex: 0 0 auto; gap: 0; }
+
+/* An average is not a member. When the room splits into two poles the band
+   it averages into can hold nobody at all, and the next slide would then
+   show that band at 0% with nothing to join the two up. */
+.p-consensus {
+  margin-top: clamp(16px, 2.4vh, 28px);
+  max-width: 54ch;
+  font-size: clamp(12px, 1.02vw, 16px);
+  line-height: 1.55;
+  color: var(--text-2);
+  padding-left: 14px;
+  border-left: 2px solid var(--series-options);
+}
+.p-consensus b { color: var(--accent-bright); font-weight: 500; }
+
+/* A band nobody picked still holds its rung on the ladder — it is the zero
+   that makes a split room look split. */
+.p-bar.none .p-bar-name { color: var(--muted); }
+.p-bar.none .p-bar-val  { color: var(--muted); }
