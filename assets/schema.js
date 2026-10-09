@@ -121,8 +121,37 @@ window.SCHEMA = {
       ]
     },
     {
-      id: "equities",
+      id: "fx",
       n: 4,
+      title: "FX",
+      blurb: "Currency, and the markets the risk sits in.",
+      questions: [
+        {
+          id: "usd",
+          kind: "range",
+          label: "What share of the portfolio would you hold in USD?",
+          hint: "Moves in quarters.",
+          min: 0, max: 100, step: 25, unit: "%", def: 50,
+          /* How far off is a total miss on this axis: see matchScale
+             in portfolios.js. half the dollar range is already a different currency stance. */
+          matchScale: 55,
+          minLabel: "0%", maxLabel: "100%",
+          format: function (v) { return v + "%"; }
+        },
+        {
+          id: "country",
+          kind: "choice",
+          label: "What country of risk do you prefer?",
+          options: [
+            { v: "g7", label: "Developed markets", sub: "G7" },
+            { v: "em", label: "Emerging markets", sub: "Ex-G7" }
+          ]
+        }
+      ]
+    },
+    {
+      id: "equities",
+      n: 5,
       title: "Equities",
       blurb: "What the book is for, and where it should be exposed.",
       questions: [
@@ -148,35 +177,6 @@ window.SCHEMA = {
             { v: "energy",      label: "Energy & Materials" },
             { v: "consumer",    label: "Consumer" },
             { v: "industrials", label: "Industrials" }
-          ]
-        }
-      ]
-    },
-    {
-      id: "fx",
-      n: 5,
-      title: "FX",
-      blurb: "Currency, and the markets the risk sits in.",
-      questions: [
-        {
-          id: "usd",
-          kind: "range",
-          label: "What share of the portfolio would you hold in USD?",
-          hint: "Moves in quarters.",
-          min: 0, max: 100, step: 25, unit: "%", def: 50,
-          /* How far off is a total miss on this axis: see matchScale
-             in portfolios.js. half the dollar range is already a different currency stance. */
-          matchScale: 55,
-          minLabel: "0%", maxLabel: "100%",
-          format: function (v) { return v + "%"; }
-        },
-        {
-          id: "country",
-          kind: "choice",
-          label: "What country of risk do you prefer?",
-          options: [
-            { v: "g7", label: "Developed markets", sub: "G7" },
-            { v: "em", label: "Emerging markets", sub: "Ex-G7" }
           ]
         }
       ]

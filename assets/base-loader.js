@@ -68,7 +68,7 @@ window.BASE = (function () {
      scoring a shelf. Optional: without it the engine falls back to
      constructing the portfolio itself. */
   window.BANDS = null;
-  fetch("data/band-books.json?v=202610090408")
+  fetch("data/band-books.json?v=202610090437")
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (d) {
       if (d && Array.isArray(d.bands) && d.bands.length) window.BANDS = d;
@@ -79,7 +79,7 @@ window.BASE = (function () {
     });
 
   window.PRODUCTS = null;
-  var productsReady = fetch("data/products.json?v=202610090408", { cache: "no-store" })
+  var productsReady = fetch("data/products.json?v=202610090437", { cache: "no-store" })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (d) {
       var ok = d && ["equities", "fixedIncome", "notes", "fx"]  /* options is optional */.every(function (b) {
@@ -92,7 +92,7 @@ window.BASE = (function () {
       console.warn("[NextGen] could not load data/products.json, room simulation disabled.");
     });
 
-  var ready = fetch("data/portfolios.json?v=202610090408", { cache: "no-store" })
+  var ready = fetch("data/portfolios.json?v=202610090437", { cache: "no-store" })
     .then(function (r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.json();
