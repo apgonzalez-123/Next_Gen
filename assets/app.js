@@ -597,6 +597,23 @@
     profile: 0, marketview: 1, fixedincome: 5, equities: 6, fx: 3
   };
 
+  /* Each cell of the strip is a DIFFERENT exercise, so one generic bob makes
+     all of them look like the same thing wobbling. The motion is picked to
+     match the pose instead: a run gets a fast two-step cadence, a skip gets
+     a light hop, a pull-up travels vertically on a slow count, a flex just
+     breathes. That is what reads as movement rather than as a drifting
+     picture. See .wait-mascot in app.css for the profiles. */
+  var MASCOT_MOTION = {
+    0: "m-flex",   /* arms up           */
+    1: "m-run",    /* running           */
+    2: "m-hop",
+    3: "m-hop",    /* skipping rope     */
+    4: "m-flex",
+    5: "m-run",    /* lunge / stride    */
+    6: "m-pull",   /* pull-up bar       */
+    7: "m-flex"
+  };
+
   function renderWaiting() {
     var stepId = steps[waitingFor].id;
     var start = MASCOT_START[stepId] || 0;
@@ -608,7 +625,8 @@
     var SRC = "assets/brand/mascot/workout.webp";
     s.appendChild(el("div", "wait",
       '<div class="wait-crest" aria-hidden="true">' +
-        '<div class="wait-mascot" style="--m-frame-index:' + start + '">' +
+        '<div class="wait-mascot ' + (MASCOT_MOTION[start] || "m-flex") +
+          '" style="--m-frame-index:' + start + '">' +
           /* No build stamp: bump-build.sh only rewrites URLs written in the
              HTML, and the strip is immutable — replacing it means renaming it. */
           '<img src="' + SRC + '" alt="" decoding="async">' +

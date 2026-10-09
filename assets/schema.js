@@ -65,7 +65,7 @@ window.SCHEMA = {
         {
           id: "marketView",
           kind: "scale",
-          label: "What are your current market views?",
+          label: "What is your current market view?",
           options: [
             { v: 0, label: "Bearish" },
             /* "Unsure", not "Neutral": on a view question the middle option

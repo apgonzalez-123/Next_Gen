@@ -1435,10 +1435,10 @@
     "notes": 16.0
    },
    "notional": {
-    "equityOptions": 20.0,
+    "equityOptions": 19.5,
     "fx": 23.0
    },
-   "grossExposure": 143.0,
+   "grossExposure": 142.5,
    "equities": {
     "lines": [
      {
@@ -1471,8 +1471,8 @@
       "structure": "Covered Call on SPY",
       "underlying": "SPY",
       "moneyness": 1.07,
-      "weightOfSleeve": 0.075,
-      "weight": 7.5,
+      "weightOfSleeve": 0.05,
+      "weight": 7.0,
       "analytics": {
        "sleeve": "options",
        "region": "g7",
@@ -1493,7 +1493,7 @@
       "structure": "Long Call SPY",
       "underlying": "SPY",
       "moneyness": 0.95,
-      "weightOfSleeve": 0.05,
+      "weightOfSleeve": 0.075,
       "weight": 5.0,
       "analytics": {
        "sleeve": "options",
@@ -1537,7 +1537,7 @@
       "structure": "Covered Call on QQQ",
       "underlying": "QQQ",
       "moneyness": 1.07,
-      "weightOfSleeve": 0.05,
+      "weightOfSleeve": 0.025,
       "weight": 5.0,
       "analytics": {
        "sleeve": "options",
@@ -1794,10 +1794,10 @@
       }
      }
     ],
-    "grossOfSleeve": 1.2,
-    "weight": 90.0,
+    "grossOfSleeve": 1.175,
+    "weight": 89.5,
     "weightCash": 70.0,
-    "weightOptions": 20.0
+    "weightOptions": 19.5
    },
    "notes": {
     "lines": [
@@ -1994,10 +1994,10 @@
     "notes": 18.0
    },
    "notional": {
-    "equityOptions": 40.0,
+    "equityOptions": 22.0,
     "fx": 24.0
    },
-   "grossExposure": 164.0,
+   "grossExposure": 146.0,
    "equities": {
     "lines": [
      {
@@ -2008,8 +2008,8 @@
       "structure": null,
       "underlying": null,
       "moneyness": null,
-      "weightOfSleeve": 0.175,
-      "weight": 13.125,
+      "weightOfSleeve": 0.125,
+      "weight": 9.375,
       "analytics": {
        "sleeve": "equities",
        "region": "g7",
@@ -2030,8 +2030,8 @@
       "structure": "Covered Call on SPY",
       "underlying": "SPY",
       "moneyness": 1.15,
-      "weightOfSleeve": 0.1,
-      "weight": 10.0,
+      "weightOfSleeve": 0.05,
+      "weight": 5.0,
       "analytics": {
        "sleeve": "options",
        "region": "g7",
@@ -2052,8 +2052,8 @@
       "structure": "Long Call SPY",
       "underlying": "SPY",
       "moneyness": 0.95,
-      "weightOfSleeve": 0.2,
-      "weight": 20.0,
+      "weightOfSleeve": 0.1,
+      "weight": 10.0,
       "analytics": {
        "sleeve": "options",
        "region": "g7",
@@ -2074,8 +2074,8 @@
       "structure": null,
       "underlying": null,
       "moneyness": null,
-      "weightOfSleeve": 0.15,
-      "weight": 11.25,
+      "weightOfSleeve": 0.125,
+      "weight": 9.375,
       "analytics": {
        "sleeve": "equities",
        "region": "g7",
@@ -2096,8 +2096,8 @@
       "structure": "Long Call QQQ",
       "underlying": "QQQ",
       "moneyness": 0.95,
-      "weightOfSleeve": 0.1,
-      "weight": 10.0,
+      "weightOfSleeve": 0.07,
+      "weight": 7.0,
       "analytics": {
        "sleeve": "options",
        "region": "g7",
@@ -2133,6 +2133,28 @@
       }
      },
      {
+      "id": "rsp",
+      "ticker": "RSP",
+      "name": "Ivesco S&P500 Equal weight",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.025,
+      "weight": 1.875,
+      "analytics": {
+       "sleeve": "equities",
+       "sector": "core",
+       "region": "g7",
+       "usdExposure": 100,
+       "riskScore": 0.48,
+       "beta": null,
+       "volatility": null,
+       "expressesLeverage": false,
+       "incomeProducing": false
+      }
+     },
+     {
       "id": "xlf-us-equity",
       "ticker": "XLF",
       "name": "State Street Financial Select Sector SPDR",
@@ -2140,8 +2162,8 @@
       "structure": null,
       "underlying": null,
       "moneyness": null,
-      "weightOfSleeve": 0.05,
-      "weight": 3.75,
+      "weightOfSleeve": 0.075,
+      "weight": 5.625,
       "analytics": {
        "sleeve": "equities",
        "region": "g7",
@@ -2243,6 +2265,28 @@
       }
      },
      {
+      "id": "xlv-us-equity",
+      "ticker": "XLV",
+      "name": "State Street Health Care Select Sector SPDR",
+      "overlay": false,
+      "structure": null,
+      "underlying": null,
+      "moneyness": null,
+      "weightOfSleeve": 0.025,
+      "weight": 1.875,
+      "analytics": {
+       "sleeve": "equities",
+       "region": "g7",
+       "sector": "healthcare",
+       "riskScore": 0.075,
+       "expressesLeverage": false,
+       "incomeProducing": false,
+       "usdExposure": 100,
+       "beta": 0.187,
+       "volatility": 1.13
+      }
+     },
+     {
       "id": "schd-us-equity",
       "ticker": "SCHD",
       "name": "Schwab US Dividend Equity ETF",
@@ -2265,10 +2309,10 @@
       }
      }
     ],
-    "grossOfSleeve": 1.4,
-    "weight": 115.0,
+    "grossOfSleeve": 1.22,
+    "weight": 97.0,
     "weightCash": 75.0,
-    "weightOptions": 40.0
+    "weightOptions": 22.0
    },
    "notes": {
     "lines": [

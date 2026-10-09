@@ -7,7 +7,8 @@ at what weight. This reads those sheets and writes them as data; nothing here
 decides anything.
 
 Sources, all in ~/Downloads:
-  NxtGen Alloc Eq.xlsx          equities and the option overlay, per band
+  NxtGen Alloc Eq*.xlsx         equities and the option overlay, per band
+                                (the most recently modified match wins)
   next gen portoflios.xlsx      structured notes, per band
   FX_Assets (1).xlsx            FX positions, per band, plus the sleeve share
   FI Portfolio Securities ...   the five fixed income books (read elsewhere)
@@ -18,7 +19,7 @@ the desk's own numbers. "Sheet1 (2)" is the same book scaled to the whole
 portfolio and totals 50-115%, which the sheet labels the Levered Position.
 Both reconcile exactly against their stated totals, and both are kept.
 """
-import json, os, re, sys
+import glob, json, os, re, sys
 import openpyxl
 
 SRC = os.path.expanduser("~/Downloads")
@@ -26,6 +27,18 @@ BANDS = ["conservative", "conservative-moderate", "moderate",
          "moderate-aggressive", "aggressive"]
 BAND_NAME = ["Conservative", "Conservative to Moderate", "Moderate",
              "Moderate to Aggressive", "Aggressive"]
+
+# The desk re-sends the equity sheet as "NxtGen Alloc Eq (2).xlsx", "(3)",
+# and so on rather than overwriting it, so a fixed filename quietly keeps
+# building yesterday's options. Take the most recently modified match and
+# print which one, so the build says out loud what it read.
+def newest(pattern):
+    hits = sorted(glob.glob(os.path.join(SRC, pattern)),
+                  key=os.path.getmtime, reverse=True)
+    hits = [h for h in hits if not os.path.basename(h).startswith("~$")]
+    if not hits:
+        raise SystemExit(f"no file matching {pattern!r} in {SRC}")
+    return hits[0]
 
 def num(v):
     if isinstance(v, (int, float)):
@@ -40,7 +53,9 @@ def slug(s, n=40):
 
 # ---------------------------------------------------------------- equities
 def equities():
-    wb = openpyxl.load_workbook(os.path.join(SRC, "NxtGen Alloc Eq.xlsx"), data_only=True)
+    src = newest("NxtGen Alloc Eq*.xlsx")
+    print(f"  equities   <- {os.path.basename(src)}")
+    wb = openpyxl.load_workbook(src, data_only=True)
     inner, outer = wb["Sheet1"], wb["Sheet1 (2)"]
     cols = [3, 5, 7, 9, 11]            # one per band; moneyness sits at col+1
     out = {b: [] for b in BANDS}

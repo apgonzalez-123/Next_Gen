@@ -950,22 +950,24 @@ button { font-family: inherit; color: inherit; }
 .wordmark > .brand-sep:first-child { display: none; }
 
 /* The shield mascot on the hold screen.
-   
+
    Two earlier attempts were wrong in opposite ways. Stepping the strip with
    steps(8) cut from one pose to the next with nothing in between, which
    reads as a glitch. Cross-fading two layers to smooth that cut was worse:
-   the eight poses are different EXERCISES, not consecutive frames of one
+   the eight cells are different EXERCISES, not consecutive frames of one
    movement, so dissolving between them just double-exposes two unrelated
    drawings.
 
-   So the strip does not animate at all. Each locked section shows one pose,
-   picked by --m-frame-index and held, and the motion is a rep — a continuous
-   dip and lift with a little squash at the bottom, which is smooth by
-   construction because nothing ever changes frame. A guest held at five
-   different sections still sees five different poses.
+   So the strip never changes frame. Each locked section shows one pose and
+   the MOTION does the work — and because the poses are different exercises,
+   the motion is picked per pose rather than shared. A run gets a fast
+   two-step cadence with a forward lean, a skip a light hop, a pull-up a slow
+   vertical haul, a flex a slow breath. One generic bob made all of them look
+   like the same picture drifting.
 
    Framing uses `left` and motion uses `transform`, so the two never fight
-   over the same property. */
+   over the same property. Each profile animates the shield and its floor
+   shadow on the same clock, so contact always lands with the dip. */
 .wait-mascot {
   position: relative;
   overflow: hidden;
@@ -974,20 +976,8 @@ button { font-family: inherit; color: inherit; }
   height: clamp(74px, 15vw, 106px);
   aspect-ratio: 256 / 240;
   transform-origin: 50% 100%;
-  animation: wait-rep 1.9s cubic-bezier(0.42, 0, 0.3, 1) infinite;
   will-change: transform;
 }
-/* One rep: a weighted dip, a lift past the start, and an unhurried settle.
-   Asymmetric on purpose — an even sine reads as a float, not an effort. */
-@keyframes wait-rep {
-  0%   { transform: translateY(0)    scale(1, 1)          rotate(0deg);     }
-  26%  { transform: translateY(8px)  scale(1.038, 0.944)  rotate(-0.8deg);  }
-  34%  { transform: translateY(7px)  scale(1.03, 0.955)   rotate(-0.6deg);  }
-  62%  { transform: translateY(-13px) scale(0.976, 1.038) rotate(0.9deg);   }
-  82%  { transform: translateY(-2px) scale(0.995, 1.006)  rotate(0.2deg);   }
-  100% { transform: translateY(0)    scale(1, 1)          rotate(0deg);     }
-}
-
 .wait-mascot img {
   position: absolute;
   top: 0; bottom: 0;
@@ -1000,8 +990,8 @@ button { font-family: inherit; color: inherit; }
   backface-visibility: hidden;
 }
 
-/* The floor the rep is driven into. Without it the shield reads as drifting
-   rather than pushing against anything. */
+/* The floor. Without something to push against, every profile reads as
+   drifting rather than as effort. */
 .wait-mascot::after {
   content: "";
   position: absolute; left: 50%; bottom: 2px;
@@ -1010,12 +1000,67 @@ button { font-family: inherit; color: inherit; }
   border-radius: 50%;
   background: radial-gradient(ellipse at center,
               rgba(127, 178, 255, 0.26), transparent 70%);
-  animation: wait-floor 1.9s cubic-bezier(0.42, 0, 0.3, 1) infinite;
 }
-@keyframes wait-floor {
-  0%, 100% { opacity: 0.55; transform: translateX(-50%) scaleX(1);    }
-  26%      { opacity: 0.85; transform: translateX(-50%) scaleX(1.12); }
-  62%      { opacity: 0.3;  transform: translateX(-50%) scaleX(0.84); }
+
+/* --- running: a two-step cadence, with the lean a runner actually has --- */
+.wait-mascot.m-run        { animation: m-run 0.62s cubic-bezier(0.36, 0, 0.3, 1) infinite; }
+.wait-mascot.m-run::after { animation: m-run-floor 0.62s cubic-bezier(0.36, 0, 0.3, 1) infinite; }
+@keyframes m-run {
+  0%   { transform: translate(0, 0)        rotate(0deg)    scale(1, 1); }
+  18%  { transform: translate(-1px, 5px)   rotate(-1.4deg) scale(1.03, 0.96); }
+  46%  { transform: translate(1px, -9px)   rotate(1.2deg)  scale(0.98, 1.03); }
+  72%  { transform: translate(1.5px, 2px)  rotate(0.6deg)  scale(1.015, 0.985); }
+  100% { transform: translate(0, 0)        rotate(0deg)    scale(1, 1); }
+}
+@keyframes m-run-floor {
+  0%, 100% { opacity: 0.6;  transform: translateX(-50%) scaleX(1); }
+  18%      { opacity: 0.9;  transform: translateX(-50%) scaleX(1.16); }
+  46%      { opacity: 0.25; transform: translateX(-50%) scaleX(0.76); }
+}
+
+/* --- skipping: light, fast, both feet, a real hang at the top --- */
+.wait-mascot.m-hop        { animation: m-hop 0.72s cubic-bezier(0.3, 0, 0.35, 1) infinite; }
+.wait-mascot.m-hop::after { animation: m-hop-floor 0.72s cubic-bezier(0.3, 0, 0.35, 1) infinite; }
+@keyframes m-hop {
+  0%   { transform: translateY(0)     scale(1, 1); }
+  14%  { transform: translateY(6px)   scale(1.06, 0.92); }   /* crouch */
+  40%  { transform: translateY(-14px) scale(0.95, 1.07); }   /* airborne */
+  58%  { transform: translateY(-14px) scale(0.97, 1.04); }   /* hang */
+  82%  { transform: translateY(3px)   scale(1.04, 0.95); }   /* land */
+  100% { transform: translateY(0)     scale(1, 1); }
+}
+@keyframes m-hop-floor {
+  0%, 100% { opacity: 0.6;  transform: translateX(-50%) scaleX(1); }
+  14%      { opacity: 0.95; transform: translateX(-50%) scaleX(1.2); }
+  40%, 58% { opacity: 0.16; transform: translateX(-50%) scaleX(0.6); }
+  82%      { opacity: 0.95; transform: translateX(-50%) scaleX(1.18); }
+}
+
+/* --- pull-up: slow up, slower down, a held beat at the top --- */
+.wait-mascot.m-pull        { animation: m-pull 2.2s cubic-bezier(0.45, 0, 0.3, 1) infinite; }
+.wait-mascot.m-pull::after { animation: m-pull-floor 2.2s ease-in-out infinite; }
+@keyframes m-pull {
+  0%   { transform: translateY(5px)   scale(1, 0.99); }
+  34%  { transform: translateY(-8px)  scale(0.985, 1.025); }
+  52%  { transform: translateY(-9px)  scale(0.985, 1.025); }  /* held */
+  88%  { transform: translateY(5px)   scale(1, 0.99); }
+  100% { transform: translateY(5px)   scale(1, 0.99); }
+}
+@keyframes m-pull-floor {
+  0%, 100%  { opacity: 0.5; transform: translateX(-50%) scaleX(1); }
+  34%, 52%  { opacity: 0.2; transform: translateX(-50%) scaleX(0.78); }
+}
+
+/* --- flex / hold: breathing, not bouncing --- */
+.wait-mascot.m-flex        { animation: m-flex 2.6s ease-in-out infinite; }
+.wait-mascot.m-flex::after { animation: m-flex-floor 2.6s ease-in-out infinite; }
+@keyframes m-flex {
+  0%, 100% { transform: translateY(0)      scale(1, 1); }
+  44%      { transform: translateY(-3.5px) scale(0.994, 1.012); }
+}
+@keyframes m-flex-floor {
+  0%, 100% { opacity: 0.55; transform: translateX(-50%) scaleX(1); }
+  44%      { opacity: 0.4;  transform: translateX(-50%) scaleX(0.93); }
 }
 
 @media (prefers-reduced-motion: reduce) {

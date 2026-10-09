@@ -370,15 +370,15 @@
      see what the portfolio actually is, without a table nobody can read
      from the back. */
   function riskStrip(p) {
-    var r = p.risk;
+    /* Expected return and volatility only.
+     *
+     * Max drawdown and running yield are band-level illustrations, like the
+     * bull / base / bear strip that used to sit under them: neither is
+     * produced by this room's book, and a precise "-14.0%" beside the
+     * room's own allocation reads as a number the engine computed for it. */
     var out = '<dl style="margin:22px 0 0">' +
       '<div class="kv"><dt>Expected return</dt><dd>' + esc(p.expReturn) + "</dd></div>" +
       '<div class="kv"><dt>Volatility</dt><dd>' + esc(p.vol) + "</dd></div>";
-    if (r) {
-      out += '<div class="kv"><dt>Max drawdown</dt><dd style="color:var(--neg)">' +
-             r.maxDrawdown.toFixed(1) + "%</dd></div>" +
-             '<div class="kv"><dt>Running yield</dt><dd>' + r.yield.toFixed(1) + "%</dd></div>";
-    }
     out += "</dl>";
 
     /* No bull / base / bear strip. Those three numbers are a band-level
