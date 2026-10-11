@@ -1239,6 +1239,73 @@
     return render(b, figs, cols, expo("By instrument", kinds), fxCards);
   }
 
+  /* A table sleeve should fill its slide, not sit in the top half of it.
+   *
+   * Seven bonds at their natural row height leave two thirds of a wall
+   * empty below them, which reads as a slide that failed to load rather
+   * than as a short book. The rows take the slack instead.
+   *
+   * A table row treats `height` as a MINIMUM, so this can only ever space
+   * rows out — it cannot squeeze one and clip its contents, which is the
+   * failure mode that matters here. If the table already overflows, the
+   * slack is negative and nothing is set.
+   */
+  function fitTable(host) {
+    var wrap = host.querySelector(".p-tblwrap");
+    var tbl  = wrap && wrap.querySelector(".p-tbl");
+    if (!tbl) return;
+
+    var rows = tbl.querySelectorAll("tbody tr");
+    if (!rows.length) return;
+    for (var r = 0; r < rows.length; r++) rows[r].style.height = "";
+
+    tbl.removeAttribute("data-squeezed");
+    tbl.style.removeProperty("--tp");
+
+    var head = tbl.tHead ? tbl.tHead.offsetHeight : 0;
+    var slack = wrap.clientHeight - tbl.offsetHeight;
+
+    /* Too TALL rather than too short: a long book — sixteen equity lines at
+       the wall scale — runs past the bottom and clips its last holding. The
+       density classes in the stylesheet are a coarse first guess at this;
+       squeeze the row padding until it actually fits. */
+    if (slack < 0) {
+      var td = tbl.querySelector("tbody td");
+      if (!td) return;
+      var pad = parseFloat(getComputedStyle(td).paddingTop) || 6;
+      tbl.setAttribute("data-squeezed", "");
+      for (var sq = 0; sq < 20 && pad > 0.5; sq++) {
+        pad = Math.max(0, pad - 1);
+        tbl.style.setProperty("--tp", pad.toFixed(1) + "px");
+        if (tbl.offsetHeight <= wrap.clientHeight - 2) return;
+      }
+      console.warn("[NextGen] table still overflows with no row padding left",
+                   host.id);
+      return;
+    }
+    if (slack < 8) return;
+
+    function setAll(h) {
+      for (var i = 0; i < rows.length; i++) rows[i].style.height = h + "px";
+    }
+    function clearAll() {
+      for (var i = 0; i < rows.length; i++) rows[i].style.height = "";
+    }
+
+    /* Aim at an even share of the space, then verify and back off. A row's
+       rendered height is not exactly what you ask for — borders, line
+       boxes and sub-pixel rounding all add a little — so the last row ends
+       up touching the exposure bar if you trust the arithmetic. Two pixels
+       a step, checked each time. */
+    var target = Math.floor((wrap.clientHeight - head) / rows.length) - 4;
+    for (var step = 0; step < 12 && target > 8; step++) {
+      setAll(target);
+      if (tbl.offsetHeight <= wrap.clientHeight - 10) return;
+      target -= 2;
+    }
+    clearAll();
+  }
+
   /* Nothing on a sleeve slide may be cropped.
    *
    * The card grid is a fixed number of columns in rows of equal height, so
@@ -1355,6 +1422,7 @@
       host.innerHTML = tape + (PANEL[S.key] || equityPanel)(bucket);
       /* After layout, not during: the measurement needs real boxes. */
       fitSleeve(host);
+      fitTable(host);
     });
   }
 
@@ -1532,7 +1600,22 @@
     if (!fromHash) {
       try { history.replaceState(null, "", "#" + (current + 1)); } catch (e) {}
     }
+    refit();
   }
+
+  /* Every fit below measures real boxes, and a slide that is not showing
+     has none: display:none makes clientHeight zero, the slack comes out
+     negative and the fit quietly declines to do anything. Paint happens on
+     a timer across ALL slides, so most of them are hidden when it runs.
+     Re-measure whatever just became visible. */
+  function refit() {
+    var on = slides[current];
+    if (!on) return;
+    var sleeve = on.querySelector(".p-sleeve");
+    if (sleeve) { fitSleeve(sleeve); fitTable(sleeve); }
+    if (on.querySelector(".p-buckets")) fitBook();
+  }
+  window.addEventListener("resize", refit);
 
   /* The screen check rides over whatever slide is up, so the type samples
      it measures are the live ones rather than a guess. It repaints on

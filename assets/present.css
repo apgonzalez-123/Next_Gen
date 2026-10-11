@@ -628,6 +628,9 @@ body.present {
   border-bottom: 1px solid var(--line);
   white-space: nowrap;
 }
+/* fitTable() writes --tp when a long book overflows its slide; it wins
+   over the density classes below, which are a coarse first guess. */
+.p-tbl[data-squeezed] td { padding-top: var(--tp) !important; padding-bottom: var(--tp) !important; }
 .p-tbl td {
   padding: clamp(6px, 1.05vh, calc(12px * var(--s))) 12px clamp(6px, 1.05vh, calc(12px * var(--s))) 0;
   border-bottom: 1px solid var(--line-soft);
