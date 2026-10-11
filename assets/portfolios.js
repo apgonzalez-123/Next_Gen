@@ -1450,7 +1450,22 @@ window.ENGINE = (function () {
     return { alloc: alloc, buckets: buckets, band: band, fromBandBook: true };
   }
 
+  /* Pin the engine to one band, whatever the room says.
+   *
+   * There are exactly five possible outputs and all five have to be checked
+   * before the event, which means being able to look at each one on the
+   * presenter itself rather than at a description of it. The validation page
+   * opens present.html?band=<id>, which sets this. It is never set during a
+   * live session. */
+  var forcedBand = null;
+  function setForcedBand(id) { forcedBand = id || null; }
+  function getForcedBand() { return forcedBand; }
+
   function roomPortfolio(agg, products) {
+    if (forcedBand) {
+      var pinned = bookForBand(forcedBand, products);
+      if (pinned) return pinned;
+    }
     /* The desk's own book wins when it is available. */
     if (window.BANDS && window.BANDS.bands) {
       var desk = bandBook(agg, products, window.BANDS);
@@ -1847,6 +1862,8 @@ window.ENGINE = (function () {
     leverageDisclosure: leverageDisclosure,
     roomPortfolio: roomPortfolio,
     bookForBand: bookForBand,
+    setForcedBand: setForcedBand,
+    getForcedBand: getForcedBand,
     backtest: backtest,
     scoreEquityShelf: scoreEquityShelf,
     scoreShelf: scoreShelf,

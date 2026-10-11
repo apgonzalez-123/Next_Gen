@@ -150,6 +150,76 @@
     host.innerHTML = html;
   }
 
+
+  /* ---------- see each of the five on the presenter --------------------
+   *
+   * The catalogue above lists what each book holds. This shows what the
+   * room will actually SEE, which is a different question: a weight that is
+   * right in the data can still be cropped off the bottom of a card. The
+   * presenter is embedded as-is, pinned to one band with ?band=, so what
+   * renders here is the same code path the projector runs.
+   */
+  var PREVIEW_SLIDES = [
+    "Join / QR", "The room, live", "The room's portfolio", "The positions",
+    "Equities", "Fixed income", "FX", "Structured notes"
+  ];
+  var pvBand = null, pvSlide = 3;
+
+  function pvFrame() {
+    var f = el("pvFrame");
+    if (!f || !pvBand) return;
+    f.src = "present.html?band=" + encodeURIComponent(pvBand) + "#" + pvSlide;
+  }
+
+  function renderPreview() {
+    var host = el("preview");
+    if (!host) return;
+    var bands = (window.BANDS && window.BANDS.bands) || [];
+    if (!bands.length) {
+      host.innerHTML = '<p class="v-note">Band books not loaded.</p>';
+      return;
+    }
+    if (!pvBand) pvBand = bands[0].id;
+
+    host.innerHTML =
+      '<div class="pv-bar">' +
+        '<div class="pv-set" id="pvBands">' +
+          bands.map(function (b) {
+            return '<button class="pv-btn' + (b.id === pvBand ? " on" : "") +
+              '" data-band="' + esc(b.id) + '" type="button">' + esc(b.name) + "</button>";
+          }).join("") +
+        "</div>" +
+        '<a class="pv-open" id="pvOpen" target="_blank" rel="noopener">Open full size &#8599;</a>' +
+      "</div>" +
+      '<div class="pv-set pv-slides" id="pvSlides">' +
+        PREVIEW_SLIDES.map(function (n, i) {
+          return '<button class="pv-btn pv-sm' + (i + 1 === pvSlide ? " on" : "") +
+            '" data-slide="' + (i + 1) + '" type="button">' +
+            (i + 1) + " · " + esc(n) + "</button>";
+        }).join("") +
+      "</div>" +
+      '<div class="pv-screen"><iframe id="pvFrame" title="Presenter preview" ' +
+        'loading="lazy"></iframe></div>' +
+      '<p class="v-note">The real presenter, pinned to this band. It is 16:9, so what ' +
+        'fits here fits on the wall — but the type is scaled to this box, not to the ' +
+        'room, so judge the layout here and the legibility with the screen check (D) on ' +
+        'the wall itself.</p>';
+
+    host.querySelectorAll("[data-band]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        pvBand = b.getAttribute("data-band"); renderPreview();
+      });
+    });
+    host.querySelectorAll("[data-slide]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        pvSlide = parseInt(b.getAttribute("data-slide"), 10); renderPreview();
+      });
+    });
+    var open = el("pvOpen");
+    if (open) open.href = "present.html?band=" + encodeURIComponent(pvBand) + "#" + pvSlide;
+    pvFrame();
+  }
+
   /* ---------- panels ---------- */
 
   function row(k, v) {
@@ -425,6 +495,7 @@
     /* The five fixed books do not depend on the room, so they are drawn
        once and never repainted when the source selector changes. */
     renderCatalogue();
+    renderPreview();
   }
 
   /* The shelf is fetched by base-loader; wait for it rather than racing it. */

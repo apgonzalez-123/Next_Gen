@@ -103,6 +103,10 @@
 
   /* ---------- painting ---------- */
 
+  /* present.html?band=<id> pins the deck to one of the five books, for
+     checking all five before the event. See ENGINE.setForcedBand(). */
+  var FORCE_BAND = (/[?&]band=([a-z-]+)/.exec(window.location.search) || [])[1] || null;
+
   function paint(res) {
     last = res;
     var agg = res.agg;
@@ -124,7 +128,7 @@
        arriving. */
     paintLive(agg);
 
-    if (!agg.count) {
+    if (!agg.count && !FORCE_BAND) {
       /* Before the room has answered, these slides are on the projector
          with nothing in them. Say what they are waiting for rather than
          showing a blank screen that reads as a broken deck. */
@@ -138,7 +142,13 @@
     if (window.PRODUCTS) {
       try { vSim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS); } catch (e) { vSim = null; }
     }
-    paintVerdict(window.ENGINE.rank(roomProfile)[0], agg.count, vSim, agg);
+    /* Pinned to a band, the verdict names that band rather than whatever
+       an empty room would have matched. */
+    var top = FORCE_BAND
+      ? { portfolio: (window.PORTFOLIOS || []).filter(function (p) {
+            return p.id === FORCE_BAND; })[0], fit: null }
+      : window.ENGINE.rank(roomProfile)[0];
+    if (top && top.portfolio) paintVerdict(top, agg.count, vSim, FORCE_BAND ? null : agg);
     var alloc = window.ENGINE.roomAllocation(agg);
     /* No "why" on the projector. The presenter is making that case out loud;
        on screen it only competes with the numbers. */
@@ -284,7 +294,7 @@
           bandLadder(p.id) +
         "</div>" +
         "<div>" +
-          '<div class="p-fit"><b id="vFit">0</b><span>fit out of 100<br><span id="vN">0</span> responses</span></div>' +
+          '<div class="p-fit"><b id="vFit">0</b><span id="vFitSub">fit out of 100<br><span id="vN">0</span> responses</span></div>' +
           '<div class="alloc-bar">' +
             keys.map(function (x) {
               return '<i style="flex:' + (alloc[x.k] || 0) + ' 0 0;background:' + x.c + '"></i>';
@@ -302,8 +312,16 @@
     }
     var f = document.getElementById("vFit");
     var c = document.getElementById("vN");
-    if (f) f.textContent = top.fit;
-    if (c) c.textContent = n;
+    var sub = document.getElementById("vFitSub");
+    if (FORCE_BAND) {
+      /* Pinned: there is no room, so there is no fit. Saying so beats
+         printing a number that would be made up. */
+      if (f) f.textContent = "\u2014";
+      if (sub) sub.innerHTML = "pinned preview<br>not a live room";
+    } else {
+      if (f) f.textContent = top.fit;
+      if (c) c.textContent = n;
+    }
   }
 
   /* Headline risk numbers plus the top holdings — enough for the room to
@@ -824,7 +842,18 @@
    * it: "tag" the ticker chip, "title" the heading, "sub" the line under it,
    * and anything else becomes a labelled row inside the card.
    */
-  var CARD_MAX = 7;
+  /* Five, not seven.
+   *
+   * Cards suit a sleeve of three or four structures, where each one has
+   * terms worth a paragraph. A fixed income book of seven bonds is tabular
+   * data — ticker, rating, country, maturity, YTW, duration — and as cards
+   * it wraps onto two rows, halving the height each gets. At the wall scale
+   * that cropped the YTW and duration off every bond, and fitSleeve() could
+   * not shrink its way out of it: the content has a floor.
+   *
+   * As a table those same seven lines fit with room to spare, and the
+   * figures line up in a column, which is what they are for. */
+  var CARD_MAX = 5;
 
   function render(b, figs, cols, foot, cardFn) {
     var lines = b.lines || [];
@@ -1182,6 +1211,46 @@
     return render(b, figs, cols, expo("By instrument", kinds), fxCards);
   }
 
+  /* Nothing on a sleeve slide may be cropped.
+   *
+   * The card grid is a fixed number of columns in rows of equal height, so
+   * how much room a card has depends on how many lines the sleeve holds —
+   * seven bonds wrap onto two rows and get half the height four notes get.
+   * At the wall scale that clipped the YTW and duration off every bond, and
+   * a holding with its figures cut off is not a smaller portfolio, it is a
+   * wrong one.
+   *
+   * So the sleeve measures itself and steps its own card scale down until
+   * every card fits. Measuring beats guessing here: it holds for any band,
+   * any line count and any screen, including ones nobody has tested on.
+   */
+  function fitSleeve(host) {
+    var grid = host.querySelector(".p-cards");
+    if (!grid) return;
+    grid.style.removeProperty("--fit");
+
+    function overflows() {
+      if (grid.scrollHeight > grid.clientHeight + 1) return true;
+      var cards = grid.querySelectorAll(".p-cd");
+      for (var i = 0; i < cards.length; i++) {
+        if (cards[i].scrollHeight > cards[i].clientHeight + 1) return true;
+      }
+      return false;
+    }
+    if (!overflows()) return;
+
+    var k = 1;
+    for (var step = 0; step < 14 && k > 0.45; step++) {
+      k -= 0.05;
+      grid.style.setProperty("--fit", k.toFixed(3));
+      if (!overflows()) return;
+    }
+    /* Ran out of room even at the floor: say so rather than crop in
+       silence, because on a projector nobody will notice the missing row. */
+    console.warn("[NextGen] sleeve still overflows at --fit " + k.toFixed(2) +
+                 "; a card is being cropped", host.id);
+  }
+
   var PANEL = {
     equities: equityPanel, fixedIncome: fixedIncomePanel,
     notes: notesPanel, fx: fxPanel
@@ -1256,6 +1325,8 @@
         "</div>";
 
       host.innerHTML = tape + (PANEL[S.key] || equityPanel)(bucket);
+      /* After layout, not during: the measurement needs real boxes. */
+      fitSleeve(host);
     });
   }
 
@@ -1517,6 +1588,9 @@
   go(startAt >= 1 ? startAt - 1 : 0, true);
 
   window.BASE.ready.then(function () {
+    /* Pin before the first paint, or the deck renders the live room once
+       and then swaps under the viewer. */
+    if (FORCE_BAND) window.ENGINE.setForcedBand(FORCE_BAND);
     refresh();
     setInterval(refresh, window.CONFIG.POLL_MS);
   });

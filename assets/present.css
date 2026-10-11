@@ -18,12 +18,19 @@
    admin board is a laptop, and neither should ever pick this up.
    ============================================================ */
 
-body.present { --s0: 1;    --sc: 1;    }
-@media (min-width: 2200px) { body.present { --s0: 1.45; --sc: 1.28; } }
-@media (min-width: 2800px) { body.present { --s0: 2.0;  --sc: 1.58; } }
-@media (min-width: 3400px) { body.present { --s0: 2.5;  --sc: 1.8;  } }
-@media (min-width: 5000px) { body.present { --s0: 3.0;  --sc: 2.1;  } }
-body.present { --s: var(--s0); }
+body.present { --s0: 1;    --sc0: 1;    }
+@media (min-width: 2200px) { body.present { --s0: 1.45; --sc0: 1.28; } }
+@media (min-width: 2800px) { body.present { --s0: 2.0;  --sc0: 1.58; } }
+@media (min-width: 3400px) { body.present { --s0: 2.5;  --sc0: 1.8;  } }
+@media (min-width: 5000px) { body.present { --s0: 3.0;  --sc0: 2.1;  } }
+body.present { --s: var(--s0); --sc: var(--sc0); }
+
+/* A sleeve laid out as cards shrinks its own content until every card fits.
+   --fit is written by fitSleeve() in present.js after each paint: seven
+   bonds wrap onto two rows, and at the tier scale the YTW and duration
+   lines were being clipped off the bottom of each card. A cropped holding
+   is a wrong portfolio, so this measures rather than guesses. */
+.p-cards { --sc: calc(var(--sc0) * var(--fit, 1)); }
 
 /* The positions slide is the exception. It lists every holding in the
    book — thirty-two lines across four columns — and it is the one slide
