@@ -133,62 +133,6 @@ body.present {
 .p-join p { color: var(--text-2); font-size: clamp(15px, 1.3vw, calc(19px * var(--s))); line-height: 1.6; max-width: 46ch; }
 
 /* --- slide 2: the split --- */
-/* --- slide 2: where the room landed ---
-   Five rows on a projector, read from the back of a room. They fill the
-   slide rather than sitting in a strip across the middle of it: the rows
-   stretch to the height available, the bars are the height of the type, and
-   the share is a figure rather than a caption. */
-.p-bars {
-  flex: 1 1 auto;
-  display: grid;
-  grid-auto-rows: 1fr;
-  gap: clamp(8px, 1.4vh, calc(20px * var(--s)));
-  align-content: stretch;
-  min-height: 0;
-  padding: clamp(6px, 1.4vh, calc(20px * var(--s))) 0;
-}
-.p-bar {
-  display: grid;
-  /* Wide enough for "Conservative to Moderate" on one line: wrapping a
-     band name breaks the ladder's rhythm. */
-  grid-template-columns: minmax(260px, 24vw) 1fr minmax(110px, 8vw);
-  gap: clamp(18px, 2.2vw, calc(40px * var(--s)));
-  align-items: center;
-  min-height: 0;
-}
-.p-bar-name {
-  font-size: clamp(16px, 1.55vw, calc(27px * var(--s)));
-  line-height: 1.15;
-  color: var(--text-2);
-  text-align: right;
-  text-wrap: balance;
-}
-.p-bar-track {
-  height: clamp(28px, 6.2vh, calc(64px * var(--s)));
-  border-radius: var(--r-sm);
-  background: var(--line-soft);
-  overflow: hidden;
-}
-.p-bar-fill {
-  display: block; height: 100%; border-radius: var(--r-sm);
-  background: rgba(201, 169, 107, 0.32);
-  transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.p-bar-val {
-  font-size: clamp(19px, 2vw, calc(38px * var(--s)));
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-.p-bar.lead .p-bar-name { color: var(--accent-bright); font-weight: 550; }
-.p-bar.lead .p-bar-fill { background: var(--accent); }
-.p-bar.lead .p-bar-val  { color: var(--accent); }
-/* A band nobody picked is still a rung: dim, but the same size, because the
-   empty rungs are what make a split room look split. */
-.p-bar.none .p-bar-track { background: rgba(255, 255, 255, 0.035); }
-
 /* --- slide 3: the verdict --- */
 .p-verdict { flex: 1 1 auto; display: grid; grid-template-columns: 1.15fr 1fr; gap: calc(56px * var(--s)); align-items: center; }
 .p-verdict h1 {
@@ -456,7 +400,6 @@ body.present {
   .p-capital { flex-direction: column; gap: 14px; }
   .p-cap-side.p-cap-nt { flex: 1 1 auto; }
   .p-join, .p-verdict { grid-template-columns: 1fr; gap: 28px; }
-  .p-bar { grid-template-columns: 150px 1fr 88px; gap: 14px; }
   .p-top, .p-stage, .p-foot { padding-left: 22px; padding-right: 22px; }
 }
 
@@ -1275,10 +1218,6 @@ body.present {
 }
 .p-consensus b { color: var(--accent-bright); font-weight: 500; }
 
-/* A band nobody picked still holds its rung on the ladder — it is the zero
-   that makes a split room look split. */
-.p-bar.none .p-bar-name { color: var(--muted); }
-.p-bar.none .p-bar-val  { color: var(--muted); }
 
 /* --- slide 3: the verdict, at projector scale ---
    The room reads this from the back, and with the drawdown, yield and

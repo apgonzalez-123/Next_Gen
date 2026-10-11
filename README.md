@@ -402,17 +402,18 @@ that session only.
 
 ## Running the session
 
-1. Open `present.html` on the projector, press **F** for fullscreen.
+1. Open `present.html` on the projector, press **F** for fullscreen, then
+   **D** once to check the screen has been understood (see below).
 2. Slide 1 shows the QR and a live response counter. Wait for the room.
-3. **→** to slide 2: where the room landed, per guest.
-4. **→** to slide 3: the room's composite portfolio — the reveal.
-5. **→** to slide 4: the positions those answers actually buy.
-6. **→** slides 5 to 9: one sleeve at a time — equities, fixed income,
-   structured notes, FX, options — each answering why that much of it and why
-   those instruments.
-7. **→** to slide 10: the engine itself, with the room's answers travelling
-   through it. Node size is how many answered, edge weight is that question's
-   measured influence on the book, sleeve bars are the real allocation.
+3. **→** to slide 2: the room voting live — every answer as it lands, and
+   the book those answers are building.
+4. **→** to slide 3: the room's composite portfolio — the reveal. If the
+   room split into two poles, this slide says so rather than leaving the
+   band looking arbitrary.
+5. **→** to slide 4: the positions those answers actually buy, all of them.
+6. **→** slides 5 to 8: one sleeve at a time — equities, fixed income, FX,
+   structured notes — each with its holdings and weighted characteristics.
+   The notes come last because they are the hardest to read off a slide.
 
 | Key | |
 |---|---|

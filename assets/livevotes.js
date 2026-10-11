@@ -18,7 +18,7 @@ window.LIVEVOTES = (function () {
   "use strict";
 
   var host = null, built = false;
-  var els = { count: null, complete: null, pending: null, rows: {},
+  var els = { count: null, complete: null, rows: {},
               alloc: null, bars: {}, keys: {}, qs: {} };
   var prev = { count: -1, bars: {} };
 
@@ -87,7 +87,6 @@ window.LIVEVOTES = (function () {
       '<div class="lv-top">' +
         '<div class="lv-stat lv-stat-lead"><b id="lvCount">0</b><span>responses</span></div>' +
         '<div class="lv-stat"><b id="lvComplete">0</b><span>finished</span></div>' +
-        '<div class="lv-stat"><b id="lvPending">0</b><span>still answering</span></div>' +
         '<div class="lv-live"><i></i>live</div>' +
       "</div>" +
       '<div class="lv-grid">';
@@ -122,7 +121,6 @@ window.LIVEVOTES = (function () {
 
     els.count = document.getElementById("lvCount");
     els.complete = document.getElementById("lvComplete");
-    els.pending = document.getElementById("lvPending");
     els.alloc = document.getElementById("lvAlloc");
 
     host.querySelectorAll("[data-k]").forEach(function (el) {
@@ -179,7 +177,6 @@ window.LIVEVOTES = (function () {
 
     els.count.textContent = count;
     els.complete.textContent = complete;
-    els.pending.textContent = Math.max(0, count - complete);
     if (landed) flash(els.count.parentNode);
     prev.count = count;
 

@@ -1,16 +1,20 @@
 /* NextGen Portfolio Builder — presenter view.
  *
- * Ten slides: join (QR) -> where the room landed -> the room's portfolio ->
- * the positions -> one slide per sleeve, equities through options -> the
- * room voting live. Arrow keys move; the data refreshes on a timer
- * regardless of which slide is up, so the counter keeps climbing on the join
- * screen.
+ * Eight slides: join (QR) -> the room voting live -> the room's portfolio ->
+ * the positions -> one sleeve at a time, equities, fixed income, FX, notes.
+ * Arrow keys move; the data refreshes on a timer regardless of which slide
+ * is up, so the counter keeps climbing on the join screen.
+ *
+ * The live board sits second now, straight after the QR, so the room
+ * watches itself answer. It replaced a slide showing which band each guest
+ * matched on their own, which asked a question the room had not reached yet
+ * — and when the room IS split, the verdict slide names the poles.
  *
  * Painting is DIFF-BASED on purpose. Rewriting innerHTML on every poll
  * would reset every bar to zero and re-run the grow animation every few
  * seconds — a visible flicker on a projector. Instead the DOM is built
- * once and only widths, numbers and ordering are updated, so bars glide
- * from their old value to the new one as votes land.
+ * once and only widths and numbers are updated, so bars glide from their
+ * old value to the new one as votes land.
  */
 (function () {
   var stage   = document.querySelector(".p-stage");
@@ -19,9 +23,6 @@
   var current = 0;
   var last    = null;
 
-  var built = false;      /* skeletons built? */
-  var buildFailed = false;
-  var splitRows = {};     /* portfolio id -> { root, fill, val, name } */
   var lastVerdictId = null;
 
   /* A rounded number, to as many places as asked; an em dash when there is
@@ -90,29 +91,6 @@
     if (out) out.textContent = url.replace(/^https?:\/\//, "").replace(/\/$/, "");
   }
 
-  /* ---------- skeletons, built once ---------- */
-
-  function buildSkeletons() {
-    /* --- split bars: one stable row per portfolio, reordered by CSS --- */
-    var host = document.getElementById("splitBars");
-    host.innerHTML = "";
-    window.PORTFOLIOS.forEach(function (p) {
-      var row = el("div", "p-bar");
-      row.innerHTML =
-        '<div class="p-bar-name">' + esc(p.name) + "</div>" +
-        '<div class="p-bar-track"><i class="p-bar-fill" style="width:0"></i></div>' +
-        '<div class="p-bar-val">0%</div>';
-      host.appendChild(row);
-      splitRows[p.id] = {
-        root: row,
-        fill: row.querySelector(".p-bar-fill"),
-        val:  row.querySelector(".p-bar-val")
-      };
-    });
-
-    built = true;
-  }
-
   function registerSlides() {
     slides = Array.prototype.slice.call(document.querySelectorAll(".p-slide"));
     dots.innerHTML = "";
@@ -154,16 +132,8 @@
       return;
     }
     clearWaiting();
-    if (!built) {
-      if (buildFailed) return;   /* do not retry a build that already threw */
-      buildSkeletons();
-    }
 
     var roomProfile = window.ENGINE.aggProfile(agg);
-    var split = window.ENGINE.aggSplit(agg);
-    var topBand = window.ENGINE.rank(roomProfile)[0];
-    paintSplit(split, topBand && topBand.portfolio
-      ? window.ENGINE.roomConsensus(agg, topBand.portfolio.id) : null);
     var vSim = null;
     if (window.PRODUCTS) {
       try { vSim = window.ENGINE.roomPortfolio(agg, window.PRODUCTS); } catch (e) { vSim = null; }
@@ -181,7 +151,6 @@
   }
 
   var WAITING = [
-    ["splitBars", "Each guest is matched on their own answers. The split appears here as they finish."],
     ["verdict",   "Every answer averaged into one profile, then matched. Waiting on the room."],
     ["book",      "The book the room's answers build. Waiting on the room."],
     ["sleeveEquities",    "Why the equity sleeve is the size it is, and why these funds. Waiting on the room."],
@@ -208,35 +177,6 @@
         host.innerHTML = "";
       }
     });
-  }
-
-  function paintSplit(split, con) {
-    var top = 0;
-    split.forEach(function (row) { top = Math.max(top, row.count); });
-
-    split.forEach(function (row, i) {
-      var r = splitRows[row.portfolio.id];
-      if (!r) return;
-      /* Risk order, fixed. The rows used to be re-ordered by share, which
-         turned the ladder into a leaderboard and hid the shape of a split
-         room; see ENGINE.aggSplit(). */
-      r.root.style.order = i;
-      r.root.classList.toggle("lead", row.count > 0 && row.count === top);
-      r.root.classList.toggle("none", row.count === 0);
-      r.fill.style.width = row.pct + "%";     /* CSS transition does the rest */
-      r.val.innerHTML = row.pct + "%";
-    });
-
-    /* The same sentence as the verdict slide, where the split is visible
-       rather than inferred: if the room has two poles, name them here. */
-    var sub = document.getElementById("splitSub");
-    if (sub) {
-      sub.innerHTML = con && (con.empty || con.divided)
-        ? "Every guest matched on their own answers. <b>The room has two poles</b> &mdash; " +
-          con.poles.map(function (x) { return x.pct + "% " + esc(x.name); }).join(" and ") +
-          " &mdash; so the average lands between them."
-        : "Every guest matched on their own answers.";
-    }
   }
 
   /* The sleeves the book actually has. This listed "cash", which the desk's
@@ -1383,7 +1323,7 @@
 
     var sizes = [
       ["Slide title",  sampleSize(".p-slide.on .p-h", 52)],
-      ["Body / rows",  sampleSize(".p-slide.on .p-hold-nm, .p-slide.on .p-bar-name, .p-slide.on .p-cd-title", 15)],
+      ["Body / rows",  sampleSize(".p-slide.on .p-hold-nm, .p-slide.on .lv-q-name, .p-slide.on .p-cd-title", 15)],
       ["Smallest label", sampleSize(".p-slide.on .p-fig small, .p-slide.on .p-bucket-top h3", 11)]
     ];
 
@@ -1540,11 +1480,10 @@
     window.STORE.results()
       .then(paint)
       .catch(function (e) {
-        /* A render fault used to be swallowed here, leaving `built` false
-           so every poll appended another pair of breakdown boards. Say so
-           loudly and stop rebuilding. */
+        /* A render fault used to be swallowed here. Say so loudly: a blank
+           slide on a projector is the kind of failure you only find by
+           looking at it. */
         console.error("[NextGen] presenter refresh failed", e);
-        buildFailed = true;
       });
   }
 
@@ -1563,10 +1502,6 @@
     window.STORE.reset(key).then(function () {
       try { if (key) sessionStorage.setItem("nextgen:adminkey", key); } catch (e) {}
       lastVerdictId = null;
-      /* The skeletons were wiped by the waiting copy, so rebuild on the
-         next paint rather than diffing into elements that no longer exist. */
-      built = false;
-      splitRows = {};
       refresh();
     }).catch(function (e) {
       try { sessionStorage.removeItem("nextgen:adminkey"); } catch (err) {}
