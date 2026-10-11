@@ -504,6 +504,34 @@
     }).join("");
 
     host.innerHTML = band + '<div class="p-buckets">' + cols + "</div>";
+    fitBook();
+  }
+
+  /* The positions slide lists the whole book, so a cropped row there is a
+     missing holding. Same approach as fitSleeve(): measure, then step the
+     column scale down until every line is on screen. */
+  function fitBook() {
+    var grid = document.querySelector(".p-buckets");
+    if (!grid) return;
+    grid.style.removeProperty("--fit");
+
+    function overflows() {
+      var cols = grid.querySelectorAll(".p-holds");
+      for (var i = 0; i < cols.length; i++) {
+        if (cols[i].scrollHeight > cols[i].clientHeight + 1) return true;
+      }
+      return false;
+    }
+    if (!overflows()) return;
+
+    var k = 1;
+    for (var step = 0; step < 16 && k > 0.4; step++) {
+      k -= 0.04;
+      grid.style.setProperty("--fit", k.toFixed(3));
+      if (!overflows()) return;
+    }
+    console.warn("[NextGen] the positions slide still overflows at --fit " +
+                 k.toFixed(2) + "; a holding is being cropped");
   }
 
   /* A geared book is shown at its gross weight, so the slide has to say so.
