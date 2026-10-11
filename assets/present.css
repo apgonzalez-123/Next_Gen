@@ -1,7 +1,35 @@
 /* ============================================================
    Presenter view — projector layout.
    Inherits every token from app.css; only layout changes here.
+
+   DISPLAY SCALE
+   -------------
+   The room this is built for is a 4.79 m x 2.67 m LED wall running 4K, and
+   every size below is a clamp() with a ceiling. At 3840px wide the middle
+   term of all 172 of them wanted 2 to 4 times the ceiling, so the whole
+   deck rendered at laptop size on a five-metre screen and sat in the top
+   fifth of it.
+
+   So each ceiling is multiplied by --s. On a laptop --s is 1 and nothing
+   below changes; past 2200px it opens up and lets the vw/vh term — which
+   was right all along — actually take effect.
+
+   Scoped to body.present on purpose: the guest screen is a phone and the
+   admin board is a laptop, and neither should ever pick this up.
    ============================================================ */
+
+body.present { --s: 1;    --sc: 1;    }
+@media (min-width: 2200px) { body.present { --s: 1.45; --sc: 1.28; } }
+@media (min-width: 2800px) { body.present { --s: 1.85; --sc: 1.5;  } }
+@media (min-width: 3400px) { body.present { --s: 2.3;  --sc: 1.72; } }
+@media (min-width: 5000px) { body.present { --s: 3.0;  --sc: 2.1;  } }
+
+/* --sc is the card scale, deliberately gentler than --s.
+   A sleeve card is a fixed slot in a single-row grid: there are only ever
+   three or four of them across and they cannot reflow, so everything inside
+   has to fit the height that is left after the title, the ticket line and
+   the key figures. At the full page scale the terms paragraph alone pushed
+   the weight footer out of the bottom of the card. */
 
 body.present {
   height: 100vh;
@@ -16,24 +44,24 @@ body.present {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  padding: 22px 40px;
+  gap: calc(24px * var(--s));
+  padding: calc(22px * var(--s)) calc(40px * var(--s));
   border-bottom: 1px solid var(--line-soft);
 }
-.p-top .wordmark { font-size: 14px; }
+.p-top .wordmark { font-size: calc(14px * var(--s)); }
 
 .p-live {
   display: flex;
   align-items: center;
-  gap: 26px;
-  font-size: 13px;
+  gap: calc(26px * var(--s));
+  font-size: calc(13px * var(--s));
   color: var(--muted);
 }
-.p-count { display: flex; align-items: baseline; gap: 9px; }
+.p-count { display: flex; align-items: baseline; gap: calc(9px * var(--s)); }
 .p-count b {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 30px;
+  font-size: calc(30px * var(--s));
   color: var(--accent-bright);
   font-variant-numeric: tabular-nums;
   line-height: 1;
@@ -50,7 +78,7 @@ body.present {
 .p-stage {
   flex: 1 1 auto;
   min-height: 0;
-  padding: 36px 40px;
+  padding: calc(36px * var(--s)) calc(40px * var(--s));
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -61,38 +89,40 @@ body.present {
 .p-h {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(30px, 3.6vw, 52px);
+  font-size: clamp(30px, 3.6vw, calc(52px * var(--s)));
   line-height: 1.05;
   margin-bottom: 8px;
 }
-.p-sub { color: var(--muted); font-size: 15px; margin-bottom: 30px; }
+.p-sub { color: var(--muted); font-size: calc(15px * var(--s)); margin-bottom: calc(30px * var(--s)); }
 
 /* --- slide 1: join --- */
 .p-join {
   flex: 1 1 auto;
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 64px;
+  grid-template-columns: auto minmax(0, max-content);
+  gap: calc(64px * var(--s));
+  justify-content: center;
+  align-content: center;
   align-items: center;
 }
 .qr-frame {
   background: #fff;
-  padding: 18px;
+  padding: calc(18px * var(--s));
   border-radius: var(--r-md);
   line-height: 0;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
 }
-.qr-frame img, .qr-frame canvas { display: block; width: clamp(220px, 24vw, 330px); height: auto; }
+.qr-frame img, .qr-frame canvas { display: block; width: clamp(220px, 19vw, calc(330px * var(--s))); height: auto; }
 .p-join h1 {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(42px, 5.6vw, 84px);
+  font-size: clamp(42px, 5.6vw, calc(84px * var(--s)));
   line-height: 1.02;
-  margin-bottom: 22px;
+  margin-bottom: calc(22px * var(--s));
 }
 /* Italic display words need room: leading-none clips a descender. */
 .p-join h1 em { font-style: italic; line-height: 1.12; padding-bottom: 2px; display: inline-block; }
-.p-join p { color: var(--text-2); font-size: clamp(15px, 1.3vw, 19px); line-height: 1.6; max-width: 46ch; }
+.p-join p { color: var(--text-2); font-size: clamp(15px, 1.3vw, calc(19px * var(--s))); line-height: 1.6; max-width: 46ch; }
 
 /* --- slide 2: the split --- */
 /* --- slide 2: where the room landed ---
@@ -104,29 +134,29 @@ body.present {
   flex: 1 1 auto;
   display: grid;
   grid-auto-rows: 1fr;
-  gap: clamp(8px, 1.4vh, 20px);
+  gap: clamp(8px, 1.4vh, calc(20px * var(--s)));
   align-content: stretch;
   min-height: 0;
-  padding: clamp(6px, 1.4vh, 20px) 0;
+  padding: clamp(6px, 1.4vh, calc(20px * var(--s))) 0;
 }
 .p-bar {
   display: grid;
   /* Wide enough for "Conservative to Moderate" on one line: wrapping a
      band name breaks the ladder's rhythm. */
   grid-template-columns: minmax(260px, 24vw) 1fr minmax(110px, 8vw);
-  gap: clamp(18px, 2.2vw, 40px);
+  gap: clamp(18px, 2.2vw, calc(40px * var(--s)));
   align-items: center;
   min-height: 0;
 }
 .p-bar-name {
-  font-size: clamp(16px, 1.55vw, 27px);
+  font-size: clamp(16px, 1.55vw, calc(27px * var(--s)));
   line-height: 1.15;
   color: var(--text-2);
   text-align: right;
   text-wrap: balance;
 }
 .p-bar-track {
-  height: clamp(28px, 6.2vh, 64px);
+  height: clamp(28px, 6.2vh, calc(64px * var(--s)));
   border-radius: var(--r-sm);
   background: var(--line-soft);
   overflow: hidden;
@@ -137,7 +167,7 @@ body.present {
   transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .p-bar-val {
-  font-size: clamp(19px, 2vw, 38px);
+  font-size: clamp(19px, 2vw, calc(38px * var(--s)));
   color: var(--muted);
   font-variant-numeric: tabular-nums;
   font-family: var(--font-display);
@@ -152,24 +182,24 @@ body.present {
 .p-bar.none .p-bar-track { background: rgba(255, 255, 255, 0.035); }
 
 /* --- slide 3: the verdict --- */
-.p-verdict { flex: 1 1 auto; display: grid; grid-template-columns: 1.15fr 1fr; gap: 56px; align-items: center; }
+.p-verdict { flex: 1 1 auto; display: grid; grid-template-columns: 1.15fr 1fr; gap: calc(56px * var(--s)); align-items: center; }
 .p-verdict h1 {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(46px, 6vw, 92px);
+  font-size: clamp(46px, 6vw, calc(92px * var(--s)));
   line-height: 1.02;
   color: var(--accent-bright);
   margin-bottom: 14px;
 }
-.p-verdict .tagline { font-size: clamp(17px, 1.6vw, 24px); font-style: italic; color: var(--text-2); margin-bottom: 26px; }
-.p-verdict .body { font-size: clamp(14px, 1.2vw, 18px); line-height: 1.65; color: var(--text-2); max-width: 52ch; }
-.p-fit { display: flex; align-items: baseline; gap: 12px; margin-bottom: 26px; }
+.p-verdict .tagline { font-size: clamp(17px, 1.6vw, calc(24px * var(--s))); font-style: italic; color: var(--text-2); margin-bottom: 26px; }
+.p-verdict .body { font-size: clamp(14px, 1.2vw, calc(18px * var(--s))); line-height: 1.65; color: var(--text-2); max-width: 52ch; }
+.p-fit { display: flex; align-items: baseline; gap: calc(12px * var(--s)); margin-bottom: calc(26px * var(--s)); }
 .p-fit b {
   font-family: var(--font-display); font-weight: 600;
-  font-size: clamp(56px, 7vw, 104px); line-height: 1;
+  font-size: clamp(56px, 7vw, calc(104px * var(--s))); line-height: 1;
   color: var(--accent-bright); font-variant-numeric: tabular-nums;
 }
-.p-fit span { font-size: 15px; color: var(--muted); }
+.p-fit span { font-size: calc(15px * var(--s)); color: var(--muted); }
 
 /* --- slide 4: the room's book ---
    Every line of it. The slide used to show five per sleeve and point at the
@@ -182,7 +212,7 @@ body.present {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: clamp(12px, 1.8vh, 22px);
+  gap: clamp(12px, 1.8vh, calc(22px * var(--s)));
   overflow: hidden;
 }
 
@@ -190,31 +220,31 @@ body.present {
    are not the same money. */
 .p-capital {
   flex: 0 0 auto;
-  display: flex; gap: clamp(18px, 2.4vw, 40px);
+  display: flex; gap: clamp(18px, 2.4vw, calc(40px * var(--s)));
   align-items: flex-start;
 }
 .p-cap-side { flex: 1 1 auto; min-width: 0; }
 .p-cap-side.p-cap-nt { flex: 0 1 38%; }
 .p-cap-h { display: flex; align-items: baseline; gap: 10px; margin-bottom: 7px; }
 .p-cap-h small {
-  font-size: clamp(8.5px, 0.62vw, 11px);
+  font-size: clamp(8.5px, 0.62vw, calc(11px * var(--s)));
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
 }
 .p-cap-h b {
   font-family: var(--mono, ui-monospace, Menlo, monospace);
-  font-size: clamp(13px, 1.1vw, 18px); font-weight: 500;
+  font-size: clamp(13px, 1.1vw, calc(18px * var(--s))); font-weight: 500;
   color: var(--accent-bright); font-variant-numeric: tabular-nums;
 }
 .p-cap-nt .p-cap-h b { color: var(--series-options); }
 .p-cap-bar {
-  display: flex; height: clamp(10px, 1.4vh, 16px);
+  display: flex; height: clamp(10px, 1.4vh, calc(16px * var(--s)));
   border-radius: var(--r-xs); overflow: hidden; background: var(--surface-2);
 }
 .p-cap-bar i { display: block; height: 100%; transition: width 0.8s cubic-bezier(0.2,0.8,0.2,1); }
 .p-cap-nt .p-cap-bar { opacity: 0.72; }
 .p-cap-keys {
   display: flex; flex-wrap: wrap; gap: 5px 16px; margin-top: 8px;
-  font-size: clamp(9.5px, 0.74vw, 12.5px); color: var(--text-2);
+  font-size: clamp(9.5px, 0.74vw, calc(12.5px * var(--s))); color: var(--text-2);
 }
 
 /* The four sleeves. */
@@ -224,7 +254,7 @@ body.present {
   /* Equities carries fifteen lines and FX three, so they do not get the
      same width. The wide column flows its holdings into two. */
   grid-template-columns: 2.2fr 1.1fr 1.15fr 1.05fr;
-  gap: clamp(16px, 2vw, 34px);
+  gap: clamp(16px, 2vw, calc(34px * var(--s)));
   overflow: hidden;
 }
 .p-bucket { min-width: 0; display: flex; flex-direction: column; min-height: 0; }
@@ -236,7 +266,7 @@ body.present {
 }
 .p-bucket-top s { width: 9px; height: 9px; border-radius: 2px; text-decoration: none; flex: 0 0 auto; }
 .p-bucket-top h3 {
-  font-size: clamp(10px, 0.86vw, 13px);
+  font-size: clamp(10px, 0.86vw, calc(13px * var(--s)));
   font-weight: 550;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -246,28 +276,28 @@ body.present {
 .p-bucket-top em {
   margin-left: auto; font-style: normal;
   font-family: var(--mono, ui-monospace, Menlo, monospace);
-  font-size: clamp(9.5px, 0.74vw, 12px);
+  font-size: clamp(9.5px, 0.74vw, calc(12px * var(--s)));
   color: var(--muted);
 }
 .p-bucket-w {
   display: flex; align-items: baseline; gap: 3px;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(22px, 2.3vw, 38px);
+  font-size: clamp(22px, 2.3vw, calc(38px * var(--s)));
   line-height: 1;
   letter-spacing: -0.035em;
   color: var(--accent-bright);
   font-variant-numeric: tabular-nums;
-  margin: clamp(5px, 0.8vh, 10px) 0 clamp(5px, 0.8vh, 10px);
+  margin: clamp(5px, 0.8vh, calc(10px * var(--s))) 0 clamp(5px, 0.8vh, calc(10px * var(--s)));
   flex: 0 0 auto;
 }
 .p-bucket-w i {
   font-style: normal; font-weight: 400;
-  font-size: clamp(10px, 0.8vw, 13px); color: var(--muted);
+  font-size: clamp(10px, 0.8vw, calc(13px * var(--s))); color: var(--muted);
 }
 .p-bucket-w u {
   text-decoration: none; margin-left: 5px;
-  font-size: clamp(8px, 0.56vw, 9.5px); letter-spacing: 0.1em;
+  font-size: clamp(8px, 0.56vw, calc(9.5px * var(--s))); letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--series-options);
 }
 
@@ -282,20 +312,20 @@ body.present {
   grid-template-columns: auto 1fr auto;
   align-items: baseline;
   gap: 9px;
-  padding: clamp(7px, 1.15vh, 13px) 0 clamp(8px, 1.3vh, 15px);
+  padding: clamp(7px, 1.15vh, calc(13px * var(--s))) 0 clamp(8px, 1.3vh, calc(15px * var(--s)));
   border-bottom: 1px solid var(--line-soft);
 }
 .p-hold:last-child { border-bottom: none; }
 .p-hold-tk {
   font-family: var(--mono, ui-monospace, Menlo, monospace);
-  font-size: clamp(8.5px, 0.68vw, 11px);
+  font-size: clamp(8.5px, 0.68vw, calc(11px * var(--s)));
   color: var(--muted);
   background: var(--surface-2);
   border-radius: 2px; padding: 1px 5px;
   white-space: nowrap;
 }
 .p-hold-nm {
-  font-size: clamp(11.5px, 0.96vw, 15.5px);
+  font-size: clamp(11.5px, 0.96vw, calc(15.5px * var(--s)));
   line-height: 1.22;
   color: var(--text-2);
   min-width: 0;
@@ -310,7 +340,7 @@ body.present {
 }
 .p-hold-w {
   font-family: var(--mono, ui-monospace, Menlo, monospace);
-  font-size: clamp(11.5px, 0.96vw, 15.5px);
+  font-size: clamp(11.5px, 0.96vw, calc(15.5px * var(--s)));
   color: var(--accent-bright);
   font-variant-numeric: tabular-nums;
 }
@@ -323,7 +353,7 @@ body.present {
 .p-hold-2 { grid-template-rows: auto auto; row-gap: 3px; }
 .p-hold-meta {
   grid-column: 2 / -1;
-  font-size: clamp(9.5px, 0.74vw, 12.5px);
+  font-size: clamp(9.5px, 0.74vw, calc(12.5px * var(--s)));
   color: var(--muted);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
@@ -333,7 +363,7 @@ body.present {
 /* Eleven lines or more: two columns rather than smaller type. */
 .p-bucket-wide .p-holds {
   columns: 2;
-  column-gap: clamp(16px, 1.8vw, 30px);
+  column-gap: clamp(16px, 1.8vw, calc(30px * var(--s)));
   column-fill: balance;
 }
 .p-bucket-wide .p-hold { break-inside: avoid; -webkit-column-break-inside: avoid; }
@@ -342,9 +372,9 @@ body.present {
 
 /* Six lines or fewer: let them breathe rather than marooning them at the
    top of an empty column. */
-.p-bucket-roomy .p-hold { padding: clamp(8px, 1.4vh, 16px) 0 clamp(9px, 1.6vh, 18px); }
+.p-bucket-roomy .p-hold { padding: clamp(8px, 1.4vh, calc(16px * var(--s))) 0 clamp(9px, 1.6vh, calc(18px * var(--s))); }
 .p-bucket-roomy .p-hold-nm,
-.p-bucket-roomy .p-hold-w { font-size: clamp(11px, 0.92vw, 15px); }
+.p-bucket-roomy .p-hold-w { font-size: clamp(11px, 0.92vw, calc(15px * var(--s))); }
 
 .p-tk {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -357,7 +387,7 @@ body.present {
   white-space: nowrap;
 }
 
-.p-book-empty { font-size: 14px; color: var(--muted); }
+.p-book-empty { font-size: calc(14px * var(--s)); color: var(--muted); }
 
 /* --- footer / controls --- */
 .p-foot {
@@ -365,13 +395,13 @@ body.present {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 16px 40px;
+  gap: calc(20px * var(--s));
+  padding: calc(16px * var(--s)) calc(40px * var(--s));
   border-top: 1px solid var(--line-soft);
-  font-size: 12px;
+  font-size: calc(12px * var(--s));
   color: var(--muted);
 }
-.p-dots { display: flex; gap: 8px; }
+.p-dots { display: flex; gap: calc(8px * var(--s)); }
 .p-dots i {
   width: 8px; height: 8px; border-radius: 50%;
   background: var(--line); cursor: pointer;
@@ -380,7 +410,7 @@ body.present {
 .p-dots i.on { background: var(--accent); transform: scale(1.25); }
 .p-keys kbd {
   font-family: var(--font-ui);
-  font-size: 11px;
+  font-size: calc(11px * var(--s));
   border: 1px solid var(--line);
   border-radius: var(--r-xs);
   padding: 3px 7px;
@@ -392,15 +422,15 @@ body.present {
   border: 1px solid var(--line);
   color: var(--text-2);
   border-radius: var(--r-sm);
-  padding: 8px 15px;
-  font-size: 12px;
+  padding: calc(8px * var(--s)) calc(15px * var(--s));
+  font-size: calc(12px * var(--s));
   cursor: pointer;
   transition: border-color 0.2s, color 0.2s;
 }
 .p-btn:hover { border-color: var(--accent); color: var(--text); }
 
 .p-badge {
-  font-size: 10.5px;
+  font-size: calc(10.5px * var(--s));
   letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--accent);
@@ -426,11 +456,11 @@ body.present {
 
 /* The projector carries the lockup larger. The mark and rule are sized in
    em, so raising the wordmark size scales all three together. */
-.p-top .wordmark { font-size: 16px; }
+.p-top .wordmark { font-size: calc(16px * var(--s)); }
 
 /* Shown on the result slides before the room has answered. */
 .p-waiting {
-  font-size: clamp(15px, 1.35vw, 21px);
+  font-size: clamp(15px, 1.35vw, calc(21px * var(--s)));
   line-height: 1.6;
   color: var(--muted);
   max-width: 44ch;
@@ -442,34 +472,34 @@ body.present {
    read from the back, short enough that nobody stops listening. */
 .p-why {
   flex: 0 0 auto;
-  margin-top: clamp(12px, 1.6vh, 20px);
-  padding-top: clamp(11px, 1.4vh, 16px);
+  margin-top: clamp(12px, 1.6vh, calc(20px * var(--s)));
+  padding-top: clamp(11px, 1.4vh, calc(16px * var(--s)));
   border-top: 1px solid var(--line);
 }
 .p-why-head {
-  font-size: clamp(10px, 0.85vw, 12px);
+  font-size: clamp(10px, 0.85vw, calc(12px * var(--s)));
   letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--muted); margin-bottom: 7px;
 }
 .p-why-line {
-  font-size: clamp(14px, 1.25vw, 20px);
+  font-size: clamp(14px, 1.25vw, calc(20px * var(--s)));
   line-height: 1.4; color: var(--text);
-  max-width: 92ch; margin-bottom: clamp(9px, 1.2vh, 14px);
+  max-width: 92ch; margin-bottom: clamp(9px, 1.2vh, calc(14px * var(--s)));
 }
 .p-why-line b { color: var(--accent-bright); font-weight: 600; }
 
-.p-why-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(24px, 4vw, 64px); }
+.p-why-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(24px, 4vw, calc(64px * var(--s))); }
 @media (max-width: 1000px) { .p-why-grid { grid-template-columns: 1fr; gap: 20px; } }
 
 .p-why-sub {
-  font-size: clamp(9px, 0.78vw, 11px);
+  font-size: clamp(9px, 0.78vw, calc(11px * var(--s)));
   letter-spacing: 0.13em; text-transform: uppercase;
   color: var(--muted); margin-bottom: 6px;
 }
 .p-drv {
   display: grid; grid-template-columns: 16px 1fr auto;
   gap: 9px; align-items: baseline;
-  font-size: clamp(12px, 1vw, 16px);
+  font-size: clamp(12px, 1vw, calc(16px * var(--s)));
   color: var(--text-2); padding: 2px 0;
 }
 .p-arw { color: var(--accent-bright); font-size: 0.95em; }
@@ -479,26 +509,20 @@ body.present {
 }
 
 .p-conv {
-  font-size: clamp(12px, 1.05vw, 17px);
+  font-size: clamp(12px, 1.05vw, calc(17px * var(--s)));
   line-height: 1.45; color: var(--text);
 }
 .p-conv i { font-style: normal; color: var(--muted); font-size: 0.82em; }
 .p-conv em { font-style: normal; color: var(--muted); margin: 0 8px; }
-.p-conv.p-weak { color: var(--muted); font-size: clamp(12px, 1.05vw, 16px); }
+.p-conv.p-weak { color: var(--muted); font-size: clamp(12px, 1.05vw, calc(16px * var(--s))); }
 
-/* The verdict gives up its spare height so the why section sits above the
-   fold. Slide 4 carries the positions in full, so the verdict does not
-   repeat them. */
-.p-slide[data-slide="2"] .p-verdict { flex: 0 1 auto; align-items: start; }
-.p-slide[data-slide="2"] .p-verdict h1 { font-size: clamp(38px, 4.6vw, 68px); }
+/* Slide 4 carries the positions in full, so the verdict does not repeat
+   them. It used to give up its height to a "why" block underneath; that
+   block is long gone and these rules were still squeezing the slide. */
+.p-slide[data-slide="2"] .p-verdict { align-items: center; }
+.p-slide[data-slide="2"] .p-verdict h1 { font-size: clamp(38px, 4.6vw, calc(80px * var(--s))); }
 .p-slide[data-slide="2"] .p-verdict .body { display: none; }
-.p-slide[data-slide="2"] .p-fit { margin-bottom: 16px; }
-.p-slide[data-slide="2"] .p-fit b { font-size: clamp(40px, 4.6vw, 66px); }
-.p-slide[data-slide="2"] .kv { padding: 7px 0; font-size: 13px; }
-.p-slide[data-slide="2"] .alloc-bar { height: 24px; }
-
-/* The why block holds its own height rather than being squeezed out. */
-.p-slide[data-slide="2"] .p-why { margin-top: auto; }
+.p-slide[data-slide="2"] .p-fit b { font-size: clamp(40px, 4.6vw, calc(76px * var(--s))); }
 
 /* Rank inside a sleeve, so the room can see the order of conviction. */
 .p-rank {
@@ -530,7 +554,7 @@ body.present {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: clamp(10px, 1.6vh, 18px);
+  gap: clamp(10px, 1.6vh, calc(18px * var(--s)));
   overflow: hidden;
 }
 
@@ -546,8 +570,8 @@ body.present {
 .p-tape {
   flex: 0 0 auto;
   display: flex; align-items: center; flex-wrap: wrap;
-  gap: clamp(14px, 2vw, 30px);
-  padding: clamp(7px, 1vh, 11px) clamp(10px, 1.1vw, 16px);
+  gap: clamp(14px, 2vw, calc(30px * var(--s)));
+  padding: clamp(7px, 1vh, calc(11px * var(--s))) clamp(10px, 1.1vw, calc(16px * var(--s)));
   border: 1px solid var(--line);
   border-left: 2px solid var(--line);
   border-radius: var(--r-sm);
@@ -555,26 +579,26 @@ body.present {
 }
 .p-tape-k {
   display: inline-flex; align-items: center; gap: 8px;
-  font-size: clamp(9.5px, 0.72vw, 12px);
+  font-size: clamp(9.5px, 0.72vw, calc(12px * var(--s)));
   letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--text);
 }
 .p-tape-k s { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
 .p-tape-i { display: inline-flex; align-items: baseline; gap: 7px; }
 .p-tape-i small {
-  font-size: clamp(8.5px, 0.62vw, 10.5px);
+  font-size: clamp(8.5px, 0.62vw, calc(10.5px * var(--s)));
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
 }
 .p-tape-i b {
   font-family: var(--mono); font-weight: 500;
-  font-size: clamp(11px, 0.92vw, 15px);
+  font-size: clamp(11px, 0.92vw, calc(15px * var(--s)));
   font-variant-numeric: tabular-nums;
   color: var(--text);
 }
 .p-tape-nt b { color: var(--series-options); }
 .p-tape-n {
   margin-left: auto;
-  font-size: clamp(9px, 0.7vw, 11.5px);
+  font-size: clamp(9px, 0.7vw, calc(11.5px * var(--s)));
   color: var(--series-options);
   white-space: nowrap;
 }
@@ -593,11 +617,11 @@ body.present {
 }
 .p-fig {
   background: var(--bg);
-  padding: clamp(6px, 0.95vh, 11px) clamp(10px, 1vw, 15px);
+  padding: clamp(6px, 0.95vh, calc(11px * var(--s))) clamp(10px, 1vw, calc(15px * var(--s)));
 }
 .p-fig small {
   display: block;
-  font-size: clamp(8.5px, 0.62vw, 10.5px);
+  font-size: clamp(8.5px, 0.62vw, calc(10.5px * var(--s)));
   letter-spacing: 0.09em; text-transform: uppercase;
   color: var(--muted); margin-bottom: 5px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -605,19 +629,19 @@ body.present {
 .p-fig b {
   display: flex; align-items: baseline; gap: 3px;
   font-family: var(--mono); font-weight: 500;
-  font-size: clamp(16px, 1.45vw, 23px); line-height: 1;
+  font-size: clamp(16px, 1.45vw, calc(23px * var(--s))); line-height: 1;
   letter-spacing: -0.015em;
   color: var(--accent-bright);
   font-variant-numeric: tabular-nums;
 }
 .p-fig .p-u {
   font-family: var(--font-ui);
-  font-size: clamp(9px, 0.66vw, 12px); font-weight: 400;
+  font-size: clamp(9px, 0.66vw, calc(12px * var(--s))); font-weight: 400;
   color: var(--muted); letter-spacing: 0;
 }
 .p-fig i {
   display: block; font-style: normal; margin-top: 4px;
-  font-size: clamp(8.5px, 0.6vw, 10.5px); color: var(--muted);
+  font-size: clamp(8.5px, 0.6vw, calc(10.5px * var(--s))); color: var(--muted);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
@@ -626,16 +650,16 @@ body.present {
 .p-tbl { width: 100%; border-collapse: collapse; }
 .p-tbl th {
   text-align: left; font-weight: 550;
-  font-size: clamp(8.5px, 0.62vw, 10.5px);
+  font-size: clamp(8.5px, 0.62vw, calc(10.5px * var(--s)));
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
-  padding: 0 12px clamp(6px, 0.9vh, 10px) 0;
+  padding: 0 12px clamp(6px, 0.9vh, calc(10px * var(--s))) 0;
   border-bottom: 1px solid var(--line);
   white-space: nowrap;
 }
 .p-tbl td {
-  padding: clamp(6px, 1.05vh, 12px) 12px clamp(6px, 1.05vh, 12px) 0;
+  padding: clamp(6px, 1.05vh, calc(12px * var(--s))) 12px clamp(6px, 1.05vh, calc(12px * var(--s))) 0;
   border-bottom: 1px solid var(--line-soft);
-  font-size: clamp(11px, 0.92vw, 14.5px);
+  font-size: clamp(11px, 0.92vw, calc(14.5px * var(--s)));
   color: var(--text-2);
   vertical-align: middle;
   white-space: nowrap;
@@ -648,10 +672,10 @@ body.present {
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
 }
-.p-tbl-dense td { padding-top: clamp(4px, 0.7vh, 8px); padding-bottom: clamp(4px, 0.7vh, 8px); }
-.p-tbl-dense td { font-size: clamp(10.5px, 0.82vw, 13px); }
-.p-tbl-tight td { padding-top: clamp(1px, 0.3vh, 3.5px); padding-bottom: clamp(1px, 0.3vh, 3.5px); }
-.p-tbl-tight td { font-size: clamp(10px, 0.76vw, 12px); }
+.p-tbl-dense td { padding-top: clamp(4px, 0.7vh, calc(8px * var(--s))); padding-bottom: clamp(4px, 0.7vh, calc(8px * var(--s))); }
+.p-tbl-dense td { font-size: clamp(10.5px, 0.82vw, calc(13px * var(--s))); }
+.p-tbl-tight td { padding-top: clamp(1px, 0.3vh, calc(3.5px * var(--s))); padding-bottom: clamp(1px, 0.3vh, calc(3.5px * var(--s))); }
+.p-tbl-tight td { font-size: clamp(10px, 0.76vw, calc(12px * var(--s))); }
 .p-tbl-tight .p-tk { font-size: 0.82em; padding: 1px 4px; }
 
 /* Weight, as a number and as the track that gives the book its shape. The
@@ -665,8 +689,8 @@ body.present {
 .p-wcell span { display: inline-block; min-width: 3.4em; text-align: right; }
 .p-track {
   display: inline-block; vertical-align: middle;
-  width: clamp(44px, 4.4vw, 78px);
-  height: clamp(8px, 1.1vh, 11px);
+  width: clamp(44px, 4.4vw, calc(78px * var(--s)));
+  height: clamp(8px, 1.1vh, calc(11px * var(--s)));
   margin-right: 11px;
   background: rgba(255, 255, 255, 0.07);
   border-radius: 1px;
@@ -715,13 +739,14 @@ body.present {
   flex: 1 1 auto; min-height: 0;
   display: grid;
   grid-template-columns: repeat(var(--n, 4), 1fr);
-  gap: clamp(12px, 1.4vw, 24px);
+  grid-auto-rows: minmax(0, 1fr);
+  gap: clamp(12px, 1.4vw, calc(24px * var(--sc)));
   align-content: stretch;
 }
 .p-cd {
   display: flex; flex-direction: column;
-  min-width: 0;
-  padding: clamp(12px, 1.8vh, 22px) clamp(13px, 1.2vw, 20px);
+  min-width: 0; min-height: 0; overflow: hidden;
+  padding: clamp(12px, 1.8vh, calc(22px * var(--sc))) clamp(13px, 1.2vw, calc(20px * var(--sc)));
   border: 1px solid var(--line);
   border-radius: var(--r-sm);
   background: linear-gradient(180deg, rgba(255,255,255,0.028), transparent 55%);
@@ -729,56 +754,56 @@ body.present {
 .p-cd-ovl { border-color: rgba(140, 92, 214, 0.34); }
 .p-cd-top {
   display: flex; align-items: center; justify-content: space-between;
-  gap: 10px; margin-bottom: clamp(10px, 1.4vh, 16px);
+  gap: 10px; margin-bottom: clamp(10px, 1.4vh, calc(16px * var(--sc)));
 }
 .p-cd-top .p-tk { margin-right: 0; }
 .p-cd-w {
   font-family: var(--mono); font-weight: 500;
-  font-size: clamp(19px, 1.9vw, 31px); line-height: 1;
+  font-size: clamp(19px, 1.9vw, calc(31px * var(--sc))); line-height: 1;
   letter-spacing: -0.02em;
   color: var(--accent-bright); font-variant-numeric: tabular-nums;
 }
 .p-cd-w i {
   font-style: normal; font-family: var(--font-ui);
-  font-size: clamp(10px, 0.72vw, 13px); color: var(--muted);
+  font-size: clamp(10px, 0.72vw, calc(13px * var(--sc))); color: var(--muted);
   margin-left: 2px;
 }
 .p-cd-title {
-  font-size: clamp(14px, 1.22vw, 21px);
+  font-size: clamp(14px, 1.22vw, calc(21px * var(--sc)));
   line-height: 1.22;
   color: var(--text);
   margin-bottom: 5px;
 }
 .p-cd-sub {
-  font-size: clamp(10.5px, 0.84vw, 13.5px);
+  font-size: clamp(10.5px, 0.84vw, calc(13.5px * var(--sc)));
   color: var(--muted);
-  margin-bottom: clamp(12px, 1.8vh, 20px);
+  margin-bottom: clamp(12px, 1.8vh, calc(20px * var(--sc)));
 }
 .p-cd-kvs {
   flex: 1 1 auto;
   display: flex; flex-direction: column; justify-content: space-between;
-  gap: clamp(7px, 1.1vh, 13px);
+  gap: clamp(7px, 1.1vh, calc(13px * var(--sc)));
 }
 .p-cd-kv {
   display: flex; align-items: baseline; justify-content: space-between;
   gap: 12px;
-  padding-bottom: clamp(6px, 0.9vh, 11px);
+  padding-bottom: clamp(6px, 0.9vh, calc(11px * var(--sc)));
   border-bottom: 1px solid var(--line-soft);
 }
 .p-cd-kv:last-child { border-bottom: none; }
 .p-cd-kv small {
-  font-size: clamp(8.5px, 0.62vw, 11px);
+  font-size: clamp(8.5px, 0.62vw, calc(11px * var(--sc)));
   letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted);
   white-space: nowrap;
 }
 .p-cd-kv b {
   font-family: var(--mono); font-weight: 500;
-  font-size: clamp(11.5px, 0.95vw, 15px);
+  font-size: clamp(11.5px, 0.95vw, calc(15px * var(--sc)));
   color: var(--text); font-variant-numeric: tabular-nums;
   text-align: right; min-width: 0;
 }
 .p-cd-track {
-  margin-top: clamp(12px, 1.8vh, 20px);
+  margin-top: clamp(12px, 1.8vh, calc(20px * var(--sc)));
   height: 3px; border-radius: 2px;
   background: rgba(255, 255, 255, 0.07);
   overflow: hidden;
@@ -794,12 +819,12 @@ body.present {
 .p-expo { flex: 0 0 auto; }
 .p-expo > small {
   display: block;
-  font-size: clamp(8.5px, 0.62vw, 10.5px);
+  font-size: clamp(8.5px, 0.62vw, calc(10.5px * var(--s)));
   letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--muted); margin-bottom: 7px;
 }
 .p-expo-bar {
-  display: flex; height: clamp(9px, 1.3vh, 14px);
+  display: flex; height: clamp(9px, 1.3vh, calc(14px * var(--s)));
   border-radius: var(--r-xs); overflow: hidden;
   background: var(--surface-2);
 }
@@ -809,7 +834,7 @@ body.present {
 }
 .p-expo-keys {
   display: flex; flex-wrap: wrap; gap: 7px 18px; margin-top: 9px;
-  font-size: clamp(9.5px, 0.72vw, 12px); color: var(--text-2);
+  font-size: clamp(9.5px, 0.72vw, calc(12px * var(--s))); color: var(--text-2);
 }
 .p-key { display: inline-flex; align-items: center; gap: 7px; }
 .p-key i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
@@ -853,31 +878,31 @@ body.present {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: clamp(10px, 1.6vh, 18px);
+  gap: clamp(10px, 1.6vh, calc(18px * var(--s)));
   overflow: hidden;
 }
 
 .lv-top {
   width: 100%; align-self: stretch;
-  display: flex; align-items: baseline; gap: clamp(20px, 3vw, 44px);
-  padding-bottom: clamp(8px, 1.2vh, 14px);
+  display: flex; align-items: baseline; gap: clamp(20px, 3vw, calc(44px * var(--s)));
+  padding-bottom: clamp(8px, 1.2vh, calc(14px * var(--s)));
   border-bottom: 1px solid var(--line);
 }
 .lv-stat { display: flex; align-items: baseline; gap: 8px; }
 .lv-stat b {
   font-family: var(--font-display); font-weight: 600;
-  font-size: clamp(20px, 2.1vw, 34px); line-height: 1;
+  font-size: clamp(20px, 2.1vw, calc(34px * var(--s))); line-height: 1;
   color: var(--text-2); font-variant-numeric: tabular-nums;
   letter-spacing: -0.02em;
 }
-.lv-stat-lead b { font-size: clamp(34px, 3.6vw, 60px); color: var(--accent-bright); }
+.lv-stat-lead b { font-size: clamp(34px, 3.6vw, calc(60px * var(--s))); color: var(--accent-bright); }
 .lv-stat span {
-  font-size: clamp(9px, 0.72vw, 12px); letter-spacing: 0.08em;
+  font-size: clamp(9px, 0.72vw, calc(12px * var(--s))); letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--muted);
 }
 .lv-live {
   margin-left: auto; display: inline-flex; align-items: center; gap: 8px;
-  font-size: clamp(9px, 0.72vw, 12px); letter-spacing: 0.14em;
+  font-size: clamp(9px, 0.72vw, calc(12px * var(--s))); letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--muted);
 }
 .lv-live i {
@@ -888,32 +913,33 @@ body.present {
 
 .lv-grid {
   width: 100%; align-self: stretch;
-  flex: 0 1 auto; min-height: 0; overflow: hidden;
+  flex: 1 1 auto; min-height: 0; overflow: hidden;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: min-content;
-  gap: clamp(10px, 1.5vh, 24px) clamp(28px, 4vw, 64px);
-  align-content: start;
+  grid-auto-rows: minmax(0, 1fr);
+  gap: clamp(10px, 1.5vh, calc(24px * var(--s))) clamp(28px, 4vw, calc(64px * var(--s)));
+  align-content: stretch;
 }
+.lv-q { display: flex; flex-direction: column; justify-content: center; }
 
 .lv-q { min-width: 0; padding: 3px 6px; border-radius: var(--r-sm); }
 .lv-q-top {
   display: flex; align-items: baseline; gap: 10px; margin-bottom: 7px;
 }
-.lv-q-name { font-size: clamp(12px, 1.02vw, 17px); color: var(--text-2); }
+.lv-q-name { font-size: clamp(12px, 1.02vw, calc(17px * var(--s))); color: var(--text-2); }
 .lv-q-step {
-  font-size: clamp(8.5px, 0.66vw, 11px); letter-spacing: 0.09em;
+  font-size: clamp(8.5px, 0.66vw, calc(11px * var(--s))); letter-spacing: 0.09em;
   text-transform: uppercase; color: var(--line);
 }
 .lv-q-top i {
   margin-left: auto; font-style: normal;
-  font-size: clamp(10px, 0.8vw, 13px);
+  font-size: clamp(10px, 0.8vw, calc(13px * var(--s)));
   color: var(--muted); font-variant-numeric: tabular-nums;
 }
 
 /* The bar always fills: the split is the message, not the length. */
 .lv-stack {
-  display: flex; gap: 2px; height: clamp(10px, 1.5vh, 18px);
+  display: flex; gap: 2px; height: clamp(10px, 1.5vh, calc(18px * var(--s)));
   border-radius: var(--r-xs); overflow: hidden;
   background: var(--line-soft);
 }
@@ -927,7 +953,7 @@ body.present {
 
 .lv-key {
   display: flex; flex-wrap: wrap; gap: 3px 14px; margin-top: 6px;
-  font-size: clamp(9.5px, 0.76vw, 12.5px); color: var(--muted);
+  font-size: clamp(9.5px, 0.76vw, calc(12.5px * var(--s))); color: var(--muted);
 }
 .lv-key span { display: inline-flex; align-items: baseline; gap: 6px; }
 .lv-key span.lead { color: var(--text-2); }
@@ -947,10 +973,10 @@ body.present {
    the last question printed straight through this heading. */
 .lv-book {
   width: 100%; align-self: stretch; flex: 0 0 auto;
-  border-top: 1px solid var(--line); padding-top: clamp(8px, 1.2vh, 14px);
+  border-top: 1px solid var(--line); padding-top: clamp(8px, 1.2vh, calc(14px * var(--s)));
 }
 .lv-book-head {
-  font-size: clamp(9px, 0.7vw, 11px); font-weight: 550;
+  font-size: clamp(9px, 0.7vw, calc(11px * var(--s))); font-weight: 550;
   letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
   margin-bottom: 8px;
 }
@@ -958,7 +984,7 @@ body.present {
 .lv-alloc-bar i { display: block; transition: flex-grow 0.7s cubic-bezier(0.2,0.8,0.2,1); }
 .lv-alloc-key {
   display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 9px;
-  font-size: clamp(9.5px, 0.75vw, 12.5px); color: var(--muted);
+  font-size: clamp(9.5px, 0.75vw, calc(12.5px * var(--s))); color: var(--muted);
 }
 .lv-alloc-key span { display: inline-flex; align-items: center; gap: 7px; }
 .lv-alloc-key s { width: 9px; height: 9px; border-radius: 2px; text-decoration: none; }
@@ -986,17 +1012,17 @@ body.present {
 }
 
 /* A long book: ten holdings instead of seven. */
-.p-sl-dense .p-pk { padding: clamp(5px, 0.85vh, 10px) 0; }
-.p-sl-dense .p-pk-name { font-size: clamp(12px, 1.02vw, 16px); }
-.p-sl-dense .p-pk-why { margin-top: 3px; font-size: clamp(10px, 0.76vw, 12.5px); }
+.p-sl-dense .p-pk { padding: clamp(5px, 0.85vh, calc(10px * var(--s))) 0; }
+.p-sl-dense .p-pk-name { font-size: clamp(12px, 1.02vw, calc(16px * var(--s))); }
+.p-sl-dense .p-pk-why { margin-top: 3px; font-size: clamp(10px, 0.76vw, calc(12.5px * var(--s))); }
 
 /* Gearing note under the positions board. */
 .p-gearing {
-  margin-top: clamp(10px, 1.6vh, 18px);
-  padding-top: clamp(8px, 1.2vh, 14px);
+  margin-top: clamp(10px, 1.6vh, calc(18px * var(--s)));
+  padding-top: clamp(8px, 1.2vh, calc(14px * var(--s)));
   border-top: 1px solid var(--line);
-  font-size: clamp(11px, 0.85vw, 14px);
-  line-height: 1.5;
+  font-size: clamp(10.5px, 0.76vw, calc(14px * var(--s)));
+  line-height: 1.45;
   color: var(--muted);
 }
 .p-gearing b { color: var(--series-options); font-weight: 450; }
@@ -1004,7 +1030,7 @@ body.present {
 /* Gearing, stated on the verdict slide beside the allocation it describes. */
 .p-verdict-gross {
   margin-top: 12px;
-  font-size: clamp(11px, 0.85vw, 14px);
+  font-size: clamp(11px, 0.85vw, calc(14px * var(--s)));
   color: var(--series-options);
 }
 
@@ -1012,13 +1038,13 @@ body.present {
    The left column under the band name was empty; this is the fact worth
    putting there — the room gets one of five books the desk wrote, and this
    shows both that and where the room landed. */
-.p-ladder { margin-top: clamp(22px, 3.2vh, 44px); max-width: 680px; }
+.p-ladder { margin-top: clamp(22px, 3.2vh, calc(44px * var(--s))); max-width: calc(680px * var(--s)); }
 .p-rung {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(90px, 1.9fr) auto;
+  grid-template-columns: minmax(0, 1.5fr) minmax(90px, 1.75fr) auto;
   align-items: center;
-  gap: clamp(12px, 1.4vw, 22px);
-  padding: clamp(11px, 1.9vh, 21px) 0;
+  gap: clamp(12px, 1.4vw, calc(22px * var(--s)));
+  padding: clamp(11px, 1.9vh, calc(21px * var(--s))) 0;
   border-bottom: 1px solid var(--line-soft);
   opacity: 0.44;
   transition: opacity 0.5s ease;
@@ -1026,7 +1052,7 @@ body.present {
 .p-rung:last-of-type { border-bottom: none; }
 .p-rung.on { opacity: 1; }
 .p-rung-n {
-  font-size: clamp(11px, 0.95vw, 15px);
+  font-size: clamp(11px, 0.95vw, calc(15px * var(--s)));
   line-height: 1.2;
   color: var(--text-2);
   /* Wrap rather than clip: "Conservative to Moder…" is not a band. */
@@ -1035,21 +1061,21 @@ body.present {
 }
 .p-rung.on .p-rung-n { color: var(--accent-bright); font-weight: 500; }
 .p-rung-bar {
-  display: flex; height: clamp(7px, 1vh, 11px);
+  display: flex; height: clamp(7px, 1vh, calc(11px * var(--s)));
   border-radius: 2px; overflow: hidden;
   background: var(--surface-2);
 }
 .p-rung-bar i { display: block; height: 100%; }
 .p-rung-g {
   font-family: var(--mono, ui-monospace, Menlo, monospace);
-  font-size: clamp(10px, 0.82vw, 13px);
+  font-size: clamp(10px, 0.82vw, calc(13px * var(--s)));
   color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
 .p-rung.on .p-rung-g { color: var(--series-options); }
 .p-ladder-note {
-  margin-top: clamp(10px, 1.5vh, 16px);
-  font-size: clamp(9.5px, 0.74vw, 12.5px);
+  margin-top: clamp(10px, 1.5vh, calc(16px * var(--s)));
+  font-size: clamp(9.5px, 0.74vw, calc(12.5px * var(--s)));
   line-height: 1.5;
   color: var(--muted);
 }
@@ -1059,10 +1085,10 @@ body.present {
    screen said so — the code looked fine and failed in the guests' hands.
    Small enough not to invite typing, large enough to read from the lectern. */
 .qr-url {
-  margin-top: clamp(10px, 1.4vh, 16px);
+  margin-top: clamp(10px, 1.4vh, calc(16px * var(--s)));
   text-align: center;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: clamp(10px, 0.8vw, 13px);
+  font-size: clamp(10px, 0.8vw, calc(13px * var(--s)));
   letter-spacing: 0.02em;
   color: var(--muted);
   word-break: break-all;
@@ -1074,29 +1100,29 @@ body.present {
    before asking what it pays and how far the underlying can fall first. */
 .p-cd-note, .p-cd-fx { justify-content: space-between; }
 .p-cd-type {
-  font-size: clamp(9.5px, 0.74vw, 12.5px);
+  font-size: clamp(9.5px, 0.74vw, calc(12.5px * var(--sc)));
   letter-spacing: 0.04em;
   color: var(--muted);
   text-align: right;
 }
 .p-cd-under {
-  font-size: clamp(16px, 1.45vw, 25px);
+  font-size: clamp(16px, 1.45vw, calc(25px * var(--sc)));
   line-height: 1.18;
   color: var(--accent-bright);
-  margin: clamp(10px, 1.6vh, 18px) 0 clamp(12px, 2vh, 22px);
+  margin: clamp(10px, 1.6vh, calc(18px * var(--sc))) 0 clamp(12px, 2vh, calc(22px * var(--sc)));
 }
 
 /* Coupon and tenor, side by side: the two numbers a client asks for. */
 .p-cd-hero {
-  display: flex; gap: clamp(14px, 1.6vw, 28px);
-  padding-bottom: clamp(12px, 1.8vh, 20px);
+  display: flex; gap: clamp(14px, 1.6vw, calc(28px * var(--sc)));
+  padding-bottom: clamp(12px, 1.8vh, calc(20px * var(--sc)));
   border-bottom: 1px solid var(--line-soft);
 }
 .p-cd-hero > div { min-width: 0; }
 .p-cd-hero b {
   display: block;
   font-family: var(--mono); font-weight: 500;
-  font-size: clamp(19px, 1.85vw, 30px); line-height: 1;
+  font-size: clamp(19px, 1.85vw, calc(30px * var(--sc))); line-height: 1;
   letter-spacing: -0.02em;
   color: var(--series-notes);
   font-variant-numeric: tabular-nums;
@@ -1104,21 +1130,21 @@ body.present {
 .p-cd-hero > div + div b { color: var(--text); }
 .p-cd-hero small {
   display: block; margin-top: 6px;
-  font-size: clamp(8.5px, 0.62vw, 11px);
+  font-size: clamp(8.5px, 0.62vw, calc(11px * var(--sc)));
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
 }
 
 /* The barrier, drawn. The distance to it is the whole risk of the
    structure, and a number on its own does not show a distance. */
-.p-cd-barrier { margin-top: clamp(12px, 1.8vh, 20px); }
+.p-cd-barrier { margin-top: clamp(12px, 1.8vh, calc(20px * var(--sc))); }
 .p-cd-barrier small {
   display: block; margin-bottom: 8px;
-  font-size: clamp(8.5px, 0.62vw, 11px);
+  font-size: clamp(8.5px, 0.62vw, calc(11px * var(--sc)));
   letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted);
 }
 .p-cd-gauge {
   position: relative;
-  height: clamp(8px, 1.1vh, 12px);
+  height: clamp(8px, 1.1vh, calc(12px * var(--sc)));
   border-radius: 2px;
   background: linear-gradient(90deg,
     rgba(217, 89, 38, 0.30) 0%, rgba(217, 89, 38, 0.12) 100%);
@@ -1135,7 +1161,7 @@ body.present {
 }
 .p-cd-barrier p {
   margin-top: 11px;
-  font-size: clamp(9.5px, 0.72vw, 12px);
+  font-size: clamp(9.5px, 0.72vw, calc(12px * var(--sc)));
   line-height: 1.5;
   color: var(--text-2);
 }
@@ -1144,17 +1170,17 @@ body.present {
 
 /* The buffer, as a number, because "barrier 60" is a level and what a
    client asks is how far the underlying can fall first. */
-.p-cd-prot { margin-bottom: clamp(9px, 1.3vh, 14px); }
+.p-cd-prot { margin-bottom: clamp(9px, 1.3vh, calc(14px * var(--sc))); }
 .p-cd-prot-n { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .p-cd-prot-n b {
   font-family: var(--mono); font-weight: 500;
-  font-size: clamp(20px, 1.9vw, 31px); line-height: 1;
+  font-size: clamp(20px, 1.9vw, calc(31px * var(--sc))); line-height: 1;
   letter-spacing: -0.02em;
   color: var(--pos);
   font-variant-numeric: tabular-nums;
 }
 .p-cd-prot-n span {
-  font-size: clamp(9px, 0.7vw, 11.5px);
+  font-size: clamp(9px, 0.7vw, calc(11.5px * var(--sc)));
   line-height: 1.35;
   color: var(--muted);
   max-width: 15ch;
@@ -1166,7 +1192,7 @@ body.present {
   position: relative;
   height: 1.5em;
   margin-top: 6px;
-  font-size: clamp(8.5px, 0.62vw, 10.5px);
+  font-size: clamp(8.5px, 0.62vw, calc(10.5px * var(--sc)));
   color: var(--muted);
 }
 .p-cd-gauge-ends > span:first-child { position: absolute; left: 0; }
@@ -1180,14 +1206,14 @@ body.present {
 
 /* FX: the position on a scale with the dollar at one end, which cannot be
    read backwards the way a "long" label can. */
-.p-cd-fxside { margin-top: clamp(4px, 0.8vh, 10px); }
+.p-cd-fxside { margin-top: clamp(4px, 0.8vh, calc(10px * var(--sc))); }
 .p-cd-fxside .p-side {
-  display: inline-block; margin-bottom: clamp(12px, 1.8vh, 18px);
-  font-size: clamp(9.5px, 0.74vw, 12px);
+  display: inline-block; margin-bottom: clamp(12px, 1.8vh, calc(18px * var(--sc)));
+  font-size: clamp(9.5px, 0.74vw, calc(12px * var(--sc)));
 }
 .p-cd-scale {
   position: relative;
-  height: clamp(8px, 1.1vh, 12px);
+  height: clamp(8px, 1.1vh, calc(12px * var(--sc)));
   border-radius: 2px;
   background: var(--surface-2);
   overflow: visible;
@@ -1204,20 +1230,20 @@ body.present {
 .p-cd-scale-ends {
   display: flex; justify-content: space-between; gap: 10px;
   margin-top: 8px;
-  font-size: clamp(8.5px, 0.64vw, 11px);
+  font-size: clamp(8.5px, 0.64vw, calc(11px * var(--sc)));
   color: var(--muted);
 }
 
 /* Both bespoke cards end the same way: weight, and the track for it. */
 .p-cd-foot {
-  margin-top: clamp(14px, 2vh, 22px);
-  padding-top: clamp(10px, 1.5vh, 16px);
+  margin-top: clamp(14px, 2vh, calc(22px * var(--sc)));
+  padding-top: clamp(10px, 1.5vh, calc(16px * var(--sc)));
   border-top: 1px solid var(--line-soft);
 }
 .p-cd-foot span {
   display: block; margin-bottom: 7px;
   font-family: var(--mono);
-  font-size: clamp(10.5px, 0.84vw, 13.5px);
+  font-size: clamp(10.5px, 0.84vw, calc(13.5px * var(--sc)));
   color: var(--accent-bright);
   font-variant-numeric: tabular-nums;
 }
@@ -1231,9 +1257,9 @@ body.present {
    it averages into can hold nobody at all, and the next slide would then
    show that band at 0% with nothing to join the two up. */
 .p-consensus {
-  margin-top: clamp(16px, 2.4vh, 28px);
+  margin-top: clamp(16px, 2.4vh, calc(28px * var(--sc)));
   max-width: 54ch;
-  font-size: clamp(12px, 1.02vw, 16px);
+  font-size: clamp(12px, 1.02vw, calc(16px * var(--sc)));
   line-height: 1.55;
   color: var(--text-2);
   padding-left: 14px;
@@ -1252,27 +1278,27 @@ body.present {
    way. Sized here rather than in app.css so the guest's phone keeps the
    smaller type it needs. */
 .p-slide[data-slide="2"] .alloc-bar {
-  height: clamp(34px, 5vh, 54px);
-  margin-top: clamp(10px, 1.6vh, 20px);
+  height: clamp(34px, 5vh, calc(54px * var(--sc)));
+  margin-top: clamp(10px, 1.6vh, calc(20px * var(--sc)));
 }
 .p-slide[data-slide="2"] .legend {
-  gap: clamp(10px, 1.6vh, 20px) clamp(18px, 2vw, 34px);
-  margin-top: clamp(12px, 1.8vh, 22px);
+  gap: clamp(10px, 1.6vh, calc(20px * var(--sc))) clamp(18px, 2vw, calc(34px * var(--sc)));
+  margin-top: clamp(12px, 1.8vh, calc(22px * var(--sc)));
 }
-.p-slide[data-slide="2"] .legend div { font-size: clamp(14px, 1.2vw, 20px); gap: 12px; }
+.p-slide[data-slide="2"] .legend div { font-size: clamp(14px, 1.2vw, calc(20px * var(--sc))); gap: 12px; }
 .p-slide[data-slide="2"] .legend s { width: 13px; height: 13px; }
 .p-slide[data-slide="2"] .kv {
-  padding: clamp(11px, 1.9vh, 22px) 0;
-  font-size: clamp(15px, 1.35vw, 23px);
+  padding: clamp(11px, 1.9vh, calc(22px * var(--sc))) 0;
+  font-size: clamp(15px, 1.35vw, calc(23px * var(--sc)));
 }
-.p-slide[data-slide="2"] .p-verdict-gross { font-size: clamp(12px, 1.05vw, 17px); }
-.p-slide[data-slide="2"] .p-fit span { font-size: clamp(13px, 1.1vw, 18px); line-height: 1.5; }
-.p-slide[data-slide="2"] .tagline { font-size: clamp(18px, 1.75vw, 29px); }
-.p-slide[data-slide="2"] .p-consensus { font-size: clamp(13px, 1.15vw, 19px); }
+.p-slide[data-slide="2"] .p-verdict-gross { font-size: clamp(12px, 1.05vw, calc(17px * var(--sc))); }
+.p-slide[data-slide="2"] .p-fit span { font-size: clamp(13px, 1.1vw, calc(18px * var(--sc))); line-height: 1.5; }
+.p-slide[data-slide="2"] .tagline { font-size: clamp(18px, 1.75vw, calc(29px * var(--sc))); }
+.p-slide[data-slide="2"] .p-consensus { font-size: clamp(13px, 1.15vw, calc(19px * var(--sc))); }
 
 /* The ladder is the left column's anchor, so it carries the extra room. */
-.p-slide[data-slide="2"] .p-rung { padding: clamp(12px, 2.1vh, 24px) 0; }
-.p-slide[data-slide="2"] .p-rung-n { font-size: clamp(13px, 1.1vw, 19px); }
-.p-slide[data-slide="2"] .p-rung-g { font-size: clamp(11px, 0.95vw, 16px); }
-.p-slide[data-slide="2"] .p-rung-bar { height: clamp(9px, 1.4vh, 15px); }
-.p-slide[data-slide="2"] .p-ladder-note { font-size: clamp(10.5px, 0.85vw, 14px); }
+.p-slide[data-slide="2"] .p-rung { padding: clamp(12px, 2.1vh, calc(24px * var(--sc))) 0; }
+.p-slide[data-slide="2"] .p-rung-n { font-size: clamp(13px, 1.1vw, calc(19px * var(--sc))); }
+.p-slide[data-slide="2"] .p-rung-g { font-size: clamp(11px, 0.95vw, calc(16px * var(--sc))); }
+.p-slide[data-slide="2"] .p-rung-bar { height: clamp(9px, 1.4vh, calc(15px * var(--sc))); }
+.p-slide[data-slide="2"] .p-ladder-note { font-size: clamp(10.5px, 0.85vw, calc(14px * var(--sc))); }
