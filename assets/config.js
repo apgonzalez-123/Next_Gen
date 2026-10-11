@@ -39,20 +39,18 @@ window.CONFIG = {
 
   /* --- where the QR sends people -------------------------------------
    *
-   * EMPTY IS THE RIGHT ANSWER unless you have a reason. Empty means "the
-   * same place this presenter page is being served from", so the guests and
-   * the projector always come out of one deployment and the QR cannot point
-   * somewhere stale.
+   * The site is served from nextgeneration2026.com (see the CNAME file at
+   * the repo root, which is what sets the GitHub Pages custom domain).
    *
-   * 2026-10-05: this was set to a custom domain, that domain went down after
-   * a phishing complaint, and a cached copy of present.html kept sending the
-   * room to it. Nothing on screen said so. The presenter now prints the
-   * address under the QR, and this is left empty so there is nothing to go
-   * stale in the first place.
+   * Naming it here rather than leaving it empty is belt and braces: empty
+   * means "wherever this page is served from", which also resolves to the
+   * custom domain once it is live, but only if the deck itself was opened
+   * there. Stating it means the QR carries the right address even if the
+   * projector is driven from the github.io URL.
    *
-   * Set it only to a short branded domain you have just checked loads, and
-   * check it again on the day. */
-  GUEST_URL: "",
+   * If this domain ever goes dark, set it back to "" — that falls back to
+   * the serving origin and cannot point at somewhere that is not up. */
+  GUEST_URL: "https://nextgeneration2026.com/",
 
   /* --- who answered what ---------------------------------------------
    * "required"  guests give a name before they can start (responses are
