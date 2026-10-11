@@ -791,15 +791,20 @@ body.present {
 }
 
 /* The exposure that matters for this asset class, as one bar. */
+/* The one chart on each sleeve slide: sector for equities, country for the
+   bonds, instrument for FX, structure for the notes. It is the only thing
+   on these slides a person reads as a SHAPE rather than as a number, so it
+   is sized to be read as one from the back of the room — it was a 28px
+   band across a 2.67 m screen. */
 .p-expo { flex: 0 0 auto; }
 .p-expo > small {
   display: block;
-  font-size: clamp(8.5px, 0.62vw, calc(10.5px * var(--s)));
+  font-size: clamp(10.5px, 0.8vw, calc(16px * var(--s)));
   letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--muted); margin-bottom: 7px;
+  color: var(--muted); margin-bottom: calc(10px * var(--s));
 }
 .p-expo-bar {
-  display: flex; height: clamp(9px, 1.3vh, calc(14px * var(--s)));
+  display: flex; height: clamp(20px, 3.1vh, calc(44px * var(--s)));
   border-radius: var(--r-xs); overflow: hidden;
   background: var(--surface-2);
 }
@@ -808,11 +813,16 @@ body.present {
   transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .p-expo-keys {
-  display: flex; flex-wrap: wrap; gap: 7px 18px; margin-top: 9px;
-  font-size: clamp(9.5px, 0.72vw, calc(12px * var(--s))); color: var(--text-2);
+  display: flex; flex-wrap: wrap;
+  gap: calc(7px * var(--s)) clamp(18px, 1.8vw, calc(34px * var(--s)));
+  margin-top: calc(11px * var(--s));
+  font-size: clamp(12px, 0.95vw, calc(19px * var(--s))); color: var(--text-2);
 }
-.p-key { display: inline-flex; align-items: center; gap: 7px; }
-.p-key i { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+.p-key { display: inline-flex; align-items: center; gap: calc(8px * var(--s)); }
+.p-key i {
+  width: calc(11px * var(--s)); height: calc(11px * var(--s));
+  border-radius: 2px; display: inline-block;
+}
 .p-key b {
   font-family: var(--mono); font-weight: 500; color: var(--accent-bright);
   font-variant-numeric: tabular-nums;
