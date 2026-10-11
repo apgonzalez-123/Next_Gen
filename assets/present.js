@@ -1320,6 +1320,148 @@
   }
 
 
+
+  /* ---------- the calibration screen (press D) -------------------------
+   *
+   * The deck has to be right on a 4.79 m wall tomorrow, and "it looks fine
+   * on my laptop" is not evidence. This turns the question into something
+   * you can measure standing in the room:
+   *
+   *   - it reports the viewport the browser actually gave us, which is the
+   *     one number everything else depends on and the one nobody can guess
+   *   - it prints a ruler of a stated physical length. Hold a tape measure
+   *     against it: if it measures what it says, the deck has understood
+   *     the screen, and every size below it is therefore also right
+   *   - it shows real type at the real sizes it will use, with the height
+   *     in millimetres and the distance each is comfortably legible from,
+   *     so you can walk to the back row and read them
+   *
+   * Nothing here affects the deck. It is an overlay and it is never on
+   * unless somebody presses D.
+   */
+  function screenSpec() {
+    var c = (window.CONFIG || {}).SCREEN || {};
+    return { widthM: c.widthM || null, heightM: c.heightM || null,
+             backRowM: c.backRowM || 8 };
+  }
+
+  /* Cap height is what the eye resolves, not the font size: roughly 70% of
+     it for this typeface. The usual legibility rule is that a character
+     wants about 1/250th of the viewing distance, so invert that. */
+  function legibleToM(fontPx, mmPerPx) {
+    var capMM = fontPx * mmPerPx * 0.7;
+    return capMM * 250 / 1000;
+  }
+
+  function sampleSize(sel, fallback) {
+    var el = document.querySelector(sel);
+    if (!el) return fallback;
+    var v = parseFloat(getComputedStyle(el).fontSize);
+    return isFinite(v) ? v : fallback;
+  }
+
+  function paintCheck() {
+    var host = document.getElementById("calib");
+    if (!host) return;
+
+    var vw = window.innerWidth, vh = window.innerHeight;
+    var dpr = window.devicePixelRatio || 1;
+    var cs = getComputedStyle(document.body);
+    var s  = (cs.getPropertyValue("--s")  || "").trim() || "1";
+    var sc = (cs.getPropertyValue("--sc") || "").trim() || "1";
+    var full = !!(document.fullscreenElement || window.innerHeight === screen.height);
+
+    var spec = screenSpec();
+    var mmPerPx = spec.widthM ? (spec.widthM * 1000) / vw : null;
+
+    /* The aspect the browser reports against the aspect of the panel. If
+       these disagree the image is being stretched and nothing below is
+       trustworthy. */
+    var vwAspect = vw / vh;
+    var panelAspect = spec.widthM && spec.heightM ? spec.widthM / spec.heightM : null;
+    var aspectOff = panelAspect ? Math.abs(vwAspect - panelAspect) / panelAspect * 100 : null;
+
+    var sizes = [
+      ["Slide title",  sampleSize(".p-slide.on .p-h", 52)],
+      ["Body / rows",  sampleSize(".p-slide.on .p-hold-nm, .p-slide.on .p-bar-name, .p-slide.on .p-cd-title", 15)],
+      ["Smallest label", sampleSize(".p-slide.on .p-fig small, .p-slide.on .p-bucket-top h3", 11)]
+    ];
+
+    /* A ruler long enough to be worth measuring but certain to fit. */
+    var rulerMM = 500;
+    var rulerPx = mmPerPx ? rulerMM / mmPerPx : null;
+
+    function row(k, v, note) {
+      return '<div class="cal-row"><span>' + k + "</span><b>" + v + "</b>" +
+             (note ? "<i>" + note + "</i>" : "") + "</div>";
+    }
+
+    var tierNote = vw >= 3400 ? "4K tier" : vw >= 2800 ? "large tier"
+                 : vw >= 2200 ? "wide tier" : "laptop tier — NOT scaled up";
+    var tierBad = vw < 2200 && spec.widthM && spec.widthM > 2.5;
+
+    host.innerHTML =
+      '<div class="cal-card">' +
+        '<h2>Screen check</h2>' +
+        '<p class="cal-lead">Press <kbd>D</kbd> to close. Nothing here is part of the deck.</p>' +
+
+        '<div class="cal-grid">' +
+          row("Viewport", vw + " &times; " + vh + " px",
+              "what the browser gave us") +
+          row("Device pixel ratio", dpr) +
+          row("Scale in use", "&times;" + s + "  (cards &times;" + sc + ")", tierNote) +
+          row("Fullscreen", full ? "yes" : "NO — press F",
+              full ? "" : "the window bar is eating the top of the slide") +
+          (spec.widthM
+            ? row("Panel", spec.widthM + " &times; " + spec.heightM + " m",
+                  "from CONFIG.SCREEN")
+            : "") +
+          (mmPerPx ? row("1 CSS pixel", mmPerPx.toFixed(3) + " mm", "on this panel") : "") +
+          (aspectOff !== null
+            ? row("Aspect", vwAspect.toFixed(3) + " vs panel " + panelAspect.toFixed(3),
+                  aspectOff < 2 ? "match" : "OFF BY " + aspectOff.toFixed(1) + "% — image is stretched")
+            : "") +
+        "</div>" +
+
+        (tierBad
+          ? '<p class="cal-bad">The viewport is under 2200px, so the deck is drawing at ' +
+            'laptop scale on a ' + spec.widthM + ' m screen. Set the display to its ' +
+            'native resolution, or lower the display scaling in the OS.</p>'
+          : "") +
+
+        (rulerPx
+          ? '<div class="cal-ruler-wrap">' +
+              "<p>This bar is <b>" + rulerMM + " mm</b>. Hold a tape measure against it.</p>" +
+              '<div class="cal-ruler" style="width:' + rulerPx.toFixed(1) + 'px"><i></i><i></i></div>' +
+              "<p class=\"cal-note\">If it measures " + rulerMM + " mm the deck has the screen " +
+              "right, and every size below is right with it. If it does not, the viewport " +
+              "above is wrong and nothing else can be trusted.</p>" +
+            "</div>"
+          : "") +
+
+        '<div class="cal-type">' +
+          "<p>Type on the slide behind this card, at its real size:</p>" +
+          sizes.map(function (x) {
+            var px = x[1];
+            var mm = mmPerPx ? (px * mmPerPx * 0.7) : null;
+            var dist = mmPerPx ? legibleToM(px, mmPerPx) : null;
+            var ok = dist === null ? null : dist >= spec.backRowM;
+            return '<div class="cal-sample' + (ok === false ? " bad" : ok ? " good" : "") + '">' +
+              '<span style="font-size:' + px + 'px">Portfolio 72.5%</span>' +
+              "<b>" + x[0] + "</b>" +
+              "<i>" + Math.round(px) + "px" +
+                (mm ? " · " + mm.toFixed(1) + "mm cap" : "") +
+                (dist ? " · legible to " + dist.toFixed(1) + " m" : "") + "</i>" +
+            "</div>";
+          }).join("") +
+          (mmPerPx
+            ? '<p class="cal-note">Back row is set to <b>' + spec.backRowM + ' m</b> in ' +
+              'CONFIG.SCREEN. Green clears it, red does not — walk back and check.</p>'
+            : "") +
+        "</div>" +
+      "</div>";
+  }
+
   /* ---------- the room voting, live ---------- */
   var liveReady = false;
 
@@ -1353,6 +1495,25 @@
     }
   }
 
+  /* The screen check rides over whatever slide is up, so the type samples
+     it measures are the live ones rather than a guess. It repaints on
+     resize because that is exactly when the answer changes. */
+  function toggleCheck() {
+    var host = document.getElementById("calib");
+    if (!host) return;
+    var on = host.hasAttribute("hidden");
+    if (on) { host.removeAttribute("hidden"); paintCheck(); }
+    else host.setAttribute("hidden", "");
+  }
+  window.addEventListener("resize", function () {
+    var host = document.getElementById("calib");
+    if (host && !host.hasAttribute("hidden")) paintCheck();
+  });
+  /* ?check=1 opens it on load, for setting up before anyone is in the room. */
+  if (/[?&]check=1/.test(window.location.search)) {
+    window.addEventListener("load", function () { toggleCheck(); });
+  }
+
   document.addEventListener("keydown", function (e) {
     if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); go(current + 1); }
     else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); go(current - 1); }
@@ -1360,6 +1521,7 @@
       if (document.fullscreenElement) document.exitFullscreen();
       else document.documentElement.requestFullscreen();
     } else if (e.key === "r" || e.key === "R") { resetVotes(); }
+    else if (e.key === "d" || e.key === "D") { toggleCheck(); }
     else if (/^[0-9]$/.test(e.key)) {
       /* 0 is the tenth slide: the deck outgrew the digits on the keyboard. */
       var n = e.key === "0" ? 10 : parseInt(e.key, 10);

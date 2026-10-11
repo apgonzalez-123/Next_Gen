@@ -18,11 +18,19 @@
    admin board is a laptop, and neither should ever pick this up.
    ============================================================ */
 
-body.present { --s: 1;    --sc: 1;    }
-@media (min-width: 2200px) { body.present { --s: 1.45; --sc: 1.28; } }
-@media (min-width: 2800px) { body.present { --s: 1.85; --sc: 1.5;  } }
-@media (min-width: 3400px) { body.present { --s: 2.3;  --sc: 1.72; } }
-@media (min-width: 5000px) { body.present { --s: 3.0;  --sc: 2.1;  } }
+body.present { --s0: 1;    --sc: 1;    }
+@media (min-width: 2200px) { body.present { --s0: 1.45; --sc: 1.28; } }
+@media (min-width: 2800px) { body.present { --s0: 2.0;  --sc: 1.58; } }
+@media (min-width: 3400px) { body.present { --s0: 2.5;  --sc: 1.8;  } }
+@media (min-width: 5000px) { body.present { --s0: 3.0;  --sc: 2.1;  } }
+body.present { --s: var(--s0); }
+
+/* The positions slide is the exception. It lists every holding in the
+   book — thirty-two lines across four columns — and it is the one slide
+   where dropping a row is a lie rather than a crop, so it takes a smaller
+   share of the scale than the rest of the deck. Measured: at the full 2.5
+   the last three equity lines and the final bond fell off the bottom. */
+.p-slide[data-slide="3"] { --s: calc(var(--s0) * 0.8); }
 
 /* --sc is the card scale, deliberately gentler than --s.
    A sleeve card is a fixed slot in a single-row grid: there are only ever
@@ -1302,3 +1310,92 @@ body.present {
 .p-slide[data-slide="2"] .p-rung-g { font-size: clamp(11px, 0.95vw, calc(16px * var(--sc))); }
 .p-slide[data-slide="2"] .p-rung-bar { height: clamp(9px, 1.4vh, calc(15px * var(--sc))); }
 .p-slide[data-slide="2"] .p-ladder-note { font-size: clamp(10.5px, 0.85vw, calc(14px * var(--sc))); }
+
+/* --- the screen check (press D) ---
+   An overlay, never part of the deck. It is deliberately sized in fixed
+   pixels scaled only by --s: it has to stay readable even when the thing
+   it is diagnosing is that sizing has gone wrong. */
+.p-calib {
+  position: fixed; inset: 0; z-index: 90;
+  display: flex; align-items: center; justify-content: center;
+  padding: calc(28px * var(--s));
+  background: rgba(6, 9, 13, 0.93);
+  backdrop-filter: blur(3px);
+  overflow: auto;
+}
+.p-calib[hidden] { display: none; }
+.cal-card {
+  width: min(100%, calc(900px * var(--s)));
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: calc(26px * var(--s)) calc(30px * var(--s));
+}
+.cal-card h2 {
+  font-family: var(--font-display); font-weight: 600;
+  font-size: calc(26px * var(--s)); color: var(--accent-bright);
+  margin-bottom: calc(4px * var(--s));
+}
+.cal-lead { font-size: calc(12px * var(--s)); color: var(--muted); margin-bottom: calc(20px * var(--s)); }
+.cal-lead kbd, .p-keys kbd { font-family: inherit; }
+
+.cal-grid { display: grid; gap: calc(2px * var(--s)); margin-bottom: calc(20px * var(--s)); }
+.cal-row {
+  display: grid; grid-template-columns: 1fr auto; align-items: baseline;
+  gap: calc(14px * var(--s));
+  padding: calc(7px * var(--s)) 0;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: calc(13px * var(--s));
+  color: var(--text-2);
+}
+.cal-row b {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--accent-bright); font-variant-numeric: tabular-nums;
+}
+.cal-row i {
+  grid-column: 1 / -1; font-style: normal;
+  font-size: calc(10.5px * var(--s)); color: var(--muted);
+}
+.cal-bad {
+  padding: calc(12px * var(--s));
+  border: 1px solid var(--neg); border-radius: var(--r-sm);
+  color: var(--neg); font-size: calc(13px * var(--s));
+  margin-bottom: calc(20px * var(--s));
+}
+
+/* The ruler is the whole point: a length you can put a tape against. */
+.cal-ruler-wrap { margin-bottom: calc(22px * var(--s)); }
+.cal-ruler-wrap p { font-size: calc(13px * var(--s)); color: var(--text-2); margin-bottom: calc(9px * var(--s)); }
+.cal-ruler {
+  position: relative;
+  height: calc(26px * var(--s));
+  background: var(--accent-bright);
+  border-radius: 2px;
+  max-width: 100%;
+}
+.cal-ruler i {
+  position: absolute; top: 0; bottom: 0; width: 2px; background: var(--ink);
+}
+.cal-ruler i:first-child { left: 0; }
+.cal-ruler i:last-child  { right: 0; }
+.cal-note { font-size: calc(11px * var(--s)) !important; color: var(--muted) !important; margin-top: calc(8px * var(--s)); }
+
+.cal-type > p { font-size: calc(13px * var(--s)); color: var(--text-2); margin-bottom: calc(12px * var(--s)); }
+.cal-sample {
+  display: grid; grid-template-columns: 1fr auto; align-items: baseline;
+  gap: calc(6px * var(--s)) calc(16px * var(--s));
+  padding: calc(10px * var(--s)) calc(12px * var(--s));
+  margin-bottom: calc(8px * var(--s));
+  border-left: 3px solid var(--line);
+  border-radius: var(--r-xs);
+  background: rgba(255,255,255,0.02);
+}
+.cal-sample.good { border-left-color: var(--pos); }
+.cal-sample.bad  { border-left-color: var(--neg); }
+.cal-sample > span { color: var(--text); line-height: 1.1; }
+.cal-sample b { font-size: calc(12px * var(--s)); color: var(--text-2); font-weight: 500; }
+.cal-sample i {
+  grid-column: 1 / -1; font-style: normal;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: calc(10.5px * var(--s)); color: var(--muted);
+}

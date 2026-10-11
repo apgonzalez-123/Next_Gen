@@ -30,6 +30,17 @@ window.CONFIG = {
   /* How often the presenter screen refreshes, in ms. */
   POLL_MS: 3000,
 
+  /* --- the screen the deck is presented on -----------------------------
+   *
+   * Physical size of the panel, in metres, and how far back the furthest
+   * seat is. Only the calibration screen uses these (press D on the
+   * presenter): it turns CSS pixels into millimetres so the deck can tell
+   * you whether its type is actually legible from that seat, and prints a
+   * ruler you can check with a tape measure.
+   *
+   * Measured on site: 4.79 m x 2.67 m. */
+  SCREEN: { widthM: 4.79, heightM: 2.67, backRowM: 8 },
+
   /* Which steps run this session. "all" uses every step in schema.js;
    * otherwise list the step ids you want, in order. Dropping a step also
    * drops its questions from matching, the breakdown and the export.
